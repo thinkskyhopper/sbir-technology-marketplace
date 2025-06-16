@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -90,6 +89,29 @@ export const useListings = () => {
     }
   };
 
+  const updateListing = async (listingId: string, listingData: Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id' | 'status'>) => {
+    if (!isAdmin) {
+      throw new Error('Only admins can update listings');
+    }
+
+    try {
+      const { error } = await supabase
+        .from('sbir_listings')
+        .update({
+          ...listingData,
+          value: Math.round(listingData.value * 100), // Convert dollars to cents
+        })
+        .eq('id', listingId);
+
+      if (error) throw error;
+
+      await fetchListings(); // Refresh listings
+    } catch (err) {
+      console.error('Error updating listing:', err);
+      throw err;
+    }
+  };
+
   const approveListing = async (listingId: string) => {
     if (!isAdmin) {
       throw new Error('Only admins can approve listings');
@@ -144,6 +166,7 @@ export const useListings = () => {
     error,
     fetchListings,
     createListing,
+    updateListing,
     approveListing,
     rejectListing
   };

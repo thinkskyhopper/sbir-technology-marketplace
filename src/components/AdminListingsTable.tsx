@@ -12,50 +12,80 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, X, Eye, AlertCircle } from "lucide-react";
+import { Check, X, Eye, Edit, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import EditListingDialog from "./EditListingDialog";
+import ConfirmActionDialog from "./ConfirmActionDialog";
+import type { SBIRListing } from "@/hooks/useListings";
 
 const AdminListingsTable = () => {
   const { listings, loading, error, approveListing, rejectListing } = useListings();
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [editingListing, setEditingListing] = useState<SBIRListing | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    show: boolean;
+    type: 'approve' | 'reject';
+    listingId: string;
+    listingTitle: string;
+  }>({
+    show: false,
+    type: 'approve',
+    listingId: '',
+    listingTitle: ''
+  });
   const { toast } = useToast();
 
-  const handleApprove = async (listingId: string) => {
-    try {
-      setProcessingId(listingId);
-      await approveListing(listingId);
-      toast({
-        title: "Listing Approved",
-        description: "The listing has been successfully approved and is now active.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to approve listing. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setProcessingId(null);
-    }
+  const handleEdit = (listing: SBIRListing) => {
+    setEditingListing(listing);
+    setShowEditDialog(true);
   };
 
-  const handleReject = async (listingId: string) => {
+  const handleApproveClick = (listing: SBIRListing) => {
+    setConfirmAction({
+      show: true,
+      type: 'approve',
+      listingId: listing.id,
+      listingTitle: listing.title
+    });
+  };
+
+  const handleRejectClick = (listing: SBIRListing) => {
+    setConfirmAction({
+      show: true,
+      type: 'reject',
+      listingId: listing.id,
+      listingTitle: listing.title
+    });
+  };
+
+  const handleConfirmAction = async () => {
     try {
-      setProcessingId(listingId);
-      await rejectListing(listingId);
-      toast({
-        title: "Listing Rejected",
-        description: "The listing has been rejected.",
-      });
+      setProcessingId(confirmAction.listingId);
+      
+      if (confirmAction.type === 'approve') {
+        await approveListing(confirmAction.listingId);
+        toast({
+          title: "Listing Approved",
+          description: "The listing has been successfully approved and is now active.",
+        });
+      } else {
+        await rejectListing(confirmAction.listingId);
+        toast({
+          title: "Listing Rejected",
+          description: "The listing has been rejected.",
+        });
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to reject listing. Please try again.",
+        description: `Failed to ${confirmAction.type} listing. Please try again.`,
         variant: "destructive",
       });
     } finally {
       setProcessingId(null);
+      setConfirmAction({ show: false, type: 'approve', listingId: '', listingTitle: '' });
     }
   };
 
@@ -116,100 +146,132 @@ const AdminListingsTable = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>All SBIR Listings</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Agency</TableHead>
-              <TableHead>Phase</TableHead>
-              <TableHead>Value</TableHead>
-              <TableHead>Deadline</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Submitted</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {listings.map((listing) => (
-              <TableRow key={listing.id}>
-                <TableCell className="max-w-xs">
-                  <div>
-                    <div className="font-medium truncate">{listing.title}</div>
-                    <div className="text-sm text-muted-foreground truncate">
-                      {listing.category}
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm">{listing.agency}</TableCell>
-                <TableCell>
-                  <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"}>
-                    {listing.phase}
-                  </Badge>
-                </TableCell>
-                <TableCell className="font-medium">
-                  {formatCurrency(listing.value)}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {formatDate(listing.deadline)}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={getStatusBadgeVariant(listing.status)}>
-                    {listing.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm">
-                  {formatDate(listing.submitted_at)}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    {listing.status === 'Pending' && (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleApprove(listing.id)}
-                          disabled={processingId === listing.id}
-                          className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                        >
-                          <Check className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleReject(listing.id)}
-                          disabled={processingId === listing.id}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-blue-600 hover:text-blue-700"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>All SBIR Listings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Agency</TableHead>
+                <TableHead>Phase</TableHead>
+                <TableHead>Value</TableHead>
+                <TableHead>Deadline</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Submitted</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        
-        {listings.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">No listings found.</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {listings.map((listing) => (
+                <TableRow key={listing.id}>
+                  <TableCell className="max-w-xs">
+                    <div>
+                      <div className="font-medium truncate">{listing.title}</div>
+                      <div className="text-sm text-muted-foreground truncate">
+                        {listing.category}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">{listing.agency}</TableCell>
+                  <TableCell>
+                    <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"}>
+                      {listing.phase}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {formatCurrency(listing.value)}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {formatDate(listing.deadline)}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusBadgeVariant(listing.status)}>
+                      {listing.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {formatDate(listing.submitted_at)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleEdit(listing)}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      
+                      {listing.status === 'Pending' && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleApproveClick(listing)}
+                            disabled={processingId === listing.id}
+                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                          >
+                            <Check className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleRejectClick(listing)}
+                            disabled={processingId === listing.id}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </>
+                      )}
+                      
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          
+          {listings.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No listings found.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <EditListingDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        listing={editingListing}
+      />
+
+      <ConfirmActionDialog
+        open={confirmAction.show}
+        onOpenChange={(open) => setConfirmAction({ ...confirmAction, show: open })}
+        onConfirm={handleConfirmAction}
+        title={confirmAction.type === 'approve' ? 'Approve Listing' : 'Reject Listing'}
+        description={
+          confirmAction.type === 'approve'
+            ? `Are you sure you want to approve "${confirmAction.listingTitle}"? This will make it visible to all users.`
+            : `Are you sure you want to reject "${confirmAction.listingTitle}"? This action cannot be undone.`
+        }
+        confirmText={confirmAction.type === 'approve' ? 'Approve' : 'Reject'}
+        variant={confirmAction.type === 'reject' ? 'destructive' : 'default'}
+      />
+    </>
   );
 };
 
