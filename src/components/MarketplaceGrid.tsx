@@ -1,62 +1,12 @@
 
-import { useState } from "react";
-import MarketplaceCard, { SBIRListing } from "./MarketplaceCard";
+import { useState, useEffect } from "react";
+import MarketplaceCard from "./MarketplaceCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter } from "lucide-react";
-
-// Mock data for demonstration
-const mockListings: SBIRListing[] = [
-  {
-    id: "1",
-    title: "Advanced AI-Powered Cybersecurity Platform for Military Networks",
-    phase: "Phase II",
-    agency: "Department of Defense",
-    value: 1750000,
-    deadline: "2024-08-15",
-    description: "Development of next-generation cybersecurity platform utilizing machine learning and artificial intelligence to protect critical military infrastructure from advanced persistent threats.",
-    category: "Cybersecurity",
-    status: "Active",
-    submittedAt: "2024-06-10"
-  },
-  {
-    id: "2",
-    title: "Quantum Communication Systems for Secure Military Operations",
-    phase: "Phase I",
-    agency: "Air Force Research Laboratory",
-    value: 275000,
-    deadline: "2024-07-30",
-    description: "Research and prototype development of quantum-encrypted communication systems for secure military operations in contested environments.",
-    category: "Communications",
-    status: "Active",
-    submittedAt: "2024-06-08"
-  },
-  {
-    id: "3",
-    title: "Autonomous Drone Swarm Technology for Reconnaissance",
-    phase: "Phase II",
-    agency: "Navy Research Office",
-    value: 2100000,
-    deadline: "2024-09-01",
-    description: "Advanced autonomous drone swarm technology for intelligence gathering and reconnaissance missions in complex operational environments.",
-    category: "Autonomous Systems",
-    status: "Active",
-    submittedAt: "2024-06-05"
-  },
-  {
-    id: "4",
-    title: "Lightweight Ballistic Protection Materials Research",
-    phase: "Phase I",
-    agency: "Army Research Laboratory",
-    value: 325000,
-    deadline: "2024-08-20",
-    description: "Development of next-generation lightweight ballistic protection materials using advanced composite technologies.",
-    category: "Materials Science",
-    status: "Pending",
-    submittedAt: "2024-06-12"
-  }
-];
+import { Search, Filter, AlertCircle } from "lucide-react";
+import { useListings, SBIRListing } from "@/hooks/useListings";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MarketplaceGridProps {
   searchQuery?: string;
@@ -65,8 +15,8 @@ interface MarketplaceGridProps {
 }
 
 const MarketplaceGrid = ({ searchQuery, onListingSelect, onContactAdmin }: MarketplaceGridProps) => {
-  const [listings] = useState<SBIRListing[]>(mockListings);
-  const [filteredListings, setFilteredListings] = useState<SBIRListing[]>(mockListings);
+  const { listings, loading, error } = useListings();
+  const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
   const [localSearchQuery, setLocalSearchQuery] = useState("");
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -107,9 +57,9 @@ const MarketplaceGrid = ({ searchQuery, onListingSelect, onContactAdmin }: Marke
   };
 
   // Apply filters whenever dependencies change
-  useState(() => {
+  useEffect(() => {
     applyFilters();
-  });
+  }, [listings, searchQuery, localSearchQuery, phaseFilter, categoryFilter, statusFilter]);
 
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +67,28 @@ const MarketplaceGrid = ({ searchQuery, onListingSelect, onContactAdmin }: Marke
   };
 
   const categories = Array.from(new Set(listings.map(listing => listing.category)));
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading contracts...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Error loading contracts: {error}
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -194,7 +166,7 @@ const MarketplaceGrid = ({ searchQuery, onListingSelect, onContactAdmin }: Marke
         ))}
       </div>
 
-      {filteredListings.length === 0 && (
+      {filteredListings.length === 0 && !loading && (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-lg">No contracts found matching your criteria.</p>
           <Button 
@@ -204,7 +176,6 @@ const MarketplaceGrid = ({ searchQuery, onListingSelect, onContactAdmin }: Marke
               setPhaseFilter("all");
               setCategoryFilter("all");
               setStatusFilter("active");
-              applyFilters();
             }}
             className="mt-4"
           >

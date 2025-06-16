@@ -1,13 +1,17 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
-import { SBIRListing } from "@/components/MarketplaceCard";
+import { SBIRListing } from "@/hooks/useListings";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<"home" | "marketplace">("home");
   const [searchQuery, setSearchQuery] = useState("");
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleExploreMarketplace = () => {
     setCurrentView("marketplace");
@@ -18,12 +22,11 @@ const Index = () => {
     setCurrentView("marketplace");
   };
 
-  const handleLoginClick = () => {
-    // TODO: Implement login modal/page
-    console.log("Login clicked");
-  };
-
   const handlePostListingClick = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
     // TODO: Implement post listing modal/page
     console.log("Post listing clicked");
   };
@@ -34,7 +37,11 @@ const Index = () => {
   };
 
   const handleContactAdmin = (listing: SBIRListing) => {
-    // TODO: Implement contact admin functionality (requires login)
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    // TODO: Implement contact admin functionality
     console.log("Contact admin for listing:", listing);
   };
 
@@ -42,7 +49,6 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header
         onSearch={handleSearch}
-        onLoginClick={handleLoginClick}
         onPostListingClick={handlePostListingClick}
       />
 

@@ -9,16 +9,143 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      contact_inquiries: {
+        Row: {
+          created_at: string
+          id: string
+          inquirer_id: string
+          listing_id: string
+          message: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inquirer_id: string
+          listing_id: string
+          message: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inquirer_id?: string
+          listing_id?: string
+          message?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_inquiries_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "sbir_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sbir_listings: {
+        Row: {
+          agency: string
+          approved_at: string | null
+          approved_by: string | null
+          category: string
+          created_at: string
+          deadline: string
+          description: string
+          id: string
+          phase: Database["public"]["Enums"]["sbir_phase"]
+          status: Database["public"]["Enums"]["listing_status"]
+          submitted_at: string
+          title: string
+          updated_at: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          agency: string
+          approved_at?: string | null
+          approved_by?: string | null
+          category: string
+          created_at?: string
+          deadline: string
+          description: string
+          id?: string
+          phase: Database["public"]["Enums"]["sbir_phase"]
+          status?: Database["public"]["Enums"]["listing_status"]
+          submitted_at?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          agency?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          category?: string
+          created_at?: string
+          deadline?: string
+          description?: string
+          id?: string
+          phase?: Database["public"]["Enums"]["sbir_phase"]
+          status?: Database["public"]["Enums"]["listing_status"]
+          submitted_at?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      listing_status: "Active" | "Pending" | "Sold" | "Rejected"
+      sbir_phase: "Phase I" | "Phase II"
+      user_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +260,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      listing_status: ["Active", "Pending", "Sold", "Rejected"],
+      sbir_phase: ["Phase I", "Phase II"],
+      user_role: ["admin", "user"],
+    },
   },
 } as const
