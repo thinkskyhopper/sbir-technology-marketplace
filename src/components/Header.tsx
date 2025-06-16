@@ -1,5 +1,5 @@
 
-import { Search, LogIn, Plus, LogOut, User, Shield } from "lucide-react";
+import { Search, LogIn, Plus, LogOut, User, Shield, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -35,6 +35,10 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
 
   const handleAuthClick = () => {
     navigate('/auth');
+  };
+
+  const handleAdminClick = () => {
+    navigate('/admin');
   };
 
   return (
@@ -93,6 +97,12 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
                       )}
                     </div>
                     <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={handleAdminClick}>
+                        <Settings className="w-4 h-4 mr-2" />
+                        Admin Dashboard
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign Out
