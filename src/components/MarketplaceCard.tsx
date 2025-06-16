@@ -3,19 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, FileText } from "lucide-react";
-
-export interface SBIRListing {
-  id: string;
-  title: string;
-  phase: "Phase I" | "Phase II";
-  agency: string;
-  value: number;
-  deadline: string;
-  description: string;
-  category: string;
-  status: "Active" | "Pending" | "Sold";
-  submittedAt: string;
-}
+import { SBIRListing } from "@/hooks/useListings";
 
 interface MarketplaceCardProps {
   listing: SBIRListing;
