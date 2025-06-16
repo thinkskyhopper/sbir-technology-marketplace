@@ -70,11 +70,7 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
   const onSubmit = async (data: ListingFormData) => {
     try {
       setIsSubmitting(true);
-      await createListing({
-        ...data,
-        status: 'Active', // Admin-created listings are automatically active
-        submitted_at: new Date().toISOString(),
-      });
+      await createListing(data);
 
       toast({
         title: "Listing Created",
