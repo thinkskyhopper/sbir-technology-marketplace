@@ -41,7 +41,8 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
   const onSubmit = async (data: ListingFormData) => {
     try {
       setIsSubmitting(true);
-      await createListing(data);
+      // Type assertion is safe here because zod validation ensures all required fields are present
+      await createListing(data as Required<ListingFormData>);
 
       toast({
         title: "Listing Created",
