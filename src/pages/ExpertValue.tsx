@@ -4,9 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Shield, Target, Users, Clock, CheckCircle, TrendingUp } from "lucide-react";
 import Header from "@/components/Header";
+import { useState, useEffect } from "react";
 
 const ExpertValue = () => {
   const navigate = useNavigate();
+  const [showCalendly, setShowCalendly] = useState(false);
 
   const benefits = [
     {
@@ -63,6 +65,55 @@ const ExpertValue = () => {
       description: "Complete the transaction with full legal and regulatory compliance"
     }
   ];
+
+  const handleScheduleConsultation = () => {
+    setShowCalendly(true);
+  };
+
+  useEffect(() => {
+    if (showCalendly) {
+      // Load Calendly script
+      const script = document.createElement('script');
+      script.src = 'https://assets.calendly.com/assets/external/widget.js';
+      script.async = true;
+      document.body.appendChild(script);
+
+      return () => {
+        // Cleanup script when component unmounts
+        document.body.removeChild(script);
+      };
+    }
+  }, [showCalendly]);
+
+  if (showCalendly) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        
+        <div className="container mx-auto px-6 py-8">
+          {/* Back Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => setShowCalendly(false)}
+            className="mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Expert Value
+          </Button>
+
+          {/* Calendly Widget */}
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-3xl font-bold text-center mb-8">Schedule Your Free Consultation</h1>
+            <div 
+              className="calendly-inline-widget" 
+              data-url="https://calendly.com/skyhopper/30min" 
+              style={{ minWidth: '320px', height: '700px' }}
+            ></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -168,7 +219,7 @@ const ExpertValue = () => {
             navigate your next contract transaction with confidence.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
+            <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={handleScheduleConsultation}>
               Schedule Free Consultation
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/')}>
