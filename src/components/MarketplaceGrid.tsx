@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import EditListingDialog from "./EditListingDialog";
 import MarketplaceFilters from "./MarketplaceFilters";
 import MarketplaceResultsGrid from "./MarketplaceResultsGrid";
@@ -40,6 +39,7 @@ const MarketplaceGrid = ({
   const [statusFilter, setStatusFilter] = useState<string>(preservedFilters?.statusFilter || "active");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
+  const isInitialMount = useRef(true);
 
   // Update local state when preservedFilters change
   useEffect(() => {
@@ -51,8 +51,13 @@ const MarketplaceGrid = ({
     }
   }, [preservedFilters]);
 
-  // Notify parent component when filters change
+  // Notify parent component when filters change, but skip the initial mount
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    
     if (onFiltersChange) {
       onFiltersChange({
         localSearchQuery,
