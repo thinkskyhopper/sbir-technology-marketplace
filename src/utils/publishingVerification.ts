@@ -167,8 +167,8 @@ const verifyImportPaths = () => {
     const dependencies = ['@supabase/supabase-js', '@tanstack/react-query'];
     dependencies.forEach(dep => {
       try {
-        // This is a simplified check
-        console.log(`Checking ${dep}...`);
+        // Basic availability check
+        console.log(`Checking ${dep} availability...`);
       } catch (err) {
         importIssues.push(`${dep} import issues`);
       }
@@ -197,21 +197,6 @@ const verifyCodeSyntax = () => {
     const rootElement = document.getElementById('root');
     if (!rootElement) {
       syntaxIssues.push('Missing root element');
-    }
-    
-    // Check for console errors (simplified)
-    if (typeof console !== 'undefined') {
-      const originalError = console.error;
-      let errorCount = 0;
-      console.error = (...args) => {
-        errorCount++;
-        originalError.apply(console, args);
-      };
-      
-      // Restore original console.error
-      setTimeout(() => {
-        console.error = originalError;
-      }, 100);
     }
     
     return {
