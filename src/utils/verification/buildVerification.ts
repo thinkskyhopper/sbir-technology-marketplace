@@ -4,7 +4,7 @@ export const verifyBuildCompatibility = () => {
     const compatibility = {
       'Vite environment': typeof import.meta !== 'undefined',
       'Module resolution': typeof import.meta.env !== 'undefined',
-      'Dynamic imports': typeof import !== 'undefined',
+      'Dynamic imports': typeof globalThis !== 'undefined', // Fixed: changed from typeof import
       'Browser APIs': typeof window !== 'undefined'
     };
     
