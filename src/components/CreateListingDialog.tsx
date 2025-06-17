@@ -79,8 +79,15 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
       return;
     }
 
-    // Validate content
-    const validation = validateListingContent(data);
+    // Validate content - ensure all required fields are present
+    const contentValidationData = {
+      title: data.title,
+      description: data.description,
+      agency: data.agency,
+      category: data.category,
+    };
+    
+    const validation = validateListingContent(contentValidationData);
     setValidationErrors(validation.errors);
     setSpamScore(validation.score);
 
@@ -112,11 +119,17 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
       
       // Create listing with "Pending" status for review
       const listingData = {
-        ...data,
+        title: data.title,
+        description: data.description,
+        phase: data.phase,
+        agency: data.agency,
+        value: data.value,
+        deadline: data.deadline,
+        category: data.category,
         status: 'Pending' as const
       };
       
-      await createListing(listingData as Required<ListingFormData>);
+      await createListing(listingData);
 
       toast({
         title: "Listing Submitted",
