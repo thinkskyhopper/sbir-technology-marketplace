@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { SBIRListing } from "@/hooks/useListings";
 
 interface MarketplaceCardProps {
@@ -12,6 +13,8 @@ interface MarketplaceCardProps {
 }
 
 const MarketplaceCard = ({ listing, onViewDetails, onContact }: MarketplaceCardProps) => {
+  const navigate = useNavigate();
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -27,6 +30,10 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact }: MarketplaceCardP
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleViewDetails = () => {
+    navigate(`/listing/${listing.id}`);
   };
 
   return (
@@ -82,7 +89,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact }: MarketplaceCardP
           variant="outline" 
           size="sm" 
           className="flex-1"
-          onClick={() => onViewDetails?.(listing)}
+          onClick={handleViewDetails}
         >
           <FileText className="w-4 h-4 mr-1" />
           View Details

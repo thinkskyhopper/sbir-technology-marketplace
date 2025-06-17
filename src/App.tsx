@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import ExpertValue from "./pages/ExpertValue";
+import ListingDetail from "./pages/ListingDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/expert-value" element={<ExpertValue />} />
+            <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

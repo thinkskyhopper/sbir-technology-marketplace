@@ -10,11 +10,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MarketplaceGridProps {
   searchQuery?: string;
-  onListingSelect?: (listing: SBIRListing) => void;
   onContactAdmin?: (listing: SBIRListing) => void;
 }
 
-const MarketplaceGrid = ({ searchQuery, onListingSelect, onContactAdmin }: MarketplaceGridProps) => {
+const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) => {
   const { listings, loading, error } = useListings();
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
   const [localSearchQuery, setLocalSearchQuery] = useState("");
@@ -160,7 +159,6 @@ const MarketplaceGrid = ({ searchQuery, onListingSelect, onContactAdmin }: Marke
           <MarketplaceCard
             key={listing.id}
             listing={listing}
-            onViewDetails={onListingSelect}
             onContact={onContactAdmin}
           />
         ))}

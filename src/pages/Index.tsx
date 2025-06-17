@@ -31,11 +31,6 @@ const Index = () => {
     console.log("Post listing clicked");
   };
 
-  const handleListingSelect = (listing: SBIRListing) => {
-    // TODO: Implement listing detail view
-    console.log("Listing selected:", listing);
-  };
-
   const handleContactAdmin = (listing: SBIRListing) => {
     if (!user) {
       navigate('/auth');
@@ -68,7 +63,6 @@ const Index = () => {
               
               <div className="max-w-4xl mx-auto">
                 <MarketplaceGrid
-                  onListingSelect={handleListingSelect}
                   onContactAdmin={handleContactAdmin}
                 />
               </div>
@@ -96,7 +90,6 @@ const Index = () => {
             
             <MarketplaceGrid
               searchQuery={searchQuery}
-              onListingSelect={handleListingSelect}
               onContactAdmin={handleContactAdmin}
             />
           </div>
