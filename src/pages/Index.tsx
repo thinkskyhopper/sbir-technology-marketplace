@@ -8,12 +8,21 @@ import { SBIRListing } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<"home" | "marketplace">("home");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Determine current view based on URL parameters or navigation state
+  const getCurrentView = (): "home" | "marketplace" => {
+    if (location.state?.showMarketplace || searchParams.get("view") === "marketplace") {
+      return "marketplace";
+    }
+    return "home";
+  };
+
+  const [currentView, setCurrentView] = useState<"home" | "marketplace">(getCurrentView());
 
   // Read filters from URL parameters
   const getFiltersFromURL = () => ({
@@ -30,14 +39,14 @@ const Index = () => {
     setMarketplaceFilters(getFiltersFromURL());
   }, [searchParams]);
 
-  // Check if we should show marketplace view based on navigation state or URL params
+  // Update view when URL or navigation state changes
   useEffect(() => {
-    if (location.state?.showMarketplace) {
-      setCurrentView("marketplace");
-      // Clear the state to prevent it from persisting on future navigations
+    const newView = getCurrentView();
+    setCurrentView(newView);
+    
+    // Clear navigation state if it exists, but don't replace if we're already showing marketplace
+    if (location.state?.showMarketplace && newView === "marketplace") {
       navigate(location.pathname + location.search, { replace: true, state: {} });
-    } else if (searchParams.get("view") === "marketplace") {
-      setCurrentView("marketplace");
     }
   }, [location.state, searchParams, navigate, location.pathname, location.search]);
 
