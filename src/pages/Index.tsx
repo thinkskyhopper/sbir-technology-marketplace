@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
@@ -12,6 +12,16 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if we should show marketplace view based on navigation state
+  useEffect(() => {
+    if (location.state?.showMarketplace) {
+      setCurrentView("marketplace");
+      // Clear the state to prevent it from persisting on future navigations
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate, location.pathname]);
 
   const handleExploreMarketplace = () => {
     setCurrentView("marketplace");

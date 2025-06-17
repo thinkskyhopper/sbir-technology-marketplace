@@ -81,6 +81,10 @@ const ListingDetail = () => {
     setShowContactDialog(true);
   };
 
+  const handleBackToMarketplace = () => {
+    navigate("/", { state: { showMarketplace: true } });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -88,7 +92,7 @@ const ListingDetail = () => {
         <div className="container mx-auto px-6 py-4">
           <Button 
             variant="ghost" 
-            onClick={() => navigate("/")}
+            onClick={handleBackToMarketplace}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
