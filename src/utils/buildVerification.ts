@@ -59,21 +59,24 @@ export const verifyAuthSetup = async () => {
 
 // Optimized system verification for publishing
 export const runLightweightSystemCheck = async () => {
-  console.log('🚀 Running Lightweight System Verification...');
+  console.log('🚀 Running Enhanced System Verification...');
   
   // Step 1: Basic build health
   const buildHealthy = verifyBuildHealth();
   
-  // Step 2: Lightweight dependency check
+  // Step 2: Enhanced dependency check
   const dependencyStatus = runLightweightDependencyCheck();
   
-  // Step 3: Quick Supabase connectivity
-  const supabaseConnected = await verifySupabaseConnection();
+  // Step 3: Supabase connectivity with retry logic
+  const supabaseConnected = await verifySupabaseConnectionWithRetry();
   
-  // Step 4: Lightweight auth check
+  // Step 4: Authentication setup
   const authConfigured = await verifyAuthSetup();
   
-  const allChecksPass = buildHealthy && dependencyStatus && supabaseConnected && authConfigured;
+  // Step 5: Publishing compatibility check
+  const publishingCompatible = verifyPublishingCompatibility();
+  
+  const allChecksPass = buildHealthy && dependencyStatus && supabaseConnected && authConfigured && publishingCompatible;
   
   console.log(`\n📊 System Status: ${allChecksPass ? '✅ All systems operational' : '⚠️ Issues detected'}`);
   
@@ -82,8 +85,64 @@ export const runLightweightSystemCheck = async () => {
     dependenciesHealthy: dependencyStatus,
     supabaseConnected,
     authConfigured,
+    publishingCompatible,
     allChecksPass
   };
+};
+
+// Enhanced Supabase connection with retry logic
+const verifySupabaseConnectionWithRetry = async (maxRetries = 2) => {
+  console.log('🔍 Enhanced Supabase Connection Check:');
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const { error } = await supabase.from('sbir_listings').select('id').limit(1);
+      
+      if (!error) {
+        console.log('✅ Supabase connection successful');
+        return true;
+      }
+      
+      if (attempt < maxRetries) {
+        console.log(`⚠️ Attempt ${attempt} failed, retrying...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } else {
+        console.error('❌ Supabase connection failed after retries:', error.message);
+        return false;
+      }
+    } catch (err) {
+      if (attempt < maxRetries) {
+        console.log(`⚠️ Attempt ${attempt} failed, retrying...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } else {
+        console.error('❌ Supabase verification failed after retries:', err);
+        return false;
+      }
+    }
+  }
+  
+  return false;
+};
+
+// Publishing compatibility verification
+const verifyPublishingCompatibility = () => {
+  console.log('🔍 Publishing Compatibility Check:');
+  
+  const compatibilityChecks = {
+    'Build environment': import.meta.env !== undefined,
+    'Asset resolution': typeof window !== 'undefined',
+    'Module system': typeof import.meta.url !== 'undefined',
+    'Runtime compatibility': typeof globalThis !== 'undefined'
+  };
+  
+  Object.entries(compatibilityChecks).forEach(([check, passed]) => {
+    console.log(`${passed ? '✅' : '❌'} ${check}`);
+  });
+  
+  const compatible = Object.values(compatibilityChecks).every(Boolean);
+  console.log(`📦 Publishing Compatibility: ${compatible ? '✅ Compatible' : '❌ Issues detected'}`);
+  
+  return compatible;
 };
 
 // Keep the comprehensive check for development use

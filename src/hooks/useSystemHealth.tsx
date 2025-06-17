@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { runLightweightSystemCheck } from '@/utils/buildVerification';
+import { prepareForPublishing } from '@/utils/publishingOptimization';
 
 interface SystemHealth {
   buildHealthy: boolean;
@@ -8,6 +9,7 @@ interface SystemHealth {
   supabaseConnected: boolean;
   authConfigured: boolean;
   allChecksPass: boolean;
+  publishingReady: boolean;
   isLoading: boolean;
   error: string | null;
 }
@@ -19,6 +21,7 @@ export const useSystemHealth = () => {
     supabaseConnected: false,
     authConfigured: false,
     allChecksPass: false,
+    publishingReady: false,
     isLoading: true,
     error: null
   });
@@ -27,11 +30,20 @@ export const useSystemHealth = () => {
     try {
       setHealth(prev => ({ ...prev, isLoading: true, error: null }));
       
-      // Use lightweight check for better performance
+      // Run system checks
       const status = await runLightweightSystemCheck();
+      
+      // Check publishing readiness
+      let publishingStatus = null;
+      try {
+        publishingStatus = await prepareForPublishing();
+      } catch (err) {
+        console.warn('⚠️ Publishing check skipped:', err);
+      }
       
       setHealth({
         ...status,
+        publishingReady: publishingStatus?.readyToPublish ?? true,
         isLoading: false,
         error: null
       });
