@@ -39,30 +39,31 @@ const Index = () => {
     setMarketplaceFilters(getFiltersFromURL());
   }, [searchParams]);
 
-  // Update view when URL parameters change - but don't create navigation loops
+  // Update view when URL parameters change - this should only respond to URL changes
   useEffect(() => {
     const newView = getCurrentView();
     console.log("View effect triggered:", newView, "current:", currentView);
-    // Only update the view state, don't trigger navigation
     setCurrentView(newView);
-  }, [searchParams]);
+  }, [location.search]); // Only listen to search params, not the state
 
   const handleExploreMarketplace = () => {
     console.log("Explore marketplace clicked");
     setCurrentView("marketplace");
-    // Use navigate to create a proper history entry
-    navigate("/?view=marketplace", { replace: false });
+    // Update URL parameters directly instead of navigate
+    const params = new URLSearchParams(searchParams);
+    params.set("view", "marketplace");
+    setSearchParams(params);
   };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setCurrentView("marketplace");
     
-    // Use navigate to create a proper history entry with search
+    // Update URL parameters directly
     const params = new URLSearchParams();
     params.set("view", "marketplace");
-    params.set("search", query);
-    navigate(`/?${params.toString()}`, { replace: false });
+    if (query) params.set("search", query);
+    setSearchParams(params);
   };
 
   const handlePostListingClick = () => {
@@ -86,7 +87,7 @@ const Index = () => {
   const handleFiltersChange = (filters: typeof marketplaceFilters) => {
     setMarketplaceFilters(filters);
     
-    // Create new URL with filters and navigate to create history entry
+    // Update URL parameters directly without creating new history entries
     const params = new URLSearchParams();
     params.set("view", "marketplace");
     if (filters.localSearchQuery) params.set("search", filters.localSearchQuery);
@@ -94,7 +95,7 @@ const Index = () => {
     if (filters.categoryFilter !== "all") params.set("category", filters.categoryFilter);
     if (filters.statusFilter !== "active") params.set("status", filters.statusFilter);
     
-    navigate(`/?${params.toString()}`, { replace: true });
+    setSearchParams(params, { replace: true }); // Use replace to avoid history clutter
   };
 
   console.log("Current view rendering:", currentView);
