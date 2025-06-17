@@ -1,3 +1,4 @@
+
 import { Search, LogIn, Plus, LogOut, User, Shield, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +78,7 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 type="text"
-                placeholder="Search SBIR contracts..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-secondary/50 border-border"
