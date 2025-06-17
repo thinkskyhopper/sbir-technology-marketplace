@@ -2,18 +2,21 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Calendar, DollarSign, Building, FileText } from "lucide-react";
+import { Calendar, DollarSign, Building, FileText, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SBIRListing } from "@/hooks/useListings";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface MarketplaceCardProps {
   listing: SBIRListing;
   onViewDetails?: (listing: SBIRListing) => void;
   onContact?: (listing: SBIRListing) => void;
+  onEdit?: (listing: SBIRListing) => void;
 }
 
-const MarketplaceCard = ({ listing, onViewDetails, onContact }: MarketplaceCardProps) => {
+const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: MarketplaceCardProps) => {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -43,12 +46,24 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact }: MarketplaceCardP
           <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"} className="text-xs">
             {listing.phase}
           </Badge>
-          <Badge 
-            variant={listing.status === "Active" ? "default" : "outline"}
-            className={listing.status === "Active" ? "bg-green-600" : ""}
-          >
-            {listing.status}
-          </Badge>
+          <div className="flex gap-1">
+            {isAdmin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => onEdit?.(listing)}
+              >
+                <Edit className="w-3 h-3" />
+              </Button>
+            )}
+            <Badge 
+              variant={listing.status === "Active" ? "default" : "outline"}
+              className={listing.status === "Active" ? "bg-green-600" : ""}
+            >
+              {listing.status}
+            </Badge>
+          </div>
         </div>
         
         <h3 className="text-lg font-semibold line-clamp-2 text-foreground">

@@ -1,18 +1,19 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, DollarSign, Building, ArrowLeft, Phone, Mail } from "lucide-react";
+import { Calendar, DollarSign, Building, ArrowLeft, Phone, Mail, Edit } from "lucide-react";
 import { useListings } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
+import EditListingDialog from "@/components/EditListingDialog";
 
 const ListingDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { listings, loading } = useListings();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const listing = listings.find(l => l.id === id);
 
@@ -56,7 +57,6 @@ const ListingDetail = () => {
     });
   };
 
-  // Select appropriate placeholder image based on category and agency
   const getListingImage = () => {
     const category = listing.category.toLowerCase();
     const agency = listing.agency.toLowerCase();
@@ -124,14 +124,24 @@ const ListingDetail = () => {
               </div>
             </div>
             
-            <Button 
-              size="lg"
-              onClick={handleContactAdmin}
-              className="ml-6"
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              Contact Admin
-            </Button>
+            <div className="ml-6 space-x-2">
+              {isAdmin && (
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowEditDialog(true)}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit Listing
+                </Button>
+              )}
+              <Button 
+                size="lg"
+                onClick={handleContactAdmin}
+              >
+                <Phone className="w-4 h-4 mr-2" />
+                Contact Admin
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -273,6 +283,13 @@ const ListingDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      <EditListingDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        listing={listing}
+      />
     </div>
   );
 };

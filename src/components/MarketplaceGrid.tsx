@@ -1,12 +1,13 @@
-
 import { useState, useEffect } from "react";
 import MarketplaceCard from "./MarketplaceCard";
+import EditListingDialog from "./EditListingDialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, AlertCircle } from "lucide-react";
 import { useListings, SBIRListing } from "@/hooks/useListings";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface MarketplaceGridProps {
   searchQuery?: string;
@@ -15,11 +16,14 @@ interface MarketplaceGridProps {
 
 const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) => {
   const { listings, loading, error } = useListings();
+  const { isAdmin } = useAuth();
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
   const [localSearchQuery, setLocalSearchQuery] = useState("");
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("active");
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
 
   const applyFilters = () => {
     let filtered = listings;
@@ -63,6 +67,11 @@ const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) 
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
     applyFilters();
+  };
+
+  const handleEditListing = (listing: SBIRListing) => {
+    setSelectedListing(listing);
+    setShowEditDialog(true);
   };
 
   const categories = Array.from(new Set(listings.map(listing => listing.category)));
@@ -160,6 +169,7 @@ const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) 
             key={listing.id}
             listing={listing}
             onContact={onContactAdmin}
+            onEdit={isAdmin ? handleEditListing : undefined}
           />
         ))}
       </div>
@@ -181,6 +191,13 @@ const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) 
           </Button>
         </div>
       )}
+
+      {/* Edit Dialog */}
+      <EditListingDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        listing={selectedListing}
+      />
     </div>
   );
 };
