@@ -39,16 +39,12 @@ const Index = () => {
     setMarketplaceFilters(getFiltersFromURL());
   }, [searchParams]);
 
-  // Update view when URL or navigation state changes
+  // Update view when URL parameters change - simplified logic
   useEffect(() => {
     const newView = getCurrentView();
+    console.log("View effect triggered:", newView, "current:", currentView);
     setCurrentView(newView);
-    
-    // Clear navigation state if it exists, but don't replace if we're already showing marketplace
-    if (location.state?.showMarketplace && newView === "marketplace") {
-      navigate(location.pathname + location.search, { replace: true, state: {} });
-    }
-  }, [location.state, searchParams, navigate, location.pathname, location.search]);
+  }, [searchParams]); // Only watch searchParams, not location.state
 
   const handleExploreMarketplace = () => {
     console.log("Explore marketplace clicked");
@@ -101,6 +97,8 @@ const Index = () => {
     
     setSearchParams(newSearchParams);
   };
+
+  console.log("Current view rendering:", currentView);
 
   return (
     <div className="min-h-screen bg-background">
