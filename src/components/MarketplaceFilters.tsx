@@ -15,7 +15,6 @@ interface MarketplaceFiltersProps {
   onPhaseFilterChange: (phase: string) => void;
   onCategoryFilterChange: (category: string) => void;
   onStatusFilterChange: (status: string) => void;
-  onApplyFilters: () => void;
 }
 
 const MarketplaceFilters = ({
@@ -27,12 +26,11 @@ const MarketplaceFilters = ({
   onSearchQueryChange,
   onPhaseFilterChange,
   onCategoryFilterChange,
-  onStatusFilterChange,
-  onApplyFilters
+  onStatusFilterChange
 }: MarketplaceFiltersProps) => {
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    onApplyFilters();
+    // Since filters apply automatically, we don't need to do anything here
   };
 
   return (
