@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
-import { SBIRListing } from "@/hooks/useListings";
+import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {

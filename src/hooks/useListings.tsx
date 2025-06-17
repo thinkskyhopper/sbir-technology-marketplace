@@ -48,6 +48,3 @@ export const useListings = () => {
     rejectListing
   };
 };
-
-// Re-export types for backward compatibility
-export type { SBIRListing } from '@/types/listings';
