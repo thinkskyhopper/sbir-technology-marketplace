@@ -128,7 +128,7 @@ const Index = () => {
                   onClick={handleExploreMarketplace}
                   className="text-primary hover:text-primary/80 font-semibold text-lg"
                 >
-                  View All Contracts →
+                  View All Technology →
                 </button>
               </div>
             </div>
