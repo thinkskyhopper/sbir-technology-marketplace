@@ -1,8 +1,8 @@
 
 import { runLightweightSystemCheck } from './buildVerification';
-import { prepareForPublishing } from './publishingOptimization';
+import { runQuickPublishingCheck } from './publishingVerification';
 
-// Enhanced startup verification with publishing readiness
+// Enhanced startup verification with comprehensive publishing readiness
 export const runStartupVerification = async () => {
   console.log('🚀 Starting Enhanced Application Verification...');
   
@@ -10,10 +10,13 @@ export const runStartupVerification = async () => {
     // Run core system checks
     const systemStatus = await runLightweightSystemCheck();
     
-    // Run publishing readiness check in production mode
+    // Run enhanced publishing verification
     let publishingStatus = null;
-    if (!import.meta.env.DEV) {
-      publishingStatus = await prepareForPublishing();
+    try {
+      publishingStatus = await runQuickPublishingCheck();
+    } catch (err) {
+      console.warn('⚠️ Publishing verification failed:', err);
+      publishingStatus = { allPassed: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
     
     if (!systemStatus.allChecksPass) {
@@ -33,16 +36,25 @@ export const runStartupVerification = async () => {
       }
     } else {
       console.log('✅ All startup verification checks passed');
-      
-      if (publishingStatus) {
-        console.log(`🚀 Publishing readiness: ${publishingStatus.readyToPublish ? 'Ready' : 'Needs attention'}`);
+    }
+    
+    // Report publishing status
+    if (publishingStatus) {
+      if (publishingStatus.allPassed) {
+        console.log('🚀 Publishing readiness: ✅ Ready to publish');
+      } else {
+        console.warn('🚀 Publishing readiness: ❌ Issues detected - check verification logs above');
+        
+        if (publishingStatus.error) {
+          console.error('🚨 Publishing error:', publishingStatus.error);
+        }
       }
     }
     
     return {
       ...systemStatus,
       publishingStatus,
-      overallHealthy: systemStatus.allChecksPass && (publishingStatus?.readyToPublish ?? true)
+      overallHealthy: systemStatus.allChecksPass && (publishingStatus?.allPassed ?? false)
     };
   } catch (err) {
     console.error('❌ Startup verification failed:', err);
@@ -70,4 +82,31 @@ export const monitorStartupPerformance = () => {
       return elapsed;
     }
   };
+};
+
+// Manual publishing verification trigger
+export const runManualPublishingCheck = async () => {
+  console.log('\n🔍 Running Manual Publishing Verification...');
+  
+  try {
+    const { runPublishingVerification } = await import('./publishingVerification');
+    const result = await runPublishingVerification();
+    
+    if (result.criticalIssues.length > 0) {
+      console.log('\n🚨 CRITICAL PUBLISHING ISSUES FOUND:');
+      result.criticalIssues.forEach(({ check, issue }) => {
+        console.error(`❌ ${check}: ${issue}`);
+      });
+      
+      console.log('\n💡 RECOMMENDATIONS:');
+      result.recommendations.forEach(rec => {
+        console.log(`  • ${rec}`);
+      });
+    }
+    
+    return result;
+  } catch (err) {
+    console.error('❌ Manual publishing check failed:', err);
+    return null;
+  }
 };

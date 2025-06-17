@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { runLightweightSystemCheck } from '@/utils/buildVerification';
-import { prepareForPublishing } from '@/utils/publishingOptimization';
+import { runManualPublishingCheck } from '@/utils/startupVerification';
 
 interface SystemHealth {
   buildHealthy: boolean;
@@ -33,17 +33,22 @@ export const useSystemHealth = () => {
       // Run system checks
       const status = await runLightweightSystemCheck();
       
-      // Check publishing readiness
-      let publishingStatus = null;
+      // Check publishing readiness with enhanced verification
+      let publishingReady = false;
       try {
-        publishingStatus = await prepareForPublishing();
+        const publishingResult = await runManualPublishingCheck();
+        publishingReady = publishingResult?.allChecksPassed ?? false;
+        
+        if (!publishingReady && publishingResult?.criticalIssues?.length) {
+          console.warn('🚨 Publishing issues detected:', publishingResult.criticalIssues);
+        }
       } catch (err) {
-        console.warn('⚠️ Publishing check skipped:', err);
+        console.warn('⚠️ Publishing check failed:', err);
       }
       
       setHealth({
         ...status,
-        publishingReady: publishingStatus?.readyToPublish ?? true,
+        publishingReady,
         isLoading: false,
         error: null
       });
@@ -57,12 +62,46 @@ export const useSystemHealth = () => {
     }
   };
 
+  const runPublishingDiagnostics = async () => {
+    console.log('\n🔍 Running Publishing Diagnostics...');
+    
+    try {
+      const publishingResult = await runManualPublishingCheck();
+      
+      if (publishingResult) {
+        console.log('\n📋 PUBLISHING DIAGNOSTIC REPORT:');
+        console.log(`Overall Status: ${publishingResult.allChecksPassed ? '✅ Ready' : '❌ Issues Found'}`);
+        
+        if (publishingResult.criticalIssues.length > 0) {
+          console.log('\n🚨 Critical Issues:');
+          publishingResult.criticalIssues.forEach(({ check, issue }) => {
+            console.error(`  ❌ ${check}: ${issue}`);
+          });
+        }
+        
+        if (publishingResult.recommendations.length > 0) {
+          console.log('\n💡 Recommendations:');
+          publishingResult.recommendations.forEach(rec => {
+            console.log(`  • ${rec}`);
+          });
+        }
+        
+        return publishingResult;
+      }
+    } catch (err) {
+      console.error('❌ Publishing diagnostics failed:', err);
+    }
+    
+    return null;
+  };
+
   useEffect(() => {
     checkSystemHealth();
   }, []);
 
   return {
     ...health,
-    recheckHealth: checkSystemHealth
+    recheckHealth: checkSystemHealth,
+    runPublishingDiagnostics
   };
 };
