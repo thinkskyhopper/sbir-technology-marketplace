@@ -39,14 +39,13 @@ const Index = () => {
     setMarketplaceFilters(getFiltersFromURL());
   }, [searchParams]);
 
-  // Update view when URL parameters change - simplified logic
+  // Update view when URL parameters change - but don't create navigation loops
   useEffect(() => {
     const newView = getCurrentView();
     console.log("View effect triggered:", newView, "current:", currentView);
-    if (newView !== currentView) {
-      setCurrentView(newView);
-    }
-  }, [searchParams, currentView]);
+    // Only update the view state, don't trigger navigation
+    setCurrentView(newView);
+  }, [searchParams]);
 
   const handleExploreMarketplace = () => {
     console.log("Explore marketplace clicked");
