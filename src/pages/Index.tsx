@@ -51,21 +51,19 @@ const Index = () => {
   const handleExploreMarketplace = () => {
     console.log("Explore marketplace clicked");
     setCurrentView("marketplace");
-    // Update URL to include marketplace view
-    const newSearchParams = new URLSearchParams();
-    newSearchParams.set("view", "marketplace");
-    setSearchParams(newSearchParams);
+    // Use navigate to create a proper history entry
+    navigate("/?view=marketplace", { replace: false });
   };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setCurrentView("marketplace");
     
-    // Update URL with search query and marketplace view
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("view", "marketplace");
-    newSearchParams.set("search", query);
-    setSearchParams(newSearchParams);
+    // Use navigate to create a proper history entry with search
+    const params = new URLSearchParams();
+    params.set("view", "marketplace");
+    params.set("search", query);
+    navigate(`/?${params.toString()}`, { replace: false });
   };
 
   const handlePostListingClick = () => {
@@ -87,20 +85,17 @@ const Index = () => {
   };
 
   const handleFiltersChange = (filters: typeof marketplaceFilters) => {
-    // Use requestAnimationFrame to defer the URL update and prevent SecurityError
-    requestAnimationFrame(() => {
-      setMarketplaceFilters(filters);
-      
-      // Update URL parameters with new filters
-      const newSearchParams = new URLSearchParams();
-      newSearchParams.set("view", "marketplace");
-      if (filters.localSearchQuery) newSearchParams.set("search", filters.localSearchQuery);
-      if (filters.phaseFilter !== "all") newSearchParams.set("phase", filters.phaseFilter);
-      if (filters.categoryFilter !== "all") newSearchParams.set("category", filters.categoryFilter);
-      if (filters.statusFilter !== "active") newSearchParams.set("status", filters.statusFilter);
-      
-      setSearchParams(newSearchParams);
-    });
+    setMarketplaceFilters(filters);
+    
+    // Create new URL with filters and navigate to create history entry
+    const params = new URLSearchParams();
+    params.set("view", "marketplace");
+    if (filters.localSearchQuery) params.set("search", filters.localSearchQuery);
+    if (filters.phaseFilter !== "all") params.set("phase", filters.phaseFilter);
+    if (filters.categoryFilter !== "all") params.set("category", filters.categoryFilter);
+    if (filters.statusFilter !== "active") params.set("status", filters.statusFilter);
+    
+    navigate(`/?${params.toString()}`, { replace: true });
   };
 
   console.log("Current view rendering:", currentView);
