@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import EditListingDialog from "./EditListingDialog";
 import MarketplaceFilters from "./MarketplaceFilters";
@@ -40,21 +41,31 @@ const MarketplaceGrid = ({
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
   const isInitialMount = useRef(true);
+  const isSyncingFromURL = useRef(false);
 
   // Update local state when preservedFilters change
   useEffect(() => {
     if (preservedFilters) {
+      isSyncingFromURL.current = true;
       setLocalSearchQuery(preservedFilters.localSearchQuery);
       setPhaseFilter(preservedFilters.phaseFilter);
       setCategoryFilter(preservedFilters.categoryFilter);
       setStatusFilter(preservedFilters.statusFilter);
+      // Reset the flag after a brief delay to allow state updates to complete
+      setTimeout(() => {
+        isSyncingFromURL.current = false;
+      }, 0);
     }
   }, [preservedFilters]);
 
-  // Notify parent component when filters change, but skip the initial mount
+  // Notify parent component when filters change, but skip initial mount and URL sync
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
+      return;
+    }
+    
+    if (isSyncingFromURL.current) {
       return;
     }
     

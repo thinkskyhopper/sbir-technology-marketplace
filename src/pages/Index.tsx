@@ -43,8 +43,10 @@ const Index = () => {
   useEffect(() => {
     const newView = getCurrentView();
     console.log("View effect triggered:", newView, "current:", currentView);
-    setCurrentView(newView);
-  }, [searchParams]); // Only watch searchParams, not location.state
+    if (newView !== currentView) {
+      setCurrentView(newView);
+    }
+  }, [searchParams, currentView]);
 
   const handleExploreMarketplace = () => {
     console.log("Explore marketplace clicked");
@@ -85,17 +87,20 @@ const Index = () => {
   };
 
   const handleFiltersChange = (filters: typeof marketplaceFilters) => {
-    setMarketplaceFilters(filters);
-    
-    // Update URL parameters with new filters
-    const newSearchParams = new URLSearchParams();
-    newSearchParams.set("view", "marketplace");
-    if (filters.localSearchQuery) newSearchParams.set("search", filters.localSearchQuery);
-    if (filters.phaseFilter !== "all") newSearchParams.set("phase", filters.phaseFilter);
-    if (filters.categoryFilter !== "all") newSearchParams.set("category", filters.categoryFilter);
-    if (filters.statusFilter !== "active") newSearchParams.set("status", filters.statusFilter);
-    
-    setSearchParams(newSearchParams);
+    // Use requestAnimationFrame to defer the URL update and prevent SecurityError
+    requestAnimationFrame(() => {
+      setMarketplaceFilters(filters);
+      
+      // Update URL parameters with new filters
+      const newSearchParams = new URLSearchParams();
+      newSearchParams.set("view", "marketplace");
+      if (filters.localSearchQuery) newSearchParams.set("search", filters.localSearchQuery);
+      if (filters.phaseFilter !== "all") newSearchParams.set("phase", filters.phaseFilter);
+      if (filters.categoryFilter !== "all") newSearchParams.set("category", filters.categoryFilter);
+      if (filters.statusFilter !== "active") newSearchParams.set("status", filters.statusFilter);
+      
+      setSearchParams(newSearchParams);
+    });
   };
 
   console.log("Current view rendering:", currentView);
