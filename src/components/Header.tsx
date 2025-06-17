@@ -1,10 +1,9 @@
-
 import { Search, LogIn, Plus, LogOut, User, Shield, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +21,7 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +43,17 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
 
   const handleLogoClick = () => {
     console.log("Logo clicked - navigating to homepage");
-    navigate('/');
+    console.log("Current location:", location.pathname);
+    
+    if (location.pathname === '/') {
+      // If already on homepage, force a refresh by navigating away and back
+      navigate('/temp', { replace: true });
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 0);
+    } else {
+      navigate('/');
+    }
   };
 
   return (
