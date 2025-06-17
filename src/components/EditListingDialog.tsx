@@ -14,6 +14,7 @@ import { useListings, SBIRListing } from "@/hooks/useListings";
 import { useToast } from "@/hooks/use-toast";
 import { listingSchema, ListingFormData } from "./CreateListingDialog/listingSchema";
 import ListingFormFields from "./CreateListingDialog/ListingFormFields";
+import PhotoUpload from "./PhotoUpload";
 
 interface EditListingDialogProps {
   open: boolean;
@@ -21,8 +22,14 @@ interface EditListingDialogProps {
   listing: SBIRListing | null;
 }
 
+// Extend the form data to include photo_url
+interface ExtendedListingFormData extends ListingFormData {
+  photo_url?: string;
+}
+
 const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const { updateListing } = useListings();
   const { toast } = useToast();
 
@@ -51,6 +58,7 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
         deadline: listing.deadline,
         category: listing.category,
       });
+      setPhotoUrl((listing as any).photo_url || null);
     }
   }, [listing, form]);
 
@@ -59,7 +67,14 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
 
     try {
       setIsSubmitting(true);
-      await updateListing(listing.id, data as Required<ListingFormData>);
+      
+      // Include photo_url in the update data
+      const updateData = {
+        ...data,
+        photo_url: photoUrl,
+      } as Required<ExtendedListingFormData>;
+
+      await updateListing(listing.id, updateData);
 
       toast({
         title: "Listing Updated",
@@ -87,6 +102,12 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <PhotoUpload
+              currentPhotoUrl={photoUrl || undefined}
+              onPhotoChange={setPhotoUrl}
+              disabled={isSubmitting}
+            />
+            
             <ListingFormFields form={form} />
 
             <div className="flex justify-end space-x-2 pt-4">

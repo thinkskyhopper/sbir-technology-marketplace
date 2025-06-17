@@ -85,6 +85,7 @@ export type Database = {
           description: string
           id: string
           phase: Database["public"]["Enums"]["sbir_phase"]
+          photo_url: string | null
           status: Database["public"]["Enums"]["listing_status"]
           submitted_at: string
           title: string
@@ -102,6 +103,7 @@ export type Database = {
           description: string
           id?: string
           phase: Database["public"]["Enums"]["sbir_phase"]
+          photo_url?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
           title: string
@@ -119,6 +121,7 @@ export type Database = {
           description?: string
           id?: string
           phase?: Database["public"]["Enums"]["sbir_phase"]
+          photo_url?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
           title?: string

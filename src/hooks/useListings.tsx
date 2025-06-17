@@ -14,6 +14,7 @@ export interface SBIRListing {
   status: 'Active' | 'Pending' | 'Sold' | 'Rejected';
   submitted_at: string;
   user_id: string;
+  photo_url?: string;
 }
 
 export const useListings = () => {
