@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -91,7 +92,7 @@ export const useListings = () => {
     }
   };
 
-  const updateListing = async (listingId: string, listingData: Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id' | 'status'>) => {
+  const updateListing = async (listingId: string, listingData: Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id'>) => {
     if (!isAdmin) {
       throw new Error('Only admins can update listings');
     }

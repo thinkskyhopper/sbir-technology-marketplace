@@ -8,13 +8,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { useListings, SBIRListing } from "@/hooks/useListings";
 import { useToast } from "@/hooks/use-toast";
 import { listingSchema, ListingFormData } from "./CreateListingDialog/listingSchema";
 import ListingFormFields from "./CreateListingDialog/ListingFormFields";
 import PhotoUpload from "./PhotoUpload";
+import { z } from "zod";
 
 interface EditListingDialogProps {
   open: boolean;
@@ -22,8 +25,15 @@ interface EditListingDialogProps {
   listing: SBIRListing | null;
 }
 
-// Extend the form data to include photo_url
-interface ExtendedListingFormData extends ListingFormData {
+// Extend the form schema to include status
+const editListingSchema = listingSchema.extend({
+  status: z.enum(['Active', 'Pending', 'Sold', 'Rejected']),
+});
+
+type EditListingFormData = z.infer<typeof editListingSchema>;
+
+// Extend the form data to include photo_url and status
+interface ExtendedEditListingFormData extends EditListingFormData {
   photo_url?: string;
 }
 
@@ -33,8 +43,8 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
   const { updateListing } = useListings();
   const { toast } = useToast();
 
-  const form = useForm<ListingFormData>({
-    resolver: zodResolver(listingSchema),
+  const form = useForm<EditListingFormData>({
+    resolver: zodResolver(editListingSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -43,6 +53,7 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
       value: 0,
       deadline: "",
       category: "",
+      status: "Pending",
     },
   });
 
@@ -57,12 +68,13 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
         value: listing.value,
         deadline: listing.deadline,
         category: listing.category,
+        status: listing.status,
       });
       setPhotoUrl((listing as any).photo_url || null);
     }
   }, [listing, form]);
 
-  const onSubmit = async (data: ListingFormData) => {
+  const onSubmit = async (data: EditListingFormData) => {
     if (!listing) return;
 
     try {
@@ -72,7 +84,7 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
       const updateData = {
         ...data,
         photo_url: photoUrl,
-      } as Required<ExtendedListingFormData>;
+      } as Required<ExtendedEditListingFormData>;
 
       await updateListing(listing.id, updateData);
 
@@ -93,11 +105,33 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
     }
   };
 
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'default';
+      case 'Pending':
+        return 'secondary';
+      case 'Rejected':
+        return 'destructive';
+      case 'Sold':
+        return 'outline';
+      default:
+        return 'outline';
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit SBIR Listing</DialogTitle>
+          <DialogTitle className="flex items-center gap-3">
+            Edit SBIR Listing
+            {listing && (
+              <Badge variant={getStatusBadgeVariant(listing.status)}>
+                {listing.status}
+              </Badge>
+            )}
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -106,6 +140,31 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
               currentPhotoUrl={photoUrl || undefined}
               onPhotoChange={setPhotoUrl}
               disabled={isSubmitting}
+            />
+            
+            {/* Status Field */}
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Active">Active</SelectItem>
+                      <SelectItem value="Sold">Sold</SelectItem>
+                      <SelectItem value="Rejected">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
             
             <ListingFormFields form={form} />
