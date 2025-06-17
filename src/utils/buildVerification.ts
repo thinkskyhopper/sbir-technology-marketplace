@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 // Build verification utility to catch common issues
 export const verifyBuildHealth = () => {
   console.log('🔍 Build Health Check:');
