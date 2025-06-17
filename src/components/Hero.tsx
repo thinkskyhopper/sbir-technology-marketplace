@@ -1,12 +1,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Shield, Target, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface HeroProps {
   onExploreClick?: () => void;
 }
 
 const Hero = ({ onExploreClick }: HeroProps) => {
+  const navigate = useNavigate();
+
+  const handleLearnMoreClick = () => {
+    navigate('/expert-value');
+  };
+
   return (
     <section className="hero-gradient py-20 relative overflow-hidden">
       {/* Background pattern */}
@@ -44,6 +51,7 @@ const Hero = ({ onExploreClick }: HeroProps) => {
             <Button 
               size="lg" 
               variant="outline"
+              onClick={handleLearnMoreClick}
               className="border-primary/20 hover:border-primary/40 px-8 py-6 text-lg"
             >
               Learn More
