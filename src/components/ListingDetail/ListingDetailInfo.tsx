@@ -23,7 +23,7 @@ const ListingDetailInfo = ({ listing }: ListingDetailInfoProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Project Details</CardTitle>
+        <CardTitle>Technology Details</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">

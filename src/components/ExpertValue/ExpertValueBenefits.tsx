@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Target, Users, Clock, CheckCircle, TrendingUp } from "lucide-react";
 
@@ -12,7 +11,7 @@ const ExpertValueBenefits = () => {
     {
       icon: Target,
       title: "Precision Matching",
-      description: "Years of experience allow our team to quickly identify the perfect contract matches based on your specific capabilities and goals."
+      description: "Years of experience allow our team to quickly identify the perfect technology matches based on your specific capabilities and goals."
     },
     {
       icon: Clock,
@@ -32,7 +31,7 @@ const ExpertValueBenefits = () => {
     {
       icon: CheckCircle,
       title: "Success Guarantee",
-      description: "Our proven track record and expert oversight ensure higher success rates for contract transfers and negotiations."
+      description: "Our proven track record and expert oversight ensure higher success rates for technology transfers and negotiations."
     }
   ];
 

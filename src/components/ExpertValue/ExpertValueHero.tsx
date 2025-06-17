@@ -6,8 +6,8 @@ const ExpertValueHero = () => {
         Why Choose <span className="text-gradient">Expert Guidance</span>?
       </h1>
       <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-        SBIR contract transactions involve complex regulations, substantial paperwork, and significant financial implications. 
-        Our expert team has successfully facilitated over $500M in contract transfers, ensuring smooth, compliant, and profitable transactions.
+        SBIR technology transactions involve complex regulations, substantial paperwork, and significant financial implications. 
+        Our expert team has successfully facilitated over $500M in technology transfers, ensuring smooth, compliant, and profitable transactions.
       </p>
     </section>
   );
