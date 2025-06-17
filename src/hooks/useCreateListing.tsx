@@ -134,8 +134,6 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
     validationErrors,
     spamScore,
     userAttempts,
-    remainingTime,
-    setValidationErrors,
-    setSpamScore
+    remainingTime
   };
 };
