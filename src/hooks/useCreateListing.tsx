@@ -4,7 +4,7 @@ import { useListings } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useRateLimiting } from "@/hooks/useRateLimiting";
-import { validateListingContent, isValidAgency } from "@/utils/contentValidation";
+import { validateListingContent } from "@/utils/contentValidation";
 import { ListingFormData } from "@/components/CreateListingDialog/listingSchema";
 import { UseFormReturn } from "react-hook-form";
 
@@ -69,17 +69,6 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
       toast({
         title: "Content Validation Failed",
         description: "Please review the content issues below.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validate agency
-    if (!isValidAgency(data.agency)) {
-      setValidationErrors(['Agency name does not appear to be a valid government organization']);
-      toast({
-        title: "Invalid Agency",
-        description: "Please enter a valid government agency name.",
         variant: "destructive",
       });
       return;
