@@ -15,11 +15,13 @@ export const useListingOperations = (onSuccess?: () => void) => {
 
     try {
       setLoading(true);
+      console.log('🔄 Creating listing operation...', { user: user.id });
+      
       const data = await listingsService.createListing(listingData, user.id);
       if (onSuccess) onSuccess();
       return data;
     } catch (err) {
-      console.error('Error creating listing:', err);
+      console.error('❌ Error creating listing:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -33,10 +35,12 @@ export const useListingOperations = (onSuccess?: () => void) => {
 
     try {
       setLoading(true);
+      console.log('🔄 Updating listing operation...', { listingId, isAdmin });
+      
       await listingsService.updateListing(listingId, listingData);
       if (onSuccess) onSuccess();
     } catch (err) {
-      console.error('Error updating listing:', err);
+      console.error('❌ Error updating listing:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -50,10 +54,12 @@ export const useListingOperations = (onSuccess?: () => void) => {
 
     try {
       setLoading(true);
+      console.log('🔄 Approving listing operation...', { listingId, adminId: user.id });
+      
       await listingsService.approveListing(listingId, user.id);
       if (onSuccess) onSuccess();
     } catch (err) {
-      console.error('Error approving listing:', err);
+      console.error('❌ Error approving listing:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -67,10 +73,12 @@ export const useListingOperations = (onSuccess?: () => void) => {
 
     try {
       setLoading(true);
+      console.log('🔄 Rejecting listing operation...', { listingId });
+      
       await listingsService.rejectListing(listingId);
       if (onSuccess) onSuccess();
     } catch (err) {
-      console.error('Error rejecting listing:', err);
+      console.error('❌ Error rejecting listing:', err);
       throw err;
     } finally {
       setLoading(false);

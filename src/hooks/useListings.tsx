@@ -15,11 +15,13 @@ export const useListings = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('📊 Fetching listings...', { isAdmin, userId: user?.id });
 
       const data = await listingsService.fetchListings(isAdmin, user?.id);
       setListings(data);
+      console.log('✅ Listings fetched successfully:', data.length);
     } catch (err) {
-      console.error('Error fetching listings:', err);
+      console.error('❌ Error fetching listings:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch listings');
     } finally {
       setLoading(false);
