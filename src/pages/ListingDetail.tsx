@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,7 @@ import { Calendar, DollarSign, Building, ArrowLeft, Phone, Mail, Edit } from "lu
 import { useListings } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
 import EditListingDialog from "@/components/EditListingDialog";
+import ContactAdminDialog from "@/components/ContactAdminDialog";
 
 const ListingDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +16,7 @@ const ListingDetail = () => {
   const { listings, loading } = useListings();
   const { user, isAdmin } = useAuth();
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showContactDialog, setShowContactDialog] = useState(false);
 
   const listing = listings.find(l => l.id === id);
 
@@ -75,12 +78,7 @@ const ListingDetail = () => {
   };
 
   const handleContactAdmin = () => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    // TODO: Implement contact admin functionality
-    console.log("Contact admin for listing:", listing);
+    setShowContactDialog(true);
   };
 
   return (
@@ -290,6 +288,15 @@ const ListingDetail = () => {
         onOpenChange={setShowEditDialog}
         listing={listing}
       />
+
+      {/* Contact Dialog */}
+      {listing && (
+        <ContactAdminDialog
+          open={showContactDialog}
+          onOpenChange={setShowContactDialog}
+          listing={listing}
+        />
+      )}
     </div>
   );
 };
