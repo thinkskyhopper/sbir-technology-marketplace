@@ -2,7 +2,8 @@
 export const verifyBundleSize = () => {
   try {
     // Estimate bundle size based on loaded resources
-    const estimatedSize = performance.getEntriesByType('navigation')[0]?.transferSize || 0;
+    const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    const estimatedSize = navigationEntries[0]?.transferSize || 0;
     const sizeInMB = estimatedSize / (1024 * 1024);
     
     // Warning if bundle seems too large

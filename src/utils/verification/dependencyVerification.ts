@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 export const verifyDependencies = async () => {
   try {
     const dependencyIssues = [];
