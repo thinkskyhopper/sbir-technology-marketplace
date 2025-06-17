@@ -23,7 +23,7 @@ const ListingDetailInfo = ({ listing }: ListingDetailInfoProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contract Details</CardTitle>
+        <CardTitle>Project Details</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
@@ -40,7 +40,7 @@ const ListingDetailInfo = ({ listing }: ListingDetailInfoProps) => {
             <p className="text-muted-foreground">{listing.agency}</p>
           </div>
           <div>
-            <h4 className="font-semibold mb-1">Contract Value</h4>
+            <h4 className="font-semibold mb-1">Project Value</h4>
             <p className="text-muted-foreground font-semibold">{formatCurrency(listing.value)}</p>
           </div>
         </div>

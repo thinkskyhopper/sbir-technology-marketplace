@@ -9,7 +9,7 @@ const ListingDetailDescription = ({ description }: ListingDetailDescriptionProps
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contract Description</CardTitle>
+        <CardTitle>Project Description</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">

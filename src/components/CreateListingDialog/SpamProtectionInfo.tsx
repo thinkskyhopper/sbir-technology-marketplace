@@ -10,7 +10,7 @@ const SpamProtectionInfo = () => {
       </div>
       <p className="text-xs text-muted-foreground">
         All listings are reviewed before publication. Please ensure your content is professional 
-        and related to legitimate SBIR contracts.
+        and related to legitimate SBIR projects.
       </p>
     </div>
   );

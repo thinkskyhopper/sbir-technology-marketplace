@@ -50,7 +50,7 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
           <div className="flex items-center text-sm">
             <DollarSign className="w-4 h-4 mr-2 text-green-500" />
             <div>
-              <p className="font-semibold">Contract Value</p>
+              <p className="font-semibold">Project Value</p>
               <p className="text-muted-foreground">{formatCurrency(listing.value)}</p>
             </div>
           </div>
@@ -72,7 +72,7 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Contact our admin team to learn more about this contract and discuss the acquisition process.
+            Contact our admin team to learn more about this opportunity and discuss the acquisition process.
           </p>
           
           <Button 
@@ -84,7 +84,7 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
           </Button>
           
           <div className="text-xs text-muted-foreground">
-            <p>• Verified contract details</p>
+            <p>• Verified opportunity details</p>
             <p>• Expert guidance included</p>
             <p>• Secure transaction process</p>
           </div>
@@ -94,7 +94,7 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
       {/* Timeline */}
       <Card>
         <CardHeader>
-          <CardTitle>Contract Timeline</CardTitle>
+          <CardTitle>Project Timeline</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-sm space-y-3">
