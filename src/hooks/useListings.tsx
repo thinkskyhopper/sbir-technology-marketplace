@@ -64,7 +64,7 @@ export const useListings = () => {
     }
   };
 
-  const createListing = async (listingData: Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id' | 'status'>) => {
+  const createListing = async (listingData: Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id'>) => {
     if (!user) {
       throw new Error('Must be authenticated to create listings');
     }
@@ -75,7 +75,8 @@ export const useListings = () => {
         .insert({
           ...listingData,
           value: Math.round(listingData.value * 100), // Convert dollars to cents
-          user_id: user.id
+          user_id: user.id,
+          status: listingData.status || 'Pending' // Default to Pending for user submissions
         })
         .select()
         .single();
