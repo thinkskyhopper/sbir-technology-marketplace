@@ -51,9 +51,10 @@ const Index = () => {
   }, [location.state, searchParams, navigate, location.pathname, location.search]);
 
   const handleExploreMarketplace = () => {
+    console.log("Explore marketplace clicked");
     setCurrentView("marketplace");
     // Update URL to include marketplace view
-    const newSearchParams = new URLSearchParams(searchParams);
+    const newSearchParams = new URLSearchParams();
     newSearchParams.set("view", "marketplace");
     setSearchParams(newSearchParams);
   };
