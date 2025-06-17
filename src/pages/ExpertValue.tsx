@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Shield, Target, Users, Clock, CheckCircle, TrendingUp } from "lucide-react";
 import Header from "@/components/Header";
@@ -202,15 +203,17 @@ const ExpertValue = () => {
 
         {/* Calendly Dialog */}
         <Dialog open={showCalendly} onOpenChange={setShowCalendly}>
-          <DialogContent className="max-w-4xl w-full h-[80vh]">
-            <DialogHeader>
-              <DialogTitle>Schedule Your Free Consultation</DialogTitle>
-            </DialogHeader>
-            <div className="flex-1 overflow-hidden">
-              <div 
-                className="calendly-inline-widget w-full h-full" 
-                data-url="https://calendly.com/skyhopper/30min"
-              ></div>
+          <DialogContent className="max-w-5xl w-[95vw] h-[90vh] p-0">
+            <div className="flex flex-col h-full">
+              <div className="p-4 border-b">
+                <DialogTitle className="text-lg font-semibold">Schedule Your Free Consultation</DialogTitle>
+              </div>
+              <div className="flex-1 min-h-0">
+                <div 
+                  className="calendly-inline-widget w-full h-full" 
+                  data-url="https://calendly.com/skyhopper/30min"
+                ></div>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
