@@ -1,3 +1,4 @@
+import React from 'react';
 
 // Dependency verification utility to catch compatibility issues
 export const verifyDependencies = () => {
