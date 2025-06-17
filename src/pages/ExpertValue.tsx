@@ -1,6 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Shield, Target, Users, Clock, CheckCircle, TrendingUp } from "lucide-react";
 import Header from "@/components/Header";
@@ -80,40 +80,12 @@ const ExpertValue = () => {
 
       return () => {
         // Cleanup script when component unmounts
-        document.body.removeChild(script);
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
       };
     }
   }, [showCalendly]);
-
-  if (showCalendly) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        
-        <div className="container mx-auto px-6 py-8">
-          {/* Back Button */}
-          <Button 
-            variant="ghost" 
-            onClick={() => setShowCalendly(false)}
-            className="mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Expert Value
-          </Button>
-
-          {/* Calendly Widget */}
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-center mb-8">Schedule Your Free Consultation</h1>
-            <div 
-              className="calendly-inline-widget" 
-              data-url="https://calendly.com/skyhopper/30min" 
-              style={{ minWidth: '320px', height: '700px' }}
-            ></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -227,6 +199,21 @@ const ExpertValue = () => {
             </Button>
           </div>
         </section>
+
+        {/* Calendly Dialog */}
+        <Dialog open={showCalendly} onOpenChange={setShowCalendly}>
+          <DialogContent className="max-w-4xl w-full h-[80vh]">
+            <DialogHeader>
+              <DialogTitle>Schedule Your Free Consultation</DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 overflow-hidden">
+              <div 
+                className="calendly-inline-widget w-full h-full" 
+                data-url="https://calendly.com/skyhopper/30min"
+              ></div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
