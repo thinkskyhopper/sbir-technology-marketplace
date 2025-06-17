@@ -4,16 +4,19 @@ import { runFullSystemCheck } from '@/utils/buildVerification';
 
 interface SystemHealth {
   buildHealthy: boolean;
+  dependenciesHealthy: boolean;
   supabaseConnected: boolean;
   authConfigured: boolean;
   allChecksPass: boolean;
   isLoading: boolean;
   error: string | null;
+  dependencyDetails?: any;
 }
 
 export const useSystemHealth = () => {
   const [health, setHealth] = useState<SystemHealth>({
     buildHealthy: false,
+    dependenciesHealthy: false,
     supabaseConnected: false,
     authConfigured: false,
     allChecksPass: false,
@@ -33,6 +36,7 @@ export const useSystemHealth = () => {
         error: null
       });
     } catch (err) {
+      console.error('❌ System health check failed:', err);
       setHealth(prev => ({
         ...prev,
         isLoading: false,

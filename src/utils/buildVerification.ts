@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { runDependencyVerification } from './dependencyVerification';
 
 // Build verification utility to catch common issues
 export const verifyBuildHealth = () => {
@@ -77,19 +78,29 @@ export const verifyAuthSetup = async () => {
 export const runFullSystemCheck = async () => {
   console.log('🚀 Running Full System Verification...');
   
+  // Step 1: Basic build health
   const buildHealthy = verifyBuildHealth();
+  
+  // Step 2: Dependency verification
+  const dependencyStatus = runDependencyVerification();
+  
+  // Step 3: Supabase connectivity
   const supabaseConnected = await verifySupabaseConnection();
+  
+  // Step 4: Authentication setup
   const authConfigured = await verifyAuthSetup();
   
-  const allChecksPass = buildHealthy && supabaseConnected && authConfigured;
+  const allChecksPass = buildHealthy && dependencyStatus.allDependenciesOk && supabaseConnected && authConfigured;
   
   console.log(`\n📊 System Status: ${allChecksPass ? '✅ All systems operational' : '⚠️ Issues detected'}`);
   
   return {
     buildHealthy,
+    dependenciesHealthy: dependencyStatus.allDependenciesOk,
     supabaseConnected,
     authConfigured,
-    allChecksPass
+    allChecksPass,
+    dependencyDetails: dependencyStatus
   };
 };
 

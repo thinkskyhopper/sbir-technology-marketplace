@@ -3,16 +3,30 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { runFullSystemCheck } from "./utils/buildVerification";
+import { runStartupVerification, monitorStartupPerformance } from "./utils/startupVerification";
 
-// Run comprehensive system verification on startup
+// Start performance monitoring
+const perfMonitor = monitorStartupPerformance();
+
+// Run comprehensive startup verification in development
 if (import.meta.env.DEV) {
-  runFullSystemCheck().then(status => {
+  runStartupVerification().then(status => {
     if (!status.allChecksPass) {
-      console.warn('⚠️ System verification detected issues. Check logs above for details.');
+      console.warn('⚠️ Startup verification detected issues. Check logs above for details.');
+      
+      // Provide specific guidance based on issues
+      if (!status.dependenciesHealthy) {
+        console.warn('💡 Dependency issues detected. This could cause publishing problems.');
+      }
+    } else {
+      console.log('✅ All startup checks passed successfully');
     }
+    
+    // Log startup performance
+    perfMonitor.getElapsedTime();
   }).catch(err => {
-    console.error('❌ System verification failed:', err);
+    console.error('❌ Startup verification failed:', err);
+    console.warn('💡 This could indicate publishing compatibility issues.');
   });
 }
 
