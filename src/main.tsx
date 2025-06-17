@@ -3,11 +3,17 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { verifyBuildHealth } from "./utils/buildVerification";
+import { runFullSystemCheck } from "./utils/buildVerification";
 
-// Verify build health on startup
+// Run comprehensive system verification on startup
 if (import.meta.env.DEV) {
-  verifyBuildHealth();
+  runFullSystemCheck().then(status => {
+    if (!status.allChecksPass) {
+      console.warn('⚠️ System verification detected issues. Check logs above for details.');
+    }
+  }).catch(err => {
+    console.error('❌ System verification failed:', err);
+  });
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
