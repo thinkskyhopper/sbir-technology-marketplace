@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -144,6 +144,18 @@ const Auth = () => {
                 {loading ? 'Loading...' : (isSignUp ? 'Create Account' : 'Sign In')}
               </Button>
             </form>
+
+            {isSignUp && (
+              <div className="mt-4 text-center text-sm text-muted-foreground">
+                By creating an account, you agree to our{' '}
+                <Link 
+                  to="/privacy-policy" 
+                  className="text-primary hover:underline font-medium"
+                >
+                  Privacy Policy
+                </Link>
+              </div>
+            )}
 
             <div className="mt-4 text-center">
               <Button

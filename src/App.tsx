@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import ExpertValue from "./pages/ExpertValue";
 import ListingDetail from "./pages/ListingDetail";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/expert-value" element={<ExpertValue />} />
             <Route path="/listing/:id" element={<ListingDetail />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
