@@ -83,7 +83,6 @@ const MarketplaceFilters = ({
           <SelectContent>
             <SelectItem value="active">Active Only</SelectItem>
             <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="Pending">Pending</SelectItem>
             <SelectItem value="Sold">Sold</SelectItem>
           </SelectContent>
         </Select>
