@@ -41,12 +41,20 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
     navigate('/admin');
   };
 
+  const handleLogoClick = () => {
+    console.log("Logo clicked - navigating to homepage");
+    navigate('/');
+  };
+
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/')}>
+          <div 
+            className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity" 
+            onClick={handleLogoClick}
+          >
             <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">S</span>
             </div>
