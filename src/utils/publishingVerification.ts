@@ -1,4 +1,3 @@
-
 // Enhanced publishing verification with specific checks for deployment issues
 export const runPublishingVerification = async () => {
   console.log('🚀 Running Enhanced Publishing Verification...');
@@ -23,7 +22,7 @@ export const runPublishingVerification = async () => {
   
   const allChecksPassed = Object.values(checks).every(check => check.passed);
   const criticalIssues = Object.entries(checks)
-    .filter(([_, result]) => !result.passed && result.critical)
+    .filter(([, result]) => !result.passed && result.critical)
     .map(([check, result]) => ({ check, issue: result.message }));
   
   console.log(`\n🎯 Publishing Status: ${allChecksPassed ? '✅ Ready' : '❌ Issues detected'}`);
@@ -98,7 +97,7 @@ const verifyBuildCompatibility = () => {
       'Browser APIs': typeof window !== 'undefined'
     };
     
-    const failed = Object.entries(compatibility).filter(([_, passed]) => !passed);
+    const failed = Object.entries(compatibility).filter(([, passed]) => !passed);
     
     if (failed.length > 0) {
       return {
