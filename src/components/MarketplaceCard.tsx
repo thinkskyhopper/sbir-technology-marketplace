@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, FileText, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { SBIRListing } from "@/hooks/useListings";
+import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import ContactAdminDialog from "./ContactAdminDialog";

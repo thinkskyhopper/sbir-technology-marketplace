@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Mail, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { SBIRListing } from "@/hooks/useListings";
+import type { SBIRListing } from "@/types/listings";
 
 interface ContactAdminDialogProps {
   open: boolean;

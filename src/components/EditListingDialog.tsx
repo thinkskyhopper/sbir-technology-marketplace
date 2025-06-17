@@ -12,7 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useListings, SBIRListing } from "@/hooks/useListings";
+import { useListings } from "@/hooks/useListings";
+import type { SBIRListing } from "@/types/listings";
 import { useToast } from "@/hooks/use-toast";
 import { listingSchema, ListingFormData } from "./CreateListingDialog/listingSchema";
 import ListingFormFields from "./CreateListingDialog/ListingFormFields";
