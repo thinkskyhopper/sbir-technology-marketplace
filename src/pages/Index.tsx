@@ -10,6 +10,12 @@ import { useAuth } from "@/contexts/AuthContext";
 const Index = () => {
   const [currentView, setCurrentView] = useState<"home" | "marketplace">("home");
   const [searchQuery, setSearchQuery] = useState("");
+  const [marketplaceFilters, setMarketplaceFilters] = useState({
+    localSearchQuery: "",
+    phaseFilter: "all",
+    categoryFilter: "all", 
+    statusFilter: "active"
+  });
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,6 +35,7 @@ const Index = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    setMarketplaceFilters(prev => ({ ...prev, localSearchQuery: query }));
     setCurrentView("marketplace");
   };
 
@@ -48,6 +55,10 @@ const Index = () => {
     }
     // TODO: Implement contact admin functionality
     console.log("Contact admin for listing:", listing);
+  };
+
+  const handleFiltersChange = (filters: typeof marketplaceFilters) => {
+    setMarketplaceFilters(filters);
   };
 
   return (
@@ -101,6 +112,8 @@ const Index = () => {
             <MarketplaceGrid
               searchQuery={searchQuery}
               onContactAdmin={handleContactAdmin}
+              preservedFilters={marketplaceFilters}
+              onFiltersChange={handleFiltersChange}
             />
           </div>
         </section>

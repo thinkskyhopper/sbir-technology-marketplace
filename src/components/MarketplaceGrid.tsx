@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import MarketplaceCard from "./MarketplaceCard";
 import EditListingDialog from "./EditListingDialog";
@@ -12,18 +13,57 @@ import { useAuth } from "@/contexts/AuthContext";
 interface MarketplaceGridProps {
   searchQuery?: string;
   onContactAdmin?: (listing: SBIRListing) => void;
+  preservedFilters?: {
+    localSearchQuery: string;
+    phaseFilter: string;
+    categoryFilter: string;
+    statusFilter: string;
+  };
+  onFiltersChange?: (filters: {
+    localSearchQuery: string;
+    phaseFilter: string;
+    categoryFilter: string;
+    statusFilter: string;
+  }) => void;
 }
 
-const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) => {
+const MarketplaceGrid = ({ 
+  searchQuery, 
+  onContactAdmin, 
+  preservedFilters,
+  onFiltersChange 
+}: MarketplaceGridProps) => {
   const { listings, loading, error } = useListings();
   const { isAdmin } = useAuth();
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
-  const [localSearchQuery, setLocalSearchQuery] = useState("");
-  const [phaseFilter, setPhaseFilter] = useState<string>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("active");
+  const [localSearchQuery, setLocalSearchQuery] = useState(preservedFilters?.localSearchQuery || "");
+  const [phaseFilter, setPhaseFilter] = useState<string>(preservedFilters?.phaseFilter || "all");
+  const [categoryFilter, setCategoryFilter] = useState<string>(preservedFilters?.categoryFilter || "all");
+  const [statusFilter, setStatusFilter] = useState<string>(preservedFilters?.statusFilter || "active");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
+
+  // Update local state when preservedFilters change
+  useEffect(() => {
+    if (preservedFilters) {
+      setLocalSearchQuery(preservedFilters.localSearchQuery);
+      setPhaseFilter(preservedFilters.phaseFilter);
+      setCategoryFilter(preservedFilters.categoryFilter);
+      setStatusFilter(preservedFilters.statusFilter);
+    }
+  }, [preservedFilters]);
+
+  // Notify parent component when filters change
+  useEffect(() => {
+    if (onFiltersChange) {
+      onFiltersChange({
+        localSearchQuery,
+        phaseFilter,
+        categoryFilter,
+        statusFilter
+      });
+    }
+  }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, onFiltersChange]);
 
   const applyFilters = () => {
     let filtered = listings;
@@ -72,6 +112,13 @@ const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) 
   const handleEditListing = (listing: SBIRListing) => {
     setSelectedListing(listing);
     setShowEditDialog(true);
+  };
+
+  const handleClearFilters = () => {
+    setLocalSearchQuery("");
+    setPhaseFilter("all");
+    setCategoryFilter("all");
+    setStatusFilter("active");
   };
 
   const categories = Array.from(new Set(listings.map(listing => listing.category)));
@@ -179,12 +226,7 @@ const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) 
           <p className="text-muted-foreground text-lg">No contracts found matching your criteria.</p>
           <Button 
             variant="outline" 
-            onClick={() => {
-              setLocalSearchQuery("");
-              setPhaseFilter("all");
-              setCategoryFilter("all");
-              setStatusFilter("active");
-            }}
+            onClick={handleClearFilters}
             className="mt-4"
           >
             Clear Filters
