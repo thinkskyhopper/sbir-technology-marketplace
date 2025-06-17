@@ -1,4 +1,5 @@
 
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -69,6 +70,10 @@ const ExpertValue = () => {
 
   const handleScheduleConsultation = () => {
     setShowCalendly(true);
+  };
+
+  const handleExploreMarketplace = () => {
+    navigate('/?view=marketplace');
   };
 
   useEffect(() => {
@@ -195,7 +200,7 @@ const ExpertValue = () => {
             <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={handleScheduleConsultation}>
               Schedule Free Consultation
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/')}>
+            <Button size="lg" variant="outline" onClick={handleExploreMarketplace}>
               Explore Marketplace
             </Button>
           </div>
@@ -223,3 +228,4 @@ const ExpertValue = () => {
 };
 
 export default ExpertValue;
+
