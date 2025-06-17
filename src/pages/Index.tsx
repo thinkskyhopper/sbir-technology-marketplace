@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
@@ -10,33 +10,54 @@ import { useAuth } from "@/contexts/AuthContext";
 const Index = () => {
   const [currentView, setCurrentView] = useState<"home" | "marketplace">("home");
   const [searchQuery, setSearchQuery] = useState("");
-  const [marketplaceFilters, setMarketplaceFilters] = useState({
-    localSearchQuery: "",
-    phaseFilter: "all",
-    categoryFilter: "all", 
-    statusFilter: "active"
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check if we should show marketplace view based on navigation state
+  // Read filters from URL parameters
+  const getFiltersFromURL = () => ({
+    localSearchQuery: searchParams.get("search") || "",
+    phaseFilter: searchParams.get("phase") || "all",
+    categoryFilter: searchParams.get("category") || "all",
+    statusFilter: searchParams.get("status") || "active"
+  });
+
+  const [marketplaceFilters, setMarketplaceFilters] = useState(getFiltersFromURL());
+
+  // Update filters when URL parameters change
+  useEffect(() => {
+    setMarketplaceFilters(getFiltersFromURL());
+  }, [searchParams]);
+
+  // Check if we should show marketplace view based on navigation state or URL params
   useEffect(() => {
     if (location.state?.showMarketplace) {
       setCurrentView("marketplace");
       // Clear the state to prevent it from persisting on future navigations
-      navigate(location.pathname, { replace: true, state: {} });
+      navigate(location.pathname + location.search, { replace: true, state: {} });
+    } else if (searchParams.get("view") === "marketplace") {
+      setCurrentView("marketplace");
     }
-  }, [location.state, navigate, location.pathname]);
+  }, [location.state, searchParams, navigate, location.pathname, location.search]);
 
   const handleExploreMarketplace = () => {
     setCurrentView("marketplace");
+    // Update URL to include marketplace view
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("view", "marketplace");
+    setSearchParams(newSearchParams);
   };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setMarketplaceFilters(prev => ({ ...prev, localSearchQuery: query }));
     setCurrentView("marketplace");
+    
+    // Update URL with search query and marketplace view
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("view", "marketplace");
+    newSearchParams.set("search", query);
+    setSearchParams(newSearchParams);
   };
 
   const handlePostListingClick = () => {
@@ -59,6 +80,16 @@ const Index = () => {
 
   const handleFiltersChange = (filters: typeof marketplaceFilters) => {
     setMarketplaceFilters(filters);
+    
+    // Update URL parameters with new filters
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set("view", "marketplace");
+    if (filters.localSearchQuery) newSearchParams.set("search", filters.localSearchQuery);
+    if (filters.phaseFilter !== "all") newSearchParams.set("phase", filters.phaseFilter);
+    if (filters.categoryFilter !== "all") newSearchParams.set("category", filters.categoryFilter);
+    if (filters.statusFilter !== "active") newSearchParams.set("status", filters.statusFilter);
+    
+    setSearchParams(newSearchParams);
   };
 
   return (

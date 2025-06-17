@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import ContactAdminDialog from "@/components/ContactAdminDialog";
 const ListingDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { listings, loading } = useListings();
   const { user, isAdmin } = useAuth();
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -82,7 +82,17 @@ const ListingDetail = () => {
   };
 
   const handleBackToMarketplace = () => {
-    navigate("/", { state: { showMarketplace: true } });
+    // Preserve any existing marketplace filters in the URL
+    const marketplaceParams = new URLSearchParams();
+    marketplaceParams.set("view", "marketplace");
+    
+    // Copy relevant filter parameters if they exist
+    if (searchParams.get("search")) marketplaceParams.set("search", searchParams.get("search")!);
+    if (searchParams.get("phase")) marketplaceParams.set("phase", searchParams.get("phase")!);
+    if (searchParams.get("category")) marketplaceParams.set("category", searchParams.get("category")!);
+    if (searchParams.get("status")) marketplaceParams.set("status", searchParams.get("status")!);
+    
+    navigate(`/?${marketplaceParams.toString()}`);
   };
 
   return (
