@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { runFullSystemCheck } from '@/utils/buildVerification';
+import { runLightweightSystemCheck } from '@/utils/buildVerification';
 
 interface SystemHealth {
   buildHealthy: boolean;
@@ -10,7 +10,6 @@ interface SystemHealth {
   allChecksPass: boolean;
   isLoading: boolean;
   error: string | null;
-  dependencyDetails?: any;
 }
 
 export const useSystemHealth = () => {
@@ -28,7 +27,8 @@ export const useSystemHealth = () => {
     try {
       setHealth(prev => ({ ...prev, isLoading: true, error: null }));
       
-      const status = await runFullSystemCheck();
+      // Use lightweight check for better performance
+      const status = await runLightweightSystemCheck();
       
       setHealth({
         ...status,

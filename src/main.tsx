@@ -8,7 +8,7 @@ import { runStartupVerification, monitorStartupPerformance } from "./utils/start
 // Start performance monitoring
 const perfMonitor = monitorStartupPerformance();
 
-// Run comprehensive startup verification in development
+// Run optimized startup verification in development only
 if (import.meta.env.DEV) {
   runStartupVerification().then(status => {
     if (!status.allChecksPass) {

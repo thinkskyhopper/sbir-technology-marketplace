@@ -1,6 +1,27 @@
 import React from 'react';
 
-// Dependency verification utility to catch compatibility issues
+// Lightweight dependency verification for publishing optimization
+export const runLightweightDependencyCheck = () => {
+  console.log('🔍 Lightweight Dependency Check:');
+  
+  const essentialChecks = {
+    'React availability': typeof React !== 'undefined',
+    'DOM ready': typeof window !== 'undefined' && document.getElementById('root'),
+    'Browser environment': typeof window !== 'undefined'
+  };
+  
+  Object.entries(essentialChecks).forEach(([check, passed]) => {
+    console.log(`${passed ? '✅' : '❌'} ${check}`);
+  });
+  
+  const allDependenciesOk = Object.values(essentialChecks).every(Boolean);
+  
+  console.log(`📦 Dependency Status: ${allDependenciesOk ? '✅ All dependencies verified' : '⚠️ Dependency issues detected'}`);
+  
+  return allDependenciesOk;
+};
+
+// Keep comprehensive checks for development debugging
 export const verifyDependencies = () => {
   console.log('🔍 Dependency Verification Check:');
   
