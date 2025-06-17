@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useListings } from "@/hooks/useListings";
 import {
@@ -17,7 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import EditListingDialog from "./EditListingDialog";
 import ConfirmActionDialog from "./ConfirmActionDialog";
-import type { SBIRListing } from "@/hooks/useListings";
+import type { SBIRListing } from "@/types/listings";
 
 const AdminListingsTable = () => {
   const { listings, loading, error, approveListing, rejectListing } = useListings();

@@ -6,7 +6,8 @@ import MarketplaceNoResults from "./MarketplaceNoResults";
 import MarketplaceLoading from "./MarketplaceLoading";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { useListings, SBIRListing } from "@/hooks/useListings";
+import { useListings } from "@/hooks/useListings";
+import type { SBIRListing } from "@/types/listings";
 
 interface MarketplaceGridProps {
   searchQuery?: string;

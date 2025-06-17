@@ -1,6 +1,6 @@
 
 import MarketplaceCard from "./MarketplaceCard";
-import { SBIRListing } from "@/hooks/useListings";
+import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface MarketplaceResultsGridProps {
