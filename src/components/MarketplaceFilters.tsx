@@ -90,11 +90,6 @@ const MarketplaceFilters = ({
           </SelectContent>
         </Select>
       </div>
-
-      <Button onClick={onApplyFilters} className="mt-4">
-        <Filter className="w-4 h-4 mr-2" />
-        Apply Filters
-      </Button>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import EditListingDialog from "./EditListingDialog";
 import MarketplaceFilters from "./MarketplaceFilters";
@@ -160,7 +159,6 @@ const MarketplaceGrid = ({
         onPhaseFilterChange={setPhaseFilter}
         onCategoryFilterChange={setCategoryFilter}
         onStatusFilterChange={setStatusFilter}
-        onApplyFilters={applyFilters}
       />
 
       {/* Results */}
