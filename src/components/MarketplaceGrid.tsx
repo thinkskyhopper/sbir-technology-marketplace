@@ -11,9 +11,10 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface MarketplaceGridProps {
   searchQuery?: string;
+  onContactAdmin?: (listing: SBIRListing) => void;
 }
 
-const MarketplaceGrid = ({ searchQuery }: MarketplaceGridProps) => {
+const MarketplaceGrid = ({ searchQuery, onContactAdmin }: MarketplaceGridProps) => {
   const { listings, loading, error } = useListings();
   const { isAdmin } = useAuth();
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
@@ -168,6 +169,7 @@ const MarketplaceGrid = ({ searchQuery }: MarketplaceGridProps) => {
             key={listing.id}
             listing={listing}
             onEdit={isAdmin ? handleEditListing : undefined}
+            onContact={onContactAdmin}
           />
         ))}
       </div>
