@@ -9,17 +9,14 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine current view based on URL parameters or navigation state
+  // Determine current view based on URL parameters
   const getCurrentView = (): "home" | "marketplace" => {
-    if (location.state?.showMarketplace || searchParams.get("view") === "marketplace") {
-      return "marketplace";
-    }
-    return "home";
+    return searchParams.get("view") === "marketplace" ? "marketplace" : "home";
   };
 
   const [currentView, setCurrentView] = useState<"home" | "marketplace">(getCurrentView());
@@ -34,36 +31,33 @@ const Index = () => {
 
   const [marketplaceFilters, setMarketplaceFilters] = useState(getFiltersFromURL());
 
-  // Update filters when URL parameters change
-  useEffect(() => {
-    setMarketplaceFilters(getFiltersFromURL());
-  }, [searchParams]);
-
-  // Update view when URL parameters change - this should only respond to URL changes
+  // Update view and filters when URL changes (including back/forward navigation)
   useEffect(() => {
     const newView = getCurrentView();
-    console.log("View effect triggered:", newView, "current:", currentView);
+    const newFilters = getFiltersFromURL();
+    
+    console.log("URL changed - updating view to:", newView);
     setCurrentView(newView);
-  }, [location.search]); // Only listen to search params, not the state
+    setMarketplaceFilters(newFilters);
+    
+    // Update search query from URL
+    const urlSearch = searchParams.get("search") || "";
+    setSearchQuery(urlSearch);
+  }, [searchParams]);
 
   const handleExploreMarketplace = () => {
     console.log("Explore marketplace clicked");
-    setCurrentView("marketplace");
-    // Update URL parameters directly instead of navigate
-    const params = new URLSearchParams(searchParams);
-    params.set("view", "marketplace");
-    setSearchParams(params);
+    navigate("/?view=marketplace");
   };
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentView("marketplace");
-    
-    // Update URL parameters directly
+    console.log("Search initiated:", query);
     const params = new URLSearchParams();
     params.set("view", "marketplace");
-    if (query) params.set("search", query);
-    setSearchParams(params);
+    if (query) {
+      params.set("search", query);
+    }
+    navigate(`/?${params.toString()}`);
   };
 
   const handlePostListingClick = () => {
@@ -85,9 +79,10 @@ const Index = () => {
   };
 
   const handleFiltersChange = (filters: typeof marketplaceFilters) => {
+    console.log("Filters changed:", filters);
     setMarketplaceFilters(filters);
     
-    // Update URL parameters directly without creating new history entries
+    // Build new URL with all filters
     const params = new URLSearchParams();
     params.set("view", "marketplace");
     if (filters.localSearchQuery) params.set("search", filters.localSearchQuery);
@@ -95,7 +90,8 @@ const Index = () => {
     if (filters.categoryFilter !== "all") params.set("category", filters.categoryFilter);
     if (filters.statusFilter !== "active") params.set("status", filters.statusFilter);
     
-    setSearchParams(params, { replace: true }); // Use replace to avoid history clutter
+    // Use replace to avoid creating history entries for filter changes
+    navigate(`/?${params.toString()}`, { replace: true });
   };
 
   console.log("Current view rendering:", currentView);
