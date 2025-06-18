@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Shield, Target, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +23,7 @@ const Hero = ({
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
             <span className="text-gradient">The SBIR Tech </span>
-            <span className="text-white">Marketplace</span>
+            <span className="text-slate-50">Marketplace</span>
           </h1>
           
           <p className="text-xl mb-8 max-w-2xl mx-auto leading-relaxed text-slate-50">Connect innovation with opportunity. Buy and sell Phase I & II SBIR technology in a secure, professional marketplace designed for defense contractors and innovators.</p>
