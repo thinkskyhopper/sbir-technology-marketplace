@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,80 +20,20 @@ interface FormData {
   email: string;
   company: string;
   message: string;
-  captchaAnswer: string;
-}
-
-interface CaptchaQuestion {
-  question: string;
-  answer: number;
 }
 
 const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [captcha, setCaptcha] = useState<CaptchaQuestion>({ question: "", answer: 0 });
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     company: "",
-    message: "",
-    captchaAnswer: ""
+    message: ""
   });
-
-  const generateCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
-    const operations = ['+', '-', '*'];
-    const operation = operations[Math.floor(Math.random() * operations.length)];
-    
-    let answer: number;
-    let question: string;
-    
-    switch (operation) {
-      case '+':
-        answer = num1 + num2;
-        question = `${num1} + ${num2}`;
-        break;
-      case '-':
-        // Ensure we don't get negative results
-        const larger = Math.max(num1, num2);
-        const smaller = Math.min(num1, num2);
-        answer = larger - smaller;
-        question = `${larger} - ${smaller}`;
-        break;
-      case '*':
-        answer = num1 * num2;
-        question = `${num1} × ${num2}`;
-        break;
-      default:
-        answer = num1 + num2;
-        question = `${num1} + ${num2}`;
-    }
-    
-    setCaptcha({ question, answer });
-  };
-
-  useEffect(() => {
-    if (open) {
-      generateCaptcha();
-    }
-  }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate CAPTCHA
-    const userAnswer = parseInt(formData.captchaAnswer);
-    if (isNaN(userAnswer) || userAnswer !== captcha.answer) {
-      toast({
-        title: "CAPTCHA Error",
-        description: "Please solve the math problem correctly.",
-        variant: "destructive",
-      });
-      generateCaptcha(); // Generate a new CAPTCHA
-      setFormData({ ...formData, captchaAnswer: "" });
-      return;
-    }
 
     setLoading(true);
     
@@ -126,8 +66,7 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
           name: "",
           email: "",
           company: "",
-          message: "",
-          captchaAnswer: ""
+          message: ""
         });
       } else {
         throw new Error('Failed to send message');
@@ -194,26 +133,6 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               placeholder="Tell us more about your interests or how we can help you..."
             />
-          </div>
-
-          <div className="bg-secondary/20 p-4 rounded-lg">
-            <Label htmlFor="captcha" className="text-sm font-medium">
-              Security Verification *
-            </Label>
-            <div className="mt-2 space-y-2">
-              <p className="text-sm text-muted-foreground">
-                Please solve this math problem: <strong>{captcha.question} = ?</strong>
-              </p>
-              <Input
-                id="captcha"
-                type="number"
-                value={formData.captchaAnswer}
-                onChange={(e) => setFormData({ ...formData, captchaAnswer: e.target.value })}
-                placeholder="Enter your answer"
-                required
-                className="w-32"
-              />
-            </div>
           </div>
 
           <div className="flex justify-end space-x-4">
