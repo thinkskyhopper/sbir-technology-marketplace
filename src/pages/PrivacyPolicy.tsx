@@ -1,11 +1,17 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Shield } from 'lucide-react';
+import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+
 const PrivacyPolicy = () => {
-  return <div className="min-h-screen bg-background flex flex-col">
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
+      
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-8">
@@ -65,6 +71,8 @@ const PrivacyPolicy = () => {
       </div>
       
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default PrivacyPolicy;
