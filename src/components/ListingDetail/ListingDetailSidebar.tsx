@@ -72,7 +72,7 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Contact our admin team to learn more about this opportunity and discuss the acquisition process.
+            Contact our team to learn more about this opportunity and discuss the acquisition process.
           </p>
           
           <Button 
@@ -80,7 +80,7 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
             onClick={onContactAdmin}
           >
             <Mail className="w-4 h-4 mr-2" />
-            Contact Admin
+            Contact
           </Button>
           
           <div className="text-xs text-muted-foreground">

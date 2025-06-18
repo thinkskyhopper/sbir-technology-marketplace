@@ -132,7 +132,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
             className="flex-1 bg-primary hover:bg-primary/90"
             onClick={handleContactAdmin}
           >
-            Contact Admin
+            Contact
           </Button>
         </CardFooter>
       </Card>

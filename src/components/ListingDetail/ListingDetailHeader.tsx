@@ -87,7 +87,7 @@ const ListingDetailHeader = ({
               onClick={onContactAdmin}
             >
               <Phone className="w-4 h-4 mr-2" />
-              Contact Admin
+              Contact
             </Button>
           </div>
         </div>
