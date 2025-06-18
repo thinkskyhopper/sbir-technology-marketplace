@@ -20,6 +20,7 @@ interface FormData {
   email: string;
   company: string;
   message: string;
+  honeypot: string; // Hidden field to catch bots
 }
 
 const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps) => {
@@ -29,11 +30,22 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
     name: "",
     email: "",
     company: "",
-    message: ""
+    message: "",
+    honeypot: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check honeypot field - if filled, it's likely a bot
+    if (formData.honeypot.trim() !== "") {
+      toast({
+        title: "Error",
+        description: "Spam detected. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
     
@@ -44,7 +56,10 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          message: formData.message,
           listing: {
             id: "general-inquiry",
             title: "General Contact Form",
@@ -66,7 +81,8 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
           name: "",
           email: "",
           company: "",
-          message: ""
+          message: "",
+          honeypot: ""
         });
       } else {
         throw new Error('Failed to send message');
@@ -93,6 +109,20 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Honeypot field - hidden from users but visible to bots */}
+          <div style={{ display: 'none' }} aria-hidden="true">
+            <label htmlFor="website">Website (leave blank):</label>
+            <input
+              id="website"
+              name="website"
+              type="text"
+              value={formData.honeypot}
+              onChange={(e) => setFormData({ ...formData, honeypot: e.target.value })}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="name">Full Name *</Label>
