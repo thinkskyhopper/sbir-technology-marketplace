@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,20 +5,15 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Shield } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-
 const PrivacyPolicy = () => {
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-8">
             <Button variant="ghost" asChild className="mr-4">
-              <Link to="/auth">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Sign Up
-              </Link>
+              
             </Button>
             <div className="flex items-center">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3">
@@ -32,7 +26,7 @@ const PrivacyPolicy = () => {
           <Card>
             <CardHeader>
               <CardTitle>Privacy Policy</CardTitle>
-              <p className="text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
+              
             </CardHeader>
             
             <CardContent className="space-y-6">
@@ -71,8 +65,6 @@ const PrivacyPolicy = () => {
       </div>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default PrivacyPolicy;
