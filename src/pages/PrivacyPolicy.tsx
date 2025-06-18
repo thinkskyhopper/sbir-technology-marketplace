@@ -52,17 +52,12 @@ const PrivacyPolicy = () => {
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold mb-4">Policy Updates and Contact</h2>
+                <h2 className="text-xl font-semibold mb-4">Policy Updates</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   We may update this policy from time to time to reflect changes in our practices or legal requirements, and we'll make those changes clear on our website. For any concerns or requests related to your privacy, feel free to reach out to us via the contact form.
                 </p>
                 
-                <div className="mt-6 p-4 bg-muted rounded-lg">
-                  <p className="font-medium">Contact Us</p>
-                  <p className="text-muted-foreground">
-                    For privacy-related questions or concerns, please use our contact form or reach out through our website.
-                  </p>
-                </div>
+                
               </section>
             </CardContent>
           </Card>
