@@ -16,9 +16,7 @@ const PrivacyPolicy = () => {
               
             </Button>
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3">
-                <Shield className="w-4 h-4 text-primary-foreground" />
-              </div>
+              
               <h1 className="text-2xl font-bold">The SBIR Tech Marketplace Privacy Policy</h1>
             </div>
           </div>
