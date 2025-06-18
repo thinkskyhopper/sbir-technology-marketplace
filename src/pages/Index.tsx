@@ -3,8 +3,10 @@ import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
+import Footer from "@/components/Footer";
 import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchParams] = useSearchParams();
@@ -88,41 +90,45 @@ const Index = () => {
     });
   };
   console.log("Current view rendering:", currentView);
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background flex flex-col">
       <Header onSearch={handleSearch} onPostListingClick={handlePostListingClick} />
 
-      {currentView === "home" ? <>
-          <Hero onExploreClick={handleExploreMarketplace} />
-          
-          {/* Featured Section */}
-          <section className="py-16 bg-secondary/20">
-            <div className="container mx-auto px-6">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Featured Opportunities</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">Discover high-value SBIR technology from leading defense industry partners</p>
-              </div>
-              
-              <div className="max-w-4xl mx-auto">
-                <MarketplaceGrid onContactAdmin={handleContactAdmin} />
-              </div>
-              
-              <div className="text-center mt-8">
-                <button onClick={handleExploreMarketplace} className="text-primary hover:text-primary/80 font-semibold text-lg">
-                  View All Opportunities →
-                </button>
-              </div>
-            </div>
-          </section>
-        </> : <section className="py-8">
-          <div className="container mx-auto px-6">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">SBIR Technology Marketplace</h1>
-              <p className="text-muted-foreground">Browse and discover Phase I & II SBIR technology from verified sellers</p>
-            </div>
+      <div className="flex-1">
+        {currentView === "home" ? <>
+            <Hero onExploreClick={handleExploreMarketplace} />
             
-            <MarketplaceGrid searchQuery={searchQuery} onContactAdmin={handleContactAdmin} preservedFilters={marketplaceFilters} onFiltersChange={handleFiltersChange} />
-          </div>
-        </section>}
+            {/* Featured Section */}
+            <section className="py-16 bg-secondary/20">
+              <div className="container mx-auto px-6">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-bold mb-4">Featured Opportunities</h2>
+                  <p className="text-muted-foreground max-w-2xl mx-auto">Discover high-value SBIR technology from leading defense industry partners</p>
+                </div>
+                
+                <div className="max-w-4xl mx-auto">
+                  <MarketplaceGrid onContactAdmin={handleContactAdmin} />
+                </div>
+                
+                <div className="text-center mt-8">
+                  <button onClick={handleExploreMarketplace} className="text-primary hover:text-primary/80 font-semibold text-lg">
+                    View All Opportunities →
+                  </button>
+                </div>
+              </div>
+            </section>
+          </> : <section className="py-8">
+            <div className="container mx-auto px-6">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold mb-2">SBIR Technology Marketplace</h1>
+                <p className="text-muted-foreground">Browse and discover Phase I & II SBIR technology from verified sellers</p>
+              </div>
+              
+              <MarketplaceGrid searchQuery={searchQuery} onContactAdmin={handleContactAdmin} preservedFilters={marketplaceFilters} onFiltersChange={handleFiltersChange} />
+            </div>
+          </section>}
+      </div>
+
+      <Footer />
     </div>;
 };
 export default Index;
