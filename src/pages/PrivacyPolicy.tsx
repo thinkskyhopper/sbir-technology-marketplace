@@ -1,42 +1,22 @@
-
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Shield } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import CreateListingDialog from '@/components/CreateListingDialog';
-
 const PrivacyPolicy = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-
-  const handlePostListingClick = () => {
-    if (user) {
-      setShowCreateDialog(true);
-    } else {
-      navigate('/auth');
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header onPostListingClick={handlePostListingClick} />
+  return <div className="min-h-screen bg-background flex flex-col">
+      <Header />
       
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-8">
             <Button variant="ghost" asChild className="mr-4">
-              <Link to="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Link>
+              
             </Button>
             <div className="flex items-center">
-              <Shield className="w-6 h-6 mr-2" />
+              
               <h1 className="text-2xl font-bold">The SBIR Tech Marketplace Privacy Policy</h1>
             </div>
           </div>
@@ -44,7 +24,7 @@ const PrivacyPolicy = () => {
           <Card>
             <CardHeader>
               <CardTitle>Privacy Policy</CardTitle>
-              <p className="text-muted-foreground">Effective Date: June 16, 2025</p>
+              
             </CardHeader>
             
             <CardContent className="space-y-6">
@@ -75,9 +55,7 @@ const PrivacyPolicy = () => {
                   We may update this policy from time to time to reflect changes in our practices or legal requirements, and we'll make those changes clear on our website. For any concerns or requests related to your privacy, feel free to reach out to us via the contact form.
                 </p>
                 
-                <p className="text-muted-foreground">
-                  Last updated: June 16, 2025
-                </p>
+                
               </section>
             </CardContent>
           </Card>
@@ -85,13 +63,6 @@ const PrivacyPolicy = () => {
       </div>
       
       <Footer />
-      
-      <CreateListingDialog 
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-      />
-    </div>
-  );
+    </div>;
 };
-
 export default PrivacyPolicy;
