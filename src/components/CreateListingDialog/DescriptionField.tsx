@@ -19,24 +19,29 @@ const DescriptionField = ({ form }: DescriptionFieldProps) => {
     <FormField
       control={form.control}
       name="description"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Description</FormLabel>
-          <FormControl>
-            <Textarea
-              placeholder="Enter detailed description"
-              rows={4}
-              {...field}
-            />
-          </FormControl>
-          <div className="flex justify-end">
-            <span className="text-sm text-muted-foreground">
-              {field.value?.length || 0}/2000 characters
-            </span>
-          </div>
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        const characterCount = field.value?.length || 0;
+        const isOverLimit = characterCount >= 2000;
+        
+        return (
+          <FormItem>
+            <FormLabel>Description</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Enter detailed description"
+                rows={4}
+                {...field}
+              />
+            </FormControl>
+            <div className="flex justify-end">
+              <span className={`text-sm ${isOverLimit ? 'text-red-500' : 'text-muted-foreground'}`}>
+                {characterCount}/2000 characters
+              </span>
+            </div>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 };
