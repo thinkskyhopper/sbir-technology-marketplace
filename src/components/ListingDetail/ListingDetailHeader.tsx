@@ -1,7 +1,6 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building, DollarSign, ArrowLeft, Phone, Edit } from "lucide-react";
+import { Building, DollarSign, ArrowLeft, Mail, Edit } from "lucide-react";
 
 interface ListingDetailHeaderProps {
   listing: {
@@ -86,7 +85,7 @@ const ListingDetailHeader = ({
               size="lg"
               onClick={onContactAdmin}
             >
-              <Phone className="w-4 h-4 mr-2" />
+              <Mail className="w-4 h-4 mr-2" />
               Contact
             </Button>
           </div>
