@@ -4,20 +4,18 @@ import { useListings } from "@/hooks/useListings";
 import {
   Table,
   TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, X, Eye, Edit, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EditListingDialog from "./EditListingDialog";
 import ConfirmActionDialog from "./ConfirmActionDialog";
+import AdminListingsTableHeader from "./AdminListingsTable/AdminListingsTableHeader";
+import AdminListingsTableRow from "./AdminListingsTable/AdminListingsTableRow";
+import AdminListingsTableLoading from "./AdminListingsTable/AdminListingsTableLoading";
+import AdminListingsTableEmpty from "./AdminListingsTable/AdminListingsTableEmpty";
 import type { SBIRListing } from "@/types/listings";
 
 const AdminListingsTable = () => {
@@ -90,49 +88,8 @@ const AdminListingsTable = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'default';
-      case 'Pending':
-        return 'secondary';
-      case 'Rejected':
-        return 'destructive';
-      case 'Sold':
-        return 'outline';
-      default:
-        return 'outline';
-    }
-  };
-
   if (loading) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading listings...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <AdminListingsTableLoading />;
   }
 
   if (error) {
@@ -155,103 +112,23 @@ const AdminListingsTable = () => {
         <CardContent>
           <ScrollArea className="h-[400px] w-full">
             <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Agency</TableHead>
-                  <TableHead>Phase</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Deadline</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Submitted</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
+              <AdminListingsTableHeader />
               <TableBody>
                 {listings.map((listing) => (
-                  <TableRow key={listing.id}>
-                    <TableCell className="max-w-xs">
-                      <div>
-                        <div className="font-medium truncate">{listing.title}</div>
-                        <div className="text-sm text-muted-foreground truncate">
-                          {listing.category}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm">{listing.agency}</TableCell>
-                    <TableCell>
-                      <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"}>
-                        {listing.phase}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {formatCurrency(listing.value)}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {formatDate(listing.deadline)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(listing.status)}>
-                        {listing.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {formatDate(listing.submitted_at)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEdit(listing)}
-                          className="text-blue-600 hover:text-blue-700"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        
-                        {listing.status === 'Pending' && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleApproveClick(listing)}
-                              disabled={processingId === listing.id}
-                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                            >
-                              <Check className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleRejectClick(listing)}
-                              disabled={processingId === listing.id}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </>
-                        )}
-                        
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-blue-600 hover:text-blue-700"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <AdminListingsTableRow
+                    key={listing.id}
+                    listing={listing}
+                    processingId={processingId}
+                    onEdit={handleEdit}
+                    onApprove={handleApproveClick}
+                    onReject={handleRejectClick}
+                  />
                 ))}
               </TableBody>
             </Table>
           </ScrollArea>
           
-          {listings.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No listings found.</p>
-            </div>
-          )}
+          {listings.length === 0 && <AdminListingsTableEmpty />}
         </CardContent>
       </Card>
 
