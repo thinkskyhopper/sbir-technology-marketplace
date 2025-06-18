@@ -1,10 +1,9 @@
-
 const ExpertValueProcess = () => {
   const processSteps = [
     {
       step: "1",
       title: "Initial Consultation",
-      description: "Free 30-minute assessment of your needs and objectives"
+      description: "Free 20-minute assessment of your needs and objectives"
     },
     {
       step: "2",
