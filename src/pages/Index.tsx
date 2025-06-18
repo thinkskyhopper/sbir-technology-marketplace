@@ -4,12 +4,14 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
 import Footer from "@/components/Footer";
+import CreateListingDialog from "@/components/CreateListingDialog";
 import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchParams] = useSearchParams();
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const {
     user
   } = useAuth();
@@ -61,8 +63,7 @@ const Index = () => {
       navigate('/auth');
       return;
     }
-    // TODO: Implement post listing modal/page
-    console.log("Post listing clicked");
+    setShowCreateDialog(true);
   };
   const handleContactAdmin = (listing: SBIRListing) => {
     if (!user) {
@@ -129,6 +130,11 @@ const Index = () => {
       </div>
 
       <Footer />
+      
+      <CreateListingDialog 
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+      />
     </div>;
 };
 export default Index;

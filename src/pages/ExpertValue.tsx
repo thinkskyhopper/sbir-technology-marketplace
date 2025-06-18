@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -12,10 +13,16 @@ import ExpertValueTestimonial from "@/components/ExpertValue/ExpertValueTestimon
 import ExpertValueCTA from "@/components/ExpertValue/ExpertValueCTA";
 import CalendlyDialog from "@/components/ExpertValue/CalendlyDialog";
 import GenericContactDialog from "@/components/GenericContactDialog";
+import CreateListingDialog from "@/components/CreateListingDialog";
+import { useAuth } from "@/contexts/AuthContext";
+
 const ExpertValue = () => {
   const navigate = useNavigate();
   const [showCalendly, setShowCalendly] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { user } = useAuth();
+
   const handleScheduleConsultation = () => {
     setShowCalendly(true);
   };
@@ -25,8 +32,16 @@ const ExpertValue = () => {
   const handleContactUs = () => {
     setShowContactDialog(true);
   };
+  const handlePostListingClick = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setShowCreateDialog(true);
+  };
+
   return <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+      <Header onPostListingClick={handlePostListingClick} />
       
       <div className="flex-1">
         <div className="container mx-auto px-6 py-8">
@@ -43,6 +58,11 @@ const ExpertValue = () => {
           <CalendlyDialog open={showCalendly} onOpenChange={setShowCalendly} />
 
           <GenericContactDialog open={showContactDialog} onOpenChange={setShowContactDialog} />
+          
+          <CreateListingDialog 
+            open={showCreateDialog}
+            onOpenChange={setShowCreateDialog}
+          />
         </div>
       </div>
 

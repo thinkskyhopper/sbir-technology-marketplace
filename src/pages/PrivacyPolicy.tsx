@@ -1,13 +1,30 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Shield } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import CreateListingDialog from '@/components/CreateListingDialog';
+import { useAuth } from '@/contexts/AuthContext';
+
 const PrivacyPolicy = () => {
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handlePostListingClick = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setShowCreateDialog(true);
+  };
+
   return <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+      <Header onPostListingClick={handlePostListingClick} />
       
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
@@ -63,6 +80,11 @@ const PrivacyPolicy = () => {
       </div>
       
       <Footer />
+      
+      <CreateListingDialog 
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+      />
     </div>;
 };
 export default PrivacyPolicy;
