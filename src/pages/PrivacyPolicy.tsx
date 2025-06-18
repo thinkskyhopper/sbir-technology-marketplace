@@ -20,7 +20,7 @@ const PrivacyPolicy = () => {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3">
               <Shield className="w-4 h-4 text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold">SBIR Exchange Privacy Policy</h1>
+            <h1 className="text-2xl font-bold">SBIR Tech Marketplace Privacy Policy</h1>
           </div>
         </div>
 
@@ -32,98 +32,37 @@ const PrivacyPolicy = () => {
           
           <CardContent className="space-y-6">
             <section>
-              <h2 className="text-xl font-semibold mb-3">1. Information We Collect</h2>
-              <p className="text-muted-foreground mb-2">We collect information you provide directly to us, such as when you:</p>
-              <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-                <li>Create an account</li>
-                <li>Use our services</li>
-                <li>Contact us for support</li>
-                <li>Subscribe to our newsletter</li>
-              </ul>
-              <p className="text-muted-foreground mt-3">
-                This may include your name, email address, phone number, and other contact information.
+              <h2 className="text-xl font-semibold mb-4">Our Commitment to Your Privacy</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                At the SBIR Tech Marketplace, we value your privacy and are committed to protecting the personal information you share with us. When you engage with our services, we may collect basic details such as your name, email address, and business or organization name. This information is used strictly to support our communication with you, provide you with the services you've requested, and ensure the overall functionality and personalization of our platform.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">2. How We Use Your Information</h2>
-              <p className="text-muted-foreground mb-2">We use the information we collect to:</p>
-              <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-                <li>Provide, maintain, and improve our services</li>
-                <li>Process transactions and send related information</li>
-                <li>Send technical notices and support messages</li>
-                <li>Respond to your comments and questions</li>
-                <li>Communicate with you about products, services, and events</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">3. Information Sharing</h2>
-              <p className="text-muted-foreground">
-                We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, 
-                except as described in this privacy policy. We may share information in the following circumstances:
-              </p>
-              <ul className="list-disc pl-6 text-muted-foreground space-y-1 mt-2">
-                <li>With your consent</li>
-                <li>To comply with legal obligations</li>
-                <li>To protect our rights and safety</li>
-                <li>In connection with a business transfer</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">4. Data Security</h2>
-              <p className="text-muted-foreground">
-                We implement appropriate technical and organizational measures to protect your personal information 
-                against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission 
-                over the internet or electronic storage is 100% secure.
+              <h2 className="text-xl font-semibold mb-4">Data Sharing and Protection</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                We want to be clear: your personal data is never sold, traded, or shared with third-party marketers or advertisers. We may work with a limited number of trusted service providers who help us operate our services, but any such relationship is governed by strong confidentiality obligations and data protection safeguards.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">5. Data Retention</h2>
-              <p className="text-muted-foreground">
-                We retain your personal information for as long as necessary to provide our services and fulfill 
-                the purposes outlined in this privacy policy, unless a longer retention period is required by law.
+              <h2 className="text-xl font-semibold mb-4">Security and Data Retention</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Our team applies industry-standard security measures to keep your data safe, and we retain your information only as long as needed to serve the purposes outlined above or as required by law. You have the right to access, update, or delete your personal information at any time, and we encourage you to contact us if you have questions about how your data is used.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">6. Your Rights</h2>
-              <p className="text-muted-foreground mb-2">You have the right to:</p>
-              <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-                <li>Access and update your personal information</li>
-                <li>Request deletion of your personal information</li>
-                <li>Opt-out of marketing communications</li>
-                <li>Request a copy of your personal information</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">7. Cookies and Similar Technologies</h2>
-              <p className="text-muted-foreground">
-                We use cookies and similar technologies to enhance your experience, analyze usage patterns, 
-                and improve our services. You can control cookie settings through your browser preferences.
+              <h2 className="text-xl font-semibold mb-4">Policy Updates and Contact</h2>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                We may update this policy from time to time to reflect changes in our practices or legal requirements, and we'll make those changes clear on our website. For any concerns or requests related to your privacy, feel free to reach out to us via the contact form.
               </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">8. Changes to This Policy</h2>
-              <p className="text-muted-foreground">
-                We may update this privacy policy from time to time. We will notify you of any changes by 
-                posting the new privacy policy on this page and updating the "Last updated" date.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">9. Contact Us</h2>
-              <p className="text-muted-foreground">
-                If you have any questions about this privacy policy or our practices, please contact us at:
-              </p>
-              <div className="mt-3 p-4 bg-muted rounded-lg">
-                <p className="font-medium">SBIR Exchange</p>
-                <p className="text-muted-foreground">Email: privacy@sbirexchange.com</p>
-                <p className="text-muted-foreground">Address: [Your Business Address]</p>
+              
+              <div className="mt-6 p-4 bg-muted rounded-lg">
+                <p className="font-medium">Contact Us</p>
+                <p className="text-muted-foreground">
+                  For privacy-related questions or concerns, please use our contact form or reach out through our website.
+                </p>
               </div>
             </section>
           </CardContent>
