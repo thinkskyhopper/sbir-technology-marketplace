@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { useState } from "react";
 import ExpertValueHero from "@/components/ExpertValue/ExpertValueHero";
 import ExpertValueStats from "@/components/ExpertValue/ExpertValueStats";
@@ -31,41 +32,45 @@ const ExpertValue = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      <div className="container mx-auto px-6 py-8">
-        {/* Back Button */}
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/')}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
-        </Button>
+      <div className="flex-1">
+        <div className="container mx-auto px-6 py-8">
+          {/* Back Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/')}
+            className="mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
 
-        <ExpertValueHero />
-        <ExpertValueStats />
-        <ExpertValueBenefits />
-        <ExpertValueProcess />
-        <ExpertValueTestimonial />
-        <ExpertValueCTA 
-          onScheduleConsultation={handleScheduleConsultation}
-          onExploreMarketplace={handleExploreMarketplace}
-          onContactUs={handleContactUs}
-        />
+          <ExpertValueHero />
+          <ExpertValueStats />
+          <ExpertValueBenefits />
+          <ExpertValueProcess />
+          <ExpertValueTestimonial />
+          <ExpertValueCTA 
+            onScheduleConsultation={handleScheduleConsultation}
+            onExploreMarketplace={handleExploreMarketplace}
+            onContactUs={handleContactUs}
+          />
 
-        <CalendlyDialog 
-          open={showCalendly} 
-          onOpenChange={setShowCalendly}
-        />
+          <CalendlyDialog 
+            open={showCalendly} 
+            onOpenChange={setShowCalendly}
+          />
 
-        <GenericContactDialog
-          open={showContactDialog}
-          onOpenChange={setShowContactDialog}
-        />
+          <GenericContactDialog
+            open={showContactDialog}
+            onOpenChange={setShowContactDialog}
+          />
+        </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
