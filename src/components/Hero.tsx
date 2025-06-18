@@ -25,7 +25,7 @@ const Hero = ({
             <span className="text-gradient">The SBIR Tech Marketplace</span>
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">Connect innovation with opportunity. Buy and sell Phase I & II SBIR technology in a secure, professional marketplace designed for defense contractors and innovators.</p>
+          <p className="text-xl mb-8 max-w-2xl mx-auto leading-relaxed text-slate-50">Connect innovation with opportunity. Buy and sell Phase I & II SBIR technology in a secure, professional marketplace designed for defense contractors and innovators.</p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button size="lg" onClick={onExploreClick} className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg">
