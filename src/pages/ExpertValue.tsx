@@ -11,10 +11,12 @@ import ExpertValueProcess from "@/components/ExpertValue/ExpertValueProcess";
 import ExpertValueTestimonial from "@/components/ExpertValue/ExpertValueTestimonial";
 import ExpertValueCTA from "@/components/ExpertValue/ExpertValueCTA";
 import CalendlyDialog from "@/components/ExpertValue/CalendlyDialog";
+import GenericContactDialog from "@/components/GenericContactDialog";
 
 const ExpertValue = () => {
   const navigate = useNavigate();
   const [showCalendly, setShowCalendly] = useState(false);
+  const [showContactDialog, setShowContactDialog] = useState(false);
 
   const handleScheduleConsultation = () => {
     setShowCalendly(true);
@@ -22,6 +24,10 @@ const ExpertValue = () => {
 
   const handleExploreMarketplace = () => {
     navigate('/?view=marketplace');
+  };
+
+  const handleContactUs = () => {
+    setShowContactDialog(true);
   };
 
   return (
@@ -47,11 +53,17 @@ const ExpertValue = () => {
         <ExpertValueCTA 
           onScheduleConsultation={handleScheduleConsultation}
           onExploreMarketplace={handleExploreMarketplace}
+          onContactUs={handleContactUs}
         />
 
         <CalendlyDialog 
           open={showCalendly} 
           onOpenChange={setShowCalendly}
+        />
+
+        <GenericContactDialog
+          open={showContactDialog}
+          onOpenChange={setShowContactDialog}
         />
       </div>
     </div>

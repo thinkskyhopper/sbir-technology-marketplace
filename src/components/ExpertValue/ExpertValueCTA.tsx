@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 interface ExpertValueCTAProps {
   onScheduleConsultation: () => void;
   onExploreMarketplace: () => void;
+  onContactUs: () => void;
 }
 
-const ExpertValueCTA = ({ onScheduleConsultation, onExploreMarketplace }: ExpertValueCTAProps) => {
+const ExpertValueCTA = ({ onScheduleConsultation, onExploreMarketplace, onContactUs }: ExpertValueCTAProps) => {
   return (
     <section className="text-center bg-secondary/20 rounded-lg p-8">
       <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
@@ -20,6 +21,9 @@ const ExpertValueCTA = ({ onScheduleConsultation, onExploreMarketplace }: Expert
         </Button>
         <Button size="lg" variant="outline" onClick={onExploreMarketplace}>
           Explore Marketplace
+        </Button>
+        <Button size="lg" variant="outline" onClick={onContactUs}>
+          Contact Us
         </Button>
       </div>
     </section>
