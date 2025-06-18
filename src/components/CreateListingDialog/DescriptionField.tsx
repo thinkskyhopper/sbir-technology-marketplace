@@ -21,7 +21,7 @@ const DescriptionField = ({ form }: DescriptionFieldProps) => {
       name="description"
       render={({ field }) => {
         const characterCount = field.value?.length || 0;
-        const isOverLimit = characterCount >= 2000;
+        const isOverLimit = characterCount >= 5000;
         
         return (
           <FormItem>
@@ -35,7 +35,7 @@ const DescriptionField = ({ form }: DescriptionFieldProps) => {
             </FormControl>
             <div className="flex justify-end">
               <span className={`text-sm ${isOverLimit ? 'text-red-500' : 'text-muted-foreground'}`}>
-                {characterCount}/2000 characters
+                {characterCount}/5000 characters
               </span>
             </div>
             <FormMessage />
