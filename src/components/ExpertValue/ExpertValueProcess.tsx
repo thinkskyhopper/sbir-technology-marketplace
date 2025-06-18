@@ -8,7 +8,7 @@ const ExpertValueProcess = () => {
     },
     {
       step: "2",
-      title: "Strategic Planning",
+      title: "SBIR Strategy",
       description: "Develop a customized approach for your specific situation"
     },
     {
