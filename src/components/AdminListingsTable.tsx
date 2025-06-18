@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useListings } from "@/hooks/useListings";
 import {
@@ -8,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -151,97 +153,99 @@ const AdminListingsTable = () => {
           <CardTitle>All SBIR Listings</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Agency</TableHead>
-                <TableHead>Phase</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Deadline</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Submitted</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listings.map((listing) => (
-                <TableRow key={listing.id}>
-                  <TableCell className="max-w-xs">
-                    <div>
-                      <div className="font-medium truncate">{listing.title}</div>
-                      <div className="text-sm text-muted-foreground truncate">
-                        {listing.category}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm">{listing.agency}</TableCell>
-                  <TableCell>
-                    <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"}>
-                      {listing.phase}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {formatCurrency(listing.value)}
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {formatDate(listing.deadline)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusBadgeVariant(listing.status)}>
-                      {listing.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {formatDate(listing.submitted_at)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleEdit(listing)}
-                        className="text-blue-600 hover:text-blue-700"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      
-                      {listing.status === 'Pending' && (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleApproveClick(listing)}
-                            disabled={processingId === listing.id}
-                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                          >
-                            <Check className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRejectClick(listing)}
-                            disabled={processingId === listing.id}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </>
-                      )}
-                      
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-blue-600 hover:text-blue-700"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <ScrollArea className="h-[400px] w-full">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Agency</TableHead>
+                  <TableHead>Phase</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead>Deadline</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Submitted</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {listings.map((listing) => (
+                  <TableRow key={listing.id}>
+                    <TableCell className="max-w-xs">
+                      <div>
+                        <div className="font-medium truncate">{listing.title}</div>
+                        <div className="text-sm text-muted-foreground truncate">
+                          {listing.category}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm">{listing.agency}</TableCell>
+                    <TableCell>
+                      <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"}>
+                        {listing.phase}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {formatCurrency(listing.value)}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {formatDate(listing.deadline)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusBadgeVariant(listing.status)}>
+                        {listing.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {formatDate(listing.submitted_at)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEdit(listing)}
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        
+                        {listing.status === 'Pending' && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleApproveClick(listing)}
+                              disabled={processingId === listing.id}
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                            >
+                              <Check className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleRejectClick(listing)}
+                              disabled={processingId === listing.id}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </>
+                        )}
+                        
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
           
           {listings.length === 0 && (
             <div className="text-center py-8">
