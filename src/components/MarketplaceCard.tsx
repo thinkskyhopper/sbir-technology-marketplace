@@ -49,16 +49,6 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
   return (
     <>
       <Card className="card-hover bg-card border-border">
-        {listing.photo_url && (
-          <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
-            <img
-              src={listing.photo_url}
-              alt={listing.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-        
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start mb-2">
             <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"} className="text-xs">
