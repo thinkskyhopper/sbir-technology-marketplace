@@ -1,22 +1,15 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 
 interface ListingDetailHeroImageProps {
   listing: {
     category: string;
     agency: string;
-    photo_url?: string;
-    title: string;
   };
 }
 
 const ListingDetailHeroImage = ({ listing }: ListingDetailHeroImageProps) => {
   const getListingImage = () => {
-    // If there's an uploaded photo, use it
-    if (listing.photo_url) {
-      return listing.photo_url;
-    }
-
-    // Otherwise, fall back to category-based placeholder images
     const category = listing.category.toLowerCase();
     const agency = listing.agency.toLowerCase();
     
@@ -33,19 +26,12 @@ const ListingDetailHeroImage = ({ listing }: ListingDetailHeroImageProps) => {
     }
   };
 
-  const getImageAlt = () => {
-    if (listing.photo_url) {
-      return `Photo for ${listing.title}`;
-    }
-    return `${listing.category} contract visualization`;
-  };
-
   return (
     <Card>
       <CardContent className="p-0">
         <img 
           src={getListingImage()} 
-          alt={getImageAlt()}
+          alt={`${listing.category} contract visualization`}
           className="w-full h-64 object-cover rounded-lg"
         />
       </CardContent>

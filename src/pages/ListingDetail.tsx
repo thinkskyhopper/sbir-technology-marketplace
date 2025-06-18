@@ -67,14 +67,7 @@ const ListingDetail = () => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Hero Image */}
-            <ListingDetailHeroImage 
-              listing={{
-                category: listing.category,
-                agency: listing.agency,
-                photo_url: listing.photo_url,
-                title: listing.title
-              }} 
-            />
+            <ListingDetailHeroImage listing={listing} />
 
             {/* Description */}
             <ListingDetailDescription description={listing.description} />
