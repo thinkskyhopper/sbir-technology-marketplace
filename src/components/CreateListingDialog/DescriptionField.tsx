@@ -21,7 +21,7 @@ const DescriptionField = ({ form }: DescriptionFieldProps) => {
       name="description"
       render={({ field }) => {
         const characterCount = field.value?.length || 0;
-        const isOverLimit = characterCount >= 5000;
+        const isOverLimit = characterCount > 5000;
         
         return (
           <FormItem>
