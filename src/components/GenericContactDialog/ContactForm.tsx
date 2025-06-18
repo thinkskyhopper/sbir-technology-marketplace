@@ -7,7 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import SecureCaptcha from "./SecureCaptcha";
 
 interface ContactFormProps {
   open: boolean;
@@ -26,7 +25,6 @@ interface FormData {
 const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -36,28 +34,6 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!isCaptchaVerified) {
-      toast({
-        title: "Verification Required",
-        description: "Please complete the security verification before submitting.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Additional bot detection - check for honeypot field
-    const form = e.target as HTMLFormElement;
-    const honeypot = form.querySelector('input[name="website"]') as HTMLInputElement;
-    if (honeypot && honeypot.value) {
-      // Bot detected - honeypot was filled
-      toast({
-        title: "Error",
-        description: "Submission failed. Please try again.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     setLoading(true);
     
@@ -76,8 +52,7 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
             value: 0,
             phase: "N/A"
           },
-          userEmail,
-          captchaVerified: isCaptchaVerified
+          userEmail
         }),
       });
 
@@ -93,7 +68,6 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
           company: "",
           message: ""
         });
-        setIsCaptchaVerified(false);
       } else {
         throw new Error('Failed to send message');
       }
@@ -106,10 +80,6 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCaptchaVerification = (isVerified: boolean) => {
-    setIsCaptchaVerified(isVerified);
   };
 
   return (
@@ -165,17 +135,11 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
             />
           </div>
 
-          <SecureCaptcha onVerificationChange={handleCaptchaVerification} />
-
           <div className="flex justify-end space-x-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              disabled={loading || !isCaptchaVerified}
-              className={!isCaptchaVerified ? "opacity-50" : ""}
-            >
+            <Button type="submit" disabled={loading}>
               {loading ? "Sending..." : "Send Message"}
             </Button>
           </div>
