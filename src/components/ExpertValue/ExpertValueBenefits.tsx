@@ -30,7 +30,7 @@ const ExpertValueBenefits = () => {
     },
     {
       icon: CheckCircle,
-      title: "Proven Track Record",
+      title: "SBIR Strategy",
       description: "Our expertise is backed by over $500M in successful technology transfers and satisfied clients across the defense sector."
     }
   ];
