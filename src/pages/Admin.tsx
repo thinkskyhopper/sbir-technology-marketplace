@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import AdminListingsTable from "@/components/AdminListingsTable";
@@ -11,11 +12,20 @@ import { Plus, Shield } from "lucide-react";
 const Admin = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handlePostListingClick = () => {
+    if (user) {
+      setShowCreateDialog(true);
+    } else {
+      navigate('/auth');
+    }
+  };
 
   return (
     <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen bg-background">
-        <Header />
+        <Header onPostListingClick={handlePostListingClick} />
         
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center justify-between mb-8">
