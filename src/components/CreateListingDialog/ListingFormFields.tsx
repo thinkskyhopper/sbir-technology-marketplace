@@ -82,6 +82,11 @@ const ListingFormFields = ({ form }: ListingFormFieldsProps) => {
                 {...field}
               />
             </FormControl>
+            <div className="flex justify-end">
+              <span className="text-sm text-muted-foreground">
+                {field.value?.length || 0}/2000 characters
+              </span>
+            </div>
             <FormMessage />
           </FormItem>
         )}
