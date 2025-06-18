@@ -1,3 +1,4 @@
+
 import { Search, LogIn, Plus, LogOut, User, Shield, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,7 +61,7 @@ const Header = ({
             <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">S</span>
             </div>
-            <span className="text-xl font-bold text-gradient">SBIR Tech Marketplace</span>
+            <span className="text-xl font-bold text-gradient">The SBIR Tech Marketplace</span>
           </div>
 
           {/* Search */}
