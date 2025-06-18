@@ -4,10 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Shield } from 'lucide-react';
 import Footer from '@/components/Footer';
-
 const PrivacyPolicy = () => {
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-8">
@@ -21,7 +19,7 @@ const PrivacyPolicy = () => {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3">
                 <Shield className="w-4 h-4 text-primary-foreground" />
               </div>
-              <h1 className="text-2xl font-bold">SBIR Tech Marketplace Privacy Policy</h1>
+              <h1 className="text-2xl font-bold">The SBIR Tech Marketplace Privacy Policy</h1>
             </div>
           </div>
 
@@ -72,8 +70,6 @@ const PrivacyPolicy = () => {
       </div>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default PrivacyPolicy;
