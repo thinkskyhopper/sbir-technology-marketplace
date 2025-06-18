@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -65,7 +66,7 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
       if (response.ok) {
         toast({
           title: "Message Sent",
-          description: "Your inquiry has been sent to our admin team. We'll get back to you soon!",
+          description: "Your inquiry has been sent to our team. We'll get back to you soon!",
         });
         onOpenChange(false);
         setFormData({
@@ -103,7 +104,7 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
           </DialogHeader>
           <div className="text-center py-6">
             <p className="text-muted-foreground mb-6">
-              Please sign in to contact our admin team about this SBIR contract.
+              Please sign in to contact our team about this SBIR contract.
             </p>
             <Button onClick={handleSignIn} className="w-full">
               Sign In to Continue
@@ -112,7 +113,7 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
         </DialogContent>
       </Dialog>
     );
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -120,7 +121,7 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="w-5 h-5" />
-            Contact Admin - {listing.title}
+            Contact - {listing.title}
           </DialogTitle>
         </DialogHeader>
         
