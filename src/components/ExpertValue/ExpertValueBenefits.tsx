@@ -1,59 +1,59 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Target, Users, Clock, CheckCircle, TrendingUp } from "lucide-react";
+
+import { CheckCircle, Clock, DollarSign, FileText, Shield, Users } from "lucide-react";
 
 const ExpertValueBenefits = () => {
   const benefits = [
     {
       icon: Shield,
-      title: "Risk Mitigation",
-      description: "Our experts help identify potential pitfalls and ensure all compliance requirements are met, reducing transaction risks significantly."
+      title: "Regulatory Expertise",
+      description: "Navigate complex SBIR regulations, ITAR requirements, and technology transfer laws with confidence."
     },
     {
-      icon: Target,
-      title: "Precision Matching",
-      description: "Years of experience allow our team to quickly identify the perfect technology matches based on your specific capabilities and goals."
+      icon: FileText,
+      title: "Documentation Excellence",
+      description: "Professional preparation of all required paperwork, contracts, and compliance documentation."
     },
     {
-      icon: Clock,
-      title: "Time Efficiency",
-      description: "Navigate complex SBIR regulations and paperwork in weeks instead of months with expert guidance every step of the way."
-    },
-    {
-      icon: TrendingUp,
-      title: "Market Intelligence",
-      description: "Access insider knowledge about market trends, pricing strategies, and upcoming opportunities in the defense sector."
+      icon: DollarSign,
+      title: "Value Maximization",
+      description: "Strategic positioning and pricing guidance to help you achieve optimal returns on your technology assets."
     },
     {
       icon: Users,
       title: "Network Access",
-      description: "Leverage our extensive network of contractors, agencies, and industry professionals to expand your business opportunities."
+      description: "Leverage our extensive network of defense contractors, government agencies, and technology buyers."
+    },
+    {
+      icon: Clock,
+      title: "Accelerated Process",
+      description: "Streamlined workflows that significantly reduce time-to-market and administrative overhead."
     },
     {
       icon: CheckCircle,
-      title: "Success Guarantee",
-      description: "Our proven track record and expert oversight ensure higher success rates for technology transfers and negotiations."
+      title: "Proven Track Record",
+      description: "Our expertise is backed by over $500M in successful technology transfers and satisfied clients across the defense sector."
     }
   ];
 
   return (
     <section className="mb-16">
-      <h2 className="text-3xl font-bold text-center mb-12">The Expert Advantage</h2>
+      <h2 className="text-3xl font-bold text-center mb-12">
+        The Expert Advantage
+      </h2>
+      
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {benefits.map((benefit, index) => (
-          <Card key={index} className="card-hover">
-            <CardHeader>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <benefit.icon className="w-6 h-6 text-primary" />
+        {benefits.map((benefit, index) => {
+          const IconComponent = benefit.icon;
+          return (
+            <div key={index} className="text-center p-6 rounded-lg border bg-card">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <IconComponent className="w-6 h-6 text-primary" />
               </div>
-              <CardTitle className="text-xl">{benefit.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-muted-foreground">
-                {benefit.description}
-              </CardDescription>
-            </CardContent>
-          </Card>
-        ))}
+              <h3 className="text-lg font-semibold mb-3">{benefit.title}</h3>
+              <p className="text-muted-foreground">{benefit.description}</p>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
