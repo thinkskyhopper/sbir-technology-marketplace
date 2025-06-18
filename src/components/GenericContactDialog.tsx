@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Mail, User } from "lucide-react";
@@ -26,9 +24,6 @@ const GenericContactDialog = ({ open, onOpenChange, title = "Contact Us" }: Gene
     name: "",
     email: "",
     company: "",
-    interestLevel: "",
-    experience: "",
-    timeline: "",
     message: ""
   });
 
@@ -72,9 +67,6 @@ const GenericContactDialog = ({ open, onOpenChange, title = "Contact Us" }: Gene
           name: "",
           email: "",
           company: "",
-          interestLevel: "",
-          experience: "",
-          timeline: "",
           message: ""
         });
       } else {
@@ -154,50 +146,6 @@ const GenericContactDialog = ({ open, onOpenChange, title = "Contact Us" }: Gene
               value={formData.company}
               onChange={(e) => setFormData({ ...formData, company: e.target.value })}
             />
-          </div>
-
-          <div>
-            <Label htmlFor="interestLevel">Level of Interest *</Label>
-            <Select value={formData.interestLevel} onValueChange={(value) => setFormData({ ...formData, interestLevel: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your interest level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="high">High - Ready to proceed immediately</SelectItem>
-                <SelectItem value="medium">Medium - Evaluating options</SelectItem>
-                <SelectItem value="low">Low - Just gathering information</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="experience">SBIR Experience *</Label>
-            <Select value={formData.experience} onValueChange={(value) => setFormData({ ...formData, experience: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your SBIR experience" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">No prior SBIR experience</SelectItem>
-                <SelectItem value="some">Some SBIR experience</SelectItem>
-                <SelectItem value="extensive">Extensive SBIR experience</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="timeline">Expected Timeline *</Label>
-            <Select value={formData.timeline} onValueChange={(value) => setFormData({ ...formData, timeline: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="When would you like to proceed?" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="immediate">Immediately</SelectItem>
-                <SelectItem value="1-2weeks">Within 1-2 weeks</SelectItem>
-                <SelectItem value="1month">Within 1 month</SelectItem>
-                <SelectItem value="3months">Within 3 months</SelectItem>
-                <SelectItem value="exploring">Just exploring options</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           <div>
