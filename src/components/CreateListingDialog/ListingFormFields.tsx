@@ -1,4 +1,3 @@
-
 import {
   FormControl,
   FormField,
@@ -180,9 +179,22 @@ const ListingFormFields = ({ form }: ListingFormFieldsProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Category</FormLabel>
-            <FormControl>
-              <Input placeholder="e.g., Cybersecurity, AI/ML, Aerospace" {...field} />
-            </FormControl>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="Advanced Materials">Advanced Materials</SelectItem>
+                <SelectItem value="Autonomous Systems">Autonomous Systems</SelectItem>
+                <SelectItem value="Biomedical Technology">Biomedical Technology</SelectItem>
+                <SelectItem value="Cybersecurity">Cybersecurity</SelectItem>
+                <SelectItem value="Quantum Technology">Quantum Technology</SelectItem>
+                <SelectItem value="Space Technology">Space Technology</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}
