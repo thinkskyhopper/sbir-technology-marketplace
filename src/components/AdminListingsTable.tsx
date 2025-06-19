@@ -1,6 +1,6 @@
-
 import { useState } from "react";
 import { useListings } from "@/hooks/useListings";
+import { useSorting } from "@/hooks/useSorting";
 import {
   Table,
   TableBody,
@@ -35,6 +35,12 @@ const AdminListingsTable = () => {
     listingTitle: ''
   });
   const { toast } = useToast();
+
+  // Add sorting functionality
+  const { sortedData: sortedListings, sortState, handleSort } = useSorting(listings, {
+    column: 'submitted_at',
+    direction: 'desc'
+  });
 
   const handleEdit = (listing: SBIRListing) => {
     setEditingListing(listing);
@@ -112,9 +118,13 @@ const AdminListingsTable = () => {
         <CardContent>
           <ScrollArea className="h-[400px] w-full">
             <Table>
-              <AdminListingsTableHeader />
+              <AdminListingsTableHeader
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
+                onSort={handleSort}
+              />
               <TableBody>
-                {listings.map((listing) => (
+                {sortedListings.map((listing) => (
                   <AdminListingsTableRow
                     key={listing.id}
                     listing={listing}
