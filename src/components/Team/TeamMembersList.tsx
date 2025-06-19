@@ -20,6 +20,12 @@ export interface TeamMember {
   display_order: number;
   created_at: string;
   updated_at: string;
+  promotions?: Array<{
+    id?: string;
+    title?: string;
+    description?: string;
+    photo_url?: string;
+  }>;
 }
 
 const TeamMembersList = () => {
