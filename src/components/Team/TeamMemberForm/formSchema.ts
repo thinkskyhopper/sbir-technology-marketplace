@@ -2,6 +2,7 @@
 import { z } from "zod";
 
 const promotionSchema = z.object({
+  id: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
   photo_url: z.string().optional(),

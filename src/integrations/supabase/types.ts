@@ -142,6 +142,7 @@ export type Database = {
           promotion_description: string | null
           promotion_photo_url: string | null
           promotion_title: string | null
+          promotions: Json | null
           updated_at: string
         }
         Insert: {
@@ -154,6 +155,7 @@ export type Database = {
           promotion_description?: string | null
           promotion_photo_url?: string | null
           promotion_title?: string | null
+          promotions?: Json | null
           updated_at?: string
         }
         Update: {
@@ -166,6 +168,7 @@ export type Database = {
           promotion_description?: string | null
           promotion_photo_url?: string | null
           promotion_title?: string | null
+          promotions?: Json | null
           updated_at?: string
         }
         Relationships: []

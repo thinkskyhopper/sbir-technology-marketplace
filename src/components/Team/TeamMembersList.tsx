@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +19,7 @@ export interface TeamMember {
   display_order: number;
   created_at: string;
   updated_at: string;
-  promotions?: Array<{
+  promotions: Array<{
     id?: string;
     title?: string;
     description?: string;

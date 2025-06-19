@@ -10,8 +10,10 @@ interface TeamMemberBioProps {
 }
 
 const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
-  // Use promotions from the new promotions array
-  const promotions = member.promotions || [];
+  // Use promotions from the new promotions array, ensuring it's always an array
+  const promotions = Array.isArray(member.promotions) ? member.promotions : [];
+
+  console.log('TeamMemberBio rendering with promotions:', promotions);
 
   return (
     <Card className={`flex-1 ${isReversed ? 'bg-secondary/80' : 'bg-card/90'}`}>

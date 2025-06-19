@@ -20,12 +20,17 @@ export const useTeamMemberForm = ({ member, onSuccess, form }: UseTeamMemberForm
     setIsSubmitting(true);
     
     try {
+      // Clean up promotions data - remove empty promotions
+      const cleanedPromotions = (data.promotions || []).filter(promotion => 
+        promotion.title || promotion.description || promotion.photo_url
+      );
+
       const submitData = {
         name: data.name,
         bio: data.bio,
         display_order: data.display_order,
         photo_url: data.photo_url || null,
-        promotions: data.promotions || [],
+        promotions: cleanedPromotions,
         // Clear legacy promotion fields since we're not using them anymore
         promotion_title: null,
         promotion_description: null,
