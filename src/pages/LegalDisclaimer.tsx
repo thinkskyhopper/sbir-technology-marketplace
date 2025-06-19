@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -9,12 +8,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CreateListingDialog from '@/components/CreateListingDialog';
 import { useAuth } from '@/contexts/AuthContext';
-
 const LegalDisclaimer = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-
   const handlePostListingClick = () => {
     if (!user) {
       navigate('/auth');
@@ -22,22 +21,17 @@ const LegalDisclaimer = () => {
     }
     setShowCreateDialog(true);
   };
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       <Header onPostListingClick={handlePostListingClick} />
       
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-8">
             <Button variant="ghost" asChild className="mr-4">
-              <Link to="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Link>
+              
             </Button>
             <div className="flex items-center">
-              <Scale className="w-6 h-6 mr-3 text-primary" />
+              
               <h1 className="text-2xl font-bold">The SBIR Tech Marketplace Legal Disclaimer</h1>
             </div>
           </div>
@@ -127,12 +121,7 @@ const LegalDisclaimer = () => {
       
       <Footer />
       
-      <CreateListingDialog 
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-      />
-    </div>
-  );
+      <CreateListingDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
+    </div>;
 };
-
 export default LegalDisclaimer;
