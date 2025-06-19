@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import EditListingDialog from "./EditListingDialog";
 import MarketplaceFilters from "./MarketplaceFilters";
@@ -24,13 +25,15 @@ interface MarketplaceGridProps {
     categoryFilter: string;
     statusFilter: string;
   }) => void;
+  showFilters?: boolean;
 }
 
 const MarketplaceGrid = ({ 
   searchQuery, 
   onContactAdmin, 
   preservedFilters,
-  onFiltersChange 
+  onFiltersChange,
+  showFilters = true
 }: MarketplaceGridProps) => {
   const { listings, loading, error } = useListings();
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
@@ -149,18 +152,20 @@ const MarketplaceGrid = ({
 
   return (
     <div className="space-y-6">
-      {/* Search and Filters */}
-      <MarketplaceFilters
-        localSearchQuery={localSearchQuery}
-        phaseFilter={phaseFilter}
-        categoryFilter={categoryFilter}
-        statusFilter={statusFilter}
-        categories={categories}
-        onSearchQueryChange={setLocalSearchQuery}
-        onPhaseFilterChange={setPhaseFilter}
-        onCategoryFilterChange={setCategoryFilter}
-        onStatusFilterChange={setStatusFilter}
-      />
+      {/* Search and Filters - Only show if showFilters is true */}
+      {showFilters && (
+        <MarketplaceFilters
+          localSearchQuery={localSearchQuery}
+          phaseFilter={phaseFilter}
+          categoryFilter={categoryFilter}
+          statusFilter={statusFilter}
+          categories={categories}
+          onSearchQueryChange={setLocalSearchQuery}
+          onPhaseFilterChange={setPhaseFilter}
+          onCategoryFilterChange={setCategoryFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
+      )}
 
       {/* Results */}
       {filteredListings.length > 0 ? (

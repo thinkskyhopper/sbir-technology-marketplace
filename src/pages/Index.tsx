@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
@@ -45,10 +46,12 @@ const Index = () => {
     const urlSearch = searchParams.get("search") || "";
     setSearchQuery(urlSearch);
   }, [searchParams]);
+
   const handleExploreMarketplace = () => {
     console.log("Explore marketplace clicked");
     navigate("/?view=marketplace");
   };
+
   const handleSearch = (query: string) => {
     console.log("Search initiated:", query);
     const params = new URLSearchParams();
@@ -58,6 +61,7 @@ const Index = () => {
     }
     navigate(`/?${params.toString()}`);
   };
+
   const handlePostListingClick = () => {
     if (!user) {
       navigate('/auth');
@@ -65,6 +69,7 @@ const Index = () => {
     }
     setShowCreateDialog(true);
   };
+
   const handleContactAdmin = (listing: SBIRListing) => {
     if (!user) {
       navigate('/auth');
@@ -73,6 +78,7 @@ const Index = () => {
     // TODO: Implement contact admin functionality
     console.log("Contact admin for listing:", listing);
   };
+
   const handleFiltersChange = (filters: typeof marketplaceFilters) => {
     console.log("Filters changed:", filters);
     setMarketplaceFilters(filters);
@@ -90,12 +96,15 @@ const Index = () => {
       replace: true
     });
   };
+
   console.log("Current view rendering:", currentView);
-  return <div className="min-h-screen bg-background flex flex-col">
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
       <Header onSearch={handleSearch} onPostListingClick={handlePostListingClick} />
 
       <div className="flex-1">
-        {currentView === "home" ? <>
+        {currentView === "home" ? (
+          <>
             <Hero onExploreClick={handleExploreMarketplace} />
             
             {/* Featured Section */}
@@ -107,7 +116,7 @@ const Index = () => {
                 </div>
                 
                 <div className="max-w-4xl mx-auto">
-                  <MarketplaceGrid onContactAdmin={handleContactAdmin} />
+                  <MarketplaceGrid onContactAdmin={handleContactAdmin} showFilters={false} />
                 </div>
                 
                 <div className="text-center mt-8">
@@ -117,16 +126,25 @@ const Index = () => {
                 </div>
               </div>
             </section>
-          </> : <section className="py-8">
+          </>
+        ) : (
+          <section className="py-8">
             <div className="container mx-auto px-6">
               <div className="mb-8">
                 <h1 className="text-3xl font-bold mb-2">SBIR Technology Marketplace</h1>
                 <p className="text-muted-foreground">Browse and discover Phase I & II SBIR technology from verified sellers</p>
               </div>
               
-              <MarketplaceGrid searchQuery={searchQuery} onContactAdmin={handleContactAdmin} preservedFilters={marketplaceFilters} onFiltersChange={handleFiltersChange} />
+              <MarketplaceGrid 
+                searchQuery={searchQuery} 
+                onContactAdmin={handleContactAdmin} 
+                preservedFilters={marketplaceFilters} 
+                onFiltersChange={handleFiltersChange}
+                showFilters={true}
+              />
             </div>
-          </section>}
+          </section>
+        )}
       </div>
 
       <Footer />
@@ -135,6 +153,8 @@ const Index = () => {
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
       />
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
