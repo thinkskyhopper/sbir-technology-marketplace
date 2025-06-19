@@ -2,6 +2,7 @@
 import React from "react";
 import { TeamMember } from "./TeamMembersList";
 import { Card, CardContent } from "@/components/ui/card";
+import PromotionCard from "./PromotionCard";
 
 interface TeamMemberBioProps {
   member: TeamMember;
@@ -9,6 +10,21 @@ interface TeamMemberBioProps {
 }
 
 const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
+  // Create promotion cards from both new and legacy formats
+  const promotions = [];
+  
+  // Add legacy promotion if it exists and no new promotions
+  if (member.promotion_title || member.promotion_description || member.promotion_photo_url) {
+    promotions.push({
+      id: 'legacy-promotion',
+      title: member.promotion_title || '',
+      description: member.promotion_description || '',
+      photo_url: member.promotion_photo_url || '',
+    });
+  }
+
+  // TODO: When we add the promotions table, we'll fetch and display those here as well
+
   return (
     <Card className={`flex-1 ${isReversed ? 'bg-secondary/80' : 'bg-card/90'}`}>
       <CardContent className="p-8">
@@ -19,29 +35,13 @@ const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
           </p>
         </div>
 
-        {/* Promotion Section */}
-        {member.promotion_title && (
-          <div className="mt-8 p-6 rounded-lg bg-background/50 border">
-            <div className="flex flex-col md:flex-row gap-6">
-              {member.promotion_photo_url && (
-                <div className="flex-shrink-0">
-                  <img 
-                    src={member.promotion_photo_url}
-                    alt={member.promotion_title}
-                    className="w-24 h-24 rounded-lg object-cover"
-                  />
-                </div>
-              )}
-              <div className="flex-1">
-                <h4 className="text-lg font-semibold mb-2 text-primary">
-                  {member.promotion_title}
-                </h4>
-                {member.promotion_description && (
-                  <p className="text-sm text-slate-50 leading-relaxed">
-                    {member.promotion_description}
-                  </p>
-                )}
-              </div>
+        {/* Promotions Section */}
+        {promotions.length > 0 && (
+          <div className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {promotions.map((promotion) => (
+                <PromotionCard key={promotion.id} promotion={promotion} />
+              ))}
             </div>
           </div>
         )}
