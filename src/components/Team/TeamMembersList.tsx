@@ -35,13 +35,22 @@ const TeamMembersList = () => {
   const { data: teamMembers, isLoading, refetch } = useQuery({
     queryKey: ['team-members'],
     queryFn: async () => {
+      console.log('Fetching team members...');
       const { data, error } = await supabase
         .from('team_members')
         .select('*')
         .order('display_order', { ascending: true });
       
       if (error) throw error;
-      return data as TeamMember[];
+      
+      // Process the data to ensure promotions is properly parsed
+      const processedData = data.map(member => ({
+        ...member,
+        promotions: member.promotions || []
+      }));
+      
+      console.log('Team members fetched:', processedData);
+      return processedData as TeamMember[];
     }
   });
 

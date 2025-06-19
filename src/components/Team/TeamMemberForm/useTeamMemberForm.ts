@@ -25,11 +25,14 @@ export const useTeamMemberForm = ({ member, onSuccess, form }: UseTeamMemberForm
         bio: data.bio,
         display_order: data.display_order,
         photo_url: data.photo_url || null,
+        promotions: data.promotions || [],
         // Clear legacy promotion fields since we're not using them anymore
         promotion_title: null,
         promotion_description: null,
         promotion_photo_url: null,
       };
+
+      console.log('Submitting team member data:', submitData);
 
       if (member) {
         // Update existing member
