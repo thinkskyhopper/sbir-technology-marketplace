@@ -22,8 +22,15 @@ const PromotionSection = ({ form }: PromotionSectionProps) => {
 
   const addPromotion = () => {
     if (fields.length < 4) {
-      append({ title: "", description: "", photo_url: "" });
+      // Generate a unique ID for the new promotion to ensure proper tracking
+      const newId = `promotion-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+      append({ id: newId, title: "", description: "", photo_url: "" });
     }
+  };
+
+  const handlePhotoChange = (fieldIndex: number, url: string | null) => {
+    console.log(`Setting photo for promotion at index ${fieldIndex}:`, url);
+    form.setValue(`promotions.${fieldIndex}.photo_url`, url || "");
   };
 
   return (
@@ -45,49 +52,54 @@ const PromotionSection = ({ form }: PromotionSectionProps) => {
       {/* Promotion cards */}
       {fields.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {fields.map((field, index) => (
-            <Card key={field.id}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Promotion {index + 1}</CardTitle>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => remove(index)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor={`promotions.${index}.title`}>Title</Label>
-                  <Input
-                    {...form.register(`promotions.${index}.title`)}
-                    placeholder="Promotion title"
-                  />
-                </div>
+          {fields.map((field, index) => {
+            const currentPhotoUrl = form.watch(`promotions.${index}.photo_url`);
+            console.log(`Promotion ${index} photo URL:`, currentPhotoUrl);
+            
+            return (
+              <Card key={field.id}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Promotion {index + 1}</CardTitle>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor={`promotions.${index}.title`}>Title</Label>
+                    <Input
+                      {...form.register(`promotions.${index}.title`)}
+                      placeholder="Promotion title"
+                    />
+                  </div>
 
-                <div>
-                  <Label htmlFor={`promotions.${index}.description`}>Description</Label>
-                  <Textarea
-                    {...form.register(`promotions.${index}.description`)}
-                    placeholder="Promotion description"
-                    rows={2}
-                  />
-                </div>
+                  <div>
+                    <Label htmlFor={`promotions.${index}.description`}>Description</Label>
+                    <Textarea
+                      {...form.register(`promotions.${index}.description`)}
+                      placeholder="Promotion description"
+                      rows={2}
+                    />
+                  </div>
 
-                <div>
-                  <Label>Photo</Label>
-                  <PhotoUpload
-                    currentPhotoUrl={form.watch(`promotions.${index}.photo_url`)}
-                    onPhotoChange={(url) => form.setValue(`promotions.${index}.photo_url`, url || "")}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <div>
+                    <Label>Photo</Label>
+                    <PhotoUpload
+                      currentPhotoUrl={currentPhotoUrl}
+                      onPhotoChange={(url) => handlePhotoChange(index, url)}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
