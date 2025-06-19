@@ -72,10 +72,10 @@ const TeamMemberForm = ({ member, onSuccess }: TeamMemberFormProps) => {
           description: "Team member updated successfully.",
         });
       } else {
-        // Create new member
+        // Create new member - insert single object, not array
         const { error } = await supabase
           .from('team_members')
-          .insert([submitData]);
+          .insert(submitData);
         
         if (error) throw error;
 
@@ -152,8 +152,7 @@ const TeamMemberForm = ({ member, onSuccess }: TeamMemberFormProps) => {
         <Label>Profile Photo</Label>
         <PhotoUpload
           currentPhotoUrl={form.watch("photo_url")}
-          onPhotoUploaded={(url) => form.setValue("photo_url", url)}
-          onPhotoRemoved={() => form.setValue("photo_url", "")}
+          onPhotoChange={(url) => form.setValue("photo_url", url || "")}
         />
       </div>
 
@@ -184,8 +183,7 @@ const TeamMemberForm = ({ member, onSuccess }: TeamMemberFormProps) => {
           <Label>Promotion Photo</Label>
           <PhotoUpload
             currentPhotoUrl={form.watch("promotion_photo_url")}
-            onPhotoUploaded={(url) => form.setValue("promotion_photo_url", url)}
-            onPhotoRemoved={() => form.setValue("promotion_photo_url", "")}
+            onPhotoChange={(url) => form.setValue("promotion_photo_url", url || "")}
           />
         </div>
       </div>

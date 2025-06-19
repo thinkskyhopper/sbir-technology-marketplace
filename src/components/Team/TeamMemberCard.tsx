@@ -194,7 +194,7 @@ const TeamMemberCard = ({ member, isReversed, onUpdate }: TeamMemberCardProps) =
         title="Delete Team Member"
         description={`Are you sure you want to delete ${member.name}? This action cannot be undone.`}
         confirmText="Delete"
-        cancelText="Cancel"
+        variant="destructive"
       />
     </>
   );
