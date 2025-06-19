@@ -17,6 +17,11 @@ const Footer = () => {
     window.scrollTo(0, 0);
   };
 
+  const handleLegalDisclaimerClick = () => {
+    navigate('/legal-disclaimer');
+    window.scrollTo(0, 0);
+  };
+
   const handleLearnMoreClick = () => {
     navigate('/expert-value');
     window.scrollTo(0, 0);
@@ -52,6 +57,12 @@ const Footer = () => {
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Privacy Policy
+              </button>
+              <button 
+                onClick={handleLegalDisclaimerClick}
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              >
+                Legal Disclaimer
               </button>
               <button 
                 onClick={handleLearnMoreClick}
