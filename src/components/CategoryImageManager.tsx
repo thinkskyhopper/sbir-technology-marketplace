@@ -18,16 +18,34 @@ const CATEGORIES = [
   "Other"
 ];
 
-const SUGGESTED_RESOLUTION = "400x300px (4:3 aspect ratio)";
+const SUGGESTED_RESOLUTION = "2000x800px (5:2 aspect ratio)";
 
 const CategoryImageManager = () => {
   const [uploadingCategory, setUploadingCategory] = useState<string | null>(null);
   const { toast } = useToast();
 
   const getCategoryImageUrl = (category: string) => {
-    // Convert category name to a URL-friendly format for placeholder images
-    const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
-    return `https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop&crop=center&q=80`;
+    const categoryLower = category.toLowerCase();
+    
+    if (categoryLower.includes('cyber') || categoryLower.includes('security')) {
+      return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else if (categoryLower.includes('software') || categoryLower.includes('ai') || categoryLower.includes('data')) {
+      return "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else if (categoryLower.includes('hardware') || categoryLower.includes('electronic')) {
+      return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else if (categoryLower.includes('autonomous')) {
+      return "https://images.unsplash.com/photo-1487887235947-a955ef187fcc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else if (categoryLower.includes('biomedical') || categoryLower.includes('medical')) {
+      return "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else if (categoryLower.includes('quantum')) {
+      return "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else if (categoryLower.includes('space')) {
+      return "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else if (categoryLower.includes('materials') || categoryLower.includes('advanced materials')) {
+      return "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    } else {
+      return "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    }
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, category: string) => {
@@ -97,7 +115,7 @@ const CategoryImageManager = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {CATEGORIES.map((category) => (
             <div key={category} className="space-y-3">
-              <div className="aspect-[4/3] border rounded-lg overflow-hidden bg-muted">
+              <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted">
                 <img
                   src={getCategoryImageUrl(category)}
                   alt={`${category} category`}
