@@ -51,7 +51,9 @@ const TeamMemberForm = ({ member, onSuccess }: TeamMemberFormProps) => {
     
     try {
       const submitData = {
-        ...data,
+        name: data.name,
+        bio: data.bio,
+        display_order: data.display_order,
         photo_url: data.photo_url || null,
         promotion_title: data.promotion_title || null,
         promotion_description: data.promotion_description || null,
