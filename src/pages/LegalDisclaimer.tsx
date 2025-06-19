@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,13 +8,15 @@ import { ArrowLeft, Scale } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CreateListingDialog from '@/components/CreateListingDialog';
+import GenericContactDialog from '@/components/GenericContactDialog';
 import { useAuth } from '@/contexts/AuthContext';
+
 const LegalDisclaimer = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const {
-    user
-  } = useAuth();
+  const [showContactDialog, setShowContactDialog] = useState(false);
+  const { user } = useAuth();
   const navigate = useNavigate();
+
   const handlePostListingClick = () => {
     if (!user) {
       navigate('/auth');
@@ -21,7 +24,13 @@ const LegalDisclaimer = () => {
     }
     setShowCreateDialog(true);
   };
-  return <div className="min-h-screen bg-background flex flex-col">
+
+  const handleContactUsClick = () => {
+    setShowContactDialog(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
       <Header onPostListingClick={handlePostListingClick} />
       
       <div className="flex-1 p-6">
@@ -111,7 +120,14 @@ const LegalDisclaimer = () => {
 
               <section>
                 <p className="text-muted-foreground leading-relaxed">
-                  For questions or concerns, please contact us.
+                  For questions or concerns, please{' '}
+                  <button 
+                    onClick={handleContactUsClick}
+                    className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors cursor-pointer"
+                  >
+                    contact us
+                  </button>
+                  .
                 </p>
               </section>
             </CardContent>
@@ -122,6 +138,9 @@ const LegalDisclaimer = () => {
       <Footer />
       
       <CreateListingDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
-    </div>;
+      <GenericContactDialog open={showContactDialog} onOpenChange={setShowContactDialog} />
+    </div>
+  );
 };
+
 export default LegalDisclaimer;
