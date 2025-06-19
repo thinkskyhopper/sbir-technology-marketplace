@@ -26,6 +26,7 @@ interface MarketplaceGridProps {
     statusFilter: string;
   }) => void;
   showFilters?: boolean;
+  maxListings?: number;
 }
 
 const MarketplaceGrid = ({ 
@@ -33,7 +34,8 @@ const MarketplaceGrid = ({
   onContactAdmin, 
   preservedFilters,
   onFiltersChange,
-  showFilters = true
+  showFilters = true,
+  maxListings
 }: MarketplaceGridProps) => {
   const { listings, loading, error } = useListings();
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
@@ -111,6 +113,11 @@ const MarketplaceGrid = ({
       filtered = filtered.filter(listing => listing.status === "Active");
     } else if (statusFilter !== "all") {
       filtered = filtered.filter(listing => listing.status === statusFilter);
+    }
+
+    // Apply maxListings limit if specified
+    if (maxListings && maxListings > 0) {
+      filtered = filtered.slice(0, maxListings);
     }
 
     setFilteredListings(filtered);

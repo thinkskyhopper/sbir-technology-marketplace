@@ -116,7 +116,7 @@ const Index = () => {
                 </div>
                 
                 <div className="max-w-4xl mx-auto">
-                  <MarketplaceGrid onContactAdmin={handleContactAdmin} showFilters={false} />
+                  <MarketplaceGrid onContactAdmin={handleContactAdmin} showFilters={false} maxListings={6} />
                 </div>
                 
                 <div className="text-center mt-8">
