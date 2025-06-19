@@ -27,6 +27,11 @@ const Footer = () => {
     window.scrollTo(0, 0);
   };
 
+  const handleTeamClick = () => {
+    navigate('/team');
+    window.scrollTo(0, 0);
+  };
+
   const handleContactUsClick = () => {
     setContactDialogOpen(true);
   };
@@ -51,6 +56,12 @@ const Footer = () => {
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Home
+              </button>
+              <button 
+                onClick={handleTeamClick}
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              >
+                Our Team
               </button>
               <button 
                 onClick={handlePrivacyPolicyClick}

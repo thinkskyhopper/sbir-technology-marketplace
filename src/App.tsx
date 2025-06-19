@@ -13,6 +13,7 @@ import ExpertValue from "./pages/ExpertValue";
 import ListingDetail from "./pages/ListingDetail";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LegalDisclaimer from "./pages/LegalDisclaimer";
+import Team from "./pages/Team";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/legal-disclaimer" element={<LegalDisclaimer />} />
+            <Route path="/team" element={<Team />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

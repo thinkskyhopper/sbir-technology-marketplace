@@ -131,6 +131,45 @@ export type Database = {
         }
         Relationships: []
       }
+      team_members: {
+        Row: {
+          bio: string
+          created_at: string
+          display_order: number
+          id: string
+          name: string
+          photo_url: string | null
+          promotion_description: string | null
+          promotion_photo_url: string | null
+          promotion_title: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          name: string
+          photo_url?: string | null
+          promotion_description?: string | null
+          promotion_photo_url?: string | null
+          promotion_title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          name?: string
+          photo_url?: string | null
+          promotion_description?: string | null
+          promotion_photo_url?: string | null
+          promotion_title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
