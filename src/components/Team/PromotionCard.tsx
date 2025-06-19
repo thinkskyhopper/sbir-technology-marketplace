@@ -4,10 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface Promotion {
-  id: string;
-  title: string;
-  description: string;
-  photo_url: string;
+  id?: string;
+  title?: string;
+  description?: string;
+  photo_url?: string;
 }
 
 interface PromotionCardProps {
