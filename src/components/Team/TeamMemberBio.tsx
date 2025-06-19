@@ -10,10 +10,12 @@ interface TeamMemberBioProps {
 }
 
 const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
-  // Create promotion cards from both new and legacy formats
+  // Create promotion cards from new promotions array if it exists
+  // If no new promotions, fall back to legacy format for backward compatibility
   const promotions = [];
   
-  // Add legacy promotion if it exists and no new promotions
+  // Check if this member has new promotions data (future functionality)
+  // For now, we'll only use legacy promotion if it exists
   if (member.promotion_title || member.promotion_description || member.promotion_photo_url) {
     promotions.push({
       id: 'legacy-promotion',
@@ -23,7 +25,10 @@ const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
     });
   }
 
-  // TODO: When we add the promotions table, we'll fetch and display those here as well
+  // TODO: When we add the promotions relationship, we'll add those here:
+  // if (member.promotions && member.promotions.length > 0) {
+  //   promotions.push(...member.promotions);
+  // }
 
   return (
     <Card className={`flex-1 ${isReversed ? 'bg-secondary/80' : 'bg-card/90'}`}>
