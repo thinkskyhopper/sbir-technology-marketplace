@@ -32,7 +32,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
         {/* Promotion Image in middle - maintaining aspect ratio */}
         {promotion.photo_url && (
           <div className="mb-4">
-            <AspectRatio ratio={16 / 9} className="bg-muted rounded-lg overflow-hidden">
+            <AspectRatio ratio={16 / 9} className="rounded-lg overflow-hidden">
               <img 
                 src={promotion.photo_url}
                 alt={promotion.title || 'Promotion'}
