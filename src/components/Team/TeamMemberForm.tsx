@@ -16,33 +16,14 @@ interface TeamMemberFormProps {
 }
 
 const TeamMemberForm = ({ member, onSuccess }: TeamMemberFormProps) => {
-  // Initialize promotions array from legacy fields if they exist
-  const initializePromotions = () => {
-    if (!member) return [];
-    
-    // If there are legacy promotion fields, convert them to the new format
-    if (member.promotion_title || member.promotion_description || member.promotion_photo_url) {
-      return [{
-        title: member.promotion_title || "",
-        description: member.promotion_description || "",
-        photo_url: member.promotion_photo_url || "",
-      }];
-    }
-    
-    return [];
-  };
-
   const form = useForm<TeamMemberFormData>({
     resolver: zodResolver(teamMemberSchema),
     defaultValues: {
       name: member?.name || "",
       bio: member?.bio || "",
       photo_url: member?.photo_url || "",
-      promotion_title: member?.promotion_title || "",
-      promotion_description: member?.promotion_description || "",
-      promotion_photo_url: member?.promotion_photo_url || "",
       display_order: member?.display_order || 0,
-      promotions: initializePromotions(),
+      promotions: member?.promotions || [],
     },
   });
 

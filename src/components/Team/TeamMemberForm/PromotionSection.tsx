@@ -20,21 +20,10 @@ const PromotionSection = ({ form }: PromotionSectionProps) => {
     name: "promotions",
   });
 
-  // Check if there's any legacy promotion data
-  const hasLegacyPromotion = form.watch("promotion_title") || 
-                            form.watch("promotion_description") || 
-                            form.watch("promotion_photo_url");
-
   const addPromotion = () => {
     if (fields.length < 4) {
       append({ title: "", description: "", photo_url: "" });
     }
-  };
-
-  const clearLegacyPromotion = () => {
-    form.setValue("promotion_title", "");
-    form.setValue("promotion_description", "");
-    form.setValue("promotion_photo_url", "");
   };
 
   return (
@@ -52,59 +41,8 @@ const PromotionSection = ({ form }: PromotionSectionProps) => {
           Add Promotion
         </Button>
       </div>
-      
-      {/* Legacy promotion fields - only show if no new promotions and has legacy data */}
-      {hasLegacyPromotion && fields.length === 0 && (
-        <Card className="border-orange-200 bg-orange-50/50">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base text-orange-800">Legacy Promotion</CardTitle>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={clearLegacyPromotion}
-                className="text-orange-600 hover:text-orange-800"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-            <p className="text-sm text-orange-700">This is a legacy promotion. Clear it to use the new promotion system.</p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="promotion_title">Promotion Title</Label>
-              <Input
-                id="promotion_title"
-                {...form.register("promotion_title")}
-                placeholder="e.g., Featured Book, Speaking Engagement, etc."
-                className="border-orange-200"
-              />
-            </div>
 
-            <div>
-              <Label htmlFor="promotion_description">Promotion Description</Label>
-              <Textarea
-                id="promotion_description"
-                {...form.register("promotion_description")}
-                placeholder="Describe the promotion"
-                rows={3}
-                className="border-orange-200"
-              />
-            </div>
-
-            <div>
-              <Label>Promotion Photo</Label>
-              <PhotoUpload
-                currentPhotoUrl={form.watch("promotion_photo_url")}
-                onPhotoChange={(url) => form.setValue("promotion_photo_url", url || "")}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* New promotion cards */}
+      {/* Promotion cards */}
       {fields.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {fields.map((field, index) => (
@@ -153,7 +91,7 @@ const PromotionSection = ({ form }: PromotionSectionProps) => {
         </div>
       )}
 
-      {fields.length === 0 && !hasLegacyPromotion && (
+      {fields.length === 0 && (
         <div className="text-center text-muted-foreground py-8">
           <p>No promotion cards added yet. Click "Add Promotion" to get started.</p>
         </div>

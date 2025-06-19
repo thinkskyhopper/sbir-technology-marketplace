@@ -10,18 +10,8 @@ interface TeamMemberBioProps {
 }
 
 const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
-  // Create promotion cards from legacy promotion fields
-  const promotions = [];
-  
-  // Only create a promotion if we have actual content
-  if (member.promotion_title || member.promotion_description || member.promotion_photo_url) {
-    promotions.push({
-      id: 'legacy-promotion',
-      title: member.promotion_title || '',
-      description: member.promotion_description || '',
-      photo_url: member.promotion_photo_url || '',
-    });
-  }
+  // Use promotions from the new promotions array
+  const promotions = member.promotions || [];
 
   return (
     <Card className={`flex-1 ${isReversed ? 'bg-secondary/80' : 'bg-card/90'}`}>
@@ -37,8 +27,8 @@ const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
         {promotions.length > 0 && (
           <div className="mt-8">
             <div className={`grid gap-6 ${promotions.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
-              {promotions.map((promotion) => (
-                <PromotionCard key={promotion.id} promotion={promotion} />
+              {promotions.map((promotion, index) => (
+                <PromotionCard key={promotion.id || `promotion-${index}`} promotion={promotion} />
               ))}
             </div>
           </div>
