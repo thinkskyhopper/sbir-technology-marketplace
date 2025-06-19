@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface Promotion {
   id: string;
@@ -28,14 +29,16 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
           </h4>
         )}
         
-        {/* Promotion Image in middle - larger size */}
+        {/* Promotion Image in middle - maintaining aspect ratio */}
         {promotion.photo_url && (
           <div className="mb-4">
-            <img 
-              src={promotion.photo_url}
-              alt={promotion.title || 'Promotion'}
-              className="w-full h-48 rounded-lg object-cover"
-            />
+            <AspectRatio ratio={16 / 9} className="bg-muted rounded-lg overflow-hidden">
+              <img 
+                src={promotion.photo_url}
+                alt={promotion.title || 'Promotion'}
+                className="w-full h-full object-contain"
+              />
+            </AspectRatio>
           </div>
         )}
         
