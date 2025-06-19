@@ -4,16 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-
-interface TeamMemberFormData {
-  name: string;
-  bio: string;
-  photo_url?: string;
-  promotion_title?: string;
-  promotion_description?: string;
-  promotion_photo_url?: string;
-  display_order: number;
-}
+import { TeamMemberFormData } from "./formSchema";
 
 interface BasicInfoFieldsProps {
   form: UseFormReturn<TeamMemberFormData>;
