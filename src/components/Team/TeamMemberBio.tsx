@@ -10,7 +10,7 @@ interface TeamMemberBioProps {
 
 const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
   return (
-    <Card className={`flex-1 ${isReversed ? 'bg-background/60' : 'bg-background/80'}`}>
+    <Card className={`flex-1 ${isReversed ? 'bg-secondary/80' : 'bg-card/90'}`}>
       <CardContent className="p-8">
         <h3 className="text-2xl font-bold mb-4">{member.name}</h3>
         <div className="prose prose-lg max-w-none">
