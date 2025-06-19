@@ -38,7 +38,7 @@ const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
         {/* Promotions Section */}
         {promotions.length > 0 && (
           <div className="mt-8">
-            <div className={`grid grid-cols-1 ${promotions.length === 1 ? 'max-w-md mx-auto' : 'md:grid-cols-2'} gap-6`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {promotions.map((promotion) => (
                 <PromotionCard key={promotion.id} promotion={promotion} />
               ))}
