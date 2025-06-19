@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useListings } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
+import Header from "@/components/Header";
 import EditListingDialog from "@/components/EditListingDialog";
 import ContactAdminDialog from "@/components/ContactAdminDialog";
 import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader";
@@ -52,7 +53,10 @@ const ListingDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Main Site Header */}
+      <Header />
+      
+      {/* Listing Specific Header */}
       <ListingDetailHeader
         listing={listing}
         isAdmin={isAdmin}
