@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
@@ -7,11 +7,17 @@ import AdminListingsTable from "@/components/AdminListingsTable";
 import CategoryImageManager from "@/components/CategoryImageManager";
 import CreateListingDialog from "@/components/CreateListingDialog";
 import { Button } from "@/components/ui/button";
-import { Plus, Shield } from "lucide-react";
+import { Plus } from "lucide-react";
+import { ensureCategoryImagesBucket } from "@/utils/createCategoryImagesBucket";
 
 const Admin = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { user } = useAuth();
+
+  // Ensure storage bucket exists when admin page loads
+  useEffect(() => {
+    ensureCategoryImagesBucket();
+  }, []);
 
   return (
     <ProtectedRoute requireAdmin={true}>

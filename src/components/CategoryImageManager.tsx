@@ -1,11 +1,19 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CATEGORIES } from "@/utils/categoryImageUtils";
+import { CATEGORIES, preloadAllCategoryImages } from "@/utils/categoryImageUtils";
 import CategoryImageCard from "./CategoryImageManager/CategoryImageCard";
 
 const CategoryImageManager = () => {
   const [uploadingCategory, setUploadingCategory] = useState<string | null>(null);
+
+  // Preload images on component mount
+  useEffect(() => {
+    // Start preloading in the background
+    preloadAllCategoryImages().catch(error => {
+      console.log('Some images failed to preload:', error);
+    });
+  }, []);
 
   const handleUploadStart = (category: string) => {
     setUploadingCategory(category);
