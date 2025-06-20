@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Share, Copy, Check, ExternalLink } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface ShareButtonProps {
   listingId: string;
@@ -13,7 +14,6 @@ interface ShareButtonProps {
 const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
   const [copied, setCopied] = useState(false);
   const [shareType, setShareType] = useState<'direct' | 'meta'>('meta');
-  const { toast } = useToast();
   
   const directUrl = `${window.location.origin}/listing/${listingId}`;
   const metaUrl = `https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/meta-tags?id=${listingId}`;
@@ -24,8 +24,7 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      toast({
-        title: "Link copied!",
+      toast.success("Link copied!", {
         description: "The listing link has been copied to your clipboard.",
         duration: 5000,
       });
@@ -33,10 +32,8 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
       // Reset copied state after 2 seconds
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast({
-        title: "Failed to copy",
+      toast.error("Failed to copy", {
         description: "Please manually copy the link below.",
-        variant: "destructive",
         duration: 5000,
       });
     }
