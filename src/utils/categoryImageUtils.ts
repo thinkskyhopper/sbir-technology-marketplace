@@ -50,22 +50,26 @@ const getCategoryImageUrl = async (category: string): Promise<string> => {
     for (const ext of possibleExtensions) {
       const fileName = `category-${categorySlug}.${ext}`;
       
-      // First, check if the file exists in storage
+      // Check if the file exists in storage with a fresh request
       const { data: fileList, error: listError } = await supabase.storage
         .from('category-images')
-        .list('', { search: fileName });
+        .list('', { 
+          search: fileName,
+          limit: 1
+        });
       
       if (!listError && fileList && fileList.length > 0) {
-        // File exists, get the public URL with aggressive cache busting
+        // File exists, get the public URL with maximum cache busting
         const { data } = await supabase.storage
           .from('category-images')
           .getPublicUrl(fileName);
         
         if (data?.publicUrl) {
-          // Add multiple cache-busting parameters to ensure fresh image loads
+          // Add aggressive cache-busting parameters
           const timestamp = Date.now();
-          const random = Math.random().toString(36).substring(7);
-          const cacheBuster = `?t=${timestamp}&r=${random}&v=1`;
+          const random = Math.random().toString(36).substring(2, 15);
+          const sessionId = Math.random().toString(36).substring(2, 10);
+          const cacheBuster = `?t=${timestamp}&r=${random}&s=${sessionId}&v=2`;
           console.log('Found uploaded image for category:', category, data.publicUrl + cacheBuster);
           return data.publicUrl + cacheBuster;
         }

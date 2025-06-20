@@ -32,35 +32,38 @@ const CategoryImageCard = ({
     loadCategoryImage();
   }, [category]);
 
-  // Refresh image after upload with more aggressive cache busting
+  // Refresh image after upload with aggressive cache invalidation
   const handleUploadComplete = async () => {
     console.log('Upload completed for category:', category);
     setIsLoading(true);
     onUploadEnd();
     
-    // Add a small delay to ensure the file is fully processed
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
     try {
-      // Force refresh the image URL to show the newly uploaded image
-      const url = await getCategoryImageUrl(category);
-      console.log('New image URL:', url);
+      // Wait longer to ensure file is fully processed
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Update both the URL and key to force complete re-render
-      setImageUrl(url);
+      // Force a complete cache invalidation by temporarily showing default image
+      const defaultUrl = getCategoryImageUrlSync(category);
+      setImageUrl(defaultUrl);
       setImageKey(prev => prev + 1);
       
-      // Force a browser cache refresh by preloading the new image
-      const img = new Image();
-      img.onload = () => {
-        console.log('New image preloaded successfully');
-        setIsLoading(false);
-      };
-      img.onerror = () => {
-        console.error('Failed to preload new image');
-        setIsLoading(false);
-      };
-      img.src = url;
+      // Wait a bit more then load the new uploaded image
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Get the new uploaded image URL with aggressive cache busting
+      const newUrl = await getCategoryImageUrl(category);
+      console.log('New image URL after upload:', newUrl);
+      
+      // Force browser to ignore all cached versions
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 15);
+      const cacheBustUrl = `${newUrl}&force=${timestamp}&refresh=${random}`;
+      
+      // Update the image URL and force re-render
+      setImageUrl(cacheBustUrl);
+      setImageKey(prev => prev + 1);
+      
+      setIsLoading(false);
     } catch (error) {
       console.error('Error refreshing image:', error);
       setIsLoading(false);
@@ -82,8 +85,14 @@ const CategoryImageCard = ({
           src={imageUrl}
           alt={`${category} category`}
           className="w-full h-full object-cover"
-          onLoad={() => console.log('Image loaded:', category, imageUrl)}
-          onError={(e) => console.error('Image load error:', category, e)}
+          onLoad={() => {
+            console.log('Image loaded successfully:', category, imageUrl);
+            setIsLoading(false);
+          }}
+          onError={(e) => {
+            console.error('Image load error:', category, e);
+            setIsLoading(false);
+          }}
         />
       </div>
       
