@@ -33,7 +33,7 @@ const ListingDetail = () => {
     const categoryLower = listing.category.toLowerCase();
     
     if (categoryLower.includes('cyber') || categoryLower.includes('security')) {
-      return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+      return "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
     } else if (categoryLower.includes('software') || categoryLower.includes('ai') || categoryLower.includes('data')) {
       return "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
     } else if (categoryLower.includes('hardware') || categoryLower.includes('electronic')) {

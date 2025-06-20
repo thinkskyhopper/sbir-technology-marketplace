@@ -13,6 +13,9 @@ export const generateMetaTagsResponse = (
   // Create a longer description for certain platforms
   const longDescription = listing ? createLongDescription(listing) : metaData.description;
   
+  // Add cache busting parameter to image URL
+  const imageUrlWithCacheBust = `${metaData.image}&cb=${Date.now()}`;
+  
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,11 +114,13 @@ export const generateMetaTagsResponse = (
 <body>
     <h1>${metaData.title}</h1>
     <p>${metaData.description}</p>
+    <img src="${metaData.image}" alt="${metaData.title}" style="max-width: 100%; height: auto;">
     <a href="${metaData.url}">View listing</a>
     
     <script>
         console.log('Meta tags page served for crawler');
         console.log('Listing URL:', '${metaData.url}');
+        console.log('Image URL:', '${metaData.image}');
         // Immediate redirect for any non-crawler that somehow reaches this page
         if (!navigator.userAgent.toLowerCase().includes('bot') && 
             !navigator.userAgent.toLowerCase().includes('crawler') &&
@@ -130,10 +135,14 @@ export const generateMetaTagsResponse = (
     headers: {
       ...corsHeaders,
       'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'public, max-age=300, s-maxage=300',
+      'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
       'X-Robots-Tag': 'index, follow',
       'Vary': 'User-Agent',
       'X-Content-Type-Options': 'nosniff',
+      'Last-Modified': new Date().toUTCString(),
+      'ETag': `"${listingId}-${Date.now()}"`,
     },
   });
 };

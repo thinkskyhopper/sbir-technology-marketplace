@@ -50,6 +50,7 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
       headers: {
         ...corsHeaders,
         'Location': listingUrl,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
   }
@@ -83,11 +84,15 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
     return generateMetaTagsResponse(defaultMetaData, listingId, true, appDomain, corsHeaders);
   }
 
+  // Get the image URL and log it for debugging
+  const imageUrl = getListingImage(listing.category);
+  console.log('Selected image URL for category', listing.category, ':', imageUrl);
+
   // Create meta tag data with proper encoding and domain
   const metaData: MetaData = {
     title: escapeHtml(`${listing.title} - SBIR Tech Marketplace`),
     description: createDescription(listing as Listing),
-    image: getListingImage(listing.category),
+    image: imageUrl,
     url: listingUrl,
     type: 'article'
   };

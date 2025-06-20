@@ -21,5 +21,8 @@ export const isCrawler = (userAgent: string): boolean => {
          ua.includes('linkexpander') ||
          ua.includes('urlpreview') ||
          ua.includes('outlook') ||
-         ua.includes('office');
+         ua.includes('office') ||
+         ua.includes('bot') ||
+         ua.includes('scraper') ||
+         ua.includes('validator');
 };

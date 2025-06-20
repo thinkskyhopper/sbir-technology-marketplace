@@ -2,8 +2,10 @@
 export const getListingImage = (category: string): string => {
   const categoryLower = category.toLowerCase();
   
+  console.log('Getting image for category:', category, 'lowercase:', categoryLower);
+  
   if (categoryLower.includes('cyber') || categoryLower.includes('security')) {
-    return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+    return "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
   } else if (categoryLower.includes('software') || categoryLower.includes('ai') || categoryLower.includes('data')) {
     return "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
   } else if (categoryLower.includes('hardware') || categoryLower.includes('electronic')) {
@@ -19,6 +21,7 @@ export const getListingImage = (category: string): string => {
   } else if (categoryLower.includes('advanced materials') || categoryLower.includes('materials')) {
     return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
   } else {
+    console.log('Using default image for category:', categoryLower);
     return "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
   }
 };
