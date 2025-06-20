@@ -16,6 +16,7 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const listingId = url.searchParams.get('id');
+    const domainParam = url.searchParams.get('domain');
 
     if (!listingId) {
       return new Response('Missing listing ID', { status: 400 });
@@ -37,6 +38,7 @@ serve(async (req) => {
       userAgent,
       isCrawler,
       listingId,
+      domainParam,
       headers: Object.fromEntries(req.headers.entries())
     });
 
@@ -45,26 +47,35 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get the actual domain from the request - fix domain detection
-    const protocol = req.headers.get('x-forwarded-proto') || 'https';
-    const host = req.headers.get('host');
-    let appDomain = 'https://amhznlnhrrugxatbeayo.supabase.co'; // Default to the actual Supabase app domain
+    // Determine the correct app domain
+    let appDomain = 'https://amhznlnhrrugxatbeayo.supabase.co'; // Default fallback
     
-    // Try to get the real app domain from referrer or use the Supabase app domain
-    const referrer = req.headers.get('referer');
-    if (referrer) {
+    // First priority: use the domain parameter passed from the ShareButton
+    if (domainParam) {
       try {
-        const referrerUrl = new URL(referrer);
-        // Only use referrer if it's the main app domain, not the edge function domain
-        if (!referrerUrl.host.includes('functions')) {
-          appDomain = `${referrerUrl.protocol}//${referrerUrl.host}`;
-        }
+        const parsedDomain = new URL(domainParam);
+        appDomain = `${parsedDomain.protocol}//${parsedDomain.host}`;
+        console.log('Using domain from parameter:', appDomain);
       } catch (e) {
-        console.log('Could not parse referrer:', referrer);
+        console.log('Could not parse domain parameter:', domainParam);
+      }
+    } else {
+      // Fallback: try to get from referrer if it's not the edge function domain
+      const referrer = req.headers.get('referer');
+      if (referrer) {
+        try {
+          const referrerUrl = new URL(referrer);
+          if (!referrerUrl.host.includes('functions') && !referrerUrl.host.includes('supabase.co')) {
+            appDomain = `${referrerUrl.protocol}//${referrerUrl.host}`;
+            console.log('Using domain from referrer:', appDomain);
+          }
+        } catch (e) {
+          console.log('Could not parse referrer:', referrer);
+        }
       }
     }
 
-    console.log('Domain info:', { protocol, host, appDomain, referrer });
+    console.log('Final app domain:', appDomain);
 
     // Fetch the listing data
     const { data: listing, error } = await supabase
@@ -296,7 +307,8 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
             Description: ${metaData.description.substring(0, 100)}...<br>
             Image: ${metaData.image}<br>
             Crawler detected: ${isCrawler}<br>
-            App Domain: ${appDomain}
+            App Domain: ${appDomain}<br>
+            Redirect URL: ${metaData.url}
         </div>
         ` : ''}
         
@@ -309,6 +321,7 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
         console.log('User agent:', navigator.userAgent);
         console.log('Is crawler:', ${isCrawler});
         console.log('App domain:', '${appDomain}');
+        console.log('Redirect URL:', '${metaData.url}');
         
         // Fallback redirect in case meta refresh doesn't work
         setTimeout(function() {

@@ -16,7 +16,8 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
   const [shareType, setShareType] = useState<'direct' | 'meta'>('meta');
   
   const directUrl = `${window.location.origin}/listing/${listingId}`;
-  const metaUrl = `https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/meta-tags?id=${listingId}`;
+  // Pass the actual app domain as a parameter to the meta-tags function
+  const metaUrl = `https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/meta-tags?id=${listingId}&domain=${encodeURIComponent(window.location.origin)}`;
   
   const shareUrl = shareType === 'meta' ? metaUrl : directUrl;
 
@@ -77,7 +78,7 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
                     <ExternalLink className="w-4 h-4 mr-2 text-muted-foreground" />
                     <div>
                       <div className="text-sm font-medium">Social Media Link</div>
-                      <div className="text-xs text-muted-foreground">Shows preview with listing details on LinkedIn, Facebook, Twitter, etc.</div>
+                      <div className="text-xs text-muted-foreground">Shows preview with listing details on LinkedIn, Facebook, Twitter, Microsoft Teams, Slack, WhatsApp, and other social platforms.</div>
                     </div>
                   </div>
                 </label>
