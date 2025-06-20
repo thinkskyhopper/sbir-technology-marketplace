@@ -31,9 +31,18 @@ serve(async (req) => {
                      userAgent.includes('whatsapp') ||
                      userAgent.includes('microsoftpreview') ||
                      userAgent.includes('teams') ||
-                     userAgent.includes('bot') ||
+                     userAgent.includes('skypeuripreview') ||
+                     userAgent.includes('discordbot') ||
+                     userAgent.includes('telegrambot') ||
+                     userAgent.includes('googlebot') ||
+                     userAgent.includes('bingbot') ||
+                     userAgent.includes('applebot') ||
                      userAgent.includes('crawler') ||
-                     userAgent.includes('spider');
+                     userAgent.includes('spider') ||
+                     // Check for common preview/link expansion patterns
+                     userAgent.includes('preview') ||
+                     userAgent.includes('linkexpander') ||
+                     userAgent.includes('urlpreview');
 
     console.log('Request details:', {
       userAgent,
@@ -70,7 +79,7 @@ serve(async (req) => {
     }
 
     // For crawlers, fetch the listing data and serve meta tags
-    console.log('Crawler detected, serving meta tags');
+    console.log('Crawler detected, serving meta tags for:', userAgent);
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -242,34 +251,21 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
       }
     }
     </script>
-    
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>SBIR Tech Marketplace</h1>
-        <p>Loading listing: ${metaData.title}</p>
-        <p><a href="${metaData.url}">View listing</a></p>
-    </div>
+    <h1>${metaData.title}</h1>
+    <p>${metaData.description}</p>
+    <a href="${metaData.url}">View listing</a>
     
     <script>
         console.log('Meta tags page served for crawler');
         console.log('Listing URL:', '${metaData.url}');
+        // Immediate redirect for any non-crawler that somehow reaches this page
+        if (!navigator.userAgent.toLowerCase().includes('bot') && 
+            !navigator.userAgent.toLowerCase().includes('crawler') &&
+            !navigator.userAgent.toLowerCase().includes('preview')) {
+            window.location.href = '${metaData.url}';
+        }
     </script>
 </body>
 </html>`;
