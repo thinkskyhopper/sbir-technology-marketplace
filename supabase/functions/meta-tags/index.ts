@@ -32,25 +32,19 @@ serve(async (req) => {
                      userAgent.includes('microsoftpreview') ||
                      userAgent.includes('teams') ||
                      userAgent.includes('bot') ||
-                     userAgent.includes('crawler');
+                     userAgent.includes('crawler') ||
+                     userAgent.includes('spider');
 
     console.log('Request details:', {
       userAgent,
       isCrawler,
       listingId,
-      domainParam,
-      headers: Object.fromEntries(req.headers.entries())
+      domainParam
     });
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     // Determine the correct app domain
-    let appDomain = 'https://amhznlnhrrugxatbeayo.supabase.co'; // Default fallback
+    let appDomain = 'https://82c5feb4-6704-4122-bfd9-18a4a7de2d6b.lovableproject.com'; // Default fallback
     
-    // First priority: use the domain parameter passed from the ShareButton
     if (domainParam) {
       try {
         const parsedDomain = new URL(domainParam);
@@ -59,23 +53,29 @@ serve(async (req) => {
       } catch (e) {
         console.log('Could not parse domain parameter:', domainParam);
       }
-    } else {
-      // Fallback: try to get from referrer if it's not the edge function domain
-      const referrer = req.headers.get('referer');
-      if (referrer) {
-        try {
-          const referrerUrl = new URL(referrer);
-          if (!referrerUrl.host.includes('functions') && !referrerUrl.host.includes('supabase.co')) {
-            appDomain = `${referrerUrl.protocol}//${referrerUrl.host}`;
-            console.log('Using domain from referrer:', appDomain);
-          }
-        } catch (e) {
-          console.log('Could not parse referrer:', referrer);
-        }
-      }
     }
 
-    console.log('Final app domain:', appDomain);
+    const listingUrl = `${appDomain}/listing/${listingId}`;
+
+    // For regular users (not crawlers), redirect immediately
+    if (!isCrawler) {
+      console.log('Regular user detected, redirecting to:', listingUrl);
+      return new Response(null, {
+        status: 302,
+        headers: {
+          ...corsHeaders,
+          'Location': listingUrl,
+        },
+      });
+    }
+
+    // For crawlers, fetch the listing data and serve meta tags
+    console.log('Crawler detected, serving meta tags');
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Fetch the listing data
     const { data: listing, error } = await supabase
@@ -91,10 +91,10 @@ serve(async (req) => {
       return generateMetaTagsResponse({
         title: 'The SBIR Tech Marketplace',
         description: 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.',
-        image: 'https://amhznlnhrrugxatbeayo.supabase.co/storage/v1/object/public/uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png',
-        url: `${appDomain}/listing/${listingId}`,
+        image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+        url: listingUrl,
         type: 'website'
-      }, listingId, isCrawler, appDomain);
+      }, listingId, true, appDomain);
     }
 
     // Convert value from cents to dollars for display
@@ -134,16 +134,12 @@ serve(async (req) => {
     // Helper function to properly clean and escape text
     const cleanText = (text: string) => {
       return text
-        // First normalize Unicode characters
         .normalize('NFKD')
-        // Replace problematic characters with proper ones
-        .replace(/[\u2013\u2014]/g, '-') // em dash and en dash
-        .replace(/[\u2018\u2019]/g, "'") // smart quotes
-        .replace(/[\u201C\u201D]/g, '"') // smart double quotes
-        .replace(/[\u2026]/g, '...') // ellipsis
-        // Remove any remaining non-ASCII characters that might cause issues
+        .replace(/[\u2013\u2014]/g, '-')
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/[\u201C\u201D]/g, '"')
+        .replace(/[\u2026]/g, '...')
         .replace(/[^\x00-\x7F]/g, ' ')
-        // Clean up multiple spaces
         .replace(/\s+/g, ' ')
         .trim();
     };
@@ -164,11 +160,11 @@ serve(async (req) => {
       title: escapeHtml(`${listing.title} - SBIR Tech Marketplace`),
       description: escapeHtml(`${listing.phase} ${listing.category} project from ${listing.agency}. Value: ${formattedValue}. ${listing.description.substring(0, 150)}...`),
       image: getListingImage(listing.category),
-      url: `${appDomain}/listing/${listing.id}`,
+      url: listingUrl,
       type: 'article'
     };
 
-    return generateMetaTagsResponse(metaData, listingId, isCrawler, appDomain);
+    return generateMetaTagsResponse(metaData, listingId, true, appDomain);
 
   } catch (error) {
     console.error('Error in meta-tags function:', error);
@@ -177,9 +173,6 @@ serve(async (req) => {
 });
 
 function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: boolean, appDomain: string) {
-  // For crawlers, delay redirect longer and add more meta tags
-  const redirectDelay = isCrawler ? 5000 : 2000;
-  
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -244,14 +237,11 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
         "name": "SBIR Tech Marketplace",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://amhznlnhrrugxatbeayo.supabase.co/storage/v1/object/public/uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png"
+          "url": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
         }
       }
     }
     </script>
-    
-    <!-- Redirect to the actual listing page after delay -->
-    <meta http-equiv="refresh" content="${redirectDelay / 1000}; url=${metaData.url}">
     
     <style>
         body {
@@ -268,67 +258,18 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .debug-info {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            padding: 10px;
-            margin: 20px 0;
-            font-size: 12px;
-            text-align: left;
-            color: #6c757d;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>SBIR Tech Marketplace</h1>
-        <div class="spinner"></div>
-        <p>Loading listing details...</p>
-        <p>You will be redirected automatically in ${redirectDelay / 1000} seconds.</p>
-        
-        ${isCrawler ? `
-        <div class="debug-info">
-            <strong>Debug Info:</strong><br>
-            Title: ${metaData.title}<br>
-            Description: ${metaData.description.substring(0, 100)}...<br>
-            Image: ${metaData.image}<br>
-            Crawler detected: ${isCrawler}<br>
-            App Domain: ${appDomain}<br>
-            Redirect URL: ${metaData.url}
-        </div>
-        ` : ''}
-        
-        <p>If you're not redirected automatically, <a href="${metaData.url}">click here</a>.</p>
+        <p>Loading listing: ${metaData.title}</p>
+        <p><a href="${metaData.url}">View listing</a></p>
     </div>
     
     <script>
-        // Log for debugging
-        console.log('Meta tags page loaded for listing: ${listingId}');
-        console.log('User agent:', navigator.userAgent);
-        console.log('Is crawler:', ${isCrawler});
-        console.log('App domain:', '${appDomain}');
-        console.log('Redirect URL:', '${metaData.url}');
-        
-        // Fallback redirect in case meta refresh doesn't work
-        setTimeout(function() {
-            if (window.location.href.includes('meta-tags')) {
-                window.location.href = '${metaData.url}';
-            }
-        }, ${redirectDelay});
+        console.log('Meta tags page served for crawler');
+        console.log('Listing URL:', '${metaData.url}');
     </script>
 </body>
 </html>`;
@@ -339,7 +280,6 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'public, max-age=300, s-maxage=300',
       'X-Robots-Tag': 'index, follow',
-      // Additional headers for better crawler support
       'Vary': 'User-Agent',
       'X-Content-Type-Options': 'nosniff',
     },
