@@ -18,7 +18,7 @@ const ExpertValueHero = () => {
         Our{" "}
         <button 
           onClick={handleExpertTeamClick}
-          className="text-gradient hover:underline font-semibold cursor-pointer transition-all duration-200 hover:scale-105"
+          className="text-gradient underline hover:no-underline font-semibold cursor-pointer transition-all duration-200 hover:scale-105"
         >
           expert team
         </button>{" "}
