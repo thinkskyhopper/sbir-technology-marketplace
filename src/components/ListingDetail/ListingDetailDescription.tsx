@@ -12,7 +12,7 @@ const ListingDetailDescription = ({ description }: ListingDetailDescriptionProps
         <CardTitle>Project Description</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+        <p className="text-slate-50 leading-relaxed whitespace-pre-wrap">
           {description}
         </p>
       </CardContent>
