@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { Share, Copy, Check, ExternalLink } from "lucide-react";
+import { Share, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
 interface ShareButtonProps {
@@ -13,13 +13,8 @@ interface ShareButtonProps {
 
 const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
   const [copied, setCopied] = useState(false);
-  const [shareType, setShareType] = useState<'direct' | 'meta'>('meta');
   
-  const directUrl = `${window.location.origin}/listing/${listingId}`;
-  // Pass the actual app domain as a parameter to the meta-tags function
-  const metaUrl = `https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/meta-tags?id=${listingId}&domain=${encodeURIComponent(window.location.origin)}`;
-  
-  const shareUrl = shareType === 'meta' ? metaUrl : directUrl;
+  const shareUrl = `${window.location.origin}/listing/${listingId}`;
 
   const handleCopyLink = async () => {
     try {
@@ -61,68 +56,26 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
             </p>
           </div>
           
-          <div className="space-y-3">
-            <div>
-              <label className="text-sm font-medium mb-3 block">Choose link type:</label>
-              <div className="space-y-2">
-                <label className="flex items-center space-x-3 cursor-pointer p-2 rounded border hover:bg-muted/50 transition-colors">
-                  <input
-                    type="radio"
-                    name="shareType"
-                    value="meta"
-                    checked={shareType === 'meta'}
-                    onChange={() => setShareType('meta')}
-                    className="w-4 h-4 text-primary"
-                  />
-                  <div className="flex items-center flex-1">
-                    <ExternalLink className="w-4 h-4 mr-2 text-muted-foreground" />
-                    <div>
-                      <div className="text-sm font-medium">Social Media Link</div>
-                      <div className="text-xs text-muted-foreground">Shows preview with listing details on LinkedIn, Facebook, Twitter, Microsoft Teams, Slack, WhatsApp, and other social platforms.</div>
-                    </div>
-                  </div>
-                </label>
-                <label className="flex items-center space-x-3 cursor-pointer p-2 rounded border hover:bg-muted/50 transition-colors">
-                  <input
-                    type="radio"
-                    name="shareType"
-                    value="direct"
-                    checked={shareType === 'direct'}
-                    onChange={() => setShareType('direct')}
-                    className="w-4 h-4 text-primary"
-                  />
-                  <div className="flex items-center flex-1">
-                    <Share className="w-4 h-4 mr-2 text-muted-foreground" />
-                    <div>
-                      <div className="text-sm font-medium">Direct Link</div>
-                      <div className="text-xs text-muted-foreground">Goes straight to the listing page</div>
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Link to copy:</label>
-              <div className="flex gap-2">
-                <Input
-                  value={shareUrl}
-                  readOnly
-                  onClick={handleSelectAll}
-                  className="flex-1 text-sm"
-                />
-                <Button
-                  size="sm"
-                  onClick={handleCopyLink}
-                  className={copied ? "bg-green-600 hover:bg-green-700" : ""}
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Link to copy:</label>
+            <div className="flex gap-2">
+              <Input
+                value={shareUrl}
+                readOnly
+                onClick={handleSelectAll}
+                className="flex-1 text-sm"
+              />
+              <Button
+                size="sm"
+                onClick={handleCopyLink}
+                className={copied ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                {copied ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+              </Button>
             </div>
           </div>
         </div>
