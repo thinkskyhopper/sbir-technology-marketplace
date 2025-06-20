@@ -64,32 +64,47 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
           
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium mb-2 block">Link type:</label>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant={shareType === 'meta' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setShareType('meta')}
-                  className="text-xs"
-                >
-                  <ExternalLink className="w-3 h-3 mr-1" />
-                  Social Media
-                </Button>
-                <Button
-                  variant={shareType === 'direct' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setShareType('direct')}
-                  className="text-xs"
-                >
-                  Direct Link
-                </Button>
+              <label className="text-sm font-medium mb-3 block">Choose link type:</label>
+              <div className="space-y-2">
+                <label className="flex items-center space-x-3 cursor-pointer p-2 rounded border hover:bg-muted/50 transition-colors">
+                  <input
+                    type="radio"
+                    name="shareType"
+                    value="meta"
+                    checked={shareType === 'meta'}
+                    onChange={() => setShareType('meta')}
+                    className="w-4 h-4 text-primary"
+                  />
+                  <div className="flex items-center flex-1">
+                    <ExternalLink className="w-4 h-4 mr-2 text-muted-foreground" />
+                    <div>
+                      <div className="text-sm font-medium">Social Media Link</div>
+                      <div className="text-xs text-muted-foreground">Shows preview with listing details</div>
+                    </div>
+                  </div>
+                </label>
+                <label className="flex items-center space-x-3 cursor-pointer p-2 rounded border hover:bg-muted/50 transition-colors">
+                  <input
+                    type="radio"
+                    name="shareType"
+                    value="direct"
+                    checked={shareType === 'direct'}
+                    onChange={() => setShareType('direct')}
+                    className="w-4 h-4 text-primary"
+                  />
+                  <div className="flex items-center flex-1">
+                    <Share className="w-4 h-4 mr-2 text-muted-foreground" />
+                    <div>
+                      <div className="text-sm font-medium">Direct Link</div>
+                      <div className="text-xs text-muted-foreground">Goes straight to the listing page</div>
+                    </div>
+                  </div>
+                </label>
               </div>
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">
-                {shareType === 'meta' ? 'Social media link:' : 'Direct link:'}
-              </label>
+              <label className="text-sm font-medium">Link to copy:</label>
               <div className="flex gap-2">
                 <Input
                   value={shareUrl}
@@ -110,13 +125,6 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
                 </Button>
               </div>
             </div>
-          </div>
-          
-          <div className="text-xs text-muted-foreground">
-            {shareType === 'meta' ? 
-              'Social media link shows preview with listing details when shared on LinkedIn, Facebook, etc.' :
-              'Direct link goes straight to the listing page.'
-            }
           </div>
         </div>
       </PopoverContent>
