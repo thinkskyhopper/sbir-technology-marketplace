@@ -51,13 +51,18 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
 
   const ImageComponent = () => {
     const imageContent = (
-      <AspectRatio ratio={16 / 9} className="rounded-lg overflow-hidden">
+      <AspectRatio 
+        ratio={16 / 9} 
+        className={`rounded-lg ${
+          hasLink 
+            ? 'border-2 border-primary p-1 overflow-hidden' 
+            : 'overflow-hidden'
+        }`}
+      >
         <img 
           src={promotion.photo_url}
           alt={promotion.title || 'Promotion'}
-          className={`w-full h-full object-contain ${
-            hasLink ? 'border-2 border-primary m-1 rounded' : ''
-          }`}
+          className="w-full h-full object-contain rounded"
         />
       </AspectRatio>
     );
