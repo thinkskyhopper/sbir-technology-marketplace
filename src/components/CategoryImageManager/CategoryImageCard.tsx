@@ -20,7 +20,6 @@ const CategoryImageCard = ({
   const [imageUrl, setImageUrl] = useState(() => getCategoryImageUrlSync(category));
   const [imageKey, setImageKey] = useState(0); // For cache busting
   const [isLoading, setIsLoading] = useState(false);
-  const [showImage, setShowImage] = useState(true);
   const isUploading = uploadingCategory === category;
 
   useEffect(() => {
@@ -33,47 +32,26 @@ const CategoryImageCard = ({
     loadCategoryImage();
   }, [category]);
 
-  // Refresh image after upload with complete reset
+  // Refresh image after upload with aggressive cache busting
   const handleUploadComplete = async () => {
     console.log('Upload completed for category:', category);
     setIsLoading(true);
     onUploadEnd();
     
     try {
-      // Step 1: Completely hide the image to force unmount
-      setShowImage(false);
+      // Wait for file processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Step 2: Wait for file processing and clear any browser cache
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Step 3: Clear the current image URL completely
-      setImageUrl('');
-      setImageKey(prev => prev + 1);
-      
-      // Step 4: Wait a bit more for complete cache invalidation
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Step 5: Get the fresh URL with maximum cache busting
+      // Force refresh the image URL
       const newUrl = await getCategoryImageUrl(category);
       console.log('New image URL after upload:', newUrl);
       
-      // Step 6: Add multiple layers of cache busting
-      const timestamp = Date.now();
-      const random1 = Math.random().toString(36).substring(2, 15);
-      const random2 = Math.random().toString(36).substring(2, 15);
-      const sessionId = Math.random().toString(36).substring(2, 10);
-      const cacheBustUrl = `${newUrl}&nocache=${timestamp}&rand=${random1}&fresh=${random2}&session=${sessionId}&version=3`;
-      
-      // Step 7: Set the new URL and show the image again
-      setImageUrl(cacheBustUrl);
+      // Update with new URL and increment key for React refresh
+      setImageUrl(newUrl);
       setImageKey(prev => prev + 1);
-      setShowImage(true);
-      
-      console.log('Final cache-busted URL:', cacheBustUrl);
       
     } catch (error) {
       console.error('Error refreshing image:', error);
-      setShowImage(true);
     } finally {
       setIsLoading(false);
     }
@@ -89,27 +67,20 @@ const CategoryImageCard = ({
             </div>
           </div>
         )}
-        {showImage && imageUrl && (
-          <img
-            key={`${category}-${imageKey}-${Date.now()}`}
-            src={imageUrl}
-            alt={`${category} category`}
-            className="w-full h-full object-cover"
-            onLoad={() => {
-              console.log('Image loaded successfully:', category, imageUrl);
-              setIsLoading(false);
-            }}
-            onError={(e) => {
-              console.error('Image load error:', category, e);
-              setIsLoading(false);
-            }}
-          />
-        )}
-        {!showImage && (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-            <div className="text-sm">Refreshing image...</div>
-          </div>
-        )}
+        <img
+          key={`${category}-${imageKey}`}
+          src={imageUrl}
+          alt={`${category} category`}
+          className="w-full h-full object-cover"
+          onLoad={() => {
+            console.log('Image loaded successfully:', category, imageUrl);
+            setIsLoading(false);
+          }}
+          onError={(e) => {
+            console.error('Image load error:', category, e);
+            setIsLoading(false);
+          }}
+        />
       </div>
       
       <div className="space-y-2">

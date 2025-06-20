@@ -52,16 +52,34 @@ const CategoryImageUpload = ({
       const fileExt = file.name.split('.').pop();
       const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
       const fileName = `category-${categorySlug}.${fileExt}`;
-      const filePath = `category-images/${fileName}`;
 
-      // Upload to Supabase storage
+      console.log('Uploading file:', fileName, 'to bucket: category-images');
+
+      // First, try to remove any existing file with different extensions
+      const possibleExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      for (const ext of possibleExtensions) {
+        const oldFileName = `category-${categorySlug}.${ext}`;
+        if (oldFileName !== fileName) {
+          await supabase.storage
+            .from('category-images')
+            .remove([oldFileName]);
+        }
+      }
+
+      // Upload to Supabase storage (note: no subdirectory, just the filename)
       const { error: uploadError } = await supabase.storage
         .from('category-images')
-        .upload(filePath, file, { upsert: true });
+        .upload(fileName, file, { 
+          upsert: true,
+          cacheControl: '0' // Disable caching for immediate updates
+        });
 
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
+
+      console.log('File uploaded successfully:', fileName);
 
       toast({
         title: "Image uploaded",
