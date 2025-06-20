@@ -27,7 +27,24 @@ export const generateMetaTagsResponse = (
     <meta name="author" content="SBIR Tech Marketplace">
     <meta name="robots" content="index, follow">
     
-    <!-- Twitter Card Meta Tags (First for priority) -->
+    <!-- Open Graph Meta Tags (Primary for most platforms) -->
+    <meta property="og:type" content="${metaData.type}">
+    <meta property="og:title" content="${metaData.title}">
+    <meta property="og:description" content="${longDescription}">
+    <meta property="og:url" content="${metaData.url}">
+    <meta property="og:site_name" content="SBIR Tech Marketplace">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Image Meta Tags -->
+    <meta property="og:image" content="${metaData.image}">
+    <meta property="og:image:url" content="${metaData.image}">
+    <meta property="og:image:secure_url" content="${metaData.image}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="${metaData.title}">
+    
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@sbirtech">
     <meta name="twitter:creator" content="@sbirtech">
@@ -36,41 +53,12 @@ export const generateMetaTagsResponse = (
     <meta name="twitter:image" content="${metaData.image}">
     <meta name="twitter:image:alt" content="${metaData.title}">
     
-    <!-- Open Graph Meta Tags for LinkedIn, Facebook, etc. -->
-    <meta property="og:title" content="${metaData.title}">
-    <meta property="og:description" content="${longDescription}">
-    <meta property="og:image" content="${metaData.image}">
-    <meta property="og:image:url" content="${metaData.image}">
-    <meta property="og:image:secure_url" content="${metaData.image}">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="${metaData.title}">
-    <meta property="og:url" content="${metaData.url}">
-    <meta property="og:type" content="${metaData.type}">
-    <meta property="og:site_name" content="SBIR Tech Marketplace">
-    <meta property="og:locale" content="en_US">
-    
-    <!-- Microsoft Teams and Skype specific tags -->
-    <meta property="msteams:card" content="summary_large_image">
-    <meta property="msteams:title" content="${metaData.title}">
-    <meta property="msteams:description" content="${longDescription}">
-    <meta property="msteams:image" content="${metaData.image}">
+    <!-- Microsoft Teams and Office specific tags -->
     <meta name="msapplication-TileImage" content="${metaData.image}">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
     
-    <!-- LinkedIn specific tags -->
-    <meta property="linkedin:title" content="${metaData.title}">
-    <meta property="linkedin:description" content="${longDescription}">
-    <meta property="linkedin:image" content="${metaData.image}">
-    
-    <!-- WhatsApp and general sharing -->
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/jpeg">
-    
-    <!-- Additional meta tags for better compatibility -->
+    <!-- Additional compatibility tags -->
     <meta property="article:author" content="SBIR Tech Marketplace">
     <meta property="article:publisher" content="SBIR Tech Marketplace">
     <meta name="application-name" content="SBIR Tech Marketplace">
@@ -78,7 +66,10 @@ export const generateMetaTagsResponse = (
     <!-- Canonical URL -->
     <link rel="canonical" href="${metaData.url}">
     
-    <!-- Structured Data -->
+    <!-- Favicon for better recognition -->
+    <link rel="icon" type="image/x-icon" href="${appDomain}/favicon.ico">
+    
+    <!-- Structured Data for enhanced crawling -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -101,28 +92,44 @@ export const generateMetaTagsResponse = (
         "name": "SBIR Tech Marketplace",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          "url": "${metaData.image}"
         }
-      }
+      },
+      "datePublished": "${new Date().toISOString()}",
+      "dateModified": "${new Date().toISOString()}"
     }
     </script>
 </head>
 <body>
-    <h1>${metaData.title}</h1>
-    <p>${twitterDescription}</p>
-    <img src="${metaData.image}" alt="${metaData.title}" style="max-width: 100%; height: auto;">
-    <a href="${metaData.url}">View listing</a>
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #333; margin-bottom: 20px;">${metaData.title}</h1>
+        <img src="${metaData.image}" alt="${metaData.title}" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; margin-bottom: 20px;">
+        <p style="color: #666; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">${twitterDescription}</p>
+        <a href="${metaData.url}" style="display: inline-block; background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Full Listing</a>
+    </div>
     
     <script>
-        console.log('Meta tags page served for crawler');
-        console.log('Listing URL:', '${metaData.url}');
-        console.log('Image URL:', '${metaData.image}');
-        console.log('Twitter Description:', '${twitterDescription}');
-        // Immediate redirect for any non-crawler that somehow reaches this page
-        if (!navigator.userAgent.toLowerCase().includes('bot') && 
-            !navigator.userAgent.toLowerCase().includes('crawler') &&
-            !navigator.userAgent.toLowerCase().includes('preview')) {
+        console.log('Meta tags page loaded for:', '${metaData.url}');
+        console.log('User Agent:', navigator.userAgent);
+        
+        // Enhanced crawler detection
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isCrawlerClient = userAgent.includes('bot') || 
+                               userAgent.includes('crawler') ||
+                               userAgent.includes('spider') ||
+                               userAgent.includes('preview') ||
+                               userAgent.includes('teams') ||
+                               userAgent.includes('msteams') ||
+                               userAgent.includes('skype') ||
+                               userAgent.includes('outlook') ||
+                               userAgent.includes('office');
+        
+        // Only redirect actual users, not crawlers
+        if (!isCrawlerClient) {
+            console.log('Redirecting user to:', '${metaData.url}');
             window.location.href = '${metaData.url}';
+        } else {
+            console.log('Crawler detected, serving meta page');
         }
     </script>
 </body>
@@ -138,6 +145,7 @@ export const generateMetaTagsResponse = (
       'X-Robots-Tag': 'index, follow',
       'Vary': 'User-Agent',
       'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'SAMEORIGIN',
       'Last-Modified': new Date().toUTCString(),
       'ETag': `"${listingId}-${Date.now()}"`,
     },
