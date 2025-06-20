@@ -18,6 +18,7 @@ const CategoryImageCard = ({
   onUploadEnd 
 }: CategoryImageCardProps) => {
   const [imageUrl, setImageUrl] = useState(() => getCategoryImageUrlSync(category));
+  const [imageKey, setImageKey] = useState(0); // For cache busting
   const isUploading = uploadingCategory === category;
 
   useEffect(() => {
@@ -33,15 +34,18 @@ const CategoryImageCard = ({
   // Refresh image after upload
   const handleUploadComplete = async () => {
     onUploadEnd();
-    // Refresh the image URL to show the newly uploaded image
+    // Force refresh the image URL to show the newly uploaded image
     const url = await getCategoryImageUrl(category);
     setImageUrl(url);
+    // Update the key to force image re-render and bypass browser cache
+    setImageKey(prev => prev + 1);
   };
 
   return (
     <div className="space-y-3">
       <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted">
         <img
+          key={imageKey}
           src={imageUrl}
           alt={`${category} category`}
           className="w-full h-full object-cover"

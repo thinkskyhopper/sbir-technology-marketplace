@@ -58,7 +58,9 @@ const getCategoryImageUrl = async (category: string): Promise<string> => {
         try {
           const response = await fetch(data.publicUrl, { method: 'HEAD' });
           if (response.ok) {
-            return data.publicUrl;
+            // Add cache-busting parameter to ensure fresh image loads
+            const cacheBuster = `?t=${Date.now()}`;
+            return data.publicUrl + cacheBuster;
           }
         } catch {
           // Continue to next extension if this one fails
