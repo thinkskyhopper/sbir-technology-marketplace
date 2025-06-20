@@ -3,16 +3,13 @@ export const createResponseHeaders = (corsHeaders: Record<string, string>, listi
   return {
     ...corsHeaders,
     'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'no-cache, no-store, must-revalidate', // Disable caching to ensure fresh content
-    'Pragma': 'no-cache',
-    'Expires': '0',
-    'X-Robots-Tag': 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
-    'Vary': 'User-Agent, Accept-Encoding',
+    'Cache-Control': 'public, max-age=300, s-maxage=300', // Allow 5 min caching for social crawlers
+    'Vary': 'User-Agent',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
+    'X-Robots-Tag': 'index, follow, max-image-preview:large',
     'Last-Modified': new Date().toUTCString(),
-    'ETag': `"${listingId}-${Date.now()}"`,
+    'ETag': `"${listingId}-${Math.floor(Date.now() / 300000)}"`, // ETag changes every 5 minutes
     'Accept-Ranges': 'bytes',
-    'X-UA-Compatible': 'IE=edge',
   };
 };
