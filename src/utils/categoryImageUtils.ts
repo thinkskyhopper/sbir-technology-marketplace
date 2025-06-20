@@ -49,30 +49,34 @@ const getCategoryImageUrl = async (category: string): Promise<string> => {
     // Try to find an uploaded image with any of the common extensions
     for (const ext of possibleExtensions) {
       const fileName = `category-${categorySlug}.${ext}`;
-      const { data } = await supabase.storage
-        .from('category-images')
-        .getPublicUrl(fileName);
       
-      if (data?.publicUrl) {
-        // Check if the file actually exists by making a head request
-        try {
-          const response = await fetch(data.publicUrl, { method: 'HEAD' });
-          if (response.ok) {
-            // Add cache-busting parameter to ensure fresh image loads
-            const cacheBuster = `?t=${Date.now()}`;
-            return data.publicUrl + cacheBuster;
-          }
-        } catch {
-          // Continue to next extension if this one fails
-          continue;
+      // First, check if the file exists in storage
+      const { data: fileList, error: listError } = await supabase.storage
+        .from('category-images')
+        .list('', { search: fileName });
+      
+      if (!listError && fileList && fileList.length > 0) {
+        // File exists, get the public URL with aggressive cache busting
+        const { data } = await supabase.storage
+          .from('category-images')
+          .getPublicUrl(fileName);
+        
+        if (data?.publicUrl) {
+          // Add multiple cache-busting parameters to ensure fresh image loads
+          const timestamp = Date.now();
+          const random = Math.random().toString(36).substring(7);
+          const cacheBuster = `?t=${timestamp}&r=${random}&v=1`;
+          console.log('Found uploaded image for category:', category, data.publicUrl + cacheBuster);
+          return data.publicUrl + cacheBuster;
         }
       }
     }
   } catch (error) {
-    console.log('No uploaded image found for category:', category);
+    console.log('No uploaded image found for category:', category, error);
   }
   
   // Fall back to default image if no uploaded image is found
+  console.log('Using default image for category:', category);
   return getDefaultCategoryImage(category);
 };
 

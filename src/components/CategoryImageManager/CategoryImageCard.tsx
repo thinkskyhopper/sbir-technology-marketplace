@@ -19,6 +19,7 @@ const CategoryImageCard = ({
 }: CategoryImageCardProps) => {
   const [imageUrl, setImageUrl] = useState(() => getCategoryImageUrlSync(category));
   const [imageKey, setImageKey] = useState(0); // For cache busting
+  const [isLoading, setIsLoading] = useState(false);
   const isUploading = uploadingCategory === category;
 
   useEffect(() => {
@@ -31,24 +32,58 @@ const CategoryImageCard = ({
     loadCategoryImage();
   }, [category]);
 
-  // Refresh image after upload
+  // Refresh image after upload with more aggressive cache busting
   const handleUploadComplete = async () => {
+    console.log('Upload completed for category:', category);
+    setIsLoading(true);
     onUploadEnd();
-    // Force refresh the image URL to show the newly uploaded image
-    const url = await getCategoryImageUrl(category);
-    setImageUrl(url);
-    // Update the key to force image re-render and bypass browser cache
-    setImageKey(prev => prev + 1);
+    
+    // Add a small delay to ensure the file is fully processed
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    try {
+      // Force refresh the image URL to show the newly uploaded image
+      const url = await getCategoryImageUrl(category);
+      console.log('New image URL:', url);
+      
+      // Update both the URL and key to force complete re-render
+      setImageUrl(url);
+      setImageKey(prev => prev + 1);
+      
+      // Force a browser cache refresh by preloading the new image
+      const img = new Image();
+      img.onload = () => {
+        console.log('New image preloaded successfully');
+        setIsLoading(false);
+      };
+      img.onerror = () => {
+        console.error('Failed to preload new image');
+        setIsLoading(false);
+      };
+      img.src = url;
+    } catch (error) {
+      console.error('Error refreshing image:', error);
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="space-y-3">
-      <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted">
+      <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted relative">
+        {(isLoading || isUploading) && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+            <div className="text-white text-sm">
+              {isUploading ? 'Uploading...' : 'Updating...'}
+            </div>
+          </div>
+        )}
         <img
-          key={imageKey}
+          key={`${category}-${imageKey}`}
           src={imageUrl}
           alt={`${category} category`}
           className="w-full h-full object-cover"
+          onLoad={() => console.log('Image loaded:', category, imageUrl)}
+          onError={(e) => console.error('Image load error:', category, e)}
         />
       </div>
       
