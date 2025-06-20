@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -207,12 +206,14 @@ const CategoryImageCard = ({
           {isUploaded === true && (
             <Button
               type="button"
-              variant="outline"
+              variant="destructive"
               size="sm"
               onClick={() => setShowRestoreDialog(true)}
               disabled={isUploading || isRestoring}
+              className="flex items-center space-x-1"
             >
               <RotateCcw className="w-4 h-4" />
+              <span>Restore Default</span>
             </Button>
           )}
         </div>
