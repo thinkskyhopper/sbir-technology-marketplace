@@ -10,11 +10,10 @@ export const generateMetaTagsResponse = (
   corsHeaders: Record<string, string>,
   listing?: any
 ): Response => {
-  // Create a longer description for certain platforms
+  // Use the base description for Twitter to ensure it's not too long
+  const twitterDescription = metaData.description;
+  // Use longer description for other platforms
   const longDescription = listing ? createLongDescription(listing) : metaData.description;
-  
-  // Add cache busting parameter to image URL
-  const imageUrlWithCacheBust = `${metaData.image}&cb=${Date.now()}`;
   
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -24,9 +23,18 @@ export const generateMetaTagsResponse = (
     <title>${metaData.title}</title>
     
     <!-- Basic Meta Tags -->
-    <meta name="description" content="${metaData.description}">
+    <meta name="description" content="${twitterDescription}">
     <meta name="author" content="SBIR Tech Marketplace">
     <meta name="robots" content="index, follow">
+    
+    <!-- Twitter Card Meta Tags (First for priority) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@sbirtech">
+    <meta name="twitter:creator" content="@sbirtech">
+    <meta name="twitter:title" content="${metaData.title}">
+    <meta name="twitter:description" content="${twitterDescription}">
+    <meta name="twitter:image" content="${metaData.image}">
+    <meta name="twitter:image:alt" content="${metaData.title}">
     
     <!-- Open Graph Meta Tags for LinkedIn, Facebook, etc. -->
     <meta property="og:title" content="${metaData.title}">
@@ -42,18 +50,6 @@ export const generateMetaTagsResponse = (
     <meta property="og:type" content="${metaData.type}">
     <meta property="og:site_name" content="SBIR Tech Marketplace">
     <meta property="og:locale" content="en_US">
-    
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@sbirtech">
-    <meta name="twitter:creator" content="@sbirtech">
-    <meta name="twitter:title" content="${metaData.title}">
-    <meta name="twitter:description" content="${metaData.description}">
-    <meta name="twitter:image" content="${metaData.image}">
-    <meta name="twitter:image:src" content="${metaData.image}">
-    <meta name="twitter:image:width" content="1200">
-    <meta name="twitter:image:height" content="630">
-    <meta name="twitter:image:alt" content="${metaData.title}">
     
     <!-- Microsoft Teams and Skype specific tags -->
     <meta property="msteams:card" content="summary_large_image">
@@ -88,7 +84,7 @@ export const generateMetaTagsResponse = (
       "@context": "https://schema.org",
       "@type": "Article",
       "headline": "${metaData.title.replace(/"/g, '\\"')}",
-      "description": "${longDescription.replace(/"/g, '\\"')}",
+      "description": "${twitterDescription.replace(/"/g, '\\"')}",
       "image": {
         "@type": "ImageObject",
         "url": "${metaData.image}",
@@ -113,7 +109,7 @@ export const generateMetaTagsResponse = (
 </head>
 <body>
     <h1>${metaData.title}</h1>
-    <p>${metaData.description}</p>
+    <p>${twitterDescription}</p>
     <img src="${metaData.image}" alt="${metaData.title}" style="max-width: 100%; height: auto;">
     <a href="${metaData.url}">View listing</a>
     
@@ -121,6 +117,7 @@ export const generateMetaTagsResponse = (
         console.log('Meta tags page served for crawler');
         console.log('Listing URL:', '${metaData.url}');
         console.log('Image URL:', '${metaData.image}');
+        console.log('Twitter Description:', '${twitterDescription}');
         // Immediate redirect for any non-crawler that somehow reaches this page
         if (!navigator.userAgent.toLowerCase().includes('bot') && 
             !navigator.userAgent.toLowerCase().includes('crawler') &&
