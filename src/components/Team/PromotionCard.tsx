@@ -44,7 +44,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
         
         {/* Promotion Description at bottom */}
         {promotion.description && (
-          <p className="text-sm text-slate-50 leading-relaxed text-center">
+          <p className="text-sm text-slate-50 leading-relaxed text-center whitespace-pre-wrap">
             {promotion.description}
           </p>
         )}
