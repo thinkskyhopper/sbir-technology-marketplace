@@ -1,9 +1,12 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Building, DollarSign, ArrowLeft, Mail, Edit } from "lucide-react";
+import ShareButton from "@/components/ShareButton";
 
 interface ListingDetailHeaderProps {
   listing: {
+    id: string;
     phase: string;
     status: string;
     title: string;
@@ -71,7 +74,11 @@ const ListingDetailHeader = ({
             </div>
           </div>
           
-          <div className="ml-6 space-x-2">
+          <div className="ml-6 flex items-center space-x-2">
+            <ShareButton 
+              listingId={listing.id}
+              listingTitle={listing.title}
+            />
             {isAdmin && (
               <Button 
                 variant="outline"
