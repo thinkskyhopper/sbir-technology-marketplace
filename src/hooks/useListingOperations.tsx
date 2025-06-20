@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { listingsService } from '@/services/listingsService';
+import { adminNotificationService } from '@/services/adminNotificationService';
 import type { CreateListingData, UpdateListingData } from '@/types/listings';
 
 export const useListingOperations = (onSuccess?: () => void) => {
@@ -18,6 +18,39 @@ export const useListingOperations = (onSuccess?: () => void) => {
       console.log('🔄 Creating listing operation...', { user: user.id });
       
       const data = await listingsService.createListing(listingData, user.id);
+      
+      // Send admin notification for new listing
+      if (data && listingData.status === 'Pending') {
+        console.log('🔔 Triggering admin notification for new listing...');
+        
+        // Get user profile data for the notification
+        const { data: userProfile } = await import('@/integrations/supabase/client').then(({ supabase }) =>
+          supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('id', user.id)
+            .single()
+        );
+
+        if (userProfile) {
+          await adminNotificationService.notifyAdminsOfNewListing(
+            {
+              id: data.id,
+              title: data.title,
+              agency: data.agency,
+              value: data.value,
+              phase: data.phase,
+              category: data.category,
+              description: data.description
+            },
+            {
+              full_name: userProfile.full_name || 'Unknown User',
+              email: userProfile.email
+            }
+          );
+        }
+      }
+      
       if (onSuccess) onSuccess();
       return data;
     } catch (err) {
