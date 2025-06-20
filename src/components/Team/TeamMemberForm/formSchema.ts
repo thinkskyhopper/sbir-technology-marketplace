@@ -6,6 +6,7 @@ const promotionSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   photo_url: z.string().optional(),
+  link_url: z.string().optional(),
 });
 
 export const teamMemberSchema = z.object({

@@ -24,7 +24,7 @@ const PromotionSection = ({ form }: PromotionSectionProps) => {
     if (fields.length < 4) {
       // Generate a unique ID for the new promotion to ensure proper tracking
       const newId = `promotion-${Date.now()}-${Math.random().toString(36).substring(2)}`;
-      append({ id: newId, title: "", description: "", photo_url: "" });
+      append({ id: newId, title: "", description: "", photo_url: "", link_url: "" });
     }
   };
 
@@ -86,6 +86,15 @@ const PromotionSection = ({ form }: PromotionSectionProps) => {
                       {...form.register(`promotions.${index}.description`)}
                       placeholder="Promotion description"
                       rows={2}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`promotions.${index}.link_url`}>Link (Optional)</Label>
+                    <Input
+                      {...form.register(`promotions.${index}.link_url`)}
+                      placeholder="https://example.com"
+                      type="url"
                     />
                   </div>
 

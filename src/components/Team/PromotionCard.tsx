@@ -8,6 +8,7 @@ interface Promotion {
   title?: string;
   description?: string;
   photo_url?: string;
+  link_url?: string;
 }
 
 interface PromotionCardProps {
@@ -19,32 +20,80 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
     return null;
   }
 
+  const hasLink = promotion.link_url && promotion.link_url.trim() !== '';
+
+  const TitleComponent = () => {
+    const titleContent = (
+      <h4 className={`text-lg font-semibold mb-4 text-center ${
+        hasLink 
+          ? 'text-primary underline hover:text-primary/80 transition-colors' 
+          : 'text-slate-50'
+      }`}>
+        {promotion.title}
+      </h4>
+    );
+
+    if (hasLink) {
+      return (
+        <a 
+          href={promotion.link_url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block"
+        >
+          {titleContent}
+        </a>
+      );
+    }
+
+    return titleContent;
+  };
+
+  const ImageComponent = () => {
+    const imageContent = (
+      <AspectRatio ratio={16 / 9} className="rounded-lg overflow-hidden">
+        <img 
+          src={promotion.photo_url}
+          alt={promotion.title || 'Promotion'}
+          className={`w-full h-full object-contain ${
+            hasLink ? 'border-2 border-primary m-1 rounded' : ''
+          }`}
+        />
+      </AspectRatio>
+    );
+
+    if (hasLink) {
+      return (
+        <a 
+          href={promotion.link_url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block"
+        >
+          {imageContent}
+        </a>
+      );
+    }
+
+    return imageContent;
+  };
+
   return (
     <Card className="bg-background/50 border">
       <CardContent className="p-6">
         {/* Promotion Title at top */}
-        {promotion.title && (
-          <h4 className="text-lg font-semibold mb-4 text-primary text-center">
-            {promotion.title}
-          </h4>
-        )}
+        {promotion.title && <TitleComponent />}
         
         {/* Promotion Image in middle - maintaining aspect ratio */}
         {promotion.photo_url && (
           <div className="mb-4">
-            <AspectRatio ratio={16 / 9} className="rounded-lg overflow-hidden">
-              <img 
-                src={promotion.photo_url}
-                alt={promotion.title || 'Promotion'}
-                className="w-full h-full object-contain"
-              />
-            </AspectRatio>
+            <ImageComponent />
           </div>
         )}
         
         {/* Promotion Description at bottom */}
         {promotion.description && (
-          <p className="text-sm text-slate-50 leading-relaxed text-center whitespace-pre-wrap">
+          <p className="text-sm text-muted-foreground leading-relaxed text-center whitespace-pre-wrap">
             {promotion.description}
           </p>
         )}
