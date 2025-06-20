@@ -45,6 +45,26 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get the actual domain from the request
+    const protocol = req.headers.get('x-forwarded-proto') || 'https';
+    const host = req.headers.get('host');
+    const actualDomain = `${protocol}://${host}`;
+    
+    // Determine the correct app domain - use the referrer if available
+    const referrer = req.headers.get('referer');
+    let appDomain = 'https://amhznlnhrrugxatbeayo.supabase.co'; // Default fallback
+    
+    if (referrer) {
+      try {
+        const referrerUrl = new URL(referrer);
+        appDomain = `${referrerUrl.protocol}//${referrerUrl.host}`;
+      } catch (e) {
+        console.log('Could not parse referrer:', referrer);
+      }
+    }
+
+    console.log('Domain info:', { actualDomain, appDomain, referrer });
+
     // Fetch the listing data
     const { data: listing, error } = await supabase
       .from('sbir_listings')
@@ -60,9 +80,9 @@ serve(async (req) => {
         title: 'The SBIR Tech Marketplace',
         description: 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.',
         image: 'https://amhznlnhrrugxatbeayo.supabase.co/storage/v1/object/public/uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png',
-        url: `https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/meta-tags?id=${listingId}`,
+        url: `${appDomain}/listing/${listingId}`,
         type: 'website'
-      }, listingId, isCrawler);
+      }, listingId, isCrawler, appDomain);
     }
 
     // Convert value from cents to dollars for display
@@ -99,16 +119,31 @@ serve(async (req) => {
       }
     };
 
-    // Create meta tag data
+    // Helper function to escape HTML and handle encoding
+    const escapeHtml = (text: string) => {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        // Fix common encoding issues
+        .replace(/â€"/g, '–')
+        .replace(/â€™/g, "'")
+        .replace(/â€œ/g, '"')
+        .replace(/â€/g, '"');
+    };
+
+    // Create meta tag data with proper encoding
     const metaData = {
-      title: `${listing.title} - SBIR Tech Marketplace`,
-      description: `${listing.phase} ${listing.category} project from ${listing.agency}. Value: ${formattedValue}. ${listing.description.substring(0, 150)}...`,
+      title: escapeHtml(`${listing.title} - SBIR Tech Marketplace`),
+      description: escapeHtml(`${listing.phase} ${listing.category} project from ${listing.agency}. Value: ${formattedValue}. ${listing.description.substring(0, 150)}...`),
       image: getListingImage(listing.category),
-      url: `https://your-domain.com/listing/${listing.id}`, // Replace with your actual domain
+      url: `${appDomain}/listing/${listing.id}`,
       type: 'article'
     };
 
-    return generateMetaTagsResponse(metaData, listingId, isCrawler);
+    return generateMetaTagsResponse(metaData, listingId, isCrawler, appDomain);
 
   } catch (error) {
     console.error('Error in meta-tags function:', error);
@@ -116,7 +151,7 @@ serve(async (req) => {
   }
 });
 
-function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: boolean) {
+function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: boolean, appDomain: string) {
   // For crawlers, delay redirect longer and add more meta tags
   const redirectDelay = isCrawler ? 5000 : 2000;
   
@@ -168,8 +203,8 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "${metaData.title}",
-      "description": "${metaData.description}",
+      "headline": "${metaData.title.replace(/"/g, '\\"')}",
+      "description": "${metaData.description.replace(/"/g, '\\"')}",
       "image": "${metaData.image}",
       "url": "${metaData.url}",
       "author": {
@@ -188,7 +223,7 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
     </script>
     
     <!-- Redirect to the actual listing page after delay -->
-    <meta http-equiv="refresh" content="${redirectDelay / 1000}; url=https://your-domain.com/listing/${listingId}">
+    <meta http-equiv="refresh" content="${redirectDelay / 1000}; url=${metaData.url}">
     
     <style>
         body {
@@ -247,7 +282,7 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
         </div>
         ` : ''}
         
-        <p>If you're not redirected automatically, <a href="https://your-domain.com/listing/${listingId}">click here</a>.</p>
+        <p>If you're not redirected automatically, <a href="${metaData.url}">click here</a>.</p>
     </div>
     
     <script>
@@ -259,7 +294,7 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
         // Fallback redirect in case meta refresh doesn't work
         setTimeout(function() {
             if (window.location.href.includes('meta-tags')) {
-                window.location.href = 'https://your-domain.com/listing/${listingId}';
+                window.location.href = '${metaData.url}';
             }
         }, ${redirectDelay});
     </script>
