@@ -21,6 +21,25 @@ serve(async (req) => {
       return new Response('Missing listing ID', { status: 400 });
     }
 
+    // Check if this is a social media crawler
+    const userAgent = req.headers.get('user-agent')?.toLowerCase() || '';
+    const isCrawler = userAgent.includes('facebookexternalhit') || 
+                     userAgent.includes('twitterbot') || 
+                     userAgent.includes('linkedinbot') || 
+                     userAgent.includes('slackbot') || 
+                     userAgent.includes('whatsapp') ||
+                     userAgent.includes('microsoftpreview') ||
+                     userAgent.includes('teams') ||
+                     userAgent.includes('bot') ||
+                     userAgent.includes('crawler');
+
+    console.log('Request details:', {
+      userAgent,
+      isCrawler,
+      listingId,
+      headers: Object.fromEntries(req.headers.entries())
+    });
+
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -41,9 +60,9 @@ serve(async (req) => {
         title: 'The SBIR Tech Marketplace',
         description: 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.',
         image: 'https://amhznlnhrrugxatbeayo.supabase.co/storage/v1/object/public/uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png',
-        url: `https://amhznlnhrrugxatbeayo.supabase.co/meta-tags?id=${listingId}`,
+        url: `https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/meta-tags?id=${listingId}`,
         type: 'website'
-      }, listingId);
+      }, listingId, isCrawler);
     }
 
     // Convert value from cents to dollars for display
@@ -89,7 +108,7 @@ serve(async (req) => {
       type: 'article'
     };
 
-    return generateMetaTagsResponse(metaData, listingId);
+    return generateMetaTagsResponse(metaData, listingId, isCrawler);
 
   } catch (error) {
     console.error('Error in meta-tags function:', error);
@@ -97,7 +116,10 @@ serve(async (req) => {
   }
 });
 
-function generateMetaTagsResponse(metaData: any, listingId: string) {
+function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: boolean) {
+  // For crawlers, delay redirect longer and add more meta tags
+  const redirectDelay = isCrawler ? 5000 : 2000;
+  
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,27 +129,66 @@ function generateMetaTagsResponse(metaData: any, listingId: string) {
     
     <!-- Basic Meta Tags -->
     <meta name="description" content="${metaData.description}">
+    <meta name="author" content="SBIR Tech Marketplace">
+    <meta name="robots" content="index, follow">
     
     <!-- Open Graph Meta Tags for LinkedIn, Facebook, etc. -->
     <meta property="og:title" content="${metaData.title}">
     <meta property="og:description" content="${metaData.description}">
     <meta property="og:image" content="${metaData.image}">
+    <meta property="og:image:url" content="${metaData.image}">
+    <meta property="og:image:secure_url" content="${metaData.image}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="${metaData.url}">
     <meta property="og:type" content="${metaData.type}">
     <meta property="og:site_name" content="SBIR Tech Marketplace">
+    <meta property="og:locale" content="en_US">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@sbirtech">
+    <meta name="twitter:creator" content="@sbirtech">
     <meta name="twitter:title" content="${metaData.title}">
     <meta name="twitter:description" content="${metaData.description}">
     <meta name="twitter:image" content="${metaData.image}">
+    <meta name="twitter:image:src" content="${metaData.image}">
+    <meta name="twitter:image:width" content="1200">
+    <meta name="twitter:image:height" content="630">
     
-    <!-- LinkedIn specific optimization -->
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <!-- LinkedIn specific tags -->
+    <meta property="og:image:alt" content="${metaData.title}">
     
-    <!-- Redirect to the actual listing page -->
-    <meta http-equiv="refresh" content="0; url=https://your-domain.com/listing/${listingId}">
+    <!-- Microsoft Teams specific tags -->
+    <meta name="msapplication-TileImage" content="${metaData.image}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "${metaData.title}",
+      "description": "${metaData.description}",
+      "image": "${metaData.image}",
+      "url": "${metaData.url}",
+      "author": {
+        "@type": "Organization",
+        "name": "SBIR Tech Marketplace"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "SBIR Tech Marketplace",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://amhznlnhrrugxatbeayo.supabase.co/storage/v1/object/public/uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png"
+        }
+      }
+    }
+    </script>
+    
+    <!-- Redirect to the actual listing page after delay -->
+    <meta http-equiv="refresh" content="${redirectDelay / 1000}; url=https://your-domain.com/listing/${listingId}">
     
     <style>
         body {
@@ -157,21 +218,50 @@ function generateMetaTagsResponse(metaData: any, listingId: string) {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 12px;
+            text-align: left;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>SBIR Tech Marketplace</h1>
         <div class="spinner"></div>
-        <p>Redirecting you to the listing...</p>
+        <p>Loading listing details...</p>
+        <p>You will be redirected automatically in ${redirectDelay / 1000} seconds.</p>
+        
+        ${isCrawler ? `
+        <div class="debug-info">
+            <strong>Debug Info:</strong><br>
+            Title: ${metaData.title}<br>
+            Description: ${metaData.description.substring(0, 100)}...<br>
+            Image: ${metaData.image}<br>
+            Crawler detected: ${isCrawler}
+        </div>
+        ` : ''}
+        
         <p>If you're not redirected automatically, <a href="https://your-domain.com/listing/${listingId}">click here</a>.</p>
     </div>
     
     <script>
+        // Log for debugging
+        console.log('Meta tags page loaded for listing: ${listingId}');
+        console.log('User agent:', navigator.userAgent);
+        console.log('Is crawler:', ${isCrawler});
+        
         // Fallback redirect in case meta refresh doesn't work
         setTimeout(function() {
-            window.location.href = 'https://your-domain.com/listing/${listingId}';
-        }, 1000);
+            if (window.location.href.includes('meta-tags')) {
+                window.location.href = 'https://your-domain.com/listing/${listingId}';
+            }
+        }, ${redirectDelay});
     </script>
 </body>
 </html>`;
@@ -180,7 +270,11 @@ function generateMetaTagsResponse(metaData: any, listingId: string) {
     headers: {
       ...corsHeaders,
       'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
+      'Cache-Control': 'public, max-age=300, s-maxage=300',
+      'X-Robots-Tag': 'index, follow',
+      // Additional headers for better crawler support
+      'Vary': 'User-Agent',
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 }
