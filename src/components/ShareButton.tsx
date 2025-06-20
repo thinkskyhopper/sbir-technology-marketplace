@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -28,6 +27,7 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
       toast({
         title: "Link copied!",
         description: "The listing link has been copied to your clipboard.",
+        duration: 5000,
       });
       
       // Reset copied state after 2 seconds
@@ -37,6 +37,7 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
         title: "Failed to copy",
         description: "Please manually copy the link below.",
         variant: "destructive",
+        duration: 5000,
       });
     }
   };
