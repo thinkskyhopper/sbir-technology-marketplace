@@ -164,14 +164,29 @@ serve(async (req) => {
         .replace(/'/g, '&#39;');
     };
 
+    // Create shorter, more Twitter-friendly description
+    const createDescription = (listing: any) => {
+      const baseDescription = `${listing.phase} ${listing.category} project from ${listing.agency}. Value: ${formattedValue}.`;
+      const remainingLength = 160 - baseDescription.length - 3; // Leave space for "..."
+      
+      if (remainingLength > 0 && listing.description) {
+        const truncatedDesc = listing.description.substring(0, remainingLength);
+        return escapeHtml(`${baseDescription} ${truncatedDesc}...`);
+      }
+      
+      return escapeHtml(baseDescription);
+    };
+
     // Create meta tag data with proper encoding and domain
     const metaData = {
       title: escapeHtml(`${listing.title} - SBIR Tech Marketplace`),
-      description: escapeHtml(`${listing.phase} ${listing.category} project from ${listing.agency}. Value: ${formattedValue}. ${listing.description.substring(0, 150)}...`),
+      description: createDescription(listing),
       image: getListingImage(listing.category),
       url: listingUrl,
       type: 'article'
     };
+
+    console.log('Generated meta data:', metaData);
 
     return generateMetaTagsResponse(metaData, listingId, true, appDomain);
 
@@ -203,6 +218,7 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="${metaData.title}">
     <meta property="og:url" content="${metaData.url}">
     <meta property="og:type" content="${metaData.type}">
     <meta property="og:site_name" content="SBIR Tech Marketplace">
@@ -218,12 +234,17 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
     <meta name="twitter:image:src" content="${metaData.image}">
     <meta name="twitter:image:width" content="1200">
     <meta name="twitter:image:height" content="630">
-    
-    <!-- LinkedIn specific tags -->
-    <meta property="og:image:alt" content="${metaData.title}">
+    <meta name="twitter:image:alt" content="${metaData.title}">
     
     <!-- Microsoft Teams specific tags -->
     <meta name="msapplication-TileImage" content="${metaData.image}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Additional meta tags for better compatibility -->
+    <meta property="article:author" content="SBIR Tech Marketplace">
+    <meta property="article:publisher" content="SBIR Tech Marketplace">
+    <meta name="application-name" content="SBIR Tech Marketplace">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="${metaData.url}">
@@ -235,7 +256,12 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
       "@type": "Article",
       "headline": "${metaData.title.replace(/"/g, '\\"')}",
       "description": "${metaData.description.replace(/"/g, '\\"')}",
-      "image": "${metaData.image}",
+      "image": {
+        "@type": "ImageObject",
+        "url": "${metaData.image}",
+        "width": 1200,
+        "height": 630
+      },
       "url": "${metaData.url}",
       "author": {
         "@type": "Organization",
