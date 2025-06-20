@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, Image } from "lucide-react";
+import { Upload, Image, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -59,7 +59,29 @@ const getCategoryImageUrl = (category: string) => {
 
 const CategoryImageManager = () => {
   const [uploadingCategory, setUploadingCategory] = useState<string | null>(null);
+  const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(new Set());
+  const [imageLoadSuccess, setImageLoadSuccess] = useState<Set<string>>(new Set());
   const { toast } = useToast();
+
+  const handleImageLoad = (category: string) => {
+    console.log(`✅ Image loaded successfully for ${category}`);
+    setImageLoadSuccess(prev => new Set([...prev, category]));
+    setImageLoadErrors(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(category);
+      return newSet;
+    });
+  };
+
+  const handleImageError = (category: string, imageUrl: string) => {
+    console.error(`❌ Image failed to load for ${category}:`, imageUrl);
+    setImageLoadErrors(prev => new Set([...prev, category]));
+    setImageLoadSuccess(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(category);
+      return newSet;
+    });
+  };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, category: string) => {
     const file = event.target.files?.[0];
@@ -128,18 +150,38 @@ const CategoryImageManager = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {CATEGORIES.map((category) => {
             const imageUrl = getCategoryImageUrl(category);
-            console.log('Selected image URL:', imageUrl);
+            const hasError = imageLoadErrors.has(category);
+            const hasLoaded = imageLoadSuccess.has(category);
+            
+            console.log(`Rendering ${category}:`, { imageUrl, hasError, hasLoaded });
             
             return (
               <div key={category} className="space-y-3">
-                <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted">
-                  <img
-                    src={imageUrl}
-                    alt={`${category} category`}
-                    className="w-full h-full object-cover"
-                    onLoad={() => console.log('Image loaded successfully:', imageUrl)}
-                    onError={(e) => console.error('Image failed to load:', imageUrl, e)}
-                  />
+                <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted relative">
+                  {hasError ? (
+                    <div className="w-full h-full flex items-center justify-center bg-red-50">
+                      <div className="text-center">
+                        <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                        <p className="text-sm text-red-600">Failed to load image</p>
+                        <p className="text-xs text-red-500 mt-1 px-2">{imageUrl}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <img
+                        src={imageUrl}
+                        alt={`${category} category`}
+                        className="w-full h-full object-cover"
+                        onLoad={() => handleImageLoad(category)}
+                        onError={() => handleImageError(category, imageUrl)}
+                      />
+                      {!hasLoaded && (
+                        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+                          <Image className="w-8 h-8 text-gray-400" />
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
@@ -174,6 +216,12 @@ const CategoryImageManager = () => {
                   <p className="text-xs text-muted-foreground">
                     Suggested: {SUGGESTED_RESOLUTION}
                   </p>
+                  
+                  {/* Debug info */}
+                  <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                    <div>Status: {hasError ? '❌ Error' : hasLoaded ? '✅ Loaded' : '⏳ Loading'}</div>
+                    <div className="break-all">URL: {imageUrl}</div>
+                  </div>
                 </div>
               </div>
             );
