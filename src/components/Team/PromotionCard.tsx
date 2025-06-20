@@ -24,10 +24,10 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
 
   const TitleComponent = () => {
     const titleContent = (
-      <h4 className={`text-lg font-semibold mb-4 text-center ${
+      <h4 className={`text-lg font-semibold mb-4 text-center transition-all duration-200 ${
         hasLink 
-          ? 'text-primary underline hover:text-primary/80 transition-colors' 
-          : 'text-slate-50'
+          ? 'text-primary underline hover:no-underline group-hover:scale-105' 
+          : 'text-slate-50 group-hover:scale-105'
       }`}>
         {promotion.title}
       </h4>
@@ -55,7 +55,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
         <img 
           src={promotion.photo_url}
           alt={promotion.title || 'Promotion'}
-          className="w-full h-full object-contain rounded"
+          className="w-full h-full object-contain rounded transition-all duration-200 group-hover:scale-105"
         />
       </AspectRatio>
     );
@@ -77,7 +77,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
   };
 
   return (
-    <Card className="bg-background/50 border">
+    <Card className="bg-background/50 border group hover:shadow-lg transition-all duration-200 cursor-pointer">
       <CardContent className="p-6">
         {/* Promotion Title at top */}
         {promotion.title && <TitleComponent />}
@@ -91,7 +91,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
         
         {/* Promotion Description at bottom */}
         {promotion.description && (
-          <p className="text-sm text-slate-50 leading-relaxed text-center whitespace-pre-wrap">
+          <p className="text-sm text-slate-50 leading-relaxed text-center whitespace-pre-wrap transition-all duration-200 group-hover:scale-105">
             {promotion.description}
           </p>
         )}
