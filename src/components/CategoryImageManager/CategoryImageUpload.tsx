@@ -98,31 +98,29 @@ const CategoryImageUpload = ({
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <Label htmlFor={`upload-${category}`} className="cursor-pointer">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={isUploading}
-          className="w-full"
-          asChild
-        >
-          <span>
-            <Upload className="w-4 h-4 mr-2" />
-            {isUploading ? "Uploading..." : "Upload"}
-          </span>
-        </Button>
-        <Input
-          id={`upload-${category}`}
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          disabled={isUploading}
-          className="sr-only"
-        />
-      </Label>
-    </div>
+    <Label htmlFor={`upload-${category}`} className="cursor-pointer flex-1">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={isUploading}
+        className="w-full"
+        asChild
+      >
+        <span>
+          <Upload className="w-4 h-4 mr-2" />
+          {isUploading ? "Uploading..." : "Upload"}
+        </span>
+      </Button>
+      <Input
+        id={`upload-${category}`}
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        disabled={isUploading}
+        className="sr-only"
+      />
+    </Label>
   );
 };
 

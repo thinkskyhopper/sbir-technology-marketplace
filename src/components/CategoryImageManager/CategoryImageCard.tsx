@@ -2,8 +2,13 @@
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
 import { getCategoryImageUrl, getCategoryImageUrlSync, SUGGESTED_RESOLUTION, clearCategoryCache } from "@/utils/categoryImageUtils";
 import CategoryImageUpload from "./CategoryImageUpload";
+import ConfirmActionDialog from "../ConfirmActionDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface CategoryImageCardProps {
   category: string;
@@ -25,7 +30,10 @@ const CategoryImageCard = ({
   const [imageKey, setImageKey] = useState(0);
   const [isLoading, setIsLoading] = useState(initialState.isUploaded === null); // Loading if we don't know the status
   const [imageLoadError, setImageLoadError] = useState(false);
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
   const isUploading = uploadingCategory === category;
+  const { toast } = useToast();
 
   useEffect(() => {
     // Only load asynchronously if we don't have cached info or if we're unsure
@@ -81,6 +89,47 @@ const CategoryImageCard = ({
     }
   };
 
+  const handleRestoreDefault = async () => {
+    setIsRestoring(true);
+    
+    try {
+      // Delete the uploaded file from storage
+      const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
+      const possibleExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      
+      for (const ext of possibleExtensions) {
+        const fileName = `category-${categorySlug}.${ext}`;
+        await supabase.storage
+          .from('category-images')
+          .remove([fileName]);
+      }
+      
+      // Clear cache and refresh with default image
+      clearCategoryCache(category);
+      const newUrl = await getCategoryImageUrl(category);
+      
+      setImageUrl(newUrl);
+      setIsUploaded(false);
+      setImageKey(prev => prev + 1);
+      
+      toast({
+        title: "Image restored",
+        description: `The ${category} category image has been restored to default.`,
+      });
+      
+    } catch (error) {
+      console.error('Error restoring default image:', error);
+      toast({
+        title: "Restore failed",
+        description: "Failed to restore default image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRestoring(false);
+      setShowRestoreDialog(false);
+    }
+  };
+
   const handleImageLoad = () => {
     console.log('Image loaded successfully:', category, imageUrl);
     setIsLoading(false);
@@ -97,10 +146,10 @@ const CategoryImageCard = ({
     <div className="space-y-3">
       <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted relative">
         {/* Loading overlay */}
-        {(isLoading || isUploading) && (
+        {(isLoading || isUploading || isRestoring) && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
             <div className="text-white text-sm">
-              {isUploading ? 'Uploading...' : 'Loading...'}
+              {isUploading ? 'Uploading...' : isRestoring ? 'Restoring...' : 'Loading...'}
             </div>
           </div>
         )}
@@ -144,17 +193,45 @@ const CategoryImageCard = ({
       <div className="space-y-2">
         <Label className="text-sm font-medium">{category}</Label>
         
-        <CategoryImageUpload
-          category={category}
-          isUploading={isUploading}
-          onUploadStart={onUploadStart}
-          onUploadEnd={handleUploadComplete}
-        />
+        <div className="flex items-center space-x-2">
+          <div className="flex-1">
+            <CategoryImageUpload
+              category={category}
+              isUploading={isUploading}
+              onUploadStart={onUploadStart}
+              onUploadEnd={handleUploadComplete}
+            />
+          </div>
+          
+          {/* Restore button - only show when image is uploaded */}
+          {isUploaded === true && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowRestoreDialog(true)}
+              disabled={isUploading || isRestoring}
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
         
         <p className="text-xs text-muted-foreground">
           Suggested: {SUGGESTED_RESOLUTION}
         </p>
       </div>
+      
+      {/* Restore confirmation dialog */}
+      <ConfirmActionDialog
+        open={showRestoreDialog}
+        onOpenChange={setShowRestoreDialog}
+        onConfirm={handleRestoreDefault}
+        title="Restore Default Image"
+        description={`Are you sure you want to restore the default image for ${category}? This will permanently delete the uploaded image.`}
+        confirmText="Restore Default"
+        variant="destructive"
+      />
     </div>
   );
 };
