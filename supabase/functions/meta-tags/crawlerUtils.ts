@@ -8,6 +8,7 @@ export const isCrawler = (userAgent: string): boolean => {
          ua.includes('whatsapp') ||
          ua.includes('microsoftpreview') ||
          ua.includes('teams') ||
+         ua.includes('msteams') ||
          ua.includes('skypeuripreview') ||
          ua.includes('discordbot') ||
          ua.includes('telegrambot') ||
@@ -18,5 +19,7 @@ export const isCrawler = (userAgent: string): boolean => {
          ua.includes('spider') ||
          ua.includes('preview') ||
          ua.includes('linkexpander') ||
-         ua.includes('urlpreview');
+         ua.includes('urlpreview') ||
+         ua.includes('outlook') ||
+         ua.includes('office');
 };

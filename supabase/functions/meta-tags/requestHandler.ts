@@ -94,5 +94,6 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
 
   console.log('Generated meta data:', metaData);
 
-  return generateMetaTagsResponse(metaData, listingId, true, appDomain, corsHeaders);
+  // Pass the full listing data to generate better descriptions for different platforms
+  return generateMetaTagsResponse(metaData, listingId, true, appDomain, corsHeaders, listing);
 };

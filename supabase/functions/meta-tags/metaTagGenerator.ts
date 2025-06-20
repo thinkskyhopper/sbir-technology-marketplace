@@ -1,13 +1,18 @@
 
 import type { MetaData } from './types.ts';
+import { createLongDescription } from './descriptionUtils.ts';
 
 export const generateMetaTagsResponse = (
   metaData: MetaData, 
   listingId: string, 
   isCrawler: boolean, 
   appDomain: string,
-  corsHeaders: Record<string, string>
+  corsHeaders: Record<string, string>,
+  listing?: any
 ): Response => {
+  // Create a longer description for certain platforms
+  const longDescription = listing ? createLongDescription(listing) : metaData.description;
+  
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +27,7 @@ export const generateMetaTagsResponse = (
     
     <!-- Open Graph Meta Tags for LinkedIn, Facebook, etc. -->
     <meta property="og:title" content="${metaData.title}">
-    <meta property="og:description" content="${metaData.description}">
+    <meta property="og:description" content="${longDescription}">
     <meta property="og:image" content="${metaData.image}">
     <meta property="og:image:url" content="${metaData.image}">
     <meta property="og:image:secure_url" content="${metaData.image}">
@@ -47,10 +52,24 @@ export const generateMetaTagsResponse = (
     <meta name="twitter:image:height" content="630">
     <meta name="twitter:image:alt" content="${metaData.title}">
     
-    <!-- Microsoft Teams specific tags -->
+    <!-- Microsoft Teams and Skype specific tags -->
+    <meta property="msteams:card" content="summary_large_image">
+    <meta property="msteams:title" content="${metaData.title}">
+    <meta property="msteams:description" content="${longDescription}">
+    <meta property="msteams:image" content="${metaData.image}">
     <meta name="msapplication-TileImage" content="${metaData.image}">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
+    
+    <!-- LinkedIn specific tags -->
+    <meta property="linkedin:title" content="${metaData.title}">
+    <meta property="linkedin:description" content="${longDescription}">
+    <meta property="linkedin:image" content="${metaData.image}">
+    
+    <!-- WhatsApp and general sharing -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
     
     <!-- Additional meta tags for better compatibility -->
     <meta property="article:author" content="SBIR Tech Marketplace">
@@ -66,7 +85,7 @@ export const generateMetaTagsResponse = (
       "@context": "https://schema.org",
       "@type": "Article",
       "headline": "${metaData.title.replace(/"/g, '\\"')}",
-      "description": "${metaData.description.replace(/"/g, '\\"')}",
+      "description": "${longDescription.replace(/"/g, '\\"')}",
       "image": {
         "@type": "ImageObject",
         "url": "${metaData.image}",
