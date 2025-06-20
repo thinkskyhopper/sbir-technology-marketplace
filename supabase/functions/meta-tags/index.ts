@@ -45,25 +45,26 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get the actual domain from the request
+    // Get the actual domain from the request - fix domain detection
     const protocol = req.headers.get('x-forwarded-proto') || 'https';
     const host = req.headers.get('host');
-    const actualDomain = `${protocol}://${host}`;
+    let appDomain = 'https://amhznlnhrrugxatbeayo.supabase.co'; // Default to the actual Supabase app domain
     
-    // Determine the correct app domain - use the referrer if available
+    // Try to get the real app domain from referrer or use the Supabase app domain
     const referrer = req.headers.get('referer');
-    let appDomain = 'https://amhznlnhrrugxatbeayo.supabase.co'; // Default fallback
-    
     if (referrer) {
       try {
         const referrerUrl = new URL(referrer);
-        appDomain = `${referrerUrl.protocol}//${referrerUrl.host}`;
+        // Only use referrer if it's the main app domain, not the edge function domain
+        if (!referrerUrl.host.includes('functions')) {
+          appDomain = `${referrerUrl.protocol}//${referrerUrl.host}`;
+        }
       } catch (e) {
         console.log('Could not parse referrer:', referrer);
       }
     }
 
-    console.log('Domain info:', { actualDomain, appDomain, referrer });
+    console.log('Domain info:', { protocol, host, appDomain, referrer });
 
     // Fetch the listing data
     const { data: listing, error } = await supabase
@@ -119,22 +120,35 @@ serve(async (req) => {
       }
     };
 
-    // Helper function to escape HTML and handle encoding
-    const escapeHtml = (text: string) => {
+    // Helper function to properly clean and escape text
+    const cleanText = (text: string) => {
       return text
+        // First normalize Unicode characters
+        .normalize('NFKD')
+        // Replace problematic characters with proper ones
+        .replace(/[\u2013\u2014]/g, '-') // em dash and en dash
+        .replace(/[\u2018\u2019]/g, "'") // smart quotes
+        .replace(/[\u201C\u201D]/g, '"') // smart double quotes
+        .replace(/[\u2026]/g, '...') // ellipsis
+        // Remove any remaining non-ASCII characters that might cause issues
+        .replace(/[^\x00-\x7F]/g, ' ')
+        // Clean up multiple spaces
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    // Helper function to escape HTML
+    const escapeHtml = (text: string) => {
+      const cleaned = cleanText(text);
+      return cleaned
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        // Fix common encoding issues
-        .replace(/â€"/g, '–')
-        .replace(/â€™/g, "'")
-        .replace(/â€œ/g, '"')
-        .replace(/â€/g, '"');
+        .replace(/'/g, '&#39;');
     };
 
-    // Create meta tag data with proper encoding
+    // Create meta tag data with proper encoding and domain
     const metaData = {
       title: escapeHtml(`${listing.title} - SBIR Tech Marketplace`),
       description: escapeHtml(`${listing.phase} ${listing.category} project from ${listing.agency}. Value: ${formattedValue}. ${listing.description.substring(0, 150)}...`),
@@ -197,6 +211,9 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
     
     <!-- Microsoft Teams specific tags -->
     <meta name="msapplication-TileImage" content="${metaData.image}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="${metaData.url}">
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -278,7 +295,8 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
             Title: ${metaData.title}<br>
             Description: ${metaData.description.substring(0, 100)}...<br>
             Image: ${metaData.image}<br>
-            Crawler detected: ${isCrawler}
+            Crawler detected: ${isCrawler}<br>
+            App Domain: ${appDomain}
         </div>
         ` : ''}
         
@@ -290,6 +308,7 @@ function generateMetaTagsResponse(metaData: any, listingId: string, isCrawler: b
         console.log('Meta tags page loaded for listing: ${listingId}');
         console.log('User agent:', navigator.userAgent);
         console.log('Is crawler:', ${isCrawler});
+        console.log('App domain:', '${appDomain}');
         
         // Fallback redirect in case meta refresh doesn't work
         setTimeout(function() {
