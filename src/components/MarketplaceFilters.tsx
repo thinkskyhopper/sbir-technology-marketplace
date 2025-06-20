@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,7 @@ const MarketplaceFilters = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border p-6 space-y-4">
+    <div className="bg-card rounded-lg border p-6 space-y-4">
       <div className="flex flex-col md:flex-row gap-4">
         {/* Search Input */}
         <div className="flex-1">
