@@ -1,6 +1,6 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { isCrawler } from './crawlerUtils.ts';
+import { isCrawler, getPlatformType } from './crawlerUtils.ts';
 import { getListingImage } from './imageUtils.ts';
 import { escapeHtml } from './textUtils.ts';
 import { createDescription } from './descriptionUtils.ts';
@@ -19,14 +19,17 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
   // Get user agent and check if it's a crawler
   const userAgent = req.headers.get('user-agent') || '';
   const isUserAgentCrawler = isCrawler(userAgent);
+  const platformType = getPlatformType(userAgent);
 
   console.log('=== META TAGS REQUEST ===');
   console.log('Timestamp:', new Date().toISOString());
   console.log('User Agent:', userAgent);
   console.log('Is Crawler:', isUserAgentCrawler);
+  console.log('Platform Type:', platformType);
   console.log('Listing ID:', listingId);
   console.log('Domain Param:', domainParam);
   console.log('Request URL:', req.url);
+  console.log('Request Headers:', Object.fromEntries(req.headers.entries()));
 
   // Determine the correct app domain
   let appDomain = 'https://82c5feb4-6704-4122-bfd9-18a4a7de2d6b.lovableproject.com'; // Default fallback
@@ -61,6 +64,7 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
   // For crawlers, fetch the listing data and serve meta tags
   console.log('=== SERVING META TAGS FOR CRAWLER ===');
   console.log('Crawler type detected:', userAgent);
+  console.log('Platform optimizing for:', platformType);
 
   // Initialize Supabase client
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
