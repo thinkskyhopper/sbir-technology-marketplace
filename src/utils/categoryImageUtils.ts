@@ -50,28 +50,37 @@ const getCategoryImageUrl = async (category: string): Promise<string> => {
     for (const ext of possibleExtensions) {
       const fileName = `category-${categorySlug}.${ext}`;
       
-      // Check if the file exists in storage with a fresh request
+      // Force a fresh request by bypassing any caching at the Supabase level
       const { data: fileList, error: listError } = await supabase.storage
         .from('category-images')
         .list('', { 
           search: fileName,
-          limit: 1
+          limit: 1,
+          offset: 0
         });
       
+      console.log(`Checking for file: ${fileName}`, { fileList, listError });
+      
       if (!listError && fileList && fileList.length > 0) {
-        // File exists, get the public URL with maximum cache busting
+        // File exists, now get a completely fresh public URL
         const { data } = await supabase.storage
           .from('category-images')
-          .getPublicUrl(fileName);
+          .getPublicUrl(fileName, {
+            download: false
+          });
         
         if (data?.publicUrl) {
-          // Add aggressive cache-busting parameters
+          // Create the most aggressive cache-busting possible
           const timestamp = Date.now();
-          const random = Math.random().toString(36).substring(2, 15);
-          const sessionId = Math.random().toString(36).substring(2, 10);
-          const cacheBuster = `?t=${timestamp}&r=${random}&s=${sessionId}&v=2`;
-          console.log('Found uploaded image for category:', category, data.publicUrl + cacheBuster);
-          return data.publicUrl + cacheBuster;
+          const random1 = Math.random().toString(36).substring(2, 15);
+          const random2 = Math.random().toString(36).substring(2, 15);
+          const random3 = Math.random().toString(36).substring(2, 15);
+          const sessionId = performance.now().toString(36).substring(2, 10);
+          const cacheBuster = `?nocache=${timestamp}&r1=${random1}&r2=${random2}&r3=${random3}&s=${sessionId}&v=4&force=true`;
+          
+          const finalUrl = data.publicUrl + cacheBuster;
+          console.log('Found uploaded image for category:', category, finalUrl);
+          return finalUrl;
         }
       }
     }
