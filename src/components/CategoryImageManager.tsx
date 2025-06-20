@@ -29,7 +29,8 @@ const getCategoryImageUrl = (category: string) => {
   // Check Advanced Materials first to avoid conflicts with other material-related terms
   if (categoryLower.includes('advanced materials') || (categoryLower.includes('advanced') && categoryLower.includes('materials'))) {
     console.log('Matched Advanced Materials category');
-    return "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    // Use a different working image for Advanced Materials
+    return "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('cyber') || categoryLower.includes('security')) {
     console.log('Matched Cybersecurity category');
     return "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
