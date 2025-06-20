@@ -1,6 +1,7 @@
 
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { getCategoryImageUrl, SUGGESTED_RESOLUTION } from "@/utils/categoryImageUtils";
+import { getCategoryImageUrl, getCategoryImageUrlSync, SUGGESTED_RESOLUTION } from "@/utils/categoryImageUtils";
 import CategoryImageUpload from "./CategoryImageUpload";
 
 interface CategoryImageCardProps {
@@ -16,8 +17,26 @@ const CategoryImageCard = ({
   onUploadStart, 
   onUploadEnd 
 }: CategoryImageCardProps) => {
-  const imageUrl = getCategoryImageUrl(category);
+  const [imageUrl, setImageUrl] = useState(() => getCategoryImageUrlSync(category));
   const isUploading = uploadingCategory === category;
+
+  useEffect(() => {
+    // Load the actual image (uploaded or default) asynchronously
+    const loadCategoryImage = async () => {
+      const url = await getCategoryImageUrl(category);
+      setImageUrl(url);
+    };
+    
+    loadCategoryImage();
+  }, [category]);
+
+  // Refresh image after upload
+  const handleUploadComplete = async () => {
+    onUploadEnd();
+    // Refresh the image URL to show the newly uploaded image
+    const url = await getCategoryImageUrl(category);
+    setImageUrl(url);
+  };
 
   return (
     <div className="space-y-3">
@@ -36,7 +55,7 @@ const CategoryImageCard = ({
           category={category}
           isUploading={isUploading}
           onUploadStart={onUploadStart}
-          onUploadEnd={onUploadEnd}
+          onUploadEnd={handleUploadComplete}
         />
         
         <p className="text-xs text-muted-foreground">

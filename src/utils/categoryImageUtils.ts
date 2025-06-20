@@ -1,4 +1,6 @@
 
+import { supabase } from "@/integrations/supabase/client";
+
 const CATEGORIES = [
   "Advanced Materials",
   "Autonomous Systems", 
@@ -11,13 +13,12 @@ const CATEGORIES = [
 
 const SUGGESTED_RESOLUTION = "2000x800px (5:2 aspect ratio)";
 
-// Use the same image selection logic as the listings
-const getCategoryImageUrl = (category: string) => {
+// Default fallback images for each category
+const getDefaultCategoryImage = (category: string) => {
   const categoryLower = category.toLowerCase();
   
   // Check Advanced Materials first to avoid conflicts with other material-related terms
   if (categoryLower.includes('advanced materials') || (categoryLower.includes('advanced') && categoryLower.includes('materials'))) {
-    // Use a different working image for Advanced Materials
     return "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('cyber') || categoryLower.includes('security')) {
     return "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
@@ -38,4 +39,44 @@ const getCategoryImageUrl = (category: string) => {
   }
 };
 
-export { CATEGORIES, SUGGESTED_RESOLUTION, getCategoryImageUrl };
+// Get category image URL - checks for uploaded image first, then falls back to default
+const getCategoryImageUrl = async (category: string): Promise<string> => {
+  try {
+    // Create filename for the category
+    const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
+    const possibleExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    
+    // Try to find an uploaded image with any of the common extensions
+    for (const ext of possibleExtensions) {
+      const fileName = `category-${categorySlug}.${ext}`;
+      const { data } = await supabase.storage
+        .from('category-images')
+        .getPublicUrl(fileName);
+      
+      if (data?.publicUrl) {
+        // Check if the file actually exists by making a head request
+        try {
+          const response = await fetch(data.publicUrl, { method: 'HEAD' });
+          if (response.ok) {
+            return data.publicUrl;
+          }
+        } catch {
+          // Continue to next extension if this one fails
+          continue;
+        }
+      }
+    }
+  } catch (error) {
+    console.log('No uploaded image found for category:', category);
+  }
+  
+  // Fall back to default image if no uploaded image is found
+  return getDefaultCategoryImage(category);
+};
+
+// Synchronous version for immediate use (returns default, but triggers async load)
+const getCategoryImageUrlSync = (category: string) => {
+  return getDefaultCategoryImage(category);
+};
+
+export { CATEGORIES, SUGGESTED_RESOLUTION, getCategoryImageUrl, getCategoryImageUrlSync };
