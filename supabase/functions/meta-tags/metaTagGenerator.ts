@@ -65,6 +65,10 @@ export const generateMetaTagsResponse = (
     
     <!-- LinkedIn specific tags -->
     <meta property="linkedin:owner" content="SBIR Tech Marketplace">
+    <meta name="linkedin:card" content="summary_large_image">
+    <meta name="linkedin:title" content="${metaData.title}">
+    <meta name="linkedin:description" content="${longDescription}">
+    <meta name="linkedin:image" content="${metaData.image}">
     
     <!-- Microsoft Teams / Office specific -->
     <meta name="msapplication-TileImage" content="${metaData.image}">
@@ -74,12 +78,28 @@ export const generateMetaTagsResponse = (
     <meta name="ms.teams.image" content="${metaData.image}">
     <meta name="ms.teams.title" content="${metaData.title}">
     <meta name="ms.teams.description" content="${longDescription}">
+    <meta name="msteams:title" content="${metaData.title}">
+    <meta name="msteams:description" content="${longDescription}">
+    <meta name="msteams:image" content="${metaData.image}">
+    
+    <!-- Additional Office/Outlook specific -->
+    <meta name="office:title" content="${metaData.title}">
+    <meta name="office:description" content="${longDescription}">
+    <meta name="office:image" content="${metaData.image}">
+    <meta name="outlook:title" content="${metaData.title}">
+    <meta name="outlook:description" content="${longDescription}">
+    <meta name="outlook:image" content="${metaData.image}">
     
     <!-- Additional compatibility meta tags -->
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SBIR Tech Marketplace">
+    
+    <!-- Additional Open Graph tags for better LinkedIn support -->
+    <meta property="og:determiner" content="the">
+    <meta property="og:rich_attachment" content="true">
+    <meta property="og:see_also" content="${appDomain}">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="${metaData.url}">
@@ -131,21 +151,25 @@ export const generateMetaTagsResponse = (
 </head>
 <body>
     <!-- Enhanced content for crawlers and humans -->
-    <main style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background-color: #f8fafc;">
-        <article style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-            <header style="margin-bottom: 30px;">
-                <h1 style="color: #1a202c; margin: 0 0 16px 0; font-size: 32px; font-weight: 700; line-height: 1.2;">${metaData.title}</h1>
-                <p style="color: #4a5568; font-size: 18px; line-height: 1.6; margin: 0;">${longDescription}</p>
+    <main role="main" itemscope itemtype="https://schema.org/TechArticle">
+        <article>
+            <header>
+                <h1 itemprop="headline">${metaData.title}</h1>
+                <p itemprop="description">${longDescription}</p>
+                <meta itemprop="datePublished" content="${new Date().toISOString()}">
+                <meta itemprop="dateModified" content="${new Date().toISOString()}">
+                <div itemprop="author" itemscope itemtype="https://schema.org/Organization">
+                    <meta itemprop="name" content="SBIR Tech Marketplace">
+                    <meta itemprop="url" content="${appDomain}">
+                </div>
             </header>
             
-            <div style="margin-bottom: 30px;">
-                <img src="${metaData.image}" alt="${metaData.title}" style="width: 100%; max-width: 800px; height: auto; border-radius: 10px; display: block; margin: 0 auto;">
+            <div>
+                <img itemprop="image" src="${metaData.image}" alt="${metaData.title}" width="1200" height="630">
             </div>
             
-            <footer style="text-align: center; padding-top: 30px; border-top: 1px solid #e2e8f0;">
-                <a href="${metaData.url}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;">
-                    View Full Listing →
-                </a>
+            <footer>
+                <a href="${metaData.url}" rel="canonical">View Full Listing →</a>
             </footer>
         </article>
     </main>
@@ -175,7 +199,7 @@ export const generateMetaTagsResponse = (
             console.log('Human user detected, redirecting after delay to:', '${metaData.url}');
             setTimeout(() => {
                 window.location.href = '${metaData.url}';
-            }, 500); // Increased delay for better crawler support
+            }, 1000); // Increased delay for better crawler support
         } else {
             console.log('Crawler detected, serving static preview page');
             // For crawlers, ensure the page is fully rendered
@@ -191,14 +215,11 @@ export const generateMetaTagsResponse = (
     headers: {
       ...corsHeaders,
       'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
-      'Pragma': 'no-cache',
-      'Expires': '0',
+      'Cache-Control': 'public, max-age=300, s-maxage=300',
       'X-Robots-Tag': 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
       'Vary': 'User-Agent, Accept-Encoding',
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'SAMEORIGIN',
-      'X-UA-Compatible': 'IE=edge',
       'Last-Modified': new Date().toUTCString(),
       'ETag': `"${listingId}-${Date.now()}"`,
       'Accept-Ranges': 'bytes',
