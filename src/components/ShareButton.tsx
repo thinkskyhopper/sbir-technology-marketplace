@@ -79,7 +79,7 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
                     <ExternalLink className="w-4 h-4 mr-2 text-muted-foreground" />
                     <div>
                       <div className="text-sm font-medium">Social Media Link</div>
-                      <div className="text-xs text-muted-foreground">Shows preview with listing details</div>
+                      <div className="text-xs text-muted-foreground">Shows preview with listing details on LinkedIn, Facebook, Twitter, etc.</div>
                     </div>
                   </div>
                 </label>
