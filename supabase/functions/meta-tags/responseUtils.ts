@@ -3,7 +3,9 @@ export const createResponseHeaders = (corsHeaders: Record<string, string>, listi
   return {
     ...corsHeaders,
     'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'public, max-age=300, s-maxage=300',
+    'Cache-Control': 'no-cache, no-store, must-revalidate', // Disable caching to ensure fresh content
+    'Pragma': 'no-cache',
+    'Expires': '0',
     'X-Robots-Tag': 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
     'Vary': 'User-Agent, Accept-Encoding',
     'X-Content-Type-Options': 'nosniff',
@@ -11,5 +13,6 @@ export const createResponseHeaders = (corsHeaders: Record<string, string>, listi
     'Last-Modified': new Date().toUTCString(),
     'ETag': `"${listingId}-${Date.now()}"`,
     'Accept-Ranges': 'bytes',
+    'X-UA-Compatible': 'IE=edge',
   };
 };

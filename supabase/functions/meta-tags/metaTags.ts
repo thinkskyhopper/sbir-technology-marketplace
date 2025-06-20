@@ -53,12 +53,17 @@ export const generateMetaTags = (metaData: MetaData, shortDescription: string, l
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
     <meta name="application-name" content="SBIR Tech Marketplace">
+    
+    <!-- Enhanced Teams/Skype meta tags -->
     <meta name="ms.teams.image" content="${metaData.image}">
     <meta name="ms.teams.title" content="${metaData.title}">
     <meta name="ms.teams.description" content="${longDescription}">
     <meta name="msteams:title" content="${metaData.title}">
     <meta name="msteams:description" content="${longDescription}">
     <meta name="msteams:image" content="${metaData.image}">
+    <meta name="skype:title" content="${metaData.title}">
+    <meta name="skype:description" content="${longDescription}">
+    <meta name="skype:image" content="${metaData.image}">
     
     <!-- Additional Office/Outlook specific -->
     <meta name="office:title" content="${metaData.title}">
@@ -77,5 +82,12 @@ export const generateMetaTags = (metaData: MetaData, shortDescription: string, l
     <!-- Additional Open Graph tags for better LinkedIn support -->
     <meta property="og:determiner" content="the">
     <meta property="og:rich_attachment" content="true">
-    <meta property="og:see_also" content="${appDomain}">`;
+    <meta property="og:see_also" content="${appDomain}">
+    
+    <!-- Additional debugging tags -->
+    <meta property="og:updated_time" content="${new Date().toISOString()}">
+    <meta property="article:section" content="Technology">
+    <meta property="article:tag" content="SBIR">
+    <meta property="article:tag" content="Technology Transfer">
+    <meta property="article:tag" content="Government Contracts">`;
 };
