@@ -32,6 +32,15 @@ const MarketplaceFilters = ({
     // Since filters apply automatically, we don't need to do anything here
   };
 
+  // Sort categories alphabetically, but put "Other" at the end
+  const sortedCategories = [...categories].sort((a, b) => {
+    // If either category is "Other", handle special case
+    if (a.toLowerCase() === "other") return 1;
+    if (b.toLowerCase() === "other") return -1;
+    // Otherwise sort alphabetically
+    return a.localeCompare(b);
+  });
+
   return (
     <div className="bg-card rounded-lg border p-6 space-y-4">
       <div className="flex flex-col md:flex-row gap-4">
@@ -69,7 +78,7 @@ const MarketplaceFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
+            {sortedCategories.map((category) => (
               <SelectItem key={category} value={category}>
                 {category}
               </SelectItem>
