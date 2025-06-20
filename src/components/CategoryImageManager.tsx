@@ -26,15 +26,13 @@ const getCategoryImageUrl = (category: string) => {
   
   console.log('Category for image selection:', category, 'Lowercase:', categoryLower);
   
-  if (categoryLower.includes('cyber') || categoryLower.includes('security')) {
+  // Check Advanced Materials first to avoid conflicts with other material-related terms
+  if (categoryLower.includes('advanced materials') || (categoryLower.includes('advanced') && categoryLower.includes('materials'))) {
+    console.log('Matched Advanced Materials category');
+    return "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+  } else if (categoryLower.includes('cyber') || categoryLower.includes('security')) {
     console.log('Matched Cybersecurity category');
     return "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-  } else if (categoryLower.includes('software') || categoryLower.includes('ai') || categoryLower.includes('data')) {
-    console.log('Matched Software/AI category');
-    return "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-  } else if (categoryLower.includes('hardware') || categoryLower.includes('electronic')) {
-    console.log('Matched Hardware category');
-    return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('autonomous')) {
     console.log('Matched Autonomous Systems category');
     return "https://images.unsplash.com/photo-1487887235947-a955ef187fcc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
@@ -47,9 +45,12 @@ const getCategoryImageUrl = (category: string) => {
   } else if (categoryLower.includes('space')) {
     console.log('Matched Space category');
     return "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-  } else if (categoryLower.includes('advanced materials') || categoryLower.includes('materials')) {
-    console.log('Matched Advanced Materials category');
-    return "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+  } else if (categoryLower.includes('software') || categoryLower.includes('ai') || categoryLower.includes('data')) {
+    console.log('Matched Software/AI category');
+    return "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+  } else if (categoryLower.includes('hardware') || categoryLower.includes('electronic')) {
+    console.log('Matched Hardware category');
+    return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else {
     console.log('Using default image for category:', categoryLower);
     return "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
