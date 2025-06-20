@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -26,7 +25,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
     const titleContent = (
       <h4 className={`text-lg font-semibold mb-4 text-center transition-all duration-200 ${
         hasLink 
-          ? 'text-primary underline hover:no-underline group-hover:scale-105' 
+          ? 'text-gradient underline hover:no-underline group-hover:scale-105' 
           : 'text-slate-50 group-hover:scale-105'
       }`}>
         {promotion.title}
