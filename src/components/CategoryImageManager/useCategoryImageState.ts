@@ -8,17 +8,23 @@ export const useCategoryImageState = (category: string) => {
   const [imageUrl, setImageUrl] = useState(initialState.url);
   const [isUploaded, setIsUploaded] = useState(initialState.isUploaded);
   const [imageKey, setImageKey] = useState(0);
+  // Only show loading if we're uncertain about upload status
   const [isLoading, setIsLoading] = useState(initialState.isUploaded === null);
   const [imageLoadError, setImageLoadError] = useState(false);
 
   useEffect(() => {
-    // Only load asynchronously if we don't have cached info or if we're unsure
+    // Only load asynchronously if we don't have cached info
     if (isUploaded === null) {
       const loadCategoryImage = async () => {
         try {
-          setIsLoading(true);
           const url = await getCategoryImageUrl(category);
-          setImageUrl(url);
+          
+          // Only update if the URL actually changed to prevent unnecessary re-renders
+          if (url !== imageUrl) {
+            setImageUrl(url);
+            setImageKey(prev => prev + 1);
+          }
+          
           // The utility now handles caching, so we can get the updated status
           const updatedState = getCategoryImageUrlSync(category);
           setIsUploaded(updatedState.isUploaded);
@@ -31,8 +37,11 @@ export const useCategoryImageState = (category: string) => {
       };
       
       loadCategoryImage();
+    } else {
+      // We have cached info, so no need to load
+      setIsLoading(false);
     }
-  }, [category, isUploaded]);
+  }, [category, isUploaded, imageUrl]);
 
   const handleImageLoad = () => {
     console.log('Image loaded successfully:', category, imageUrl);

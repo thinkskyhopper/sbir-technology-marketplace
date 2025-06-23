@@ -52,21 +52,26 @@ export const getCachedEntry = (category: string): CacheEntry | undefined => {
 };
 
 export const setCacheEntry = (category: string, url: string, isUploaded: boolean) => {
-  imageCache.set(category, {
+  const entry = {
     url,
     isUploaded,
     timestamp: Date.now()
-  });
+  };
   
+  imageCache.set(category, entry);
   saveCacheToStorage();
+  
+  console.log(`Cached image info for ${category}:`, { url, isUploaded });
 };
 
 export const clearCategoryCache = (category: string) => {
   imageCache.delete(category);
   saveCacheToStorage();
+  console.log(`Cleared cache for category: ${category}`);
 };
 
 export const clearAllCache = () => {
   imageCache.clear();
   localStorage.removeItem(STORAGE_KEY);
+  console.log('Cleared all image cache');
 };
