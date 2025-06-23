@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -35,7 +34,7 @@ export const listingsService = {
       console.log('🔄 Falling back to basic listing fetch...');
       const fallbackQuery = supabase
         .from('sbir_listings')
-        .select('*') // Only select sbir_listings fields, no profiles join
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (!isAdmin) {
@@ -61,6 +60,42 @@ export const listingsService = {
       })) || [];
 
       console.log('✅ Listings fetched (fallback mode):', formattedListings.length);
+      return formattedListings as SBIRListing[];
+    }
+
+    // Check if data contains valid profile information
+    const hasValidProfiles = data && data.length > 0 && data[0].profiles && typeof data[0].profiles === 'object' && 'full_name' in data[0].profiles;
+    
+    if (!hasValidProfiles && data && data.length > 0) {
+      // If main query succeeded but profiles data is invalid, fetch without profiles
+      console.log('🔄 Profiles data invalid, fetching without profiles...');
+      const basicQuery = supabase
+        .from('sbir_listings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!isAdmin) {
+        if (userId) {
+          basicQuery.or(`status.eq.Active,user_id.eq.${userId}`);
+        } else {
+          basicQuery.eq('status', 'Active');
+        }
+      }
+
+      const { data: basicData, error: basicError } = await basicQuery;
+      
+      if (basicError) {
+        throw basicError;
+      }
+
+      const formattedListings = basicData?.map(listing => ({
+        ...listing,
+        value: listing.value / 100,
+        deadline: new Date(listing.deadline).toISOString().split('T')[0],
+        profiles: null
+      })) || [];
+
+      console.log('✅ Listings fetched (no profiles mode):', formattedListings.length);
       return formattedListings as SBIRListing[];
     }
 
