@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -8,7 +7,13 @@ export const listingsService = {
     
     let query = supabase
       .from('sbir_listings')
-      .select('*')
+      .select(`
+        *,
+        profiles:user_id (
+          full_name,
+          email
+        )
+      `)
       .order('created_at', { ascending: false });
 
     // If not admin, only show active listings and user's own listings (excluding hidden)

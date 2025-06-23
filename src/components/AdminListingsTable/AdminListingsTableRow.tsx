@@ -82,6 +82,16 @@ const AdminListingsTableRow = ({
           {listing.status}
         </Badge>
       </TableCell>
+      <TableCell className="max-w-xs">
+        <div>
+          <div className="font-medium text-sm truncate">
+            {listing.profiles?.full_name || 'Unknown User'}
+          </div>
+          <div className="text-xs text-muted-foreground truncate">
+            {listing.profiles?.email}
+          </div>
+        </div>
+      </TableCell>
       <TableCell className="text-sm">
         {formatDate(listing.submitted_at)}
       </TableCell>

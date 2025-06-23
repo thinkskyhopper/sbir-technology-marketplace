@@ -1,15 +1,10 @@
 
-import {
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SortableTableHead from "./SortableTableHead";
-import { SortDirection } from "@/hooks/useSorting";
 
 interface AdminListingsTableHeaderProps {
-  currentSortColumn: string | null;
-  currentSortDirection: SortDirection;
+  currentSortColumn: string;
+  currentSortDirection: 'asc' | 'desc';
   onSort: (column: string) => void;
 }
 
@@ -22,15 +17,16 @@ const AdminListingsTableHeader = ({
     <TableHeader>
       <TableRow>
         <SortableTableHead
-          sortKey="title"
+          column="title"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
+          className="max-w-xs"
         >
-          Title
+          Title & Category
         </SortableTableHead>
         <SortableTableHead
-          sortKey="agency"
+          column="agency"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -38,7 +34,7 @@ const AdminListingsTableHeader = ({
           Agency
         </SortableTableHead>
         <SortableTableHead
-          sortKey="phase"
+          column="phase"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -46,7 +42,7 @@ const AdminListingsTableHeader = ({
           Phase
         </SortableTableHead>
         <SortableTableHead
-          sortKey="value"
+          column="value"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -54,7 +50,7 @@ const AdminListingsTableHeader = ({
           Value
         </SortableTableHead>
         <SortableTableHead
-          sortKey="deadline"
+          column="deadline"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -62,15 +58,16 @@ const AdminListingsTableHeader = ({
           Deadline
         </SortableTableHead>
         <SortableTableHead
-          sortKey="status"
+          column="status"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
         >
           Status
         </SortableTableHead>
+        <TableHead>Submitted By</TableHead>
         <SortableTableHead
-          sortKey="submitted_at"
+          column="submitted_at"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
