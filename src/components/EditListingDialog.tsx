@@ -41,7 +41,7 @@ interface ExtendedEditListingFormData extends EditListingFormData {
 const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const { updateListing } = useListings();
+  const { updateListing, fetchListings } = useListings();
   const { toast } = useToast();
 
   const form = useForm<EditListingFormData>({
@@ -88,6 +88,10 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
       } as Required<ExtendedEditListingFormData>;
 
       await updateListing(listing.id, updateData);
+
+      // Explicitly refresh listings to ensure changes are reflected
+      console.log('🔄 Refreshing listings after successful edit...');
+      fetchListings();
 
       toast({
         title: "Listing Updated",
