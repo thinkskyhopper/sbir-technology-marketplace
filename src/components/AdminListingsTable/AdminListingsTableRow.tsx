@@ -66,7 +66,9 @@ const AdminListingsTableRow = ({
           </div>
         </div>
       </TableCell>
-      <TableCell className="text-sm max-w-[80px] truncate">{listing.agency}</TableCell>
+      <TableCell className="text-sm max-w-[100px] min-w-[80px]">
+        <div className="break-words">{listing.agency}</div>
+      </TableCell>
       <TableCell className="min-w-[90px]">
         <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"} className="whitespace-nowrap">
           {listing.phase}
@@ -83,12 +85,12 @@ const AdminListingsTableRow = ({
           {listing.status}
         </Badge>
       </TableCell>
-      <TableCell className="max-w-[120px] min-w-[100px]">
+      <TableCell className="max-w-[140px] min-w-[120px]">
         <div>
-          <div className="font-medium text-sm truncate">
+          <div className="font-medium text-sm break-words">
             {listing.profiles?.full_name || 'Unknown User'}
           </div>
-          <div className="text-xs text-muted-foreground truncate">
+          <div className="text-xs text-muted-foreground break-words">
             {listing.profiles?.email || 'No email available'}
           </div>
         </div>
@@ -111,4 +113,3 @@ const AdminListingsTableRow = ({
 };
 
 export default AdminListingsTableRow;
-

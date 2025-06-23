@@ -1,5 +1,3 @@
-
-
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SortableTableHead from "./SortableTableHead";
 
@@ -31,7 +29,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="max-w-[80px]"
+          className="max-w-[100px] min-w-[80px]"
         >
           Agency
         </SortableTableHead>
@@ -71,7 +69,7 @@ const AdminListingsTableHeader = ({
         >
           Status
         </SortableTableHead>
-        <TableHead className="max-w-[120px] min-w-[100px]">Submitted By</TableHead>
+        <TableHead className="max-w-[140px] min-w-[120px]">Submitted By</TableHead>
         <SortableTableHead
           sortKey="submitted_at"
           currentSortColumn={currentSortColumn}
@@ -88,4 +86,3 @@ const AdminListingsTableHeader = ({
 };
 
 export default AdminListingsTableHeader;
-
