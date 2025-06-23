@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -63,8 +64,11 @@ export const listingsService = {
       return formattedListings as SBIRListing[];
     }
 
-    // Check if data contains valid profile information
-    const hasValidProfiles = data && data.length > 0 && data[0].profiles && typeof data[0].profiles === 'object' && 'full_name' in data[0].profiles;
+    // Check if data exists and has valid profile information
+    const hasValidProfiles = data && data.length > 0 && data[0] && data[0].profiles && 
+      typeof data[0].profiles === 'object' && 
+      !('error' in data[0].profiles) && 
+      'full_name' in data[0].profiles;
     
     if (!hasValidProfiles && data && data.length > 0) {
       // If main query succeeded but profiles data is invalid, fetch without profiles
