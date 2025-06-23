@@ -34,7 +34,7 @@ export const listingsService = {
       console.log('🔄 Falling back to basic listing fetch...');
       const fallbackQuery = supabase
         .from('sbir_listings')
-        .select('*')
+        .select('*') // Only select sbir_listings fields, no profiles
         .order('created_at', { ascending: false });
 
       if (!isAdmin) {
@@ -52,15 +52,12 @@ export const listingsService = {
       }
 
       // Return listings without profile data - properly structure the data
-      const formattedListings = fallbackData?.map(listing => {
-        const { ...listingData } = listing;
-        return {
-          ...listingData,
-          value: listingData.value / 100,
-          deadline: new Date(listingData.deadline).toISOString().split('T')[0],
-          profiles: null
-        };
-      }) || [];
+      const formattedListings = fallbackData?.map(listing => ({
+        ...listing,
+        value: listing.value / 100,
+        deadline: new Date(listing.deadline).toISOString().split('T')[0],
+        profiles: null // Explicitly set to null since no profile data is available
+      })) || [];
 
       console.log('✅ Listings fetched (fallback mode):', formattedListings.length);
       return formattedListings as SBIRListing[];
