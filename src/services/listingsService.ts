@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -9,12 +10,11 @@ export const listingsService = {
       .from('sbir_listings')
       .select(`
         *,
-        profiles:profiles!inner(
+        profiles!fk_sbir_listings_user_id(
           full_name,
           email
         )
       `)
-      .eq('profiles.id', 'sbir_listings.user_id')
       .order('created_at', { ascending: false });
 
     // If not admin, only show active listings and user's own listings (excluding hidden)
@@ -63,51 +63,15 @@ export const listingsService = {
       return formattedListings as SBIRListing[];
     }
 
-    // Check if data exists and has valid profile information
-    const hasValidProfiles = data && data.length > 0 && data[0] && 
-      data[0].profiles && 
-      typeof data[0].profiles === 'object' && 
-      !('error' in data[0].profiles) && 
-      'full_name' in data[0].profiles;
-    
-    if (!hasValidProfiles && data && data.length > 0) {
-      // If main query succeeded but profiles data is invalid, fetch without profiles
-      console.log('🔄 Profiles data invalid, fetching without profiles...');
-      const basicQuery = supabase
-        .from('sbir_listings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (!isAdmin) {
-        if (userId) {
-          basicQuery.or(`status.eq.Active,user_id.eq.${userId}`);
-        } else {
-          basicQuery.eq('status', 'Active');
-        }
-      }
-
-      const { data: basicData, error: basicError } = await basicQuery;
-      
-      if (basicError) {
-        throw basicError;
-      }
-
-      const formattedListings = basicData?.map(listing => ({
-        ...listing,
-        value: listing.value / 100,
-        deadline: new Date(listing.deadline).toISOString().split('T')[0],
-        profiles: null
-      })) || [];
-
-      console.log('✅ Listings fetched (no profiles mode):', formattedListings.length);
-      return formattedListings as SBIRListing[];
-    }
-
     // Convert value from cents to dollars and format dates
     const formattedListings = data?.map(listing => ({
       ...listing,
       value: listing.value / 100, // Convert cents to dollars
-      deadline: new Date(listing.deadline).toISOString().split('T')[0]
+      deadline: new Date(listing.deadline).toISOString().split('T')[0],
+      // Ensure profiles is properly typed - it should either be the profile object or null
+      profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
+        ? listing.profiles 
+        : null
     })) || [];
 
     console.log('✅ Listings formatted:', formattedListings.length);
