@@ -95,6 +95,7 @@ const AdminListingsTable = () => {
         toast({
           title: "Listing Hidden",
           description: "The listing has been hidden from the marketplace.",
+          duration: 5000, // Auto-dismiss after 5 seconds
         });
       }
     } catch (error) {
