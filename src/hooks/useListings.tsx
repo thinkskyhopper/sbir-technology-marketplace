@@ -70,32 +70,6 @@ export const useListings = () => {
     }
   }, [fetchListings]);
 
-  // Handle page visibility changes to refresh data when user returns to tab
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && hasLoadedRef.current) {
-        console.log('👁️ Page became visible - refreshing listings...');
-        refreshListings();
-      }
-    };
-
-    // Handle window focus events
-    const handleFocus = () => {
-      if (hasLoadedRef.current) {
-        console.log('🎯 Window focused - refreshing listings...');
-        refreshListings();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleFocus);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, [refreshListings]);
-
   // Cleanup function to reset state on unmount
   useEffect(() => {
     return () => {
@@ -105,7 +79,7 @@ export const useListings = () => {
     };
   }, []);
 
-  // Memoize the return object to prevent unnecessary re-renders
+  // Memoized the return object to prevent unnecessary re-renders
   const returnValue = useMemo(() => ({
     listings,
     loading,
