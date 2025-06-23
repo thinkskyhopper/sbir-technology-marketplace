@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -34,7 +35,7 @@ export const listingsService = {
       console.log('🔄 Falling back to basic listing fetch...');
       const fallbackQuery = supabase
         .from('sbir_listings')
-        .select('*') // Only select sbir_listings fields, no profiles
+        .select('*') // Only select sbir_listings fields, no profiles join
         .order('created_at', { ascending: false });
 
       if (!isAdmin) {
