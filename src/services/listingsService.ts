@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -65,7 +64,8 @@ export const listingsService = {
     }
 
     // Check if data exists and has valid profile information
-    const hasValidProfiles = data && data.length > 0 && data[0] && data[0].profiles && 
+    const hasValidProfiles = data && data.length > 0 && data[0] && 
+      data[0].profiles && 
       typeof data[0].profiles === 'object' && 
       !('error' in data[0].profiles) && 
       'full_name' in data[0].profiles;
