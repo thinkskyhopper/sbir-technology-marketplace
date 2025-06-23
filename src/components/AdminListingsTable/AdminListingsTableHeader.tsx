@@ -1,4 +1,5 @@
 
+
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SortableTableHead from "./SortableTableHead";
 
@@ -21,7 +22,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="max-w-xs"
+          className="max-w-[200px] min-w-[150px]"
         >
           Title & Category
         </SortableTableHead>
@@ -30,6 +31,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
+          className="max-w-[80px]"
         >
           Agency
         </SortableTableHead>
@@ -38,6 +40,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
+          className="min-w-[90px]"
         >
           Phase
         </SortableTableHead>
@@ -46,6 +49,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
+          className="min-w-[80px] text-right"
         >
           Value
         </SortableTableHead>
@@ -54,6 +58,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
+          className="min-w-[80px]"
         >
           Deadline
         </SortableTableHead>
@@ -62,22 +67,25 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
+          className="min-w-[80px]"
         >
           Status
         </SortableTableHead>
-        <TableHead>Submitted By</TableHead>
+        <TableHead className="max-w-[120px] min-w-[100px]">Submitted By</TableHead>
         <SortableTableHead
           sortKey="submitted_at"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
+          className="min-w-[80px]"
         >
           Submitted
         </SortableTableHead>
-        <TableHead>Actions</TableHead>
+        <TableHead className="w-[80px]">Actions</TableHead>
       </TableRow>
     </TableHeader>
   );
 };
 
 export default AdminListingsTableHeader;
+

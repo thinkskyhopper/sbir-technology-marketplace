@@ -1,4 +1,5 @@
 
+
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import AdminListingsTableActions from "./AdminListingsTableActions";
@@ -57,32 +58,32 @@ const AdminListingsTableRow = ({
 
   return (
     <TableRow>
-      <TableCell className="max-w-xs">
+      <TableCell className="max-w-[200px] min-w-[150px]">
         <div>
-          <div className="font-medium truncate">{listing.title}</div>
+          <div className="font-medium break-words">{listing.title}</div>
           <div className="text-sm text-muted-foreground truncate">
             {listing.category}
           </div>
         </div>
       </TableCell>
-      <TableCell className="text-sm">{listing.agency}</TableCell>
-      <TableCell>
-        <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"}>
+      <TableCell className="text-sm max-w-[80px] truncate">{listing.agency}</TableCell>
+      <TableCell className="min-w-[90px]">
+        <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"} className="whitespace-nowrap">
           {listing.phase}
         </Badge>
       </TableCell>
-      <TableCell className="font-medium">
+      <TableCell className="font-medium min-w-[80px] text-right">
         {formatCurrency(listing.value)}
       </TableCell>
-      <TableCell className="text-sm">
+      <TableCell className="text-sm min-w-[80px]">
         {formatDate(listing.deadline)}
       </TableCell>
-      <TableCell>
-        <Badge variant={getStatusBadgeVariant(listing.status)}>
+      <TableCell className="min-w-[80px]">
+        <Badge variant={getStatusBadgeVariant(listing.status)} className="whitespace-nowrap">
           {listing.status}
         </Badge>
       </TableCell>
-      <TableCell className="max-w-xs">
+      <TableCell className="max-w-[120px] min-w-[100px]">
         <div>
           <div className="font-medium text-sm truncate">
             {listing.profiles?.full_name || 'Unknown User'}
@@ -92,10 +93,10 @@ const AdminListingsTableRow = ({
           </div>
         </div>
       </TableCell>
-      <TableCell className="text-sm">
+      <TableCell className="text-sm min-w-[80px]">
         {formatDate(listing.submitted_at)}
       </TableCell>
-      <TableCell>
+      <TableCell className="w-[80px]">
         <AdminListingsTableActions
           listing={listing}
           processingId={processingId}
@@ -110,3 +111,4 @@ const AdminListingsTableRow = ({
 };
 
 export default AdminListingsTableRow;
+
