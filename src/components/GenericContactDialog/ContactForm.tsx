@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ContactFormProps {
   open: boolean;
@@ -50,12 +51,13 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
     setLoading(true);
     
     try {
-      const response = await fetch('/api/send-contact-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      console.log('Sending generic contact form...', {
+        formData,
+        userEmail
+      });
+
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
           name: formData.name,
           email: formData.email,
           company: formData.company,
@@ -68,26 +70,30 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
             phase: "N/A"
           },
           userEmail
-        }),
+        }
       });
 
-      if (response.ok) {
-        toast({
-          title: "Message Sent",
-          description: "Your message has been sent to our team. We'll get back to you soon!",
-        });
-        onOpenChange(false);
-        setFormData({
-          name: "",
-          email: "",
-          company: "",
-          message: "",
-          honeypot: ""
-        });
-      } else {
-        throw new Error('Failed to send message');
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
       }
-    } catch (error) {
+
+      console.log('Generic contact email sent successfully:', data);
+
+      toast({
+        title: "Message Sent",
+        description: "Your message has been sent to our team. We'll get back to you soon!",
+      });
+      onOpenChange(false);
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        message: "",
+        honeypot: ""
+      });
+    } catch (error: any) {
+      console.error('Generic contact form submission error:', error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",

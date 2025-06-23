@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Mail, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import type { SBIRListing } from "@/types/listings";
 
 interface ContactAdminDialogProps {
@@ -45,12 +46,20 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
     setLoading(true);
     
     try {
-      const response = await fetch('/api/send-contact-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      console.log('Sending contact inquiry...', {
+        formData,
+        listing: {
+          id: listing.id,
+          title: listing.title,
+          agency: listing.agency,
+          value: listing.value,
+          phase: listing.phase
         },
-        body: JSON.stringify({
+        userEmail: user.email
+      });
+
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
           ...formData,
           listing: {
             id: listing.id,
@@ -60,28 +69,32 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
             phase: listing.phase
           },
           userEmail: user.email
-        }),
+        }
       });
 
-      if (response.ok) {
-        toast({
-          title: "Message Sent",
-          description: "Your inquiry has been sent to our team. We'll get back to you soon!",
-        });
-        onOpenChange(false);
-        setFormData({
-          name: "",
-          email: "",
-          company: "",
-          interestLevel: "",
-          experience: "",
-          timeline: "",
-          message: ""
-        });
-      } else {
-        throw new Error('Failed to send message');
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
       }
-    } catch (error) {
+
+      console.log('Contact email sent successfully:', data);
+
+      toast({
+        title: "Message Sent",
+        description: "Your inquiry has been sent to our team. We'll get back to you soon!",
+      });
+      onOpenChange(false);
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        interestLevel: "",
+        experience: "",
+        timeline: "",
+        message: ""
+      });
+    } catch (error: any) {
+      console.error('Contact form submission error:', error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
