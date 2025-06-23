@@ -58,16 +58,10 @@ const Footer = () => {
                 Home
               </button>
               <button 
-                onClick={handleTeamClick}
+                onClick={handleLearnMoreClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
-                Our Team
-              </button>
-              <button 
-                onClick={handlePrivacyPolicyClick}
-                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
-              >
-                Privacy Policy
+                Learn More
               </button>
               <button 
                 onClick={handleLegalDisclaimerClick}
@@ -76,10 +70,16 @@ const Footer = () => {
                 Legal Disclaimer
               </button>
               <button 
-                onClick={handleLearnMoreClick}
+                onClick={handlePrivacyPolicyClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
-                Learn More
+                Privacy Policy
+              </button>
+              <button 
+                onClick={handleTeamClick}
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              >
+                Our Team
               </button>
               <button 
                 onClick={handleContactUsClick}
