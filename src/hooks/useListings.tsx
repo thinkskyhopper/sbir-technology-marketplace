@@ -32,7 +32,8 @@ export const useListings = () => {
     createListing,
     updateListing,
     approveListing,
-    rejectListing
+    rejectListing,
+    hideListing
   } = useListingOperations(fetchListings);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export const useListings = () => {
     createListing,
     updateListing,
     approveListing,
-    rejectListing
+    rejectListing,
+    hideListing
   };
 };

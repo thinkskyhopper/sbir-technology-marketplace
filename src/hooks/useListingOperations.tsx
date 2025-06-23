@@ -118,11 +118,31 @@ export const useListingOperations = (onSuccess?: () => void) => {
     }
   };
 
+  const hideListing = async (listingId: string) => {
+    if (!isAdmin) {
+      throw new Error('Only admins can hide listings');
+    }
+
+    try {
+      setLoading(true);
+      console.log('🔄 Hiding listing operation...', { listingId });
+      
+      await listingsService.updateListing(listingId, { status: 'Hidden' } as UpdateListingData);
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error('❌ Error hiding listing:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     createListing,
     updateListing,
     approveListing,
     rejectListing,
+    hideListing,
     loading
   };
 };

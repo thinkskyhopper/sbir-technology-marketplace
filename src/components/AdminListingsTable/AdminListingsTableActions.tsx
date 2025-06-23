@@ -9,6 +9,7 @@ interface AdminListingsTableActionsProps {
   onEdit: (listing: SBIRListing) => void;
   onApprove: (listing: SBIRListing) => void;
   onReject: (listing: SBIRListing) => void;
+  onHide: (listing: SBIRListing) => void;
 }
 
 const AdminListingsTableActions = ({
@@ -17,6 +18,7 @@ const AdminListingsTableActions = ({
   onEdit,
   onApprove,
   onReject,
+  onHide,
 }: AdminListingsTableActionsProps) => {
   return (
     <div className="flex items-center space-x-2">
@@ -55,7 +57,10 @@ const AdminListingsTableActions = ({
       <Button
         size="sm"
         variant="ghost"
-        className="text-blue-600 hover:text-blue-700"
+        onClick={() => onHide(listing)}
+        disabled={processingId === listing.id}
+        className="text-gray-600 hover:text-gray-700"
+        title={listing.status === 'Hidden' ? 'Already hidden' : 'Hide listing'}
       >
         <Eye className="w-4 h-4" />
       </Button>

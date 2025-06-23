@@ -10,6 +10,7 @@ interface AdminListingsTableRowProps {
   onEdit: (listing: SBIRListing) => void;
   onApprove: (listing: SBIRListing) => void;
   onReject: (listing: SBIRListing) => void;
+  onHide: (listing: SBIRListing) => void;
 }
 
 const AdminListingsTableRow = ({
@@ -18,6 +19,7 @@ const AdminListingsTableRow = ({
   onEdit,
   onApprove,
   onReject,
+  onHide,
 }: AdminListingsTableRowProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -90,6 +92,7 @@ const AdminListingsTableRow = ({
           onEdit={onEdit}
           onApprove={onApprove}
           onReject={onReject}
+          onHide={onHide}
         />
       </TableCell>
     </TableRow>
