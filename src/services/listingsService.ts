@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -9,7 +10,7 @@ export const listingsService = {
       .from('sbir_listings')
       .select(`
         *,
-        profiles:user_id (
+        profiles!sbir_listings_user_id_fkey (
           full_name,
           email
         )

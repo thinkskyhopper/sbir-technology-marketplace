@@ -17,7 +17,7 @@ const AdminListingsTableHeader = ({
     <TableHeader>
       <TableRow>
         <SortableTableHead
-          column="title"
+          sortKey="title"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -26,7 +26,7 @@ const AdminListingsTableHeader = ({
           Title & Category
         </SortableTableHead>
         <SortableTableHead
-          column="agency"
+          sortKey="agency"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -34,7 +34,7 @@ const AdminListingsTableHeader = ({
           Agency
         </SortableTableHead>
         <SortableTableHead
-          column="phase"
+          sortKey="phase"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -42,7 +42,7 @@ const AdminListingsTableHeader = ({
           Phase
         </SortableTableHead>
         <SortableTableHead
-          column="value"
+          sortKey="value"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -50,7 +50,7 @@ const AdminListingsTableHeader = ({
           Value
         </SortableTableHead>
         <SortableTableHead
-          column="deadline"
+          sortKey="deadline"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -58,7 +58,7 @@ const AdminListingsTableHeader = ({
           Deadline
         </SortableTableHead>
         <SortableTableHead
-          column="status"
+          sortKey="status"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
@@ -67,7 +67,7 @@ const AdminListingsTableHeader = ({
         </SortableTableHead>
         <TableHead>Submitted By</TableHead>
         <SortableTableHead
-          column="submitted_at"
+          sortKey="submitted_at"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
