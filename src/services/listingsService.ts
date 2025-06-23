@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -113,5 +114,21 @@ export const listingsService = {
     }
     
     console.log('✅ Listing rejected successfully');
+  },
+
+  async hideListing(listingId: string): Promise<void> {
+    console.log('🙈 Hiding listing...', { listingId });
+    
+    const { error } = await supabase
+      .from('sbir_listings')
+      .update({ status: 'Hidden' })
+      .eq('id', listingId);
+
+    if (error) {
+      console.error('❌ Hide listing error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Listing hidden successfully');
   }
 };

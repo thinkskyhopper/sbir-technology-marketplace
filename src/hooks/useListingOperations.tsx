@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { listingsService } from '@/services/listingsService';
@@ -127,7 +128,7 @@ export const useListingOperations = (onSuccess?: () => void) => {
       setLoading(true);
       console.log('🔄 Hiding listing operation...', { listingId });
       
-      await listingsService.updateListing(listingId, { status: 'Hidden' } as UpdateListingData);
+      await listingsService.hideListing(listingId);
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('❌ Error hiding listing:', err);
