@@ -28,7 +28,7 @@ interface EditListingDialogProps {
 
 // Extend the form schema to include status
 const editListingSchema = listingSchema.extend({
-  status: z.enum(['Active', 'Pending', 'Sold', 'Rejected']),
+  status: z.enum(['Active', 'Pending', 'Sold', 'Rejected', 'Hidden']),
 });
 
 type EditListingFormData = z.infer<typeof editListingSchema>;
@@ -116,6 +116,8 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
         return 'destructive';
       case 'Sold':
         return 'outline';
+      case 'Hidden':
+        return 'outline';
       default:
         return 'outline';
     }
@@ -159,6 +161,7 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
                     <SelectContent>
                       <SelectItem value="Pending">Pending</SelectItem>
                       <SelectItem value="Active">Active</SelectItem>
+                      <SelectItem value="Hidden">Hidden</SelectItem>
                       <SelectItem value="Sold">Sold</SelectItem>
                       <SelectItem value="Rejected">Rejected</SelectItem>
                     </SelectContent>

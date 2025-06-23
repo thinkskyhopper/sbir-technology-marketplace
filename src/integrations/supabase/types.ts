@@ -188,7 +188,7 @@ export type Database = {
       }
     }
     Enums: {
-      listing_status: "Active" | "Pending" | "Sold" | "Rejected"
+      listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
       sbir_phase: "Phase I" | "Phase II"
       user_role: "admin" | "user"
     }
@@ -306,7 +306,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      listing_status: ["Active", "Pending", "Sold", "Rejected"],
+      listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
       sbir_phase: ["Phase I", "Phase II"],
       user_role: ["admin", "user"],
     },

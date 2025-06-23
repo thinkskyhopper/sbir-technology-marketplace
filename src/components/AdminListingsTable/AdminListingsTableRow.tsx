@@ -46,6 +46,8 @@ const AdminListingsTableRow = ({
         return 'destructive';
       case 'Sold':
         return 'outline';
+      case 'Hidden':
+        return 'outline';
       default:
         return 'outline';
     }

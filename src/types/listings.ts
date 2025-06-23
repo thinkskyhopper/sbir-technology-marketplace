@@ -8,13 +8,13 @@ export interface SBIRListing {
   value: number;
   deadline: string;
   category: string;
-  status: 'Active' | 'Pending' | 'Sold' | 'Rejected';
+  status: 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
   submitted_at: string;
   user_id: string;
   photo_url?: string;
 }
 
-export type ListingStatus = 'Active' | 'Pending' | 'Sold' | 'Rejected';
+export type ListingStatus = 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
 export type SBIRPhase = 'Phase I' | 'Phase II';
 
 export type CreateListingData = Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id'>;

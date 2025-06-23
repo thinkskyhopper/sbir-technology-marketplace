@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -86,7 +87,7 @@ const MarketplaceFilters = ({
           </SelectContent>
         </Select>
 
-        {/* Status Filter */}
+        {/* Status Filter - Only show Active, Closed, and Awarded for marketplace users */}
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Status" />

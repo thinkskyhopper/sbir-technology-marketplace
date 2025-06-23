@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing, CreateListingData, UpdateListingData } from '@/types/listings';
 
@@ -11,7 +10,7 @@ export const listingsService = {
       .select('*')
       .order('created_at', { ascending: false });
 
-    // If not admin, only show active listings and user's own listings
+    // If not admin, only show active listings and user's own listings (excluding hidden)
     if (!isAdmin) {
       if (userId) {
         query = query.or(`status.eq.Active,user_id.eq.${userId}`);
