@@ -10,6 +10,7 @@ interface SortableTableHeadProps {
   currentSortColumn: string | null;
   currentSortDirection: SortDirection;
   onSort: (column: string) => void;
+  className?: string;
 }
 
 const SortableTableHead = ({
@@ -18,6 +19,7 @@ const SortableTableHead = ({
   currentSortColumn,
   currentSortDirection,
   onSort,
+  className,
 }: SortableTableHeadProps) => {
   const isActive = currentSortColumn === sortKey;
   
@@ -38,7 +40,7 @@ const SortableTableHead = ({
   };
 
   return (
-    <TableHead>
+    <TableHead className={className}>
       <Button
         variant="ghost"
         className="h-auto p-0 font-medium text-muted-foreground hover:text-foreground"

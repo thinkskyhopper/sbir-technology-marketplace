@@ -88,7 +88,7 @@ const AdminListingsTableRow = ({
             {listing.profiles?.full_name || 'Unknown User'}
           </div>
           <div className="text-xs text-muted-foreground truncate">
-            {listing.profiles?.email}
+            {listing.profiles?.email || 'No email available'}
           </div>
         </div>
       </TableCell>

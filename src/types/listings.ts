@@ -15,7 +15,7 @@ export interface SBIRListing {
   profiles?: {
     full_name: string | null;
     email: string;
-  };
+  } | null;
 }
 
 export type ListingStatus = 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';

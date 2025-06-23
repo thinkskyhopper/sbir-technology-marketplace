@@ -10,11 +10,12 @@ export const listingsService = {
       .from('sbir_listings')
       .select(`
         *,
-        profiles!sbir_listings_user_id_fkey (
+        profiles:profiles!inner(
           full_name,
           email
         )
       `)
+      .eq('profiles.id', 'sbir_listings.user_id')
       .order('created_at', { ascending: false });
 
     // If not admin, only show active listings and user's own listings (excluding hidden)
@@ -30,7 +31,37 @@ export const listingsService = {
 
     if (error) {
       console.error('❌ Supabase query error:', error);
-      throw error;
+      // Fallback: fetch listings without profile data if join fails
+      console.log('🔄 Falling back to basic listing fetch...');
+      const fallbackQuery = supabase
+        .from('sbir_listings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!isAdmin) {
+        if (userId) {
+          fallbackQuery.or(`status.eq.Active,user_id.eq.${userId}`);
+        } else {
+          fallbackQuery.eq('status', 'Active');
+        }
+      }
+
+      const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+      
+      if (fallbackError) {
+        throw fallbackError;
+      }
+
+      // Return listings without profile data
+      const formattedListings = fallbackData?.map(listing => ({
+        ...listing,
+        value: listing.value / 100,
+        deadline: new Date(listing.deadline).toISOString().split('T')[0],
+        profiles: null
+      })) || [];
+
+      console.log('✅ Listings fetched (fallback mode):', formattedListings.length);
+      return formattedListings as SBIRListing[];
     }
 
     // Convert value from cents to dollars and format dates
