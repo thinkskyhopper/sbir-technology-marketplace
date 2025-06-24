@@ -5,6 +5,7 @@ import { useListings } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMetaTags } from "@/hooks/useMetaTags";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import EditListingDialog from "@/components/EditListingDialog";
 import ContactAdminDialog from "@/components/ContactAdminDialog";
 import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader";
@@ -100,7 +101,7 @@ const ListingDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Main Site Header */}
       <Header />
       
@@ -114,7 +115,7 @@ const ListingDetail = () => {
       />
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 flex-1">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
@@ -135,6 +136,9 @@ const ListingDetail = () => {
           />
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Edit Dialog */}
       <EditListingDialog
