@@ -92,21 +92,33 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
         status: 'Pending' as const
       };
       
+      console.log('🔄 Starting listing creation process...', { user: user.id, title: data.title });
+      
       await createListing(listingData);
+
+      console.log('✅ Listing creation completed successfully');
 
       toast({
         title: "Listing Submitted",
         description: "Your listing has been submitted for review and will be published once approved.",
       });
 
+      // Reset form and validation state
       form.reset();
       setValidationErrors([]);
       setSpamScore(0);
+      
+      // Call onSuccess callback
       onSuccess();
     } catch (error) {
+      console.error('❌ Error in listing creation process:', error);
+      
+      // More specific error handling
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
       toast({
         title: "Error",
-        description: "Failed to create listing. Please try again.",
+        description: `Failed to create listing: ${errorMessage}. Please try again.`,
         variant: "destructive",
       });
     } finally {
