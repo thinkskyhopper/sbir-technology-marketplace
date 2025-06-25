@@ -1,7 +1,7 @@
 
-
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import AdminListingsTableActions from "./AdminListingsTableActions";
 import type { SBIRListing } from "@/types/listings";
 
@@ -60,7 +60,12 @@ const AdminListingsTableRow = ({
     <TableRow>
       <TableCell className="max-w-[200px] min-w-[150px]">
         <div>
-          <div className="font-medium break-words">{listing.title}</div>
+          <Link 
+            to={`/listing/${listing.id}`}
+            className="font-medium break-words hover:text-blue-600 hover:underline transition-colors"
+          >
+            {listing.title}
+          </Link>
           <div className="text-sm text-muted-foreground truncate">
             {listing.category}
           </div>
