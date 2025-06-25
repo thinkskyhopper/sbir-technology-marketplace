@@ -25,33 +25,54 @@ interface RequestChangeDialogProps {
   requestType: 'change' | 'deletion';
 }
 
-// Schema for change requests (without photo_url and status)
-const changeRequestSchema = listingSchema.omit({ status: true }).extend({
-  reason: z.string().min(10, "Please provide a reason for this request (minimum 10 characters)"),
-});
+// Schema for change requests - conditional based on request type
+const createChangeRequestSchema = (requestType: 'change' | 'deletion') => {
+  const baseSchema = z.object({
+    reason: z.string().min(10, "Please provide a reason for this request (minimum 10 characters)"),
+  });
 
-type ChangeRequestFormData = z.infer<typeof changeRequestSchema>;
+  if (requestType === 'change') {
+    return baseSchema.extend({
+      title: z.string().min(1, "Title is required"),
+      description: z.string().min(10, "Description must be at least 10 characters"),
+      phase: z.enum(["Phase I", "Phase II"]),
+      agency: z.string().min(1, "Agency is required"),
+      value: z.number().min(1, "Value must be greater than 0"),
+      deadline: z.string().min(1, "Deadline is required"),
+      category: z.string().min(1, "Category is required"),
+    });
+  }
+  
+  return baseSchema;
+};
 
 const RequestChangeDialog = ({ open, onOpenChange, listing, requestType }: RequestChangeDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createChangeRequest } = useChangeRequests();
   const { toast } = useToast();
 
-  const form = useForm<ChangeRequestFormData>({
-    resolver: zodResolver(changeRequestSchema),
-    defaultValues: {
-      title: listing?.title || "",
-      description: listing?.description || "",
-      phase: listing?.phase || "Phase I",
-      agency: listing?.agency || "",
-      value: listing?.value || 0,
-      deadline: listing?.deadline || "",
-      category: listing?.category || "",
-      reason: "",
-    },
+  const schema = createChangeRequestSchema(requestType);
+  type FormData = z.infer<typeof schema>;
+
+  const defaultValues: FormData = requestType === 'change' ? {
+    title: listing?.title || "",
+    description: listing?.description || "",
+    phase: listing?.phase || "Phase I",
+    agency: listing?.agency || "",
+    value: listing?.value || 0,
+    deadline: listing?.deadline || "",
+    category: listing?.category || "",
+    reason: "",
+  } as FormData : {
+    reason: "",
+  } as FormData;
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues,
   });
 
-  const onSubmit = async (data: ChangeRequestFormData) => {
+  const onSubmit = async (data: FormData) => {
     if (!listing) return;
 
     try {
@@ -62,13 +83,13 @@ const RequestChangeDialog = ({ open, onOpenChange, listing, requestType }: Reque
         request_type: requestType,
         reason: data.reason,
         requested_changes: requestType === 'change' ? {
-          title: data.title,
-          description: data.description,
-          phase: data.phase,
-          agency: data.agency,
-          value: data.value,
-          deadline: data.deadline,
-          category: data.category,
+          title: (data as any).title,
+          description: (data as any).description,
+          phase: (data as any).phase,
+          agency: (data as any).agency,
+          value: (data as any).value,
+          deadline: (data as any).deadline,
+          category: (data as any).category,
         } : null,
       };
 
@@ -117,7 +138,7 @@ const RequestChangeDialog = ({ open, onOpenChange, listing, requestType }: Reque
             {requestType === 'change' && (
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Proposed Changes</h3>
-                <ListingFormFields form={form} />
+                <ListingFormFields form={form as any} />
               </div>
             )}
             
