@@ -206,7 +206,7 @@ export const listingsService = {
       
       // Check if it's a permission error
       if (deleteError.code === 'PGRST116' || deleteError.message.includes('policy')) {
-        throw new Error('You do not have permission to delete this listing. Only admins can delete any listing, and users can only delete their own listings.');
+        throw new Error('You do not have permission to delete this listing. Only admins can delete listings.');
       }
       
       throw new Error(`Failed to delete listing: ${deleteError.message}`);
