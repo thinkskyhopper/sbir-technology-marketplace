@@ -44,6 +44,59 @@ export type Database = {
           },
         ]
       }
+      listing_change_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          processed_at: string | null
+          processed_by: string | null
+          reason: string | null
+          request_type: Database["public"]["Enums"]["change_request_type"]
+          requested_changes: Json | null
+          status: Database["public"]["Enums"]["change_request_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          processed_at?: string | null
+          processed_by?: string | null
+          reason?: string | null
+          request_type: Database["public"]["Enums"]["change_request_type"]
+          requested_changes?: Json | null
+          status?: Database["public"]["Enums"]["change_request_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          reason?: string | null
+          request_type?: Database["public"]["Enums"]["change_request_type"]
+          requested_changes?: Json | null
+          status?: Database["public"]["Enums"]["change_request_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_change_requests_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "sbir_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -196,6 +249,8 @@ export type Database = {
       }
     }
     Enums: {
+      change_request_status: "pending" | "approved" | "rejected"
+      change_request_type: "change" | "deletion"
       listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
       sbir_phase: "Phase I" | "Phase II"
       user_role: "admin" | "user"
@@ -314,6 +369,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      change_request_status: ["pending", "approved", "rejected"],
+      change_request_type: ["change", "deletion"],
       listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
       sbir_phase: ["Phase I", "Phase II"],
       user_role: ["admin", "user"],

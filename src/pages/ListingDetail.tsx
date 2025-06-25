@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import EditListingDialog from "@/components/EditListingDialog";
 import ContactAdminDialog from "@/components/ContactAdminDialog";
 import CreateListingDialog from "@/components/CreateListingDialog";
+import RequestChangeDialog from "@/components/RequestChangeDialog";
 import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader";
 import ListingDetailHeroImage from "@/components/ListingDetail/ListingDetailHeroImage";
 import ListingDetailDescription from "@/components/ListingDetail/ListingDetailDescription";
@@ -27,6 +28,8 @@ const ListingDetail = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showRequestChangeDialog, setShowRequestChangeDialog] = useState(false);
+  const [showRequestDeletionDialog, setShowRequestDeletionDialog] = useState(false);
 
   const listing = listings.find(l => l.id === id);
 
@@ -130,6 +133,14 @@ const ListingDetail = () => {
     }
   };
 
+  const handleRequestChange = () => {
+    setShowRequestChangeDialog(true);
+  };
+
+  const handleRequestDeletion = () => {
+    setShowRequestDeletionDialog(true);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Main Site Header */}
@@ -143,6 +154,8 @@ const ListingDetail = () => {
         onContactAdmin={handleContactAdmin}
         onEditListing={() => setShowEditDialog(true)}
         onDeleteListing={handleDeleteListing}
+        onRequestChange={handleRequestChange}
+        onRequestDeletion={handleRequestDeletion}
       />
 
       {/* Main Content */}
@@ -191,6 +204,22 @@ const ListingDetail = () => {
       <CreateListingDialog 
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
+      />
+
+      {/* Request Change Dialog */}
+      <RequestChangeDialog
+        open={showRequestChangeDialog}
+        onOpenChange={setShowRequestChangeDialog}
+        listing={listing}
+        requestType="change"
+      />
+
+      {/* Request Deletion Dialog */}
+      <RequestChangeDialog
+        open={showRequestDeletionDialog}
+        onOpenChange={setShowRequestDeletionDialog}
+        listing={listing}
+        requestType="deletion"
       />
     </div>
   );

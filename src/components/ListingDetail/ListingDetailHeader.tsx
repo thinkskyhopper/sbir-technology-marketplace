@@ -1,10 +1,11 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building, DollarSign, ArrowLeft, Mail, Edit, Trash2 } from "lucide-react";
+import { Building, DollarSign, ArrowLeft, Mail, Edit, Trash2, FileEdit, UserX } from "lucide-react";
 import ShareButton from "@/components/ShareButton";
 import ConfirmActionDialog from "@/components/ConfirmActionDialog";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ListingDetailHeaderProps {
   listing: {
@@ -14,12 +15,15 @@ interface ListingDetailHeaderProps {
     title: string;
     agency: string;
     value: number;
+    user_id: string;
   };
   isAdmin: boolean;
   onBackToMarketplace: () => void;
   onContactAdmin: () => void;
   onEditListing: () => void;
   onDeleteListing?: (listingId: string) => void;
+  onRequestChange?: () => void;
+  onRequestDeletion?: () => void;
 }
 
 const ListingDetailHeader = ({
@@ -28,9 +32,12 @@ const ListingDetailHeader = ({
   onBackToMarketplace,
   onContactAdmin,
   onEditListing,
-  onDeleteListing
+  onDeleteListing,
+  onRequestChange,
+  onRequestDeletion
 }: ListingDetailHeaderProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { user } = useAuth();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -45,6 +52,10 @@ const ListingDetailHeader = ({
     }
     setShowDeleteDialog(false);
   };
+
+  // Check if current user owns this listing
+  const isOwner = user?.id === listing.user_id;
+  const canRequestChanges = isOwner && !isAdmin;
 
   return (
     <>
@@ -119,6 +130,27 @@ const ListingDetailHeader = ({
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
+                  </Button>
+                </div>
+              )}
+              
+              {/* Owner-only buttons (non-admin users who own the listing) */}
+              {canRequestChanges && (
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="outline"
+                    onClick={onRequestChange}
+                  >
+                    <FileEdit className="w-4 h-4 mr-2" />
+                    Request Changes
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={onRequestDeletion}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <UserX className="w-4 h-4 mr-2" />
+                    Request Deletion
                   </Button>
                 </div>
               )}
