@@ -4,6 +4,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useListings } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMetaTags } from "@/hooks/useMetaTags";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import EditListingDialog from "@/components/EditListingDialog";
@@ -20,8 +21,9 @@ const ListingDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { listings, loading } = useListings();
+  const { listings, loading, deleteListing } = useListings();
   const { isAdmin } = useAuth();
+  const { toast } = useToast();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
 
@@ -100,6 +102,25 @@ const ListingDetail = () => {
     navigate(`/?${marketplaceParams.toString()}`);
   };
 
+  const handleDeleteListing = async (listingId: string) => {
+    try {
+      await deleteListing(listingId);
+      toast({
+        title: "Success",
+        description: "Listing deleted successfully",
+      });
+      // Navigate back to marketplace after successful deletion
+      handleBackToMarketplace();
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete listing",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Main Site Header */}
@@ -112,6 +133,7 @@ const ListingDetail = () => {
         onBackToMarketplace={handleBackToMarketplace}
         onContactAdmin={handleContactAdmin}
         onEditListing={() => setShowEditDialog(true)}
+        onDeleteListing={handleDeleteListing}
       />
 
       {/* Main Content */}
