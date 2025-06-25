@@ -73,7 +73,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    // Use the correct development server URL
+    const redirectUrl = import.meta.env.DEV 
+      ? `${window.location.protocol}//${window.location.hostname}:8080/`
+      : `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -103,7 +106,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetPassword = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/auth?mode=reset`;
+    // Use the correct development server URL for password reset
+    const redirectUrl = import.meta.env.DEV 
+      ? `${window.location.protocol}//${window.location.hostname}:8080/auth?mode=reset`
+      : `${window.location.origin}/auth?mode=reset`;
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl
