@@ -1,23 +1,33 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 
 interface MarketplaceFiltersProps {
-  localSearchQuery: string;
-  phaseFilter: string;
-  categoryFilter: string;
-  statusFilter: string;
-  categories: string[];
-  onSearchQueryChange: (query: string) => void;
-  onPhaseFilterChange: (phase: string) => void;
-  onCategoryFilterChange: (category: string) => void;
-  onStatusFilterChange: (status: string) => void;
+  onFilterChange?: (filters: Record<string, string>) => void;
+  initialFilters?: {
+    search: string;
+    phase: string;
+    category: string;
+    status: string;
+  };
+  // New props for MarketplaceGrid compatibility
+  localSearchQuery?: string;
+  phaseFilter?: string;
+  categoryFilter?: string;
+  statusFilter?: string;
+  categories?: string[];
+  onSearchQueryChange?: (query: string) => void;
+  onPhaseFilterChange?: (phase: string) => void;
+  onCategoryFilterChange?: (category: string) => void;
+  onStatusFilterChange?: (status: string) => void;
 }
 
 const MarketplaceFilters = ({
+  onFilterChange,
+  initialFilters,
   localSearchQuery,
   phaseFilter,
   categoryFilter,
@@ -28,17 +38,97 @@ const MarketplaceFilters = ({
   onCategoryFilterChange,
   onStatusFilterChange
 }: MarketplaceFiltersProps) => {
+  // Use controlled props if available, otherwise use local state
+  const [localSearchState, setLocalSearchState] = useState(initialFilters?.search || "");
+  const [phaseFilterState, setPhaseFilterState] = useState(initialFilters?.phase || "all");
+  const [categoryFilterState, setCategoryFilterState] = useState(initialFilters?.category || "all");
+  const [statusFilterState, setStatusFilterState] = useState(initialFilters?.status || "all");
+
+  // Determine which values to use (controlled vs uncontrolled)
+  const searchValue = localSearchQuery !== undefined ? localSearchQuery : localSearchState;
+  const phaseValue = phaseFilter !== undefined ? phaseFilter : phaseFilterState;
+  const categoryValue = categoryFilter !== undefined ? categoryFilter : categoryFilterState;
+  const statusValue = statusFilter !== undefined ? statusFilter : statusFilterState;
+
+  // Default categories list
+  const defaultCategories = [
+    "Cybersecurity",
+    "Software",
+    "Hardware",
+    "AI/Machine Learning",
+    "Autonomous Systems",
+    "Biomedical",
+    "Quantum Technologies",
+    "Space Technologies",
+    "Advanced Materials",
+    "Other"
+  ];
+
+  const categoriesToUse = categories || defaultCategories;
+
+  // Update local state when initialFilters change
+  useEffect(() => {
+    if (initialFilters) {
+      setLocalSearchState(initialFilters.search);
+      setPhaseFilterState(initialFilters.phase);
+      setCategoryFilterState(initialFilters.category);
+      setStatusFilterState(initialFilters.status);
+    }
+  }, [initialFilters]);
+
+  // Notify parent of filter changes (for Index.tsx compatibility)
+  useEffect(() => {
+    if (onFilterChange) {
+      onFilterChange({
+        search: searchValue,
+        phase: phaseValue,
+        category: categoryValue,
+        status: statusValue
+      });
+    }
+  }, [searchValue, phaseValue, categoryValue, statusValue, onFilterChange]);
+
+  const handleSearchChange = (value: string) => {
+    if (onSearchQueryChange) {
+      onSearchQueryChange(value);
+    } else {
+      setLocalSearchState(value);
+    }
+  };
+
+  const handlePhaseChange = (value: string) => {
+    if (onPhaseFilterChange) {
+      onPhaseFilterChange(value);
+    } else {
+      setPhaseFilterState(value);
+    }
+  };
+
+  const handleCategoryChange = (value: string) => {
+    if (onCategoryFilterChange) {
+      onCategoryFilterChange(value);
+    } else {
+      setCategoryFilterState(value);
+    }
+  };
+
+  const handleStatusChange = (value: string) => {
+    if (onStatusFilterChange) {
+      onStatusFilterChange(value);
+    } else {
+      setStatusFilterState(value);
+    }
+  };
+
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Since filters apply automatically, we don't need to do anything here
+    // Filters apply automatically through useEffect or controlled props
   };
 
   // Sort categories alphabetically, but put "Other" at the end
-  const sortedCategories = [...categories].sort((a, b) => {
-    // If either category is "Other", handle special case
+  const sortedCategories = [...categoriesToUse].sort((a, b) => {
     if (a.toLowerCase() === "other") return 1;
     if (b.toLowerCase() === "other") return -1;
-    // Otherwise sort alphabetically
     return a.localeCompare(b);
   });
 
@@ -52,15 +142,15 @@ const MarketplaceFilters = ({
             <Input
               type="text"
               placeholder="Search..."
-              value={localSearchQuery}
-              onChange={(e) => onSearchQueryChange(e.target.value)}
+              value={searchValue}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-10"
             />
           </form>
         </div>
 
         {/* Phase Filter */}
-        <Select value={phaseFilter} onValueChange={onPhaseFilterChange}>
+        <Select value={phaseValue} onValueChange={handlePhaseChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Phase" />
           </SelectTrigger>
@@ -73,7 +163,7 @@ const MarketplaceFilters = ({
         </Select>
 
         {/* Category Filter */}
-        <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
+        <Select value={categoryValue} onValueChange={handleCategoryChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
@@ -87,14 +177,14 @@ const MarketplaceFilters = ({
           </SelectContent>
         </Select>
 
-        {/* Status Filter - Only show Active, Closed, and Awarded for marketplace users */}
-        <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+        {/* Status Filter */}
+        <Select value={statusValue} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="Active">Active</SelectItem>
             <SelectItem value="Closed">Closed</SelectItem>
             <SelectItem value="Awarded">Awarded</SelectItem>
           </SelectContent>
