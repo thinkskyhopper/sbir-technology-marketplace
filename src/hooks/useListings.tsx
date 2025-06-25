@@ -57,7 +57,8 @@ export const useListings = () => {
     updateListing,
     approveListing,
     rejectListing,
-    hideListing
+    hideListing,
+    deleteListing
   } = useListingOperations(refreshListings);
 
   // Initial fetch when auth state changes significantly
@@ -89,7 +90,8 @@ export const useListings = () => {
     updateListing,
     approveListing,
     rejectListing,
-    hideListing
+    hideListing,
+    deleteListing
   }), [
     listings,
     loading,
@@ -99,7 +101,8 @@ export const useListings = () => {
     updateListing,
     approveListing,
     rejectListing,
-    hideListing
+    hideListing,
+    deleteListing
   ]);
 
   return returnValue;

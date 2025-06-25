@@ -170,5 +170,21 @@ export const listingsService = {
     }
     
     console.log('✅ Listing hidden successfully');
+  },
+
+  async deleteListing(listingId: string): Promise<void> {
+    console.log('🗑️ Deleting listing...', { listingId });
+    
+    const { error } = await supabase
+      .from('sbir_listings')
+      .delete()
+      .eq('id', listingId);
+
+    if (error) {
+      console.error('❌ Delete listing error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Listing deleted successfully');
   }
 };

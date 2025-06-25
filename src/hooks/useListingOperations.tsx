@@ -138,12 +138,32 @@ export const useListingOperations = (onSuccess?: () => void) => {
     }
   };
 
+  const deleteListing = async (listingId: string) => {
+    if (!isAdmin) {
+      throw new Error('Only admins can delete listings');
+    }
+
+    try {
+      setLoading(true);
+      console.log('🔄 Deleting listing operation...', { listingId });
+      
+      await listingsService.deleteListing(listingId);
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error('❌ Error deleting listing:', err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     createListing,
     updateListing,
     approveListing,
     rejectListing,
     hideListing,
+    deleteListing,
     loading
   };
 };
