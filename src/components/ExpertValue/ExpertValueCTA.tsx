@@ -8,6 +8,10 @@ interface ExpertValueCTAProps {
 }
 
 const ExpertValueCTA = ({ onScheduleConsultation, onExploreMarketplace, onContactUs }: ExpertValueCTAProps) => {
+  const handleScheduleConsultation = () => {
+    window.open('https://scheduler.zoom.us/ted-dennis/ted-dennis-sbir-connect', '_blank');
+  };
+
   return (
     <section className="text-center bg-secondary/20 rounded-lg p-8">
       <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
@@ -16,7 +20,7 @@ const ExpertValueCTA = ({ onScheduleConsultation, onExploreMarketplace, onContac
         navigate your next contract transaction with confidence.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={onScheduleConsultation}>
+        <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={handleScheduleConsultation}>
           Schedule Free Consultation
         </Button>
         <Button size="lg" variant="outline" onClick={onExploreMarketplace}>
