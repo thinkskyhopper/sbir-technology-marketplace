@@ -1,196 +1,155 @@
 
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useListings } from "@/hooks/useListings";
-import { useAuth } from "@/contexts/AuthContext";
-import { useMetaTags } from "@/hooks/useMetaTags";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import MarketplaceFilters from "@/components/MarketplaceFilters";
-import MarketplaceResultsGrid from "@/components/MarketplaceResultsGrid";
+import MarketplaceGrid from "@/components/MarketplaceGrid";
 import Footer from "@/components/Footer";
 import CreateListingDialog from "@/components/CreateListingDialog";
 import type { SBIRListing } from "@/types/listings";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { listings, loading, error } = useListings();
-  const { user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams] = useSearchParams();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
+  const {
+    user
+  } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Set up meta tags for the homepage
-  useMetaTags({
-    title: "The SBIR Tech Marketplace - Generate Revenue from Past SBIR/STTR Awards",
-    description: "Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.",
-    image: "/lovable-uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png",
-    url: window.location.href,
-    type: "website"
-  });
-
-  // Determine the current view based on URL parameters
-  const currentView = searchParams.get("view") || "hero";
-  const isMarketplaceView = currentView === "marketplace";
-
-  // Simple filter function that doesn't trigger URL changes
-  const applyFilters = (filters: Record<string, string>) => {
-    if (!listings.length) {
-      setFilteredListings([]);
-      return;
-    }
-
-    // Start with all listings (don't pre-filter by status here since useListings already handles this)
-    let filtered = [...listings];
-
-    const searchQuery = filters.search;
-    const phaseFilter = filters.phase;
-    const categoryFilter = filters.category;
-    const statusFilter = filters.status;
-
-    if (searchQuery && searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(listing =>
-        listing.title.toLowerCase().includes(query) ||
-        listing.description.toLowerCase().includes(query) ||
-        listing.agency.toLowerCase().includes(query) ||
-        listing.category.toLowerCase().includes(query)
-      );
-    }
-
-    if (phaseFilter && phaseFilter !== "all") {
-      filtered = filtered.filter(listing => listing.phase === phaseFilter);
-    }
-
-    if (categoryFilter && categoryFilter !== "all") {
-      filtered = filtered.filter(listing => listing.category === categoryFilter);
-    }
-
-    if (statusFilter && statusFilter !== "all") {
-      filtered = filtered.filter(listing => listing.status === statusFilter);
-    }
-
-    setFilteredListings(filtered);
+  // Determine current view based on URL parameters
+  const getCurrentView = (): "home" | "marketplace" => {
+    return searchParams.get("view") === "marketplace" ? "marketplace" : "home";
   };
+  const [currentView, setCurrentView] = useState<"home" | "marketplace">(getCurrentView());
 
-  // Initial filter application when listings change
+  // Read filters from URL parameters
+  const getFiltersFromURL = () => ({
+    localSearchQuery: searchParams.get("search") || "",
+    phaseFilter: searchParams.get("phase") || "all",
+    categoryFilter: searchParams.get("category") || "all",
+    statusFilter: searchParams.get("status") || "active"
+  });
+  const [marketplaceFilters, setMarketplaceFilters] = useState(getFiltersFromURL());
+
+  // Update view and filters when URL changes (including back/forward navigation)
   useEffect(() => {
-    if (isMarketplaceView) {
-      const initialFilters = {
-        search: searchParams.get("search") || "",
-        phase: searchParams.get("phase") || "all",
-        category: searchParams.get("category") || "all",
-        status: searchParams.get("status") || "all"
-      };
-      applyFilters(initialFilters);
-    } else {
-      // For hero view, show the 6 newest listings without any filters
-      if (listings.length > 0) {
-        setFilteredListings(listings.slice(0, 6));
-      }
-    }
-  }, [listings, searchParams, isMarketplaceView]);
+    const newView = getCurrentView();
+    const newFilters = getFiltersFromURL();
+    console.log("URL changed - updating view to:", newView);
+    setCurrentView(newView);
+    setMarketplaceFilters(newFilters);
+
+    // Update search query from URL
+    const urlSearch = searchParams.get("search") || "";
+    setSearchQuery(urlSearch);
+  }, [searchParams]);
+
+  const handleExploreMarketplace = () => {
+    console.log("Explore marketplace clicked");
+    navigate("/?view=marketplace");
+  };
 
   const handleSearch = (query: string) => {
-    try {
-      const newParams = new URLSearchParams(searchParams);
-      if (query.trim()) {
-        newParams.set("search", query);
-      } else {
-        newParams.delete("search");
-      }
-      newParams.set("view", "marketplace");
-      setSearchParams(newParams, { replace: true });
-    } catch (error) {
-      console.warn("URL update failed, applying filters locally", error);
-      // Apply filters locally if URL update fails
-      applyFilters({
-        search: query,
-        phase: "all",
-        category: "all",
-        status: "all"
-      });
+    console.log("Search initiated:", query);
+    const params = new URLSearchParams();
+    params.set("view", "marketplace");
+    if (query) {
+      params.set("search", query);
     }
+    navigate(`/?${params.toString()}`);
   };
 
-  const handleViewMarketplace = () => {
-    try {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set("view", "marketplace");
-      setSearchParams(newParams, { replace: true });
-    } catch (error) {
-      console.warn("URL update failed", error);
+  const handlePostListingClick = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
     }
-  };
-
-  const handlePostListing = () => {
     setShowCreateDialog(true);
   };
 
-  const handleFilterChange = (filters: Record<string, string>) => {
-    // Just apply filters locally without URL manipulation
-    applyFilters(filters);
-  };
-
-  const handleClearFilters = () => {
-    const clearedFilters = {
-      search: "",
-      phase: "all",
-      category: "all",
-      status: "all"
-    };
-    applyFilters(clearedFilters);
-    
-    try {
-      const newParams = new URLSearchParams();
-      newParams.set("view", "marketplace");
-      setSearchParams(newParams, { replace: true });
-    } catch (error) {
-      console.warn("URL update failed during clear", error);
+  const handleContactAdmin = (listing: SBIRListing) => {
+    if (!user) {
+      navigate('/auth');
+      return;
     }
+    // TODO: Implement contact admin functionality
+    console.log("Contact admin for listing:", listing);
   };
 
+  const handleFiltersChange = (filters: typeof marketplaceFilters) => {
+    console.log("Filters changed:", filters);
+    setMarketplaceFilters(filters);
+
+    // Build new URL with all filters
+    const params = new URLSearchParams();
+    params.set("view", "marketplace");
+    if (filters.localSearchQuery) params.set("search", filters.localSearchQuery);
+    if (filters.phaseFilter !== "all") params.set("phase", filters.phaseFilter);
+    if (filters.categoryFilter !== "all") params.set("category", filters.categoryFilter);
+    if (filters.statusFilter !== "active") params.set("status", filters.statusFilter);
+
+    // Use replace to avoid creating history entries for filter changes
+    navigate(`/?${params.toString()}`, {
+      replace: true
+    });
+  };
+
+  console.log("Current view rendering:", currentView);
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header 
-        onSearch={handleSearch}
-        onPostListingClick={handlePostListing}
-      />
-      
-      <main className="flex-1">
-        {!isMarketplaceView ? (
-          <Hero onViewMarketplace={handleViewMarketplace} />
+      <Header onSearch={handleSearch} onPostListingClick={handlePostListingClick} />
+
+      <div className="flex-1">
+        {currentView === "home" ? (
+          <>
+            <Hero onExploreClick={handleExploreMarketplace} />
+            
+            {/* Featured Section */}
+            <section className="py-16 bg-secondary/20">
+              <div className="container mx-auto px-6">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-bold mb-4">Featured Opportunities</h2>
+                  <p className="text-muted-foreground max-w-2xl mx-auto">Discover high-value SBIR technology from leading defense industry partners</p>
+                </div>
+                
+                <div className="max-w-4xl mx-auto">
+                  <MarketplaceGrid onContactAdmin={handleContactAdmin} showFilters={false} maxListings={6} />
+                </div>
+                
+                <div className="text-center mt-8">
+                  <button onClick={handleExploreMarketplace} className="text-primary hover:text-primary/80 font-semibold text-lg">
+                    View All Opportunities →
+                  </button>
+                </div>
+              </div>
+            </section>
+          </>
         ) : (
-          <div className="container mx-auto px-6 py-8">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">SBIR Tech Marketplace</h1>
-              <p className="text-muted-foreground">
-                Discover and connect with innovative SBIR/STTR technologies
-              </p>
+          <section className="py-8">
+            <div className="container mx-auto px-6">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold mb-2">SBIR Technology Marketplace</h1>
+                <p className="text-muted-foreground">Browse and discover Phase I & II SBIR technology from verified sellers</p>
+              </div>
+              
+              <MarketplaceGrid 
+                searchQuery={searchQuery} 
+                onContactAdmin={handleContactAdmin} 
+                preservedFilters={marketplaceFilters} 
+                onFiltersChange={handleFiltersChange}
+                showFilters={true}
+              />
             </div>
-            
-            <MarketplaceFilters
-              onFilterChange={handleFilterChange}
-              initialFilters={{
-                search: searchParams.get("search") || "",
-                phase: searchParams.get("phase") || "all",
-                category: searchParams.get("category") || "all",
-                status: searchParams.get("status") || "all"
-              }}
-            />
-            
-            <MarketplaceResultsGrid
-              listings={filteredListings}
-              loading={loading}
-              error={error}
-              onClearFilters={handleClearFilters}
-            />
-          </div>
+          </section>
         )}
-      </main>
-      
+      </div>
+
       <Footer />
       
-      <CreateListingDialog
+      <CreateListingDialog 
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
       />

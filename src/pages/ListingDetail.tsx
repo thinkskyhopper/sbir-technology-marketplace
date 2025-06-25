@@ -9,7 +9,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import EditListingDialog from "@/components/EditListingDialog";
 import ContactAdminDialog from "@/components/ContactAdminDialog";
-import CreateListingDialog from "@/components/CreateListingDialog";
 import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader";
 import ListingDetailHeroImage from "@/components/ListingDetail/ListingDetailHeroImage";
 import ListingDetailDescription from "@/components/ListingDetail/ListingDetailDescription";
@@ -27,7 +26,6 @@ const ListingDetail = () => {
   const { toast } = useToast();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const listing = listings.find(l => l.id === id);
 
@@ -90,10 +88,6 @@ const ListingDetail = () => {
     setShowContactDialog(true);
   };
 
-  const handlePostListing = () => {
-    setShowCreateDialog(true);
-  };
-
   const handleBackToMarketplace = () => {
     // Preserve any existing marketplace filters in the URL
     const marketplaceParams = new URLSearchParams();
@@ -130,7 +124,7 @@ const ListingDetail = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Main Site Header */}
-      <Header onPostListingClick={handlePostListing} />
+      <Header />
       
       {/* Listing Specific Header */}
       <ListingDetailHeader
@@ -167,12 +161,6 @@ const ListingDetail = () => {
 
       {/* Footer */}
       <Footer />
-
-      {/* Create Dialog */}
-      <CreateListingDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-      />
 
       {/* Edit Dialog */}
       <EditListingDialog
