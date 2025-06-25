@@ -90,25 +90,6 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
           </div>
         </CardContent>
       </Card>
-
-      {/* Timeline */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Timeline</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm space-y-3">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Listed</span>
-              <span>{formatDate(listing.submitted_at)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Deadline</span>
-              <span className="font-semibold text-red-600">{formatDate(listing.deadline)}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
