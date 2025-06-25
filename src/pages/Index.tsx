@@ -34,7 +34,10 @@ const Index = () => {
 
   // Filter listings based on search parameters
   useEffect(() => {
-    if (!listings.length) return;
+    if (!listings.length) {
+      setFilteredListings([]);
+      return;
+    }
 
     let filtered = listings.filter(listing => listing.status === "Active");
 
@@ -104,6 +107,12 @@ const Index = () => {
     setSearchParams(newParams);
   };
 
+  const handleClearFilters = () => {
+    const newParams = new URLSearchParams();
+    newParams.set("view", "marketplace");
+    setSearchParams(newParams);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header 
@@ -137,6 +146,7 @@ const Index = () => {
               listings={filteredListings}
               loading={loading}
               error={error}
+              onClearFilters={handleClearFilters}
             />
           </div>
         )}
