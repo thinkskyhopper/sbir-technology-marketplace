@@ -39,7 +39,8 @@ const Index = () => {
       return;
     }
 
-    let filtered = listings.filter(listing => listing.status === "Active");
+    // Start with all listings (don't pre-filter by status here since useListings already handles this)
+    let filtered = [...listings];
 
     const searchQuery = filters.search;
     const phaseFilter = filters.phase;
@@ -73,14 +74,21 @@ const Index = () => {
 
   // Initial filter application when listings change
   useEffect(() => {
-    const initialFilters = {
-      search: searchParams.get("search") || "",
-      phase: searchParams.get("phase") || "all",
-      category: searchParams.get("category") || "all",
-      status: searchParams.get("status") || "all"
-    };
-    applyFilters(initialFilters);
-  }, [listings, searchParams]);
+    if (isMarketplaceView) {
+      const initialFilters = {
+        search: searchParams.get("search") || "",
+        phase: searchParams.get("phase") || "all",
+        category: searchParams.get("category") || "all",
+        status: searchParams.get("status") || "all"
+      };
+      applyFilters(initialFilters);
+    } else {
+      // For hero view, show the 6 newest listings without any filters
+      if (listings.length > 0) {
+        setFilteredListings(listings.slice(0, 6));
+      }
+    }
+  }, [listings, searchParams, isMarketplaceView]);
 
   const handleSearch = (query: string) => {
     try {
