@@ -76,16 +76,20 @@ const MarketplaceFilters = ({
     }
   }, [initialFilters]);
 
-  // Notify parent of filter changes (for Index.tsx compatibility)
+  // Debounced filter change notification - only notify after user stops changing filters
   useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange({
-        search: searchValue,
-        phase: phaseValue,
-        category: categoryValue,
-        status: statusValue
-      });
-    }
+    const timeoutId = setTimeout(() => {
+      if (onFilterChange) {
+        onFilterChange({
+          search: searchValue,
+          phase: phaseValue,
+          category: categoryValue,
+          status: statusValue
+        });
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
   }, [searchValue, phaseValue, categoryValue, statusValue, onFilterChange]);
 
   const handleSearchChange = (value: string) => {
@@ -122,7 +126,7 @@ const MarketplaceFilters = ({
 
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Filters apply automatically through useEffect or controlled props
+    // Filters apply automatically through useEffect with debounce
   };
 
   // Sort categories alphabetically, but put "Other" at the end

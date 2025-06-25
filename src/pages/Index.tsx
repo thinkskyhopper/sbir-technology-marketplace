@@ -32,8 +32,8 @@ const Index = () => {
   const currentView = searchParams.get("view") || "hero";
   const isMarketplaceView = currentView === "marketplace";
 
-  // Filter listings based on search parameters
-  useEffect(() => {
+  // Simple filter function that doesn't trigger URL changes
+  const applyFilters = (filters: Record<string, string>) => {
     if (!listings.length) {
       setFilteredListings([]);
       return;
@@ -41,12 +41,12 @@ const Index = () => {
 
     let filtered = listings.filter(listing => listing.status === "Active");
 
-    const searchQuery = searchParams.get("search");
-    const phaseFilter = searchParams.get("phase");
-    const categoryFilter = searchParams.get("category");
-    const statusFilter = searchParams.get("status");
+    const searchQuery = filters.search;
+    const phaseFilter = filters.phase;
+    const categoryFilter = filters.category;
+    const statusFilter = filters.status;
 
-    if (searchQuery) {
+    if (searchQuery && searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(listing =>
         listing.title.toLowerCase().includes(query) ||
@@ -69,23 +69,49 @@ const Index = () => {
     }
 
     setFilteredListings(filtered);
+  };
+
+  // Initial filter application when listings change
+  useEffect(() => {
+    const initialFilters = {
+      search: searchParams.get("search") || "",
+      phase: searchParams.get("phase") || "all",
+      category: searchParams.get("category") || "all",
+      status: searchParams.get("status") || "all"
+    };
+    applyFilters(initialFilters);
   }, [listings, searchParams]);
 
   const handleSearch = (query: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (query.trim()) {
-      newParams.set("search", query);
-    } else {
-      newParams.delete("search");
+    try {
+      const newParams = new URLSearchParams(searchParams);
+      if (query.trim()) {
+        newParams.set("search", query);
+      } else {
+        newParams.delete("search");
+      }
+      newParams.set("view", "marketplace");
+      setSearchParams(newParams, { replace: true });
+    } catch (error) {
+      console.warn("URL update failed, applying filters locally", error);
+      // Apply filters locally if URL update fails
+      applyFilters({
+        search: query,
+        phase: "all",
+        category: "all",
+        status: "all"
+      });
     }
-    newParams.set("view", "marketplace");
-    setSearchParams(newParams);
   };
 
   const handleViewMarketplace = () => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("view", "marketplace");
-    setSearchParams(newParams);
+    try {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("view", "marketplace");
+      setSearchParams(newParams, { replace: true });
+    } catch (error) {
+      console.warn("URL update failed", error);
+    }
   };
 
   const handlePostListing = () => {
@@ -93,24 +119,26 @@ const Index = () => {
   };
 
   const handleFilterChange = (filters: Record<string, string>) => {
-    const newParams = new URLSearchParams(searchParams);
-    
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value && value !== "all") {
-        newParams.set(key, value);
-      } else {
-        newParams.delete(key);
-      }
-    });
-    
-    newParams.set("view", "marketplace");
-    setSearchParams(newParams);
+    // Just apply filters locally without URL manipulation
+    applyFilters(filters);
   };
 
   const handleClearFilters = () => {
-    const newParams = new URLSearchParams();
-    newParams.set("view", "marketplace");
-    setSearchParams(newParams);
+    const clearedFilters = {
+      search: "",
+      phase: "all",
+      category: "all",
+      status: "all"
+    };
+    applyFilters(clearedFilters);
+    
+    try {
+      const newParams = new URLSearchParams();
+      newParams.set("view", "marketplace");
+      setSearchParams(newParams, { replace: true });
+    } catch (error) {
+      console.warn("URL update failed during clear", error);
+    }
   };
 
   return (
