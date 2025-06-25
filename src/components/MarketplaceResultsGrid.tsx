@@ -10,14 +10,20 @@ import ContactAdminDialog from "./ContactAdminDialog";
 
 interface MarketplaceResultsGridProps {
   listings: SBIRListing[];
-  loading: boolean;
-  error: string | null;
+  loading?: boolean;
+  error?: string | null;
+  onEditListing?: (listing: SBIRListing) => void;
+  onContactAdmin?: (listing: SBIRListing) => void;
+  onClearFilters?: () => void;
 }
 
 const MarketplaceResultsGrid = ({ 
   listings, 
-  loading,
-  error
+  loading = false,
+  error = null,
+  onEditListing,
+  onContactAdmin,
+  onClearFilters
 }: MarketplaceResultsGridProps) => {
   const { isAdmin } = useAuth();
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -27,11 +33,17 @@ const MarketplaceResultsGrid = ({
   const handleEditListing = (listing: SBIRListing) => {
     setSelectedListing(listing);
     setShowEditDialog(true);
+    if (onEditListing) {
+      onEditListing(listing);
+    }
   };
 
   const handleContactAdmin = (listing: SBIRListing) => {
     setSelectedListing(listing);
     setShowContactDialog(true);
+    if (onContactAdmin) {
+      onContactAdmin(listing);
+    }
   };
 
   if (loading) {
@@ -47,7 +59,7 @@ const MarketplaceResultsGrid = ({
   }
 
   if (listings.length === 0) {
-    return <MarketplaceNoResults />;
+    return <MarketplaceNoResults onClearFilters={onClearFilters || (() => {})} />;
   }
 
   return (

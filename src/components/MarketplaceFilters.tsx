@@ -6,26 +6,52 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter } from "lucide-react";
 
 interface MarketplaceFiltersProps {
-  onFilterChange: (filters: Record<string, string>) => void;
-  initialFilters: {
+  onFilterChange?: (filters: Record<string, string>) => void;
+  initialFilters?: {
     search: string;
     phase: string;
     category: string;
     status: string;
   };
+  // New props for MarketplaceGrid compatibility
+  localSearchQuery?: string;
+  phaseFilter?: string;
+  categoryFilter?: string;
+  statusFilter?: string;
+  categories?: string[];
+  onSearchQueryChange?: (query: string) => void;
+  onPhaseFilterChange?: (phase: string) => void;
+  onCategoryFilterChange?: (category: string) => void;
+  onStatusFilterChange?: (status: string) => void;
 }
 
 const MarketplaceFilters = ({
   onFilterChange,
-  initialFilters
+  initialFilters,
+  localSearchQuery,
+  phaseFilter,
+  categoryFilter,
+  statusFilter,
+  categories,
+  onSearchQueryChange,
+  onPhaseFilterChange,
+  onCategoryFilterChange,
+  onStatusFilterChange
 }: MarketplaceFiltersProps) => {
-  const [localSearchQuery, setLocalSearchQuery] = useState(initialFilters.search);
-  const [phaseFilter, setPhaseFilter] = useState(initialFilters.phase);
-  const [categoryFilter, setCategoryFilter] = useState(initialFilters.category);
-  const [statusFilter, setStatusFilter] = useState(initialFilters.status);
+  // Use controlled props if available, otherwise use local state
+  const [localSearchState, setLocalSearchState] = useState(initialFilters?.search || "");
+  const [phaseFilterState, setPhaseFilterState] = useState(initialFilters?.phase || "all");
+  const [categoryFilterState, setCategoryFilterState] = useState(initialFilters?.category || "all");
+  const [statusFilterState, setStatusFilterState] = useState(initialFilters?.status || "all");
 
-  // Categories list - you can make this dynamic later if needed
-  const categories = [
+  // Determine which values to use (controlled vs uncontrolled)
+  const searchValue = localSearchQuery !== undefined ? localSearchQuery : localSearchState;
+  const phaseValue = phaseFilter !== undefined ? phaseFilter : phaseFilterState;
+  const categoryValue = categoryFilter !== undefined ? categoryFilter : categoryFilterState;
+  const statusValue = statusFilter !== undefined ? statusFilter : statusFilterState;
+
+  // Default categories list
+  const defaultCategories = [
     "Cybersecurity",
     "Software",
     "Hardware",
@@ -38,31 +64,69 @@ const MarketplaceFilters = ({
     "Other"
   ];
 
+  const categoriesToUse = categories || defaultCategories;
+
   // Update local state when initialFilters change
   useEffect(() => {
-    setLocalSearchQuery(initialFilters.search);
-    setPhaseFilter(initialFilters.phase);
-    setCategoryFilter(initialFilters.category);
-    setStatusFilter(initialFilters.status);
+    if (initialFilters) {
+      setLocalSearchState(initialFilters.search);
+      setPhaseFilterState(initialFilters.phase);
+      setCategoryFilterState(initialFilters.category);
+      setStatusFilterState(initialFilters.status);
+    }
   }, [initialFilters]);
 
-  // Notify parent of filter changes
+  // Notify parent of filter changes (for Index.tsx compatibility)
   useEffect(() => {
-    onFilterChange({
-      search: localSearchQuery,
-      phase: phaseFilter,
-      category: categoryFilter,
-      status: statusFilter
-    });
-  }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, onFilterChange]);
+    if (onFilterChange) {
+      onFilterChange({
+        search: searchValue,
+        phase: phaseValue,
+        category: categoryValue,
+        status: statusValue
+      });
+    }
+  }, [searchValue, phaseValue, categoryValue, statusValue, onFilterChange]);
+
+  const handleSearchChange = (value: string) => {
+    if (onSearchQueryChange) {
+      onSearchQueryChange(value);
+    } else {
+      setLocalSearchState(value);
+    }
+  };
+
+  const handlePhaseChange = (value: string) => {
+    if (onPhaseFilterChange) {
+      onPhaseFilterChange(value);
+    } else {
+      setPhaseFilterState(value);
+    }
+  };
+
+  const handleCategoryChange = (value: string) => {
+    if (onCategoryFilterChange) {
+      onCategoryFilterChange(value);
+    } else {
+      setCategoryFilterState(value);
+    }
+  };
+
+  const handleStatusChange = (value: string) => {
+    if (onStatusFilterChange) {
+      onStatusFilterChange(value);
+    } else {
+      setStatusFilterState(value);
+    }
+  };
 
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Filters apply automatically through useEffect
+    // Filters apply automatically through useEffect or controlled props
   };
 
   // Sort categories alphabetically, but put "Other" at the end
-  const sortedCategories = [...categories].sort((a, b) => {
+  const sortedCategories = [...categoriesToUse].sort((a, b) => {
     if (a.toLowerCase() === "other") return 1;
     if (b.toLowerCase() === "other") return -1;
     return a.localeCompare(b);
@@ -78,15 +142,15 @@ const MarketplaceFilters = ({
             <Input
               type="text"
               placeholder="Search..."
-              value={localSearchQuery}
-              onChange={(e) => setLocalSearchQuery(e.target.value)}
+              value={searchValue}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-10"
             />
           </form>
         </div>
 
         {/* Phase Filter */}
-        <Select value={phaseFilter} onValueChange={setPhaseFilter}>
+        <Select value={phaseValue} onValueChange={handlePhaseChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Phase" />
           </SelectTrigger>
@@ -99,7 +163,7 @@ const MarketplaceFilters = ({
         </Select>
 
         {/* Category Filter */}
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+        <Select value={categoryValue} onValueChange={handleCategoryChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
@@ -114,7 +178,7 @@ const MarketplaceFilters = ({
         </Select>
 
         {/* Status Filter */}
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusValue} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-full md:w-48">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
