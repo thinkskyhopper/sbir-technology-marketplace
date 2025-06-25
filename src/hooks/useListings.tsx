@@ -46,9 +46,10 @@ export const useListings = () => {
     }
   }, [user?.id, isAdmin]);
 
-  // Memoized refresh function that forces a fetch
+  // Enhanced refresh function that forces a fetch and clears cache
   const refreshListings = useCallback(() => {
-    console.log('🔄 Forcing listings refresh...');
+    console.log('🔄 Forcing listings refresh and clearing cache...');
+    hasLoadedRef.current = false;
     fetchListings(true);
   }, [fetchListings]);
 

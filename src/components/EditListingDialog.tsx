@@ -41,7 +41,7 @@ interface ExtendedEditListingFormData extends EditListingFormData {
 const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const { updateListing, fetchListings } = useListings();
+  const { updateListing } = useListings();
   const { toast } = useToast();
 
   const form = useForm<EditListingFormData>({
@@ -87,19 +87,27 @@ const EditListingDialog = ({ open, onOpenChange, listing }: EditListingDialogPro
         photo_url: photoUrl,
       } as Required<ExtendedEditListingFormData>;
 
+      console.log('🔄 Updating listing with data:', { listingId: listing.id, updateData });
       await updateListing(listing.id, updateData);
 
-      // Explicitly refresh listings to ensure changes are reflected
-      console.log('🔄 Refreshing listings after successful edit...');
-      fetchListings();
+      console.log('✅ Listing updated successfully, refreshing data...');
 
       toast({
         title: "Listing Updated",
         description: "The listing has been successfully updated.",
       });
 
+      // Close the dialog and let the parent component handle the refresh
       onOpenChange(false);
+      
+      // Force a page reload to ensure all components reflect the changes
+      // This is a reliable way to ensure the entire page reflects the updates
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+
     } catch (error) {
+      console.error('❌ Error updating listing:', error);
       toast({
         title: "Error",
         description: "Failed to update listing. Please try again.",
