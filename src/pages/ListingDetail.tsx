@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useListings } from "@/hooks/useListings";
@@ -9,6 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import EditListingDialog from "@/components/EditListingDialog";
 import ContactAdminDialog from "@/components/ContactAdminDialog";
+import CreateListingDialog from "@/components/CreateListingDialog";
 import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader";
 import ListingDetailHeroImage from "@/components/ListingDetail/ListingDetailHeroImage";
 import ListingDetailDescription from "@/components/ListingDetail/ListingDetailDescription";
@@ -22,10 +22,11 @@ const ListingDetail = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { listings, loading, deleteListing } = useListings();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const { toast } = useToast();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const listing = listings.find(l => l.id === id);
 
@@ -88,6 +89,14 @@ const ListingDetail = () => {
     setShowContactDialog(true);
   };
 
+  const handlePostListingClick = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setShowCreateDialog(true);
+  };
+
   const handleBackToMarketplace = () => {
     // Preserve any existing marketplace filters in the URL
     const marketplaceParams = new URLSearchParams();
@@ -124,7 +133,7 @@ const ListingDetail = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Main Site Header */}
-      <Header />
+      <Header onPostListingClick={handlePostListingClick} />
       
       {/* Listing Specific Header */}
       <ListingDetailHeader
@@ -177,6 +186,12 @@ const ListingDetail = () => {
           listing={listing}
         />
       )}
+
+      {/* Create Listing Dialog */}
+      <CreateListingDialog 
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+      />
     </div>
   );
 };
