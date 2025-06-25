@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,9 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertCircle, Shield } from 'lucide-react';
+import PasswordReset from '@/components/PasswordReset';
+import UpdatePassword from '@/components/UpdatePassword';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -20,12 +23,56 @@ const Auth = () => {
   
   const { signUp, signIn, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode');
 
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
+
+  // Show password update form when coming from reset email
+  if (mode === 'reset' && user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                <Shield className="w-6 h-6 text-primary-foreground" />
+              </div>
+            </div>
+            <h1 className="text-2xl font-bold">SBIR Exchange</h1>
+            <p className="text-muted-foreground">Secure marketplace for SBIR contracts</p>
+          </div>
+          
+          <UpdatePassword />
+        </div>
+      </div>
+    );
+  }
+
+  // Show password reset form
+  if (showPasswordReset) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                <Shield className="w-6 h-6 text-primary-foreground" />
+              </div>
+            </div>
+            <h1 className="text-2xl font-bold">SBIR Exchange</h1>
+            <p className="text-muted-foreground">Secure marketplace for SBIR contracts</p>
+          </div>
+          
+          <PasswordReset onBackToSignIn={() => setShowPasswordReset(false)} />
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,6 +173,19 @@ const Auth = () => {
                   minLength={6}
                 />
               </div>
+
+              {!isSignUp && (
+                <div className="text-right">
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={() => setShowPasswordReset(true)}
+                    className="text-sm p-0 h-auto"
+                  >
+                    Forgot your password?
+                  </Button>
+                </div>
+              )}
 
               {error && (
                 <Alert variant="destructive">
