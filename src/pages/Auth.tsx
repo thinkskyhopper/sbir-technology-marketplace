@@ -43,8 +43,10 @@ const Auth = () => {
                 <Shield className="w-6 h-6 text-primary-foreground" />
               </div>
             </div>
-            <h1 className="text-2xl font-bold">SBIR Exchange</h1>
-            <p className="text-muted-foreground">Secure marketplace for SBIR contracts</p>
+            <Link to="/" className="text-2xl font-bold hover:opacity-80 transition-opacity">
+              The SBIR Tech Marketplace
+            </Link>
+            <p className="text-muted-foreground">Secure marketplace for SBIR technology</p>
           </div>
           
           <UpdatePassword />
@@ -64,8 +66,10 @@ const Auth = () => {
                 <Shield className="w-6 h-6 text-primary-foreground" />
               </div>
             </div>
-            <h1 className="text-2xl font-bold">SBIR Exchange</h1>
-            <p className="text-muted-foreground">Secure marketplace for SBIR contracts</p>
+            <Link to="/" className="text-2xl font-bold hover:opacity-80 transition-opacity">
+              The SBIR Tech Marketplace
+            </Link>
+            <p className="text-muted-foreground">Secure marketplace for SBIR technology</p>
           </div>
           
           <PasswordReset onBackToSignIn={() => setShowPasswordReset(false)} />
@@ -118,8 +122,10 @@ const Auth = () => {
               <Shield className="w-6 h-6 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold">SBIR Exchange</h1>
-          <p className="text-muted-foreground">Secure marketplace for SBIR contracts</p>
+          <Link to="/" className="text-2xl font-bold hover:opacity-80 transition-opacity">
+            The SBIR Tech Marketplace
+          </Link>
+          <p className="text-muted-foreground">Secure marketplace for SBIR technology</p>
         </div>
 
         <Card>
@@ -127,7 +133,7 @@ const Auth = () => {
             <CardTitle>{isSignUp ? 'Create Account' : 'Sign In'}</CardTitle>
             <CardDescription>
               {isSignUp 
-                ? 'Join the marketplace to buy and sell SBIR contracts'
+                ? 'Join the marketplace to buy and sell SBIR technology'
                 : 'Welcome back to the marketplace'
               }
             </CardDescription>
