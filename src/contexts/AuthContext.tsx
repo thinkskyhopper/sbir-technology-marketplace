@@ -32,9 +32,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    console.log('Setting up auth state listener...');
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -64,12 +68,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('Cleaning up auth subscription');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const getRedirectUrl = () => {
@@ -82,6 +90,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, fullName: string) => {
     const redirectUrl = getRedirectUrl();
     
+    console.log('Sign up attempt for:', email, 'with redirect:', redirectUrl);
+    
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -93,19 +103,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
     
+    if (error) {
+      console.error('Sign up error:', error);
+    }
+    
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
+    console.log('Sign in attempt for:', email);
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
     
+    if (error) {
+      console.error('Sign in error:', error);
+    }
+    
     return { error };
   };
 
   const signOut = async () => {
+    console.log('Sign out initiated');
     await supabase.auth.signOut();
   };
 
@@ -114,19 +135,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ? `${window.location.protocol}//${window.location.hostname}:8080/auth?mode=reset`
       : `${window.location.origin}/auth?mode=reset`;
     
-    console.log('Password reset redirect URL:', redirectUrl);
+    console.log('Password reset request for:', email, 'with redirect:', redirectUrl);
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl
     });
     
+    if (error) {
+      console.error('Password reset error:', error);
+    }
+    
     return { error };
   };
 
   const updatePassword = async (password: string) => {
+    console.log('Password update attempt');
+    
     const { error } = await supabase.auth.updateUser({
       password: password
     });
+    
+    if (error) {
+      console.error('Password update error:', error);
+    }
     
     return { error };
   };
