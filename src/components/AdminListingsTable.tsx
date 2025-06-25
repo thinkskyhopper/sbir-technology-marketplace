@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useListings } from "@/hooks/useListings";
 import { useSorting } from "@/hooks/useSorting";
@@ -19,7 +20,7 @@ import AdminListingsTableEmpty from "./AdminListingsTable/AdminListingsTableEmpt
 import type { SBIRListing } from "@/types/listings";
 
 const AdminListingsTable = () => {
-  const { listings, loading, error, approveListing, rejectListing, hideListing } = useListings();
+  const { listings, loading, error, approveListing, rejectListing, hideListing, deleteListing } = useListings();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [editingListing, setEditingListing] = useState<SBIRListing | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -72,6 +73,25 @@ const AdminListingsTable = () => {
       listingId: listing.id,
       listingTitle: listing.title
     });
+  };
+
+  const handleDeleteClick = async (listing: SBIRListing) => {
+    try {
+      setProcessingId(listing.id);
+      await deleteListing(listing.id);
+      toast({
+        title: "Listing Deleted",
+        description: "The listing has been permanently deleted.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete listing. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingId(null);
+    }
   };
 
   const handleConfirmAction = async () => {
@@ -149,6 +169,7 @@ const AdminListingsTable = () => {
                     onApprove={handleApproveClick}
                     onReject={handleRejectClick}
                     onHide={handleHideClick}
+                    onDelete={handleDeleteClick}
                   />
                 ))}
               </TableBody>
