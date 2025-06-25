@@ -203,6 +203,12 @@ export const listingsService = {
 
     if (deleteError) {
       console.error('❌ Delete listing error:', deleteError);
+      
+      // Check if it's a permission error
+      if (deleteError.code === 'PGRST116' || deleteError.message.includes('policy')) {
+        throw new Error('You do not have permission to delete this listing. Only admins can delete any listing, and users can only delete their own listings.');
+      }
+      
       throw new Error(`Failed to delete listing: ${deleteError.message}`);
     }
     
@@ -210,7 +216,7 @@ export const listingsService = {
     
     if (!data || data.length === 0) {
       console.warn('⚠️ Delete operation completed but no rows were affected');
-      throw new Error('Delete operation completed but no rows were affected. The listing may have already been deleted.');
+      throw new Error('Delete operation completed but no rows were affected. This may be due to insufficient permissions or the listing may have already been deleted.');
     }
   }
 };
