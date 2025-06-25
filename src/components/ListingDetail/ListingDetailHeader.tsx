@@ -86,13 +86,25 @@ const ListingDetailHeader = ({
               </div>
             </div>
             
-            <div className="ml-6 flex items-center space-x-2">
-              <ShareButton 
-                listingId={listing.id}
-                listingTitle={listing.title}
-              />
+            <div className="ml-6 flex flex-col items-end space-y-2">
+              {/* Main action buttons */}
+              <div className="flex items-center space-x-2">
+                <ShareButton 
+                  listingId={listing.id}
+                  listingTitle={listing.title}
+                />
+                <Button 
+                  size="lg"
+                  onClick={onContactAdmin}
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Contact
+                </Button>
+              </div>
+              
+              {/* Admin-only buttons */}
               {isAdmin && (
-                <>
+                <div className="flex items-center space-x-2">
                   <Button 
                     variant="outline"
                     onClick={onEditListing}
@@ -108,15 +120,8 @@ const ListingDetailHeader = ({
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
                   </Button>
-                </>
+                </div>
               )}
-              <Button 
-                size="lg"
-                onClick={onContactAdmin}
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                Contact
-              </Button>
             </div>
           </div>
         </div>
