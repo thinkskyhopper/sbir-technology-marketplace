@@ -9,6 +9,7 @@ interface ListingDetailSidebarProps {
     value: number;
     agency: string;
     submitted_at: string;
+    approved_at?: string | null;
   };
   onContactAdmin: () => void;
 }
@@ -33,6 +34,18 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
     });
   };
 
+  const formatDateTime = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Use approved_at if available, otherwise fall back to submitted_at
+  const dateListedValue = listing.approved_at || listing.submitted_at;
+
   return (
     <div className="space-y-6">
       {/* Key Information */}
@@ -45,7 +58,9 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
             <Clock className="w-4 h-4 mr-2 text-blue-500" />
             <div>
               <p className="font-semibold">Date Listed</p>
-              <p className="text-muted-foreground">{formatDate(listing.submitted_at)}</p>
+              <p className="text-muted-foreground">
+                {listing.approved_at ? formatDateTime(listing.approved_at) : formatDateTime(listing.submitted_at)}
+              </p>
             </div>
           </div>
           
