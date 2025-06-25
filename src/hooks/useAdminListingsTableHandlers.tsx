@@ -71,16 +71,22 @@ export const useAdminListingsTableHandlers = ({
 
   const handleDeleteClick = async (listing: SBIRListing) => {
     try {
+      console.log('🔄 Starting delete operation for listing:', listing.id);
       setProcessingId(listing.id);
+      
       await deleteListing(listing.id);
+      
+      console.log('✅ Delete operation completed successfully');
       toast({
         title: "Listing Deleted",
-        description: "The listing has been permanently deleted.",
+        description: `"${listing.title}" has been permanently deleted.`,
       });
     } catch (error) {
+      console.error('❌ Delete operation failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
-        title: "Error",
-        description: "Failed to delete listing. Please try again.",
+        title: "Delete Failed",
+        description: `Failed to delete "${listing.title}": ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
@@ -113,9 +119,10 @@ export const useAdminListingsTableHandlers = ({
         });
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Error",
-        description: `Failed to ${confirmAction.type} listing. Please try again.`,
+        description: `Failed to ${confirmAction.type} listing: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {

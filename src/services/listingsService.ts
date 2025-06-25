@@ -173,18 +173,44 @@ export const listingsService = {
   },
 
   async deleteListing(listingId: string): Promise<void> {
-    console.log('🗑️ Deleting listing...', { listingId });
+    console.log('🗑️ Attempting to delete listing...', { listingId });
     
-    const { error } = await supabase
+    // First, let's check if the listing exists
+    const { data: existingListing, error: fetchError } = await supabase
+      .from('sbir_listings')
+      .select('id, title, status')
+      .eq('id', listingId)
+      .single();
+
+    if (fetchError) {
+      console.error('❌ Error fetching listing before delete:', fetchError);
+      throw new Error(`Failed to find listing: ${fetchError.message}`);
+    }
+
+    if (!existingListing) {
+      console.error('❌ Listing not found:', listingId);
+      throw new Error('Listing not found');
+    }
+
+    console.log('📋 Found listing to delete:', existingListing);
+
+    // Now attempt to delete the listing
+    const { error: deleteError, data } = await supabase
       .from('sbir_listings')
       .delete()
-      .eq('id', listingId);
+      .eq('id', listingId)
+      .select(); // This will return the deleted rows for confirmation
 
-    if (error) {
-      console.error('❌ Delete listing error:', error);
-      throw error;
+    if (deleteError) {
+      console.error('❌ Delete listing error:', deleteError);
+      throw new Error(`Failed to delete listing: ${deleteError.message}`);
     }
     
-    console.log('✅ Listing deleted successfully');
+    console.log('✅ Listing deleted successfully. Deleted rows:', data);
+    
+    if (!data || data.length === 0) {
+      console.warn('⚠️ Delete operation completed but no rows were affected');
+      throw new Error('Delete operation completed but no rows were affected. The listing may have already been deleted.');
+    }
   }
 };
