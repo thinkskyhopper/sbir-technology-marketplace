@@ -40,7 +40,7 @@ const ListingDetailInfo = ({ listing }: ListingDetailInfoProps) => {
             <p className="text-muted-foreground">{listing.agency}</p>
           </div>
           <div>
-            <h4 className="font-semibold mb-1">Project Value</h4>
+            <h4 className="font-semibold mb-1">Sale Price</h4>
             <p className="text-muted-foreground font-semibold">{formatCurrency(listing.value)}</p>
           </div>
         </div>

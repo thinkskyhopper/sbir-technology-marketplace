@@ -53,7 +53,7 @@ const ValueDeadlineFields = ({ form }: ValueDeadlineFieldsProps) => {
         name="value"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Value (USD)</FormLabel>
+            <FormLabel>Sale Price (USD)</FormLabel>
             <FormControl>
               <Input
                 type="text"

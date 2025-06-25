@@ -75,7 +75,7 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
           <div className="flex items-center text-sm">
             <DollarSign className="w-4 h-4 mr-2 text-green-500" />
             <div>
-              <p className="font-semibold">Project Value</p>
+              <p className="font-semibold">Sale Price</p>
               <p className="text-muted-foreground">{formatCurrency(listing.value)}</p>
             </div>
           </div>
