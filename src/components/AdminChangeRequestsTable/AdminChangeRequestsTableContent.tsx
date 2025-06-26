@@ -67,7 +67,7 @@ export const AdminChangeRequestsTableContent = ({
         
         {changeRequests.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No change requests found.</p>
+            <p className="text-muted-foreground">You're all caught up!</p>
           </div>
         )}
       </CardContent>
