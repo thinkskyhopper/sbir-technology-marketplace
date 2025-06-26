@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, CheckCircle, Eye, EyeOff, Lock, Info } from 'lucide-react';
 
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
@@ -18,8 +18,25 @@ const UpdatePassword = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   
-  const { updatePassword, signOut } = useAuth();
+  const { updatePassword, signOut, user } = useAuth();
   const navigate = useNavigate();
+
+  const validatePassword = (pwd: string) => {
+    const errors = [];
+    if (pwd.length < 6) {
+      errors.push('At least 6 characters long');
+    }
+    if (!/[A-Z]/.test(pwd)) {
+      errors.push('One uppercase letter');
+    }
+    if (!/[a-z]/.test(pwd)) {
+      errors.push('One lowercase letter');
+    }
+    if (!/[0-9]/.test(pwd)) {
+      errors.push('One number');
+    }
+    return errors;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +45,9 @@ const UpdatePassword = () => {
     setSuccess(false);
 
     // Validation
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    const passwordErrors = validatePassword(password);
+    if (passwordErrors.length > 0) {
+      setError(`Password must contain: ${passwordErrors.join(', ')}`);
       setLoading(false);
       return;
     }
@@ -41,23 +59,32 @@ const UpdatePassword = () => {
     }
 
     try {
-      console.log('Attempting to update password...');
+      console.log('Attempting to update password for user:', user?.email);
       const { error } = await updatePassword(password);
       
       if (error) {
-        setError(error.message);
+        console.error('Password update error:', error);
+        
+        // Handle specific error cases
+        if (error.message.includes('session_not_found') || error.message.includes('invalid_session')) {
+          setError('Your session has expired. Please request a new password reset link.');
+        } else if (error.message.includes('same_password')) {
+          setError('New password must be different from your current password');
+        } else {
+          setError(error.message || 'Failed to update password');
+        }
       } else {
         setSuccess(true);
-        console.log('Password updated successfully');
+        console.log('Password updated successfully for user:', user?.email);
         
         // Auto-redirect after successful password update
         setTimeout(() => {
           navigate('/');
-        }, 2000);
+        }, 3000);
       }
     } catch (err) {
       console.error('Unexpected error during password update:', err);
-      setError('An unexpected error occurred');
+      setError('An unexpected error occurred while updating your password');
     } finally {
       setLoading(false);
     }
@@ -87,7 +114,14 @@ const UpdatePassword = () => {
             <CheckCircle className="h-12 w-12 text-green-500" />
           </div>
           
-          <div className="text-center space-y-2">
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              Your password has been successfully updated. You can now use your new password to sign in.
+            </AlertDescription>
+          </Alert>
+          
+          <div className="mt-6 text-center space-y-2">
             <Button onClick={() => navigate('/')} className="w-full">
               Continue to Homepage
             </Button>
@@ -103,9 +137,12 @@ const UpdatePassword = () => {
   return (
     <Card>
       <CardHeader className="text-center">
+        <div className="flex items-center justify-center mb-2">
+          <Lock className="h-8 w-8 text-primary" />
+        </div>
         <CardTitle>Update Your Password</CardTitle>
         <CardDescription>
-          Please enter your new password below
+          {user?.email ? `Updating password for ${user.email}` : 'Please enter your new password below'}
         </CardDescription>
       </CardHeader>
       
@@ -123,6 +160,7 @@ const UpdatePassword = () => {
                 placeholder="Enter your new password"
                 disabled={loading}
                 minLength={6}
+                className={error && error.includes('Password must') ? 'border-red-500' : ''}
               />
               <Button
                 type="button"
@@ -130,10 +168,16 @@ const UpdatePassword = () => {
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
+            {password && (
+              <div className="text-xs text-muted-foreground">
+                Password requirements: 6+ characters, uppercase, lowercase, number
+              </div>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -148,6 +192,7 @@ const UpdatePassword = () => {
                 placeholder="Confirm your new password"
                 disabled={loading}
                 minLength={6}
+                className={error && error.includes('do not match') ? 'border-red-500' : ''}
               />
               <Button
                 type="button"
@@ -155,6 +200,7 @@ const UpdatePassword = () => {
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                disabled={loading}
               >
                 {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
@@ -168,8 +214,19 @@ const UpdatePassword = () => {
             </Alert>
           )}
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Updating Password...' : 'Update Password'}
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={loading || !password || !confirmPassword}
+          >
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Updating Password...
+              </>
+            ) : (
+              'Update Password'
+            )}
           </Button>
         </form>
 
@@ -178,6 +235,7 @@ const UpdatePassword = () => {
             variant="link"
             onClick={handleSignOut}
             className="text-sm"
+            disabled={loading}
           >
             Cancel and Sign Out
           </Button>

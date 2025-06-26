@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { AlertCircle, ArrowLeft, Mail, CheckCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Mail, CheckCircle, Clock } from 'lucide-react';
 
 interface PasswordResetProps {
   onBackToSignIn: () => void;
@@ -17,6 +17,7 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState(false);
   
   const { resetPassword } = useAuth();
 
@@ -25,6 +26,7 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
+    setRateLimited(false);
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,14 +46,17 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
         // Handle specific error cases
         if (error.message.includes('User not found')) {
           setError('No account found with this email address');
-        } else if (error.message.includes('rate limit')) {
+        } else if (error.message.includes('rate limit') || error.message.includes('too many')) {
           setError('Too many requests. Please wait a few minutes before trying again');
+          setRateLimited(true);
+        } else if (error.message.includes('invalid_request')) {
+          setError('Invalid request. Please check your email and try again');
         } else {
-          setError(error.message);
+          setError(error.message || 'An error occurred while sending the reset email');
         }
       } else {
-        setSuccess('Password reset email sent! Please check your inbox and follow the instructions to reset your password.');
-        console.log('Password reset email sent successfully');
+        setSuccess(`Password reset email sent to ${email}! Please check your inbox and follow the instructions to reset your password.`);
+        console.log('Password reset email sent successfully to:', email);
       }
     } catch (err) {
       console.error('Unexpected error during password reset:', err);
@@ -83,28 +88,43 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
             </AlertDescription>
           </Alert>
 
-          <div className="mt-6 text-center space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Didn't receive the email? Check your spam folder or try again.
-            </p>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSuccess(null);
-                setEmail('');
-              }}
-              className="w-full"
-            >
-              Try Again
-            </Button>
-            <Button
-              variant="link"
-              onClick={onBackToSignIn}
-              className="text-sm"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Sign In
-            </Button>
+          <div className="mt-6 space-y-4">
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p className="font-medium">Next steps:</p>
+              <ol className="list-decimal list-inside space-y-1 ml-2">
+                <li>Check your email inbox for the reset link</li>
+                <li>Click the link in the email</li>
+                <li>Enter your new password</li>
+              </ol>
+            </div>
+            
+            <Alert>
+              <Clock className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Didn't receive the email?</strong> Check your spam folder or try again with a different email address.
+              </AlertDescription>
+            </Alert>
+
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSuccess(null);
+                  setEmail('');
+                }}
+                className="w-full"
+              >
+                Send Another Reset Email
+              </Button>
+              <Button
+                variant="link"
+                onClick={onBackToSignIn}
+                className="w-full text-sm"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Sign In
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -132,18 +152,37 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
               required
               placeholder="you@company.com"
               disabled={loading}
+              className={error ? 'border-red-500' : ''}
             />
           </div>
 
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription>
+                {error}
+                {rateLimited && (
+                  <div className="mt-2 text-sm">
+                    <p>This is a security measure to prevent abuse. Please wait before trying again.</p>
+                  </div>
+                )}
+              </AlertDescription>
             </Alert>
           )}
 
-          <Button type="submit" className="w-full" disabled={loading || !email}>
-            {loading ? 'Sending...' : 'Send Reset Email'}
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={loading || !email.trim() || rateLimited}
+          >
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Sending Reset Email...
+              </>
+            ) : (
+              'Send Reset Email'
+            )}
           </Button>
         </form>
 
@@ -159,8 +198,9 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
           </Button>
         </div>
 
-        <div className="mt-6 text-xs text-muted-foreground text-center">
-          <p>Make sure to check your spam folder if you don't see the email within a few minutes.</p>
+        <div className="mt-6 text-xs text-muted-foreground text-center space-y-2">
+          <p><strong>Note:</strong> Make sure to check your spam folder if you don't see the email within a few minutes.</p>
+          <p>The reset link will expire after 1 hour for security reasons.</p>
         </div>
       </CardContent>
     </Card>
