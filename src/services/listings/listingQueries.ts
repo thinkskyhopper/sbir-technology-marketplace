@@ -10,7 +10,7 @@ export const listingQueries = {
       .from('sbir_listings')
       .select(`
         *,
-        profiles!fk_sbir_listings_user_id(
+        profiles!sbir_listings_user_id_fkey(
           full_name,
           email
         )
@@ -45,6 +45,7 @@ export const listingQueries = {
     })) || [];
 
     console.log('✅ Listings formatted:', formattedListings.length);
+    console.log('📊 Sample listing with profile:', formattedListings[0]);
     return formattedListings;
   },
 
