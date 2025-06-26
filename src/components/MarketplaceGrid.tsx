@@ -8,6 +8,7 @@ import MarketplaceLoading from "./MarketplaceLoading";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useListings } from "@/hooks/useListings";
+import { usePagination } from "@/hooks/usePagination";
 import type { SBIRListing } from "@/types/listings";
 
 interface MarketplaceGridProps {
@@ -47,6 +48,21 @@ const MarketplaceGrid = ({
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
   const isInitialMount = useRef(true);
   const isSyncingFromURL = useRef(false);
+
+  // Pagination hook - 15 items per page
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToPage,
+    hasNextPage,
+    hasPreviousPage,
+    resetPagination,
+    totalItems
+  } = usePagination({
+    data: filteredListings,
+    itemsPerPage: 15
+  });
 
   // Update local state when preservedFilters change
   useEffect(() => {
@@ -121,6 +137,8 @@ const MarketplaceGrid = ({
     }
 
     setFilteredListings(filtered);
+    // Reset pagination when filters change
+    resetPagination();
   };
 
   // Apply filters whenever dependencies change
@@ -177,9 +195,15 @@ const MarketplaceGrid = ({
       {/* Results */}
       {filteredListings.length > 0 ? (
         <MarketplaceResultsGrid
-          listings={filteredListings}
+          listings={paginatedData}
           onEditListing={handleEditListing}
           onContactAdmin={onContactAdmin}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={goToPage}
+          hasNextPage={hasNextPage}
+          hasPreviousPage={hasPreviousPage}
+          totalItems={totalItems}
         />
       ) : (
         <MarketplaceNoResults onClearFilters={handleClearFilters} />
