@@ -49,6 +49,7 @@ export const useIndexNavigation = () => {
     if (filters.phaseFilter !== "all") params.set("phase", filters.phaseFilter);
     if (filters.categoryFilter !== "all") params.set("category", filters.categoryFilter);
     if (filters.statusFilter !== "active") params.set("status", filters.statusFilter);
+    if (filters.sortFilter !== "newest") params.set("sort", filters.sortFilter);
 
     // Use replace to avoid creating history entries for filter changes
     navigate(`/?${params.toString()}`, {
