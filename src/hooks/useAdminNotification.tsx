@@ -7,11 +7,15 @@ export const useAdminNotification = () => {
   const { user } = useAuth();
 
   const sendNewListingNotification = async (listing: SBIRListing) => {
-    if (!user || listing.status !== 'Pending') {
+    if (!user) {
+      console.log('ℹ️ Admin notification skipped: No user authenticated');
+      return;
+    }
+
+    if (listing.status !== 'Pending') {
       console.log('ℹ️ Admin notification skipped:', {
-        hasUser: !!user,
         status: listing.status,
-        reason: !user ? 'No user' : 'Status not Pending - notifications only sent for Pending listings'
+        reason: 'Notifications only sent for Pending listings'
       });
       return;
     }
