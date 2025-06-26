@@ -1,4 +1,3 @@
-
 import { useListings } from "@/hooks/useListings";
 import { useSorting } from "@/hooks/useSorting";
 import { usePagination } from "@/hooks/usePagination";
@@ -115,8 +114,8 @@ const AdminListingsTable = () => {
     setAgencyFilter("all");
   };
 
-  // Check if any filters are active
-  const hasActiveFilters = searchTerm || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all";
+  // Check if any filters are active - Fixed TypeScript error by properly converting searchTerm to boolean
+  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all";
 
   if (loading) {
     return <AdminListingsTableLoading />;
