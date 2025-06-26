@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { useChangeRequests } from "@/hooks/useChangeRequests";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
   TableBody,
@@ -18,9 +18,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertCircle, Check, X, Eye } from "lucide-react";
+import { AlertCircle, Check, X, Eye, User } from "lucide-react";
 import { format } from "date-fns";
 import type { ListingChangeRequest } from "@/types/changeRequests";
+
+interface AdminProfile {
+  id: string;
+  full_name: string;
+  email: string;
+}
 
 const AdminChangeRequestsTable = () => {
   const [changeRequests, setChangeRequests] = useState<ListingChangeRequest[]>([]);
@@ -30,6 +36,7 @@ const AdminChangeRequestsTable = () => {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [adminProfiles, setAdminProfiles] = useState<{ [key: string]: AdminProfile }>({});
   
   const { fetchChangeRequests, updateChangeRequestStatus } = useChangeRequests();
   const { isAdmin } = useAuth();
@@ -41,6 +48,25 @@ const AdminChangeRequestsTable = () => {
       setError(null);
       const requests = await fetchChangeRequests(true); // Fetch as admin
       setChangeRequests(requests || []);
+      
+      // Get unique admin IDs who have processed requests
+      const adminIds = [...new Set(requests?.map(r => r.processed_by).filter(Boolean) || [])];
+      
+      // Fetch admin profiles for processed requests
+      if (adminIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', adminIds);
+        
+        if (profiles) {
+          const profilesMap = profiles.reduce((acc, profile) => {
+            acc[profile.id] = profile;
+            return acc;
+          }, {} as { [key: string]: AdminProfile });
+          setAdminProfiles(profilesMap);
+        }
+      }
     } catch (err) {
       console.error('Failed to load change requests:', err);
       setError(err instanceof Error ? err.message : 'Failed to load change requests');
@@ -112,16 +138,9 @@ const AdminChangeRequestsTable = () => {
     }
   };
 
-  const renderChanges = (changes: any) => {
-    if (!changes) return 'No changes specified';
-    
-    return Object.entries(changes)
-      .filter(([_, value]) => value !== null && value !== undefined && value !== '')
-      .map(([key, value]) => {
-        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-        return `${fieldName}: ${value}`;
-      })
-      .join(', ');
+  const getAdminInfo = (adminId: string) => {
+    const admin = adminProfiles[adminId];
+    return admin ? `${admin.full_name || admin.email}` : 'Unknown Admin';
   };
 
   if (!isAdmin) {
@@ -179,6 +198,7 @@ const AdminChangeRequestsTable = () => {
                   <TableHead>Type</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Requested</TableHead>
+                  <TableHead>Processed By</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -207,6 +227,16 @@ const AdminChangeRequestsTable = () => {
                     </TableCell>
                     <TableCell>
                       {format(new Date(request.created_at), 'MMM d, yyyy')}
+                    </TableCell>
+                    <TableCell>
+                      {request.processed_by ? (
+                        <div className="flex items-center space-x-1">
+                          <User className="w-3 h-3" />
+                          <span className="text-sm">{getAdminInfo(request.processed_by)}</span>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">Not processed</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
@@ -302,12 +332,19 @@ const AdminChangeRequestsTable = () => {
               )}
 
               <div>
-                <h3 className="font-medium mb-2">Request Details</h3>
-                <p><strong>Status:</strong> {selectedRequest.status}</p>
-                <p><strong>Submitted:</strong> {format(new Date(selectedRequest.created_at), 'PPP')}</p>
-                {selectedRequest.processed_at && (
-                  <p><strong>Processed:</strong> {format(new Date(selectedRequest.processed_at), 'PPP')}</p>
-                )}
+                <h3 className="font-medium mb-2">Request Status</h3>
+                <div className="space-y-2">
+                  <p><strong>Status:</strong> <Badge variant={getStatusBadgeVariant(selectedRequest.status)}>{selectedRequest.status}</Badge></p>
+                  <p><strong>Submitted:</strong> {format(new Date(selectedRequest.created_at), 'PPP')}</p>
+                  {selectedRequest.processed_at && (
+                    <>
+                      <p><strong>Processed:</strong> {format(new Date(selectedRequest.processed_at), 'PPP')}</p>
+                      {selectedRequest.processed_by && (
+                        <p><strong>Processed by:</strong> {getAdminInfo(selectedRequest.processed_by)}</p>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
 
               {selectedRequest.status === 'pending' && (
