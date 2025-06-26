@@ -18,20 +18,19 @@ const Index = () => {
   const [selectedListing, setSelectedListing] = useState<any>(null);
 
   const {
-    viewMode,
     searchQuery,
-    preservedFilters,
-    setViewMode,
     setSearchQuery,
-    setPreservedFilters,
+    currentView,
+    setCurrentView,
+    marketplaceFilters,
+    setMarketplaceFilters,
   } = useIndexState();
 
-  const { handleNavigateToListing } = useIndexNavigation();
+  const { handleExploreMarketplace, handleFiltersChange } = useIndexNavigation();
 
   useMetaTags({
     title: "SBIR Technology Marketplace | Connect with Innovative Technologies",
-    description: "Discover and connect with cutting-edge SBIR technologies. Access a curated marketplace of government-funded innovations ready for commercialization.",
-    keywords: "SBIR, technology marketplace, innovation, government contracts, R&D, small business"
+    description: "Discover and connect with cutting-edge SBIR technologies. Access a curated marketplace of government-funded innovations ready for commercialization."
   });
 
   const handleContactAdmin = (listing: any) => {
@@ -49,23 +48,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {viewMode === 'home' ? (
+      {currentView === 'home' ? (
         <HomePage
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onViewModeChange={setViewMode}
+          onExploreClick={handleExploreMarketplace}
           onContactAdmin={handleContactAdmin}
-          onGenericContact={handleGenericContact}
         />
       ) : (
         <MarketplacePage
           searchQuery={searchQuery}
-          preservedFilters={preservedFilters}
-          onSearchChange={setSearchQuery}
-          onFiltersChange={setPreservedFilters}
-          onViewModeChange={setViewMode}
+          marketplaceFilters={marketplaceFilters}
           onContactAdmin={handleContactAdmin}
-          onNavigateToListing={handleNavigateToListing}
+          onFiltersChange={handleFiltersChange}
         />
       )}
 
