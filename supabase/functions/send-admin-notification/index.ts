@@ -25,6 +25,9 @@ interface AdminNotificationRequest {
   submitterEmail: string;
 }
 
+// Helper function to add delay between email sends
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -80,9 +83,12 @@ const handler = async (req: Request): Promise<Response> => {
 
     const adminEmails = adminProfiles.map(profile => profile.email);
 
-    // Send individual emails to each admin to ensure delivery
-    const emailPromises = adminEmails.map(async (adminEmail, index) => {
-      console.log(`📤 Sending admin notification ${index + 1}/${adminEmails.length} to:`, adminEmail);
+    // Send emails sequentially with delays to avoid rate limiting
+    const results = [];
+    
+    for (let i = 0; i < adminEmails.length; i++) {
+      const adminEmail = adminEmails[i];
+      console.log(`📤 Sending admin notification ${i + 1}/${adminEmails.length} to:`, adminEmail);
       
       try {
         const emailResponse = await resend.emails.send({
@@ -118,15 +124,24 @@ const handler = async (req: Request): Promise<Response> => {
         });
 
         console.log(`✅ Admin notification sent successfully to ${adminEmail}:`, emailResponse);
-        return { success: true, email: adminEmail, response: emailResponse };
+        results.push({ success: true, email: adminEmail, response: emailResponse });
       } catch (error) {
         console.error(`❌ Failed to send admin notification to ${adminEmail}:`, error);
-        return { success: false, email: adminEmail, error: error.message };
+        results.push({ success: false, email: adminEmail, error: error.message });
+        
+        // If it's a rate limit error, wait longer before the next attempt
+        if (error.message && error.message.includes('rate_limit_exceeded')) {
+          console.log('Rate limit detected, waiting 2 seconds before next email...');
+          await delay(2000);
+        }
       }
-    });
-
-    // Wait for all emails to be sent
-    const results = await Promise.all(emailPromises);
+      
+      // Add a small delay between each email to prevent rate limiting
+      // Skip delay for the last email
+      if (i < adminEmails.length - 1) {
+        await delay(600); // 600ms delay = ~1.5 emails per second (safely under 2/sec limit)
+      }
+    }
     
     // Log results
     const successful = results.filter(r => r.success);
