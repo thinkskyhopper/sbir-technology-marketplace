@@ -6,21 +6,12 @@ import { useAdminListingsTableState } from "@/hooks/useAdminListingsTableState";
 import { useAdminListingsTableHandlers } from "@/hooks/useAdminListingsTableHandlers";
 import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
 import { useState, useMemo, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-} from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { AlertCircle, Search, Filter } from "lucide-react";
-import AdminListingsTableHeader from "./AdminListingsTable/AdminListingsTableHeader";
-import AdminListingsTableRow from "./AdminListingsTable/AdminListingsTableRow";
+import { AlertCircle } from "lucide-react";
+import AdminListingsTableFilters from "./AdminListingsTable/AdminListingsTableFilters";
+import AdminListingsTableContent from "./AdminListingsTable/AdminListingsTableContent";
 import AdminListingsTableLoading from "./AdminListingsTable/AdminListingsTableLoading";
-import AdminListingsTableEmpty from "./AdminListingsTable/AdminListingsTableEmpty";
 import AdminListingsTableDialogs from "./AdminListingsTable/AdminListingsTableDialogs";
 import AdminListingsTablePagination from "./AdminListingsTable/AdminListingsTablePagination";
 
@@ -116,6 +107,17 @@ const AdminListingsTable = () => {
   // Load change request data for indicators (optimized to avoid repeated calls)
   const { refetch: refetchChangeRequests } = useListingChangeRequests();
 
+  // Clear all filters helper
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setStatusFilter("all");
+    setPhaseFilter("all");
+    setAgencyFilter("all");
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = searchTerm || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all";
+
   if (loading) {
     return <AdminListingsTableLoading />;
   }
@@ -137,91 +139,33 @@ const AdminListingsTable = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>All SBIR Listings ({totalItems} total, {filteredListings.length} filtered)</CardTitle>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search listings..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8 w-64"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Rejected">Rejected</SelectItem>
-                  <SelectItem value="Hidden">Hidden</SelectItem>
-                  <SelectItem value="Sold">Sold</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={phaseFilter} onValueChange={setPhaseFilter}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Phase" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Phases</SelectItem>
-                  <SelectItem value="Phase I">Phase I</SelectItem>
-                  <SelectItem value="Phase II">Phase II</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={agencyFilter} onValueChange={setAgencyFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Agency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Agencies</SelectItem>
-                  {uniqueAgencies.map(agency => (
-                    <SelectItem key={agency} value={agency}>{agency}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {(searchTerm || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all") && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setStatusFilter("all");
-                    setPhaseFilter("all");
-                    setAgencyFilter("all");
-                  }}
-                >
-                  Clear Filters
-                </Button>
-              )}
-            </div>
+            <AdminListingsTableFilters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              phaseFilter={phaseFilter}
+              setPhaseFilter={setPhaseFilter}
+              agencyFilter={agencyFilter}
+              setAgencyFilter={setAgencyFilter}
+              uniqueAgencies={uniqueAgencies}
+              onClearFilters={handleClearFilters}
+              hasActiveFilters={hasActiveFilters}
+            />
           </div>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[600px] w-full">
-            <Table>
-              <AdminListingsTableHeader
-                currentSortColumn={sortState.column}
-                currentSortDirection={sortState.direction}
-                onSort={handleSort}
-              />
-              <TableBody>
-                {paginatedData.map((listing) => (
-                  <AdminListingsTableRow
-                    key={listing.id}
-                    listing={listing}
-                    processingId={processingId}
-                    onEdit={handleEdit}
-                    onApprove={handleApproveClick}
-                    onReject={handleRejectClick}
-                    onHide={handleHideClick}
-                    onDelete={handleDeleteClick}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
+          <AdminListingsTableContent
+            paginatedData={paginatedData}
+            processingId={processingId}
+            sortState={sortState}
+            onSort={handleSort}
+            onEdit={handleEdit}
+            onApprove={handleApproveClick}
+            onReject={handleRejectClick}
+            onHide={handleHideClick}
+            onDelete={handleDeleteClick}
+          />
           
           {filteredListings.length === 0 && (
             <div className="text-center py-8">
