@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { listingsService } from '@/services/listingsService';
@@ -22,11 +23,17 @@ export const useListingOperations = (onSuccess?: () => void) => {
       
       // Send admin notification for new listing
       if (data && listingData.status === 'Pending') {
-        console.log('🔔 Triggering admin notification for new listing...');
+        console.log('🔔 Starting admin notification process for new listing...');
+        console.log('📋 Notification trigger conditions met:', {
+          hasData: !!data,
+          status: listingData.status,
+          listingId: data.id
+        });
         
         try {
+          console.log('👤 Fetching user profile for notification...');
           // Get user profile data for the notification
-          const { data: userProfile } = await import('@/integrations/supabase/client').then(({ supabase }) =>
+          const { data: userProfile, error: profileError } = await import('@/integrations/supabase/client').then(({ supabase }) =>
             supabase
               .from('profiles')
               .select('full_name, email')
@@ -34,8 +41,19 @@ export const useListingOperations = (onSuccess?: () => void) => {
               .single()
           );
 
+          if (profileError) {
+            console.error('❌ Failed to fetch user profile:', profileError);
+            throw profileError;
+          }
+
+          console.log('✅ User profile fetched:', {
+            fullName: userProfile?.full_name,
+            email: userProfile?.email
+          });
+
           if (userProfile) {
-            await adminNotificationService.notifyAdminsOfNewListing(
+            console.log('📤 Calling admin notification service...');
+            const notificationResult = await adminNotificationService.notifyAdminsOfNewListing(
               {
                 id: data.id,
                 title: data.title,
@@ -50,12 +68,21 @@ export const useListingOperations = (onSuccess?: () => void) => {
                 email: userProfile.email
               }
             );
-            console.log('✅ Admin notification sent successfully');
+            console.log('✅ Admin notification service result:', notificationResult);
+          } else {
+            console.warn('⚠️ No user profile found for notification');
           }
         } catch (notificationError) {
           // Log notification error but don't fail the whole operation
-          console.warn('⚠️ Admin notification failed (listing still created):', notificationError);
+          console.error('❌ Admin notification process failed:', notificationError);
+          console.error('❌ Notification error details:', JSON.stringify(notificationError, null, 2));
         }
+      } else {
+        console.log('ℹ️ Admin notification skipped:', {
+          hasData: !!data,
+          status: listingData.status,
+          reason: !data ? 'No listing data' : 'Status not Pending'
+        });
       }
       
       console.log('✅ Listing creation process completed successfully');
