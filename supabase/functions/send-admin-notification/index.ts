@@ -33,6 +33,11 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const data: AdminNotificationRequest = await req.json();
+    console.log('🔔 Admin notification request received:', {
+      listingId: data.listing.id,
+      listingTitle: data.listing.title,
+      submitterEmail: data.submitterEmail
+    });
 
     // Initialize Supabase client
     const supabase = createClient(
@@ -47,12 +52,12 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('role', 'admin');
 
     if (adminError) {
-      console.error('Error fetching admin profiles:', adminError);
+      console.error('❌ Error fetching admin profiles:', adminError);
       throw new Error('Failed to fetch admin profiles');
     }
 
     if (!adminProfiles || adminProfiles.length === 0) {
-      console.log('No admin users found');
+      console.log('⚠️ No admin users found');
       return new Response(JSON.stringify({ message: 'No admin users to notify' }), {
         status: 200,
         headers: {
@@ -61,6 +66,8 @@ const handler = async (req: Request): Promise<Response> => {
         },
       });
     }
+
+    console.log('👥 Found admin users:', adminProfiles.length, 'admins');
 
     const formatCurrency = (amount: number) => {
       return new Intl.NumberFormat('en-US', {
@@ -71,47 +78,76 @@ const handler = async (req: Request): Promise<Response> => {
       }).format(amount);
     };
 
-    // Send email to all admins
     const adminEmails = adminProfiles.map(profile => profile.email);
 
-    const emailResponse = await resend.emails.send({
-      from: "SBIR Marketplace <onboarding@resend.dev>",
-      to: adminEmails,
-      subject: `New SBIR Listing Pending Approval - ${data.listing.title}`,
-      html: `
-        <h1>New SBIR Listing Requires Approval</h1>
-        
-        <p>A new SBIR contract listing has been submitted and is pending your approval.</p>
-        
-        <h2>Listing Details</h2>
-        <p><strong>Title:</strong> ${data.listing.title}</p>
-        <p><strong>Agency:</strong> ${data.listing.agency}</p>
-        <p><strong>Phase:</strong> ${data.listing.phase}</p>
-        <p><strong>Category:</strong> ${data.listing.category}</p>
-        <p><strong>Value:</strong> ${formatCurrency(data.listing.value)}</p>
-        
-        <h2>Description</h2>
-        <p>${data.listing.description.replace(/\n/g, '<br>')}</p>
-        
-        <h2>Submitted By</h2>
-        <p><strong>Name:</strong> ${data.submitterName}</p>
-        <p><strong>Email:</strong> ${data.submitterEmail}</p>
-        
-        <h2>Action Required</h2>
-        <p>Please log into the admin panel to review and approve or reject this listing.</p>
-        <p><strong>Listing ID:</strong> ${data.listing.id}</p>
-        
-        <hr>
-        <p><em>This notification was sent automatically from the SBIR Marketplace platform.</em></p>
-      `,
+    // Send individual emails to each admin to ensure delivery
+    const emailPromises = adminEmails.map(async (adminEmail, index) => {
+      console.log(`📤 Sending admin notification ${index + 1}/${adminEmails.length} to:`, adminEmail);
+      
+      try {
+        const emailResponse = await resend.emails.send({
+          from: "SBIR Marketplace <noreply@updates.thesbirtechmarketplace.com>",
+          to: [adminEmail],
+          subject: `New SBIR Listing Pending Approval - ${data.listing.title}`,
+          html: `
+            <h1>New SBIR Listing Requires Approval</h1>
+            
+            <p>A new SBIR contract listing has been submitted and is pending your approval.</p>
+            
+            <h2>Listing Details</h2>
+            <p><strong>Title:</strong> ${data.listing.title}</p>
+            <p><strong>Agency:</strong> ${data.listing.agency}</p>
+            <p><strong>Phase:</strong> ${data.listing.phase}</p>
+            <p><strong>Category:</strong> ${data.listing.category}</p>
+            <p><strong>Value:</strong> ${formatCurrency(data.listing.value)}</p>
+            
+            <h2>Description</h2>
+            <p>${data.listing.description.replace(/\n/g, '<br>')}</p>
+            
+            <h2>Submitted By</h2>
+            <p><strong>Name:</strong> ${data.submitterName}</p>
+            <p><strong>Email:</strong> ${data.submitterEmail}</p>
+            
+            <h2>Action Required</h2>
+            <p>Please log into the admin panel to review and approve or reject this listing.</p>
+            <p><strong>Listing ID:</strong> ${data.listing.id}</p>
+            
+            <hr>
+            <p><em>This notification was sent automatically from the SBIR Marketplace platform.</em></p>
+          `,
+        });
+
+        console.log(`✅ Admin notification sent successfully to ${adminEmail}:`, emailResponse);
+        return { success: true, email: adminEmail, response: emailResponse };
+      } catch (error) {
+        console.error(`❌ Failed to send admin notification to ${adminEmail}:`, error);
+        return { success: false, email: adminEmail, error: error.message };
+      }
     });
 
-    console.log("Admin notification email sent successfully:", emailResponse);
+    // Wait for all emails to be sent
+    const results = await Promise.all(emailPromises);
+    
+    // Log results
+    const successful = results.filter(r => r.success);
+    const failed = results.filter(r => !r.success);
+    
+    console.log(`📊 Admin notification complete: ${successful.length} successful, ${failed.length} failed`);
+    
+    if (failed.length > 0) {
+      console.error('❌ Failed admin notifications:', failed);
+    }
+
+    // Return success if at least one email was sent successfully
+    if (successful.length === 0) {
+      throw new Error('Failed to send admin notifications to any admin users');
+    }
 
     return new Response(JSON.stringify({ 
       success: true, 
-      emailsSent: adminEmails.length,
-      emailResponse 
+      emailsSent: successful.length,
+      totalAdmins: adminEmails.length,
+      results: results
     }), {
       status: 200,
       headers: {
@@ -120,7 +156,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error in send-admin-notification function:", error);
+    console.error("❌ Error in send-admin-notification function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
