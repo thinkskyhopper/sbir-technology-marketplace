@@ -32,16 +32,30 @@ export const AdminChangeRequestsTableRow = ({
     }
   };
 
+  // Use preserved listing information if available, otherwise fall back to joined data
+  const listingTitle = request.listing_title || 
+                      (request as any).sbir_listings?.title || 
+                      'Deleted Listing';
+  
+  const listingAgency = request.listing_agency || 
+                       (request as any).sbir_listings?.agency || 
+                       'Unknown Agency';
+
+  const isListingDeleted = !request.listing_id;
+
   return (
     <TableRow>
       <TableCell>
         <div>
-          <p className="font-medium">
-            {(request as any).sbir_listings?.title || 'Unknown Listing'}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {(request as any).sbir_listings?.agency || 'Unknown Agency'}
-          </p>
+          <div className="flex items-center space-x-2">
+            <p className="font-medium">{listingTitle}</p>
+            {isListingDeleted && (
+              <Badge variant="outline" className="text-xs text-muted-foreground">
+                Deleted
+              </Badge>
+            )}
+          </div>
+          <p className="text-sm text-muted-foreground">{listingAgency}</p>
         </div>
       </TableCell>
       <TableCell>

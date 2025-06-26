@@ -3,6 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import type { ListingChangeRequest } from '@/types/changeRequests';
 
 export const handleApprovedDeletion = async (changeRequest: ListingChangeRequest) => {
+  // Check if listing still exists (might have been deleted already)
+  if (!changeRequest.listing_id) {
+    console.log('⚠️ Listing already deleted, skipping deletion');
+    return;
+  }
+
   console.log('🗑️ Deleting listing for approved deletion request...', changeRequest.listing_id);
   
   const { error: deleteError } = await supabase
@@ -19,6 +25,12 @@ export const handleApprovedDeletion = async (changeRequest: ListingChangeRequest
 };
 
 export const handleApprovedChanges = async (changeRequest: ListingChangeRequest) => {
+  // Check if listing still exists
+  if (!changeRequest.listing_id) {
+    console.warn('⚠️ Cannot apply changes - listing has been deleted');
+    return;
+  }
+
   if (!changeRequest.requested_changes) {
     console.warn('⚠️ No requested changes found, skipping listing update');
     return;

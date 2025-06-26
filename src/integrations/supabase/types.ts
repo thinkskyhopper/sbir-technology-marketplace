@@ -49,7 +49,9 @@ export type Database = {
           admin_notes: string | null
           created_at: string
           id: string
-          listing_id: string
+          listing_agency: string | null
+          listing_id: string | null
+          listing_title: string | null
           processed_at: string | null
           processed_by: string | null
           reason: string | null
@@ -63,7 +65,9 @@ export type Database = {
           admin_notes?: string | null
           created_at?: string
           id?: string
-          listing_id: string
+          listing_agency?: string | null
+          listing_id?: string | null
+          listing_title?: string | null
           processed_at?: string | null
           processed_by?: string | null
           reason?: string | null
@@ -77,7 +81,9 @@ export type Database = {
           admin_notes?: string | null
           created_at?: string
           id?: string
-          listing_id?: string
+          listing_agency?: string | null
+          listing_id?: string | null
+          listing_title?: string | null
           processed_at?: string | null
           processed_by?: string | null
           reason?: string | null

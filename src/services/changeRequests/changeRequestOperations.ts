@@ -8,11 +8,25 @@ export const createChangeRequestOperation = async (
 ) => {
   console.log('🔄 Creating change request...', requestData);
   
+  // First, get the listing information to store with the request
+  const { data: listing, error: listingError } = await supabase
+    .from('sbir_listings')
+    .select('title, agency')
+    .eq('id', requestData.listing_id)
+    .single();
+
+  if (listingError) {
+    console.error('❌ Error fetching listing info:', listingError);
+    throw listingError;
+  }
+
   const { data, error } = await supabase
     .from('listing_change_requests')
     .insert({
       ...requestData,
       user_id: userId,
+      listing_title: listing.title,
+      listing_agency: listing.agency,
     })
     .select()
     .single();
