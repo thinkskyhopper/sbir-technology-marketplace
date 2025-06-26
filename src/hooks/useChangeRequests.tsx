@@ -112,7 +112,24 @@ export const useChangeRequests = () => {
       setLoading(true);
       console.log('🔄 Updating change request status...', { requestId, status });
       
-      const { error } = await supabase
+      // First, get the change request details
+      const { data: changeRequest, error: fetchError } = await supabase
+        .from('listing_change_requests')
+        .select('*')
+        .eq('id', requestId)
+        .single();
+
+      if (fetchError) {
+        console.error('❌ Error fetching change request:', fetchError);
+        throw fetchError;
+      }
+
+      if (!changeRequest) {
+        throw new Error('Change request not found');
+      }
+
+      // Update the change request status
+      const { error: updateError } = await supabase
         .from('listing_change_requests')
         .update({
           status,
@@ -122,9 +139,32 @@ export const useChangeRequests = () => {
         })
         .eq('id', requestId);
 
-      if (error) {
-        console.error('❌ Update change request status error:', error);
-        throw error;
+      if (updateError) {
+        console.error('❌ Update change request status error:', updateError);
+        throw updateError;
+      }
+
+      // If approved and it's a change request (not deletion), apply the changes to the listing
+      if (status === 'approved' && changeRequest.request_type === 'change' && changeRequest.requested_changes) {
+        console.log('🔄 Applying approved changes to listing...', changeRequest.listing_id);
+        
+        // Prepare the update data, converting value to cents if present
+        const updateData = { ...changeRequest.requested_changes };
+        if (updateData.value && typeof updateData.value === 'number') {
+          updateData.value = Math.round(updateData.value * 100); // Convert dollars to cents
+        }
+
+        const { error: listingUpdateError } = await supabase
+          .from('sbir_listings')
+          .update(updateData)
+          .eq('id', changeRequest.listing_id);
+
+        if (listingUpdateError) {
+          console.error('❌ Error updating listing with approved changes:', listingUpdateError);
+          throw new Error(`Failed to apply changes to listing: ${listingUpdateError.message}`);
+        }
+
+        console.log('✅ Successfully applied approved changes to listing');
       }
       
       console.log('✅ Change request status updated successfully');
