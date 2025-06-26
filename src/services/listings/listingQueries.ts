@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing } from '@/types/listings';
 
@@ -9,7 +10,7 @@ export const listingQueries = {
       .from('sbir_listings')
       .select(`
         *,
-        profiles!sbir_listings_user_id_fkey(
+        profiles!fk_sbir_listings_user_id(
           full_name,
           email
         )
