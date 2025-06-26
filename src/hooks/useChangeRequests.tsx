@@ -148,23 +148,30 @@ export const useChangeRequests = () => {
       if (status === 'approved' && changeRequest.request_type === 'change' && changeRequest.requested_changes) {
         console.log('🔄 Applying approved changes to listing...', changeRequest.listing_id);
         
-        // Prepare the update data, converting value to cents if present
-        const updateData = { ...changeRequest.requested_changes };
-        if (updateData.value && typeof updateData.value === 'number') {
-          updateData.value = Math.round(updateData.value * 100); // Convert dollars to cents
+        // Ensure requested_changes is an object before spreading
+        const requestedChanges = changeRequest.requested_changes;
+        if (typeof requestedChanges === 'object' && requestedChanges !== null && !Array.isArray(requestedChanges)) {
+          const updateData = { ...requestedChanges };
+          
+          // Convert value to cents if present
+          if (updateData.value && typeof updateData.value === 'number') {
+            updateData.value = Math.round(updateData.value * 100); // Convert dollars to cents
+          }
+
+          const { error: listingUpdateError } = await supabase
+            .from('sbir_listings')
+            .update(updateData)
+            .eq('id', changeRequest.listing_id);
+
+          if (listingUpdateError) {
+            console.error('❌ Error updating listing with approved changes:', listingUpdateError);
+            throw new Error(`Failed to apply changes to listing: ${listingUpdateError.message}`);
+          }
+
+          console.log('✅ Successfully applied approved changes to listing');
+        } else {
+          console.warn('⚠️ Invalid requested_changes format, skipping listing update');
         }
-
-        const { error: listingUpdateError } = await supabase
-          .from('sbir_listings')
-          .update(updateData)
-          .eq('id', changeRequest.listing_id);
-
-        if (listingUpdateError) {
-          console.error('❌ Error updating listing with approved changes:', listingUpdateError);
-          throw new Error(`Failed to apply changes to listing: ${listingUpdateError.message}`);
-        }
-
-        console.log('✅ Successfully applied approved changes to listing');
       }
       
       console.log('✅ Change request status updated successfully');
