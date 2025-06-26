@@ -11,6 +11,7 @@ interface MarketplacePageProps {
     phaseFilter: string;
     categoryFilter: string;
     statusFilter: string;
+    sortFilter: string;
   };
   onFiltersChange: (filters: any) => void;
 }

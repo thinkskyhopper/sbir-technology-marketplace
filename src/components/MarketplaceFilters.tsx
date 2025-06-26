@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,11 +10,13 @@ interface MarketplaceFiltersProps {
   phaseFilter: string;
   categoryFilter: string;
   statusFilter: string;
+  sortFilter: string;
   categories: string[];
   onSearchQueryChange: (query: string) => void;
   onPhaseFilterChange: (phase: string) => void;
   onCategoryFilterChange: (category: string) => void;
   onStatusFilterChange: (status: string) => void;
+  onSortFilterChange: (sort: string) => void;
 }
 
 const MarketplaceFilters = ({
@@ -21,11 +24,13 @@ const MarketplaceFilters = ({
   phaseFilter,
   categoryFilter,
   statusFilter,
+  sortFilter,
   categories,
   onSearchQueryChange,
   onPhaseFilterChange,
   onCategoryFilterChange,
-  onStatusFilterChange
+  onStatusFilterChange,
+  onSortFilterChange
 }: MarketplaceFiltersProps) => {
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +62,17 @@ const MarketplaceFilters = ({
             />
           </form>
         </div>
+
+        {/* Sort Filter */}
+        <Select value={sortFilter} onValueChange={onSortFilterChange}>
+          <SelectTrigger className="w-full md:w-48">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest First</SelectItem>
+            <SelectItem value="oldest">Oldest First</SelectItem>
+          </SelectContent>
+        </Select>
 
         {/* Phase Filter */}
         <Select value={phaseFilter} onValueChange={onPhaseFilterChange}>

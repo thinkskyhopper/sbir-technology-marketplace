@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useListings } from "@/hooks/useListings";
 import { usePagination } from "@/hooks/usePagination";
+import { useSorting } from "@/hooks/useSorting";
 import type { SBIRListing } from "@/types/listings";
 
 interface MarketplaceGridProps {
@@ -19,12 +20,14 @@ interface MarketplaceGridProps {
     phaseFilter: string;
     categoryFilter: string;
     statusFilter: string;
+    sortFilter: string;
   };
   onFiltersChange?: (filters: {
     localSearchQuery: string;
     phaseFilter: string;
     categoryFilter: string;
     statusFilter: string;
+    sortFilter: string;
   }) => void;
   showFilters?: boolean;
   maxListings?: number;
@@ -44,6 +47,7 @@ const MarketplaceGrid = ({
   const [phaseFilter, setPhaseFilter] = useState<string>(preservedFilters?.phaseFilter || "all");
   const [categoryFilter, setCategoryFilter] = useState<string>(preservedFilters?.categoryFilter || "all");
   const [statusFilter, setStatusFilter] = useState<string>(preservedFilters?.statusFilter || "active");
+  const [sortFilter, setSortFilter] = useState<string>(preservedFilters?.sortFilter || "newest");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
   const isInitialMount = useRef(true);
@@ -72,6 +76,7 @@ const MarketplaceGrid = ({
       setPhaseFilter(preservedFilters.phaseFilter);
       setCategoryFilter(preservedFilters.categoryFilter);
       setStatusFilter(preservedFilters.statusFilter);
+      setSortFilter(preservedFilters.sortFilter || "newest");
       // Reset the flag after a brief delay to allow state updates to complete
       setTimeout(() => {
         isSyncingFromURL.current = false;
@@ -95,10 +100,11 @@ const MarketplaceGrid = ({
         localSearchQuery,
         phaseFilter,
         categoryFilter,
-        statusFilter
+        statusFilter,
+        sortFilter
       });
     }
-  }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, onFiltersChange]);
+  }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, onFiltersChange]);
 
   const applyFilters = () => {
     let filtered = listings;
@@ -131,6 +137,13 @@ const MarketplaceGrid = ({
       filtered = filtered.filter(listing => listing.status === statusFilter);
     }
 
+    // Apply sorting
+    if (sortFilter === "newest") {
+      filtered = filtered.sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
+    } else if (sortFilter === "oldest") {
+      filtered = filtered.sort((a, b) => new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime());
+    }
+
     // Apply maxListings limit if specified
     if (maxListings && maxListings > 0) {
       filtered = filtered.slice(0, maxListings);
@@ -144,7 +157,7 @@ const MarketplaceGrid = ({
   // Apply filters whenever dependencies change
   useEffect(() => {
     applyFilters();
-  }, [listings, searchQuery, localSearchQuery, phaseFilter, categoryFilter, statusFilter]);
+  }, [listings, searchQuery, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter]);
 
   const handleEditListing = (listing: SBIRListing) => {
     setSelectedListing(listing);
@@ -156,6 +169,7 @@ const MarketplaceGrid = ({
     setPhaseFilter("all");
     setCategoryFilter("all");
     setStatusFilter("active");
+    setSortFilter("newest");
   };
 
   const categories = Array.from(new Set(listings.map(listing => listing.category)));
@@ -184,11 +198,13 @@ const MarketplaceGrid = ({
           phaseFilter={phaseFilter}
           categoryFilter={categoryFilter}
           statusFilter={statusFilter}
+          sortFilter={sortFilter}
           categories={categories}
           onSearchQueryChange={setLocalSearchQuery}
           onPhaseFilterChange={setPhaseFilter}
           onCategoryFilterChange={setCategoryFilter}
           onStatusFilterChange={setStatusFilter}
+          onSortFilterChange={setSortFilter}
         />
       )}
 
