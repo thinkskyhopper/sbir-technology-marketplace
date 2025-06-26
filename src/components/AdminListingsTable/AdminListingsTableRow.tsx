@@ -30,14 +30,6 @@ const AdminListingsTableRow = ({
   const { getListingRequestSummary } = useListingChangeRequests();
   const requestSummary = getListingRequestSummary(listing.id);
 
-  // Debug logging to see what profile data we have
-  console.log('🔍 Listing row data:', {
-    id: listing.id,
-    title: listing.title,
-    profiles: listing.profiles,
-    hasProfiles: !!listing.profiles
-  });
-
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'Active': return 'default';
@@ -57,28 +49,13 @@ const AdminListingsTableRow = ({
     }).format(amount);
   };
 
-  const getSubmitterInfo = () => {
-    if (listing.profiles?.full_name) {
-      return listing.profiles.full_name;
-    }
-    if (listing.profiles?.email) {
-      return listing.profiles.email;
-    }
-    return 'Unknown User';
-  };
-
   return (
     <TableRow>
       <TableCell>
         <div className="flex items-start space-x-2">
           <div className="flex-1">
             <p className="font-medium line-clamp-2">{listing.title}</p>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">{listing.agency}</p>
-              <p className="text-xs text-muted-foreground">
-                Submitted by: {getSubmitterInfo()}
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground">{listing.agency}</p>
           </div>
           {requestSummary && requestSummary.total_pending > 0 && (
             <TooltipProvider>
@@ -112,11 +89,7 @@ const AdminListingsTableRow = ({
       <TableCell>
         <Badge variant="outline">{listing.phase}</Badge>
       </TableCell>
-      <TableCell className="max-w-[150px]">
-        <div className="truncate" title={listing.category}>
-          {listing.category}
-        </div>
-      </TableCell>
+      <TableCell>{listing.category}</TableCell>
       <TableCell>{formatCurrency(listing.value)}</TableCell>
       <TableCell>{format(new Date(listing.submitted_at), 'MMM d, yyyy')}</TableCell>
       <TableCell>
