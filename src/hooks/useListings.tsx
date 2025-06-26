@@ -54,13 +54,16 @@ export const useListings = () => {
   }, [fetchListings]);
 
   const {
-    createListing,
+    createListing: createListingOperation,
     updateListing,
     approveListing,
     rejectListing,
     hideListing,
     deleteListing
   } = useListingOperations(refreshListings);
+
+  // Use the operation that includes notification logic
+  const createListing = createListingOperation;
 
   // Initial fetch when auth state changes significantly
   useEffect(() => {
