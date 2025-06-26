@@ -20,7 +20,7 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
   const [spamScore, setSpamScore] = useState(0);
   
   const { createListing } = useListings();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { toast } = useToast();
   
   // Rate limiting: max 3 submissions per hour per user
@@ -42,8 +42,8 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
       return;
     }
 
-    // Check rate limiting
-    if (isRateLimited(user.id)) {
+    // Check rate limiting - exempt admins from rate limiting
+    if (!isAdmin && isRateLimited(user.id)) {
       const remainingTime = getRemainingTime(user.id);
       toast({
         title: "Rate Limit Exceeded",
@@ -77,8 +77,10 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
     try {
       setIsSubmitting(true);
       
-      // Record the attempt
-      recordAttempt(user.id);
+      // Record the attempt only for non-admin users
+      if (!isAdmin) {
+        recordAttempt(user.id);
+      }
       
       // Create listing with "Pending" status for review
       const listingData = {
@@ -92,7 +94,7 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
         status: 'Pending' as const
       };
       
-      console.log('🔄 Starting listing creation process...', { user: user.id, title: data.title });
+      console.log('🔄 Starting listing creation process...', { user: user.id, title: data.title, isAdmin });
       
       await createListing(listingData);
 
@@ -126,8 +128,9 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
     }
   };
 
-  const userAttempts = user ? isRateLimited(user.id) : false;
-  const remainingTime = user ? getRemainingTime(user.id) : 0;
+  // Admin users are never rate limited
+  const userAttempts = user && !isAdmin ? isRateLimited(user.id) : false;
+  const remainingTime = user && !isAdmin ? getRemainingTime(user.id) : 0;
 
   return {
     onSubmit,
