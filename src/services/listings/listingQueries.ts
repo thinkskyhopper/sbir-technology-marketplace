@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing } from '@/types/listings';
 
@@ -34,18 +33,21 @@ export const listingQueries = {
     }
 
     // Convert value from cents to dollars and format dates
-    const formattedListings = data?.map(listing => ({
-      ...listing,
-      value: listing.value / 100, // Convert cents to dollars
-      deadline: new Date(listing.deadline).toISOString().split('T')[0],
-      // Ensure profiles is properly typed - it should either be the profile object or null
-      profiles: listing.profiles && 
-                typeof listing.profiles === 'object' && 
-                listing.profiles !== null &&
-                'full_name' in listing.profiles 
-        ? listing.profiles 
-        : null
-    })) || [];
+    const formattedListings = data?.map(listing => {
+      // Type guard for profiles - check if it's a valid profile object
+      const hasValidProfile = listing.profiles && 
+                             typeof listing.profiles === 'object' && 
+                             listing.profiles !== null &&
+                             typeof (listing.profiles as any).full_name !== 'undefined';
+      
+      return {
+        ...listing,
+        value: listing.value / 100, // Convert cents to dollars
+        deadline: new Date(listing.deadline).toISOString().split('T')[0],
+        // Ensure profiles is properly typed
+        profiles: hasValidProfile ? listing.profiles : null
+      };
+    }) || [];
 
     console.log('✅ Listings formatted:', formattedListings.length);
     console.log('📊 Sample listing with profile:', formattedListings[0]);
