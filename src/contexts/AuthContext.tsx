@@ -34,6 +34,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log('Setting up auth state listener...');
     
+    // Check for existing session first
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -66,14 +74,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.email);
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
     return () => {
       console.log('Cleaning up auth subscription');
       subscription.unsubscribe();
@@ -81,14 +81,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const getRedirectUrl = () => {
-    if (import.meta.env.DEV) {
-      return `${window.location.protocol}//${window.location.hostname}:8080/`;
-    }
-    return `${window.location.origin}/`;
+    // Always use the current origin for redirects
+    return `${window.location.origin}/auth?mode=reset`;
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = getRedirectUrl();
+    const redirectUrl = `${window.location.origin}/`;
     
     console.log('Sign up attempt for:', email, 'with redirect:', redirectUrl);
     
@@ -131,9 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetPassword = async (email: string) => {
-    const redirectUrl = import.meta.env.DEV 
-      ? `${window.location.protocol}//${window.location.hostname}:8080/auth?mode=reset`
-      : `${window.location.origin}/auth?mode=reset`;
+    const redirectUrl = getRedirectUrl();
     
     console.log('Password reset request for:', email, 'with redirect:', redirectUrl);
     
