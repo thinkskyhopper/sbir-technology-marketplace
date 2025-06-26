@@ -61,7 +61,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const adminEmails = adminProfiles.map(profile => profile.email);
-    console.log('Sending email to admin users:', adminEmails);
+    console.log('Found admin users:', adminEmails.length, 'emails:', adminEmails);
 
     const formatCurrency = (amount: number) => {
       return new Intl.NumberFormat('en-US', {
@@ -117,16 +117,50 @@ const handler = async (req: Request): Promise<Response> => {
       <p><em>This inquiry was submitted through the SBIR Marketplace platform.</em></p>
     `;
 
-    const emailResponse = await resend.emails.send({
-      from: "SBIR Marketplace <onboarding@resend.dev>",
-      to: adminEmails,
-      subject: subject,
-      html: emailContent,
+    // Send individual emails to each admin to ensure delivery
+    const emailPromises = adminEmails.map(async (adminEmail, index) => {
+      console.log(`Sending email ${index + 1}/${adminEmails.length} to:`, adminEmail);
+      
+      try {
+        const emailResponse = await resend.emails.send({
+          from: "SBIR Marketplace <onboarding@resend.dev>",
+          to: [adminEmail],
+          subject: subject,
+          html: emailContent,
+        });
+        
+        console.log(`Email sent successfully to ${adminEmail}:`, emailResponse);
+        return { success: true, email: adminEmail, response: emailResponse };
+      } catch (error) {
+        console.error(`Failed to send email to ${adminEmail}:`, error);
+        return { success: false, email: adminEmail, error: error.message };
+      }
     });
 
-    console.log("Contact email sent successfully:", emailResponse);
+    // Wait for all emails to be sent
+    const results = await Promise.all(emailPromises);
+    
+    // Log results
+    const successful = results.filter(r => r.success);
+    const failed = results.filter(r => !r.success);
+    
+    console.log(`Email sending complete: ${successful.length} successful, ${failed.length} failed`);
+    
+    if (failed.length > 0) {
+      console.error('Failed emails:', failed);
+    }
 
-    return new Response(JSON.stringify(emailResponse), {
+    // Return success if at least one email was sent successfully
+    if (successful.length === 0) {
+      throw new Error('Failed to send emails to any admin users');
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      emailsSent: successful.length,
+      totalAdmins: adminEmails.length,
+      results: results
+    }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
