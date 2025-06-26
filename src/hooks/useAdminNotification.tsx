@@ -11,7 +11,7 @@ export const useAdminNotification = () => {
       console.log('ℹ️ Admin notification skipped:', {
         hasUser: !!user,
         status: listing.status,
-        reason: !user ? 'No user' : 'Status not Pending'
+        reason: !user ? 'No user' : 'Status not Pending - notifications only sent for Pending listings'
       });
       return;
     }
@@ -20,7 +20,8 @@ export const useAdminNotification = () => {
     console.log('📋 Notification trigger conditions met:', {
       hasListing: !!listing,
       status: listing.status,
-      listingId: listing.id
+      listingId: listing.id,
+      userEmail: user.email
     });
     
     try {
@@ -39,7 +40,7 @@ export const useAdminNotification = () => {
         throw profileError;
       }
 
-      console.log('✅ User profile fetched:', {
+      console.log('✅ User profile fetched successfully:', {
         fullName: userProfile?.full_name,
         email: userProfile?.email
       });
@@ -61,7 +62,8 @@ export const useAdminNotification = () => {
             email: userProfile.email
           }
         );
-        console.log('✅ Admin notification service result:', notificationResult);
+        console.log('✅ Admin notification sent successfully:', notificationResult);
+        return notificationResult;
       } else {
         console.warn('⚠️ No user profile found for notification');
       }
@@ -69,6 +71,7 @@ export const useAdminNotification = () => {
       // Log notification error but don't fail the whole operation
       console.error('❌ Admin notification process failed:', notificationError);
       console.error('❌ Notification error details:', JSON.stringify(notificationError, null, 2));
+      throw notificationError; // Re-throw so we can see the error in the console
     }
   };
 

@@ -17,14 +17,23 @@ export const useBasicListingOperations = (onSuccess?: () => void) => {
 
     try {
       setLoading(true);
-      console.log('🔄 Creating listing operation...', { user: user.id });
+      console.log('🔄 Creating listing operation...', { user: user.id, isAdmin });
       
       const data = await listingsService.createListing(listingData, user.id);
       console.log('✅ Listing created in database:', data.id);
       
-      // Send admin notification for new listing
-      if (data && listingData.status === 'Pending') {
-        await sendNewListingNotification(data);
+      // Send admin notification for new listing - only for Pending status
+      if (data && data.status === 'Pending') {
+        console.log('🔔 Sending admin notification for new pending listing...');
+        try {
+          await sendNewListingNotification(data);
+          console.log('✅ Admin notification process completed');
+        } catch (notificationError) {
+          console.error('❌ Admin notification failed, but listing was created successfully:', notificationError);
+          // Don't fail the listing creation if notification fails
+        }
+      } else {
+        console.log('ℹ️ Skipping admin notification - listing status is not Pending:', data?.status);
       }
       
       console.log('✅ Listing creation process completed successfully');
