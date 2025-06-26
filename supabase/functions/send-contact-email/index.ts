@@ -123,7 +123,7 @@ const handler = async (req: Request): Promise<Response> => {
       
       try {
         const emailResponse = await resend.emails.send({
-          from: "SBIR Marketplace <onboarding@resend.dev>",
+          from: "SBIR Marketplace <noreply@updates.thesbirtechmarketplace.com>",
           to: [adminEmail],
           subject: subject,
           html: emailContent,
