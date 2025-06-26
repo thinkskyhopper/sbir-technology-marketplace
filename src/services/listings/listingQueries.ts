@@ -39,7 +39,10 @@ export const listingQueries = {
       value: listing.value / 100, // Convert cents to dollars
       deadline: new Date(listing.deadline).toISOString().split('T')[0],
       // Ensure profiles is properly typed - it should either be the profile object or null
-      profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
+      profiles: listing.profiles && 
+                typeof listing.profiles === 'object' && 
+                listing.profiles !== null &&
+                'full_name' in listing.profiles 
         ? listing.profiles 
         : null
     })) || [];
