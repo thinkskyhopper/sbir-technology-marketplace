@@ -3,6 +3,7 @@ import { useListings } from "@/hooks/useListings";
 import { useSorting } from "@/hooks/useSorting";
 import { useAdminListingsTableState } from "@/hooks/useAdminListingsTableState";
 import { useAdminListingsTableHandlers } from "@/hooks/useAdminListingsTableHandlers";
+import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
 import {
   Table,
   TableBody,
@@ -55,6 +56,9 @@ const AdminListingsTable = () => {
     column: 'submitted_at',
     direction: 'desc'
   });
+
+  // Load change request data for indicators
+  const { refetch: refetchChangeRequests } = useListingChangeRequests();
 
   if (loading) {
     return <AdminListingsTableLoading />;

@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import AdminListingsTable from "@/components/AdminListingsTable";
+import AdminChangeRequestsTable from "@/components/AdminChangeRequestsTable";
 import CategoryImageManager from "@/components/CategoryImageManager";
 import CreateListingDialog from "@/components/CreateListingDialog";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ const Admin = () => {
           </div>
 
           <div className="space-y-8">
+            <AdminChangeRequestsTable />
             <AdminListingsTable />
             <CategoryImageManager />
           </div>
