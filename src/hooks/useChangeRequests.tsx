@@ -144,33 +144,51 @@ export const useChangeRequests = () => {
         throw updateError;
       }
 
-      // If approved and it's a change request (not deletion), apply the changes to the listing
-      if (status === 'approved' && changeRequest.request_type === 'change' && changeRequest.requested_changes) {
-        console.log('🔄 Applying approved changes to listing...', changeRequest.listing_id);
-        
-        // Ensure requested_changes is an object before spreading
-        const requestedChanges = changeRequest.requested_changes;
-        if (typeof requestedChanges === 'object' && requestedChanges !== null && !Array.isArray(requestedChanges)) {
-          const updateData = { ...requestedChanges };
+      // Handle approved requests
+      if (status === 'approved') {
+        if (changeRequest.request_type === 'deletion') {
+          // Delete the listing for approved deletion requests
+          console.log('🗑️ Deleting listing for approved deletion request...', changeRequest.listing_id);
           
-          // Convert value to cents if present
-          if (updateData.value && typeof updateData.value === 'number') {
-            updateData.value = Math.round(updateData.value * 100); // Convert dollars to cents
-          }
-
-          const { error: listingUpdateError } = await supabase
+          const { error: deleteError } = await supabase
             .from('sbir_listings')
-            .update(updateData)
+            .delete()
             .eq('id', changeRequest.listing_id);
 
-          if (listingUpdateError) {
-            console.error('❌ Error updating listing with approved changes:', listingUpdateError);
-            throw new Error(`Failed to apply changes to listing: ${listingUpdateError.message}`);
+          if (deleteError) {
+            console.error('❌ Error deleting listing:', deleteError);
+            throw new Error(`Failed to delete listing: ${deleteError.message}`);
           }
 
-          console.log('✅ Successfully applied approved changes to listing');
-        } else {
-          console.warn('⚠️ Invalid requested_changes format, skipping listing update');
+          console.log('✅ Successfully deleted listing for approved deletion request');
+        } else if (changeRequest.request_type === 'change' && changeRequest.requested_changes) {
+          // Apply changes for approved change requests
+          console.log('🔄 Applying approved changes to listing...', changeRequest.listing_id);
+          
+          // Ensure requested_changes is an object before spreading
+          const requestedChanges = changeRequest.requested_changes;
+          if (typeof requestedChanges === 'object' && requestedChanges !== null && !Array.isArray(requestedChanges)) {
+            const updateData = { ...requestedChanges };
+            
+            // Convert value to cents if present
+            if (updateData.value && typeof updateData.value === 'number') {
+              updateData.value = Math.round(updateData.value * 100); // Convert dollars to cents
+            }
+
+            const { error: listingUpdateError } = await supabase
+              .from('sbir_listings')
+              .update(updateData)
+              .eq('id', changeRequest.listing_id);
+
+            if (listingUpdateError) {
+              console.error('❌ Error updating listing with approved changes:', listingUpdateError);
+              throw new Error(`Failed to apply changes to listing: ${listingUpdateError.message}`);
+            }
+
+            console.log('✅ Successfully applied approved changes to listing');
+          } else {
+            console.warn('⚠️ Invalid requested_changes format, skipping listing update');
+          }
         }
       }
       
