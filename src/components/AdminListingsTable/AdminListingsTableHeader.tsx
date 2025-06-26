@@ -1,9 +1,10 @@
+
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SortableTableHead from "./SortableTableHead";
 
 interface AdminListingsTableHeaderProps {
-  currentSortColumn: string;
-  currentSortDirection: 'asc' | 'desc';
+  currentSortColumn: string | null;
+  currentSortDirection: 'asc' | 'desc' | null;
   onSort: (column: string) => void;
 }
 
@@ -20,7 +21,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="max-w-[200px] min-w-[150px]"
+          className="max-w-[250px] min-w-[200px]"
         >
           Title & Category
         </SortableTableHead>
@@ -29,7 +30,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="max-w-[100px] min-w-[80px]"
+          className="max-w-[120px] min-w-[100px]"
         >
           Agency
         </SortableTableHead>
@@ -47,7 +48,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="min-w-[80px] text-right"
+          className="min-w-[100px] text-right"
         >
           Value
         </SortableTableHead>
@@ -56,7 +57,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="min-w-[80px]"
+          className="min-w-[100px]"
         >
           Deadline
         </SortableTableHead>
@@ -65,7 +66,7 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="min-w-[80px]"
+          className="min-w-[90px]"
         >
           Status
         </SortableTableHead>
@@ -75,11 +76,11 @@ const AdminListingsTableHeader = ({
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
           onSort={onSort}
-          className="min-w-[80px]"
+          className="min-w-[100px]"
         >
           Submitted
         </SortableTableHead>
-        <TableHead className="w-[80px]">Actions</TableHead>
+        <TableHead className="w-[100px]">Actions</TableHead>
       </TableRow>
     </TableHeader>
   );

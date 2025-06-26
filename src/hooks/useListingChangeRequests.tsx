@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -13,10 +13,18 @@ interface ListingChangeRequestSummary {
 export const useListingChangeRequests = () => {
   const [requestSummaries, setRequestSummaries] = useState<ListingChangeRequestSummary[]>([]);
   const [loading, setLoading] = useState(false);
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
   const { isAdmin } = useAuth();
 
-  const fetchChangeRequestSummaries = async () => {
+  const fetchChangeRequestSummaries = useCallback(async (force = false) => {
     if (!isAdmin) return;
+
+    // Prevent excessive API calls - only fetch if forced or more than 30 seconds have passed
+    const now = Date.now();
+    if (!force && now - lastFetchTime < 30000) {
+      console.log('📊 Skipping change request fetch - too recent');
+      return;
+    }
 
     try {
       setLoading(true);
@@ -56,25 +64,30 @@ export const useListingChangeRequests = () => {
       const summaryArray = Object.values(summaries);
       console.log('✅ Change request summaries fetched:', summaryArray.length);
       setRequestSummaries(summaryArray);
+      setLastFetchTime(now);
     } catch (err) {
       console.error('❌ Error fetching change request summaries:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAdmin, lastFetchTime]);
 
   useEffect(() => {
     fetchChangeRequestSummaries();
-  }, [isAdmin]);
+  }, [isAdmin]); // Only depend on isAdmin to prevent infinite loops
 
-  const getListingRequestSummary = (listingId: string): ListingChangeRequestSummary | null => {
+  const getListingRequestSummary = useCallback((listingId: string): ListingChangeRequestSummary | null => {
     return requestSummaries.find(summary => summary.listing_id === listingId) || null;
-  };
+  }, [requestSummaries]);
+
+  const refetch = useCallback(() => {
+    fetchChangeRequestSummaries(true);
+  }, [fetchChangeRequestSummaries]);
 
   return {
     requestSummaries,
     loading,
     getListingRequestSummary,
-    refetch: fetchChangeRequestSummaries
+    refetch
   };
 };

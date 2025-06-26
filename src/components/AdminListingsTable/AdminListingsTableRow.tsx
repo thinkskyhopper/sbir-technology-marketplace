@@ -50,19 +50,28 @@ const AdminListingsTableRow = ({
   };
 
   return (
-    <TableRow>
-      <TableCell>
+    <TableRow className="hover:bg-muted/50">
+      <TableCell className="max-w-[250px]">
         <div className="flex items-start space-x-2">
-          <div className="flex-1">
-            <p className="font-medium line-clamp-2">{listing.title}</p>
-            <p className="text-sm text-muted-foreground">{listing.agency}</p>
+          <div className="flex-1 min-w-0">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="font-medium line-clamp-2 text-sm cursor-help">{listing.title}</p>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs">
+                  <p className="text-sm">{listing.title}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <p className="text-xs text-muted-foreground truncate">{listing.category}</p>
           </div>
           {requestSummary && requestSummary.total_pending > 0 && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex items-center">
-                    <AlertTriangle className="w-4 h-4 text-amber-500" />
+                    <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -81,17 +90,61 @@ const AdminListingsTableRow = ({
           )}
         </div>
       </TableCell>
+      <TableCell className="max-w-[120px]">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p className="text-sm truncate cursor-help">{listing.agency}</p>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-sm">{listing.agency}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </TableCell>
       <TableCell>
-        <Badge variant={getStatusBadgeVariant(listing.status)}>
+        <Badge variant="outline" className="text-xs">{listing.phase}</Badge>
+      </TableCell>
+      <TableCell className="text-right">
+        <span className="text-sm font-medium">{formatCurrency(listing.value)}</span>
+      </TableCell>
+      <TableCell>
+        <span className="text-sm">{format(new Date(listing.deadline), 'MMM d, yyyy')}</span>
+      </TableCell>
+      <TableCell>
+        <Badge variant={getStatusBadgeVariant(listing.status)} className="text-xs">
           {listing.status}
         </Badge>
       </TableCell>
-      <TableCell>
-        <Badge variant="outline">{listing.phase}</Badge>
+      <TableCell className="max-w-[140px]">
+        {listing.profiles ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="cursor-help">
+                  <p className="text-sm font-medium truncate">
+                    {listing.profiles.full_name || 'N/A'}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {listing.profiles.email}
+                  </p>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-sm">
+                  <p className="font-medium">{listing.profiles.full_name || 'N/A'}</p>
+                  <p>{listing.profiles.email}</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <span className="text-sm text-muted-foreground">Unknown</span>
+        )}
       </TableCell>
-      <TableCell>{listing.category}</TableCell>
-      <TableCell>{formatCurrency(listing.value)}</TableCell>
-      <TableCell>{format(new Date(listing.submitted_at), 'MMM d, yyyy')}</TableCell>
+      <TableCell>
+        <span className="text-sm">{format(new Date(listing.submitted_at), 'MMM d, yyyy')}</span>
+      </TableCell>
       <TableCell>
         <AdminListingsTableActions
           listing={listing}
