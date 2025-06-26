@@ -26,6 +26,7 @@ export const adminNotificationService = {
         submitter: userData.email
       });
       
+      console.log('📤 Invoking send-admin-notification edge function...');
       const { data, error } = await supabase.functions.invoke('send-admin-notification', {
         body: {
           listing,
@@ -41,12 +42,19 @@ export const adminNotificationService = {
       }
 
       console.log('✅ Admin notification edge function response:', data);
-      return data;
+      
+      // Check if the response indicates success
+      if (data && data.success) {
+        console.log(`📧 Successfully sent notifications to ${data.emailsSent} admins`);
+        return data;
+      } else {
+        console.warn('⚠️ Edge function returned but with potential issues:', data);
+        return data;
+      }
     } catch (error) {
       console.error('❌ Complete admin notification failure:', error);
       console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-      // Don't throw the error as we don't want listing creation to fail if notification fails
-      return null;
+      throw error; // Re-throw the error so it can be handled upstream
     }
   }
 };

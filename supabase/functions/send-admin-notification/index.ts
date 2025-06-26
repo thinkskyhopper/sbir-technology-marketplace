@@ -35,19 +35,28 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    console.log('🔔 Admin notification request received');
     const data: AdminNotificationRequest = await req.json();
-    console.log('🔔 Admin notification request received:', {
+    console.log('📋 Request data:', {
       listingId: data.listing.id,
       listingTitle: data.listing.title,
       submitterEmail: data.submitterEmail
     });
 
-    // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    // Validate required environment variables
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
+    if (!supabaseUrl || !supabaseServiceKey || !resendApiKey) {
+      console.error('❌ Missing required environment variables');
+      throw new Error('Missing required environment variables');
+    }
+
+    // Initialize Supabase client
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    console.log('👥 Fetching admin users...');
     // Get all admin users
     const { data: adminProfiles, error: adminError } = await supabase
       .from('profiles')
@@ -56,12 +65,17 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (adminError) {
       console.error('❌ Error fetching admin profiles:', adminError);
-      throw new Error('Failed to fetch admin profiles');
+      throw new Error(`Failed to fetch admin profiles: ${adminError.message}`);
     }
 
     if (!adminProfiles || adminProfiles.length === 0) {
       console.log('⚠️ No admin users found');
-      return new Response(JSON.stringify({ message: 'No admin users to notify' }), {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        message: 'No admin users to notify',
+        emailsSent: 0,
+        totalAdmins: 0
+      }), {
         status: 200,
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +84,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    console.log('👥 Found admin users:', adminProfiles.length, 'admins');
+    console.log(`👥 Found ${adminProfiles.length} admin users`);
 
     const formatCurrency = (amount: number) => {
       return new Intl.NumberFormat('en-US', {
@@ -173,7 +187,11 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("❌ Error in send-admin-notification function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        success: false,
+        error: error.message,
+        emailsSent: 0
+      }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },

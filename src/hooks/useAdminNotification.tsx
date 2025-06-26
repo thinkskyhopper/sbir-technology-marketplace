@@ -12,6 +12,7 @@ export const useAdminNotification = () => {
       return;
     }
 
+    // Only send notifications for Pending listings
     if (listing.status !== 'Pending') {
       console.log('ℹ️ Admin notification skipped:', {
         status: listing.status,
@@ -20,24 +21,21 @@ export const useAdminNotification = () => {
       return;
     }
 
-    console.log('🔔 Starting admin notification process for new listing...');
-    console.log('📋 Notification trigger conditions met:', {
-      hasListing: !!listing,
-      status: listing.status,
+    console.log('🔔 Starting admin notification process for new listing...', {
       listingId: listing.id,
-      userEmail: user.email
+      title: listing.title,
+      status: listing.status
     });
     
     try {
       console.log('👤 Fetching user profile for notification...');
       // Get user profile data for the notification
-      const { data: userProfile, error: profileError } = await import('@/integrations/supabase/client').then(({ supabase }) =>
-        supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('id', user.id)
-          .single()
-      );
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data: userProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('id', user.id)
+        .single();
 
       if (profileError) {
         console.error('❌ Failed to fetch user profile:', profileError);
@@ -70,6 +68,7 @@ export const useAdminNotification = () => {
         return notificationResult;
       } else {
         console.warn('⚠️ No user profile found for notification');
+        throw new Error('User profile not found');
       }
     } catch (notificationError) {
       // Log notification error but don't fail the whole operation
