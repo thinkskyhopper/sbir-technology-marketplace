@@ -1,6 +1,7 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { adminNotificationService } from '@/services/adminNotificationService';
+import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing } from '@/types/listings';
 
 export const useAdminNotification = () => {
@@ -29,8 +30,8 @@ export const useAdminNotification = () => {
     
     try {
       console.log('👤 Fetching user profile for notification...');
+      
       // Get user profile data for the notification
-      const { supabase } = await import('@/integrations/supabase/client');
       const { data: userProfile, error: profileError } = await supabase
         .from('profiles')
         .select('full_name, email')
@@ -39,41 +40,52 @@ export const useAdminNotification = () => {
 
       if (profileError) {
         console.error('❌ Failed to fetch user profile:', profileError);
-        throw profileError;
+        throw new Error(`Failed to fetch user profile: ${profileError.message}`);
+      }
+
+      if (!userProfile) {
+        console.error('❌ No user profile found');
+        throw new Error('User profile not found');
       }
 
       console.log('✅ User profile fetched successfully:', {
-        fullName: userProfile?.full_name,
-        email: userProfile?.email
+        fullName: userProfile.full_name,
+        email: userProfile.email
       });
 
-      if (userProfile) {
-        console.log('📤 Calling admin notification service...');
-        const notificationResult = await adminNotificationService.notifyAdminsOfNewListing(
-          {
-            id: listing.id,
-            title: listing.title,
-            agency: listing.agency,
-            value: listing.value,
-            phase: listing.phase,
-            category: listing.category,
-            description: listing.description
-          },
-          {
-            full_name: userProfile.full_name || 'Unknown User',
-            email: userProfile.email
-          }
-        );
-        console.log('✅ Admin notification sent successfully:', notificationResult);
-        return notificationResult;
-      } else {
-        console.warn('⚠️ No user profile found for notification');
-        throw new Error('User profile not found');
-      }
+      console.log('📤 Calling admin notification service...');
+      const notificationResult = await adminNotificationService.notifyAdminsOfNewListing(
+        {
+          id: listing.id,
+          title: listing.title,
+          agency: listing.agency,
+          value: listing.value,
+          phase: listing.phase,
+          category: listing.category,
+          description: listing.description
+        },
+        {
+          full_name: userProfile.full_name || 'Unknown User',
+          email: userProfile.email
+        }
+      );
+      
+      console.log('✅ Admin notification sent successfully:', notificationResult);
+      return notificationResult;
     } catch (notificationError) {
       // Log notification error but don't fail the whole operation
       console.error('❌ Admin notification process failed:', notificationError);
-      console.error('❌ Notification error details:', JSON.stringify(notificationError, null, 2));
+      
+      // Create a more detailed error object for logging
+      const errorDetails = {
+        message: notificationError instanceof Error ? notificationError.message : 'Unknown error',
+        stack: notificationError instanceof Error ? notificationError.stack : undefined,
+        name: notificationError instanceof Error ? notificationError.name : 'Unknown',
+        userId: user?.id,
+        listingId: listing?.id
+      };
+      
+      console.error('❌ Notification error details:', errorDetails);
       throw notificationError; // Re-throw so we can see the error in the console
     }
   };
