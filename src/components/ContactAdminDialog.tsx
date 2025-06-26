@@ -117,7 +117,7 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
           </DialogHeader>
           <div className="text-center py-6">
             <p className="text-muted-foreground mb-6">
-              Please sign in to contact our team about this SBIR technology.
+              Please sign in to contact our team about this SBIR contract.
             </p>
             <Button onClick={handleSignIn} className="w-full">
               Sign In to Continue
@@ -221,7 +221,7 @@ const ContactAdminDialog = ({ open, onOpenChange, listing }: ContactAdminDialogP
               rows={4}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              placeholder="Tell us more about your specific interests or questions regarding this SBIR technology..."
+              placeholder="Tell us more about your specific interests or questions regarding this SBIR contract..."
             />
           </div>
 

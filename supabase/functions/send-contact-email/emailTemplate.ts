@@ -19,11 +19,11 @@ export const generateEmailTemplate = (data: ContactEmailRequest): string => {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${isGenericContact ? 'New General Contact Inquiry' : 'New SBIR Technology Inquiry'}</title>
+      <title>${isGenericContact ? 'New General Contact Inquiry' : 'New SBIR Contract Inquiry'}</title>
     </head>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="margin: 0; font-size: 24px;">${isGenericContact ? 'New General Contact Inquiry' : 'New SBIR Technology Inquiry'}</h1>
+        <h1 style="margin: 0; font-size: 24px;">${isGenericContact ? 'New General Contact Inquiry' : 'New SBIR Contract Inquiry'}</h1>
       </div>
       
       <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
@@ -46,12 +46,12 @@ export const generateEmailTemplate = (data: ContactEmailRequest): string => {
       </div>
       
       <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #6f42c1; margin: 20px 0;">
-        <h2 style="color: #6f42c1; margin-top: 0;">Technology Details</h2>
+        <h2 style="color: #6f42c1; margin-top: 0;">Contract Details</h2>
         <p><strong>Title:</strong> ${data.listing.title}</p>
         <p><strong>Agency:</strong> ${data.listing.agency}</p>
         <p><strong>Phase:</strong> ${data.listing.phase}</p>
         <p><strong>Value:</strong> ${formatCurrency(data.listing.value)}</p>
-        <p style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 4px;"><strong>Technology ID:</strong> ${data.listing.id}</p>
+        <p style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 4px;"><strong>Contract ID:</strong> ${data.listing.id}</p>
       </div>
     `;
   }
@@ -84,5 +84,5 @@ export const generateEmailSubject = (data: ContactEmailRequest): string => {
   
   return isGenericContact 
     ? `New General Contact Inquiry from ${data.name}`
-    : `New SBIR Technology Inquiry - ${data.listing.title}`;
+    : `New SBIR Contract Inquiry - ${data.listing.title}`;
 };

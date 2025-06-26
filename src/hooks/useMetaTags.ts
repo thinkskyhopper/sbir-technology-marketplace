@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 interface MetaTagData {
   title?: string;
   description?: string;
-  keywords?: string;
   image?: string;
   url?: string;
   type?: string;
@@ -50,10 +49,6 @@ export const useMetaTags = (metaData: MetaTagData) => {
       updateMetaTag('twitter:description', metaData.description);
     }
 
-    if (metaData.keywords) {
-      updateMetaTag('keywords', metaData.keywords);
-    }
-
     if (metaData.image) {
       updateMetaTag('og:image', metaData.image);
       updateMetaTag('twitter:image', metaData.image);
@@ -75,7 +70,6 @@ export const useMetaTags = (metaData: MetaTagData) => {
       updateMetaTag('description', 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.');
       updateMetaTag('og:description', 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.');
       updateMetaTag('twitter:description', 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.');
-      updateMetaTag('keywords', '');
       updateMetaTag('og:image', '/lovable-uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png');
       updateMetaTag('twitter:image', '/lovable-uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png');
       updateMetaTag('og:type', 'website');
