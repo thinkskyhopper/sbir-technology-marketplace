@@ -4,6 +4,7 @@ import type { ContactEmailRequest } from './types.ts';
 import { fetchAdminUsers } from './adminService.ts';
 import { sendContactEmails } from './emailService.ts';
 import { handleCorsRequest, handleSuccess, handleError } from './responseHandler.ts';
+import { validateEnvironment, validateContactRequest } from './validationService.ts';
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -12,6 +13,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Validate environment variables early
+    validateEnvironment();
+
     const data: ContactEmailRequest = await req.json();
     console.log('📨 Contact email request received:', {
       name: data.name,
@@ -19,6 +23,9 @@ const handler = async (req: Request): Promise<Response> => {
       listingId: data.listing.id,
       isGeneral: data.listing.id === "general-inquiry"
     });
+
+    // Validate request data
+    validateContactRequest(data);
 
     // Fetch admin users
     const adminEmails = await fetchAdminUsers();

@@ -16,6 +16,8 @@ export const sendContactEmails = async (
   const emailContent = generateEmailTemplate(data);
   const results: EmailResult[] = [];
   
+  console.log(`📤 Starting to send contact emails to ${adminEmails.length} admin(s)`);
+  
   for (let i = 0; i < adminEmails.length; i++) {
     const adminEmail = adminEmails[i];
     console.log(`📤 Sending contact email ${i + 1}/${adminEmails.length} to:`, adminEmail);
@@ -54,5 +56,6 @@ export const sendContactEmails = async (
     }
   }
   
+  console.log(`📊 Contact email batch complete: ${results.filter(r => r.success).length} successful, ${results.filter(r => !r.success).length} failed`);
   return results;
 };

@@ -12,6 +12,7 @@ export const fetchAdminUsers = async (): Promise<string[]> => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
   );
 
+  console.log('👥 Fetching admin users...');
   const { data: adminProfiles, error: adminError } = await supabase
     .from('profiles')
     .select('email, full_name')
@@ -19,12 +20,12 @@ export const fetchAdminUsers = async (): Promise<string[]> => {
     .order('email');
 
   if (adminError) {
-    console.error('Error fetching admin users:', adminError);
-    throw new Error('Failed to fetch admin users');
+    console.error('❌ Error fetching admin users:', adminError);
+    throw new Error(`Failed to fetch admin users: ${adminError.message}`);
   }
 
   if (!adminProfiles || adminProfiles.length === 0) {
-    console.error('No admin users found');
+    console.error('⚠️ No admin users found');
     throw new Error('No admin users found');
   }
 
