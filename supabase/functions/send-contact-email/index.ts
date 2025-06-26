@@ -40,6 +40,12 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const data: ContactEmailRequest = await req.json();
+    console.log('📨 Contact email request received:', {
+      name: data.name,
+      email: data.email,
+      listingId: data.listing.id,
+      isGeneral: data.listing.id === "general-inquiry"
+    });
 
     // Create Supabase client with service role key to access admin users
     const supabase = createClient(
@@ -50,8 +56,9 @@ const handler = async (req: Request): Promise<Response> => {
     // Fetch all admin users
     const { data: adminProfiles, error: adminError } = await supabase
       .from('profiles')
-      .select('email')
-      .eq('role', 'admin');
+      .select('email, full_name')
+      .eq('role', 'admin')
+      .order('email'); // Add consistent ordering
 
     if (adminError) {
       console.error('Error fetching admin users:', adminError);
@@ -63,8 +70,8 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('No admin users found');
     }
 
-    const adminEmails = adminProfiles.map(profile => profile.email);
-    console.log('Found admin users:', adminEmails.length, 'emails:', adminEmails);
+    const adminEmails = adminProfiles.map(profile => profile.email).filter(email => email); // Filter out null/undefined emails
+    console.log('📧 Found admin users:', adminProfiles.length, 'validated emails:', adminEmails);
 
     const formatCurrency = (amount: number) => {
       return new Intl.NumberFormat('en-US', {
@@ -79,45 +86,70 @@ const handler = async (req: Request): Promise<Response> => {
     const isGenericContact = data.listing.id === "general-inquiry";
     
     const subject = isGenericContact 
-      ? `New General Contact Inquiry from ${data.name}`
-      : `New SBIR Contract Inquiry - ${data.listing.title}`;
+      ? `📞 New General Contact Inquiry from ${data.name}`
+      : `📞 New SBIR Contract Inquiry - ${data.listing.title}`;
 
     let emailContent = `
-      <h1>${isGenericContact ? 'New General Contact Inquiry' : 'New SBIR Contract Inquiry'}</h1>
-      
-      <h2>Contact Information</h2>
-      <p><strong>Name:</strong> ${data.name}</p>
-      <p><strong>Email:</strong> ${data.email}</p>
-      <p><strong>User Account:</strong> ${data.userEmail}</p>
-      ${data.company ? `<p><strong>Company:</strong> ${data.company}</p>` : ''}
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${isGenericContact ? 'New General Contact Inquiry' : 'New SBIR Contract Inquiry'}</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="margin: 0; font-size: 24px;">📞 ${isGenericContact ? 'New General Contact Inquiry' : 'New SBIR Contract Inquiry'}</h1>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+          <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; margin: 20px 0;">
+            <h2 style="color: #28a745; margin-top: 0;">👤 Contact Information</h2>
+            <p><strong>Name:</strong> ${data.name}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>User Account:</strong> ${data.userEmail}</p>
+            ${data.company ? `<p><strong>Company:</strong> ${data.company}</p>` : ''}
+          </div>
     `;
 
     if (!isGenericContact) {
       emailContent += `
-        <h2>Interest Details</h2>
-        <p><strong>Interest Level:</strong> ${data.interestLevel}</p>
-        <p><strong>SBIR Experience:</strong> ${data.experience}</p>
-        <p><strong>Timeline:</strong> ${data.timeline}</p>
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; margin: 20px 0;">
+          <h2 style="color: #007bff; margin-top: 0;">🎯 Interest Details</h2>
+          <p><strong>Interest Level:</strong> ${data.interestLevel}</p>
+          <p><strong>SBIR Experience:</strong> ${data.experience}</p>
+          <p><strong>Timeline:</strong> ${data.timeline}</p>
+        </div>
         
-        <h2>Contract Details</h2>
-        <p><strong>Title:</strong> ${data.listing.title}</p>
-        <p><strong>Agency:</strong> ${data.listing.agency}</p>
-        <p><strong>Phase:</strong> ${data.listing.phase}</p>
-        <p><strong>Value:</strong> ${formatCurrency(data.listing.value)}</p>
-        <p><strong>Contract ID:</strong> ${data.listing.id}</p>
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #6f42c1; margin: 20px 0;">
+          <h2 style="color: #6f42c1; margin-top: 0;">📋 Contract Details</h2>
+          <p><strong>Title:</strong> ${data.listing.title}</p>
+          <p><strong>Agency:</strong> ${data.listing.agency}</p>
+          <p><strong>Phase:</strong> ${data.listing.phase}</p>
+          <p><strong>Value:</strong> ${formatCurrency(data.listing.value)}</p>
+          <p style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 4px;"><strong>Contract ID:</strong> ${data.listing.id}</p>
+        </div>
       `;
     }
 
     if (data.message) {
       emailContent += `
-        <h2>Additional Message</h2>
-        <p>${data.message.replace(/\n/g, '<br>')}</p>
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0;">
+          <h2 style="color: #e68900; margin-top: 0;">💬 Additional Message</h2>
+          <p style="white-space: pre-wrap;">${data.message}</p>
+        </div>
       `;
     }
 
     emailContent += `
-      <hr>
-      <p><em>This inquiry was submitted through the SBIR Marketplace platform.</em></p>
+          <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
+          <p style="text-align: center; color: #6c757d; font-size: 14px;">
+            <em>This inquiry was submitted through the SBIR Marketplace platform.<br>
+            If you believe this email was sent in error, please contact support.</em>
+          </p>
+        </div>
+      </body>
+      </html>
     `;
 
     // Send emails sequentially with delays to avoid rate limiting
@@ -125,7 +157,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     for (let i = 0; i < adminEmails.length; i++) {
       const adminEmail = adminEmails[i];
-      console.log(`Sending email ${i + 1}/${adminEmails.length} to:`, adminEmail);
+      console.log(`📤 Sending contact email ${i + 1}/${adminEmails.length} to:`, adminEmail);
       
       try {
         const emailResponse = await resend.emails.send({
@@ -133,12 +165,19 @@ const handler = async (req: Request): Promise<Response> => {
           to: [adminEmail],
           subject: subject,
           html: emailContent,
+          // Add email headers to improve deliverability
+          headers: {
+            'List-Unsubscribe': '<mailto:unsubscribe@thesbirtechmarketplace.com>',
+            'X-Entity-ID': `contact-inquiry-${Date.now()}`,
+            'X-Priority': '3',
+            'Reply-To': data.email
+          }
         });
         
-        console.log(`Email sent successfully to ${adminEmail}:`, emailResponse);
+        console.log(`✅ Contact email sent successfully to ${adminEmail}:`, emailResponse);
         results.push({ success: true, email: adminEmail, response: emailResponse });
       } catch (error) {
-        console.error(`Failed to send email to ${adminEmail}:`, error);
+        console.error(`❌ Failed to send contact email to ${adminEmail}:`, error);
         results.push({ success: false, email: adminEmail, error: error.message });
         
         // If it's a rate limit error, wait longer before the next attempt
@@ -148,10 +187,10 @@ const handler = async (req: Request): Promise<Response> => {
         }
       }
       
-      // Add a small delay between each email to prevent rate limiting
+      // Add a delay between each email to prevent rate limiting
       // Skip delay for the last email
       if (i < adminEmails.length - 1) {
-        await delay(600); // 600ms delay = ~1.5 emails per second (safely under 2/sec limit)
+        await delay(800); // Increased delay to 800ms for better deliverability
       }
     }
     
@@ -159,10 +198,10 @@ const handler = async (req: Request): Promise<Response> => {
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
     
-    console.log(`Email sending complete: ${successful.length} successful, ${failed.length} failed`);
+    console.log(`📊 Contact email sending complete: ${successful.length} successful, ${failed.length} failed`);
     
     if (failed.length > 0) {
-      console.error('Failed emails:', failed);
+      console.error('❌ Failed contact emails:', failed);
     }
 
     // Return success if at least one email was sent successfully
@@ -174,7 +213,8 @@ const handler = async (req: Request): Promise<Response> => {
       success: true,
       emailsSent: successful.length,
       totalAdmins: adminEmails.length,
-      results: results
+      results: results,
+      adminEmails: adminEmails // Include for debugging
     }), {
       status: 200,
       headers: {
@@ -183,9 +223,13 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error in send-contact-email function:", error);
+    console.error("❌ Error in send-contact-email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        success: false,
+        emailsSent: 0
+      }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
