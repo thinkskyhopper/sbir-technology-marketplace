@@ -5,7 +5,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { useAdminListingsTableState } from "@/hooks/useAdminListingsTableState";
 import { useAdminListingsTableHandlers } from "@/hooks/useAdminListingsTableHandlers";
 import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -108,10 +108,10 @@ const AdminListingsTable = () => {
     itemsPerPage: 10
   });
 
-  // Reset pagination when filters change
-  useMemo(() => {
+  // Reset pagination when filters change - use useEffect to avoid infinite loops
+  useEffect(() => {
     resetPagination();
-  }, [searchTerm, statusFilter, phaseFilter, agencyFilter, resetPagination]);
+  }, [searchTerm, statusFilter, phaseFilter, agencyFilter]);
 
   // Load change request data for indicators (optimized to avoid repeated calls)
   const { refetch: refetchChangeRequests } = useListingChangeRequests();
