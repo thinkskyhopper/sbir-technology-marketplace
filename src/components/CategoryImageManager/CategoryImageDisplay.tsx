@@ -1,4 +1,3 @@
-
 import { Skeleton } from "@/components/ui/skeleton";
 import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
 
@@ -33,33 +32,14 @@ const CategoryImageDisplay = ({
   // Use fallback image if there's an error
   const displayImageUrl = imageLoadError ? getDefaultCategoryImage(category) : imageUrl;
   
-  // Add debugging for biomedical category specifically
-  if (category.toLowerCase().includes('biomedical')) {
-    console.log('Biomedical category debug:', {
-      category,
-      imageUrl,
-      displayImageUrl,
-      imageLoadError,
-      defaultUrl: getDefaultCategoryImage(category)
-    });
-  }
-  
   // Handle image error - prevent infinite loops by not calling onImageError for fallback images
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
     const currentSrc = target.src;
     const defaultImageUrl = getDefaultCategoryImage(category);
     
-    console.error('Image load error for category:', category, {
-      currentSrc,
-      defaultImageUrl,
-      isAlreadyDefault: currentSrc.includes(defaultImageUrl.split('?')[0])
-    });
-    
     // If the current failing image is already the default image, don't try to reload
     if (currentSrc.includes(defaultImageUrl.split('?')[0])) {
-      console.error('Default image also failed to load for category:', category);
-      // Show a placeholder or broken image indicator
       return;
     }
     
@@ -91,10 +71,7 @@ const CategoryImageDisplay = ({
         className={`w-full h-full object-cover transition-opacity duration-200 ${
           showSkeleton ? 'opacity-0' : 'opacity-100'
         }`}
-        onLoad={() => {
-          console.log('Image loaded successfully for category:', category, displayImageUrl);
-          onImageLoad();
-        }}
+        onLoad={onImageLoad}
         onError={handleImageError}
         loading="eager"
       />
@@ -110,13 +87,6 @@ const CategoryImageDisplay = ({
       {imageLoadError && (
         <div className="absolute bottom-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs">
           Using Default
-        </div>
-      )}
-      
-      {/* Debug info for biomedical category */}
-      {category.toLowerCase().includes('biomedical') && (
-        <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs">
-          Debug: {imageLoadError ? 'ERROR' : 'OK'}
         </div>
       )}
     </div>
