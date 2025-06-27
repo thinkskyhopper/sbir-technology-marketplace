@@ -44,6 +44,15 @@ const MarketplaceResultsGrid = ({
         </span>
       </div>
 
+      {/* Top Pagination */}
+      <MarketplacePagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        hasNextPage={hasNextPage}
+        hasPreviousPage={hasPreviousPage}
+      />
+
       {/* Results grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {listings.map((listing) => (
@@ -56,7 +65,7 @@ const MarketplaceResultsGrid = ({
         ))}
       </div>
 
-      {/* Pagination */}
+      {/* Bottom Pagination */}
       <MarketplacePagination
         currentPage={currentPage}
         totalPages={totalPages}
