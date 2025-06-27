@@ -71,14 +71,14 @@ export const useMarketplaceData = ({
     }
 
     setFilteredListings(filtered);
-    // Reset pagination when filters change
+    // Always reset pagination when filters change to ensure user doesn't end up on empty pages
     resetPagination();
   };
 
   // Apply filters whenever dependencies change
   useEffect(() => {
     applyFilters();
-  }, [listings, searchQuery, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter]);
+  }, [listings, searchQuery, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, maxListings]);
 
   const categories = Array.from(new Set(listings.map(listing => listing.category)));
 

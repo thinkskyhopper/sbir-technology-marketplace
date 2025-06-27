@@ -61,17 +61,8 @@ const MarketplaceGridContainer = ({
     onFiltersChange
   });
 
-  // Pagination hook - 15 items per page
-  const {
-    currentPage,
-    totalPages,
-    paginatedData,
-    goToPage,
-    hasNextPage,
-    hasPreviousPage,
-    resetPagination,
-    totalItems
-  } = usePagination({
+  // First, get the filtered data to use for pagination
+  const initialPagination = usePagination({
     data: [],
     itemsPerPage: 15
   });
@@ -85,18 +76,18 @@ const MarketplaceGridContainer = ({
     statusFilter,
     sortFilter,
     maxListings,
-    resetPagination
+    resetPagination: initialPagination.resetPagination
   });
 
-  // Update pagination data when filtered listings change
+  // Now create the final pagination with the actual filtered data
   const {
-    currentPage: finalCurrentPage,
-    totalPages: finalTotalPages,
-    paginatedData: finalPaginatedData,
-    goToPage: finalGoToPage,
-    hasNextPage: finalHasNextPage,
-    hasPreviousPage: finalHasPreviousPage,
-    totalItems: finalTotalItems
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToPage,
+    hasNextPage,
+    hasPreviousPage,
+    totalItems
   } = usePagination({
     data: filteredListings,
     itemsPerPage: 15
@@ -141,13 +132,13 @@ const MarketplaceGridContainer = ({
         onClearFilters={handleClearFilters}
         onEditListing={handleEditListing}
         onContactAdmin={onContactAdmin}
-        currentPage={finalCurrentPage}
-        totalPages={finalTotalPages}
-        paginatedData={finalPaginatedData}
-        onPageChange={finalGoToPage}
-        hasNextPage={finalHasNextPage}
-        hasPreviousPage={finalHasPreviousPage}
-        totalItems={finalTotalItems}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        paginatedData={paginatedData}
+        onPageChange={goToPage}
+        hasNextPage={hasNextPage}
+        hasPreviousPage={hasPreviousPage}
+        totalItems={totalItems}
       />
 
       {/* Edit Dialog */}
