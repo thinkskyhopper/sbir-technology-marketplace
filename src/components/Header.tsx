@@ -117,7 +117,7 @@ const Header = ({
               The SBIR Tech Marketplace
             </span>
             <span className="text-sm font-bold text-gradient block xs:hidden sm:hidden">
-              SBIR
+              TSTM
             </span>
           </div>
 
