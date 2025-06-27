@@ -2,12 +2,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Calendar, DollarSign, Building, FileText, Edit } from "lucide-react";
+import { Calendar, DollarSign, Building, FileText, Edit, Image as ImageIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import ContactAdminDialog from "./ContactAdminDialog";
+import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface MarketplaceCardProps {
   listing: SBIRListing;
@@ -21,6 +23,14 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
   const [searchParams] = useSearchParams();
   const { isAdmin } = useAuth();
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
+
+  // Use custom photo if available and no error, otherwise fall back to default
+  const shouldUseCustomImage = listing.photo_url && !imageError;
+  const imageUrl = shouldUseCustomImage 
+    ? listing.photo_url 
+    : getDefaultCategoryImage(listing.category);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -56,9 +66,49 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
     setShowContactDialog(true);
   };
 
+  const handleImageLoad = () => {
+    setIsImageLoading(false);
+  };
+
+  const handleImageError = () => {
+    if (shouldUseCustomImage) {
+      console.error('Custom image failed to load:', listing.photo_url);
+      setImageError(true);
+    }
+    setIsImageLoading(false);
+  };
+
   return (
     <>
-      <Card className="card-hover bg-card border-border">
+      <Card className="card-hover bg-card border-border overflow-hidden">
+        {/* Image Section */}
+        <div className="relative">
+          <AspectRatio ratio={16 / 9} className="bg-muted">
+            <img
+              src={imageUrl}
+              alt={`${listing.category} visualization`}
+              className="w-full h-full object-cover"
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              style={{ opacity: isImageLoading ? 0 : 1, transition: 'opacity 0.2s' }}
+            />
+            
+            {/* Loading state */}
+            {isImageLoading && (
+              <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
+                <ImageIcon className="w-8 h-8 text-muted-foreground" />
+              </div>
+            )}
+            
+            {/* Custom image indicator */}
+            {shouldUseCustomImage && !isImageLoading && (
+              <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                Custom
+              </div>
+            )}
+          </AspectRatio>
+        </div>
+
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start mb-2">
             <Badge variant="default" className="text-xs">
