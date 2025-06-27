@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -16,9 +15,10 @@ const Admin = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { user } = useAuth();
 
-  // Ensure storage bucket exists when admin page loads
+  // Ensure storage bucket exists and scroll to top when admin page loads
   useEffect(() => {
     ensureCategoryImagesBucket();
+    window.scrollTo(0, 0);
   }, []);
 
   return (
