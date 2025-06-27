@@ -11,7 +11,6 @@ interface UseMarketplaceDataProps {
   statusFilter: string;
   sortFilter: string;
   maxListings?: number;
-  resetPagination: () => void;
 }
 
 export const useMarketplaceData = ({
@@ -22,10 +21,10 @@ export const useMarketplaceData = ({
   categoryFilter,
   statusFilter,
   sortFilter,
-  maxListings,
-  resetPagination
+  maxListings
 }: UseMarketplaceDataProps) => {
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
+  const [shouldResetPagination, setShouldResetPagination] = useState(false);
 
   const applyFilters = () => {
     let filtered = listings;
@@ -71,8 +70,8 @@ export const useMarketplaceData = ({
     }
 
     setFilteredListings(filtered);
-    // Always reset pagination when filters change to ensure user doesn't end up on empty pages
-    resetPagination();
+    // Signal that pagination should be reset
+    setShouldResetPagination(true);
   };
 
   // Apply filters whenever dependencies change
@@ -82,8 +81,15 @@ export const useMarketplaceData = ({
 
   const categories = Array.from(new Set(listings.map(listing => listing.category)));
 
+  // Reset the pagination reset flag after it's been consumed
+  const consumePaginationReset = () => {
+    setShouldResetPagination(false);
+  };
+
   return {
     filteredListings,
-    categories
+    categories,
+    shouldResetPagination,
+    consumePaginationReset
   };
 };

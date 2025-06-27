@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EditListingDialog from "../EditListingDialog";
 import MarketplaceGridContent from "./MarketplaceGridContent";
 import MarketplaceLoading from "../MarketplaceLoading";
@@ -61,13 +61,7 @@ const MarketplaceGridContainer = ({
     onFiltersChange
   });
 
-  // First, get the filtered data to use for pagination
-  const initialPagination = usePagination({
-    data: [],
-    itemsPerPage: 15
-  });
-
-  const { filteredListings, categories } = useMarketplaceData({
+  const { filteredListings, categories, shouldResetPagination, consumePaginationReset } = useMarketplaceData({
     listings,
     searchQuery,
     localSearchQuery,
@@ -75,11 +69,10 @@ const MarketplaceGridContainer = ({
     categoryFilter,
     statusFilter,
     sortFilter,
-    maxListings,
-    resetPagination: initialPagination.resetPagination
+    maxListings
   });
 
-  // Now create the final pagination with the actual filtered data
+  // Pagination with the filtered data
   const {
     currentPage,
     totalPages,
@@ -87,11 +80,20 @@ const MarketplaceGridContainer = ({
     goToPage,
     hasNextPage,
     hasPreviousPage,
-    totalItems
+    totalItems,
+    resetPagination
   } = usePagination({
     data: filteredListings,
     itemsPerPage: 15
   });
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    if (shouldResetPagination) {
+      resetPagination();
+      consumePaginationReset();
+    }
+  }, [shouldResetPagination, resetPagination, consumePaginationReset]);
 
   const handleEditListing = (listing: SBIRListing) => {
     setSelectedListing(listing);
