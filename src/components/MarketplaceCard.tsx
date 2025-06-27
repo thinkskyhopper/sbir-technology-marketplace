@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, FileText, Edit } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -18,6 +18,7 @@ interface MarketplaceCardProps {
 
 const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: MarketplaceCardProps) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isAdmin } = useAuth();
   const [showContactDialog, setShowContactDialog] = useState(false);
 
@@ -39,7 +40,16 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
   };
 
   const handleViewDetails = () => {
-    navigate(`/listing/${listing.id}`);
+    // Preserve current search parameters when navigating to listing detail
+    const currentParams = new URLSearchParams(searchParams);
+    const listingUrl = `/listing/${listing.id}`;
+    
+    // Add current search params to the listing URL if they exist
+    if (currentParams.toString()) {
+      navigate(`${listingUrl}?${currentParams.toString()}`);
+    } else {
+      navigate(listingUrl);
+    }
   };
 
   const handleContactAdmin = () => {
