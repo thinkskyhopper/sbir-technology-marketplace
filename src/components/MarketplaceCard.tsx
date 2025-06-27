@@ -51,7 +51,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
       <Card className="card-hover bg-card border-border">
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start mb-2">
-            <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"} className="text-xs">
+            <Badge variant="default" className="text-xs">
               {listing.phase}
             </Badge>
             <div className="flex gap-1">
