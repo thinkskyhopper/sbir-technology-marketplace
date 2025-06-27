@@ -1,11 +1,5 @@
 
 import { useState, useMemo, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Search, RotateCcw } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { usePagination } from '@/hooks/usePagination';
 import { 
@@ -16,6 +10,9 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination';
+import FilterBar from './FilterBar';
+import ListingItem from './ListingItem';
+import SelectionInfo from './SelectionInfo';
 import type { SBIRListing } from '@/types/listings';
 
 interface FeaturedListingsSelectorProps {
@@ -108,72 +105,28 @@ const FeaturedListingsSelector = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Filters */}
-      <div className="flex items-center space-x-4 mb-4 pb-4 border-b flex-wrap gap-2">
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search listings..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8 w-64"
-          />
-        </div>
-        <Select value={phaseFilter} onValueChange={setPhaseFilter}>
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Phase" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Phases</SelectItem>
-            <SelectItem value="Phase I">Phase I</SelectItem>
-            <SelectItem value="Phase II">Phase II</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={agencyFilter} onValueChange={setAgencyFilter}>
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Agency" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Agencies</SelectItem>
-            {uniqueAgencies.map(agency => (
-              <SelectItem key={agency} value={agency}>{agency}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {uniqueCategories.map(category => (
-              <SelectItem key={category} value={category}>{category}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {hasActiveFilters && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleClearFilters}
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
-          </Button>
-        )}
-      </div>
+      <FilterBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        phaseFilter={phaseFilter}
+        setPhaseFilter={setPhaseFilter}
+        agencyFilter={agencyFilter}
+        setAgencyFilter={setAgencyFilter}
+        categoryFilter={categoryFilter}
+        setCategoryFilter={setCategoryFilter}
+        uniqueAgencies={uniqueAgencies}
+        uniqueCategories={uniqueCategories}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={handleClearFilters}
+      />
 
-      {/* Selection Info */}
-      <div className="mb-4 flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">
-          {selectedListings.length} of 6 listings selected
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Showing {paginatedListings.length} of {filteredListings.length} listings
-        </p>
-      </div>
+      <SelectionInfo
+        selectedCount={selectedListings.length}
+        maxSelections={6}
+        displayedCount={paginatedListings.length}
+        totalCount={filteredListings.length}
+      />
 
-      {/* Listings List */}
       <ScrollArea className="flex-1">
         <div className="space-y-2">
           {paginatedListings.map((listing) => {
@@ -181,32 +134,13 @@ const FeaturedListingsSelector = ({
             const canSelect = selectedListings.length < 6 || isSelected;
             
             return (
-              <div
+              <ListingItem
                 key={listing.id}
-                className={`flex items-center space-x-3 p-3 border rounded-lg ${
-                  isSelected ? 'bg-primary/5 border-primary' : 'hover:bg-muted/50'
-                } ${!canSelect ? 'opacity-50' : ''}`}
-              >
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={(checked) => handleListingToggle(listing, checked as boolean)}
-                  disabled={!canSelect}
-                />
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <h4 className="font-medium truncate">{listing.title}</h4>
-                    <Badge variant="outline" className="text-xs">
-                      {listing.phase}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                    <span>{listing.agency}</span>
-                    <span>${listing.value.toLocaleString()}</span>
-                    <span>{listing.category}</span>
-                  </div>
-                </div>
-              </div>
+                listing={listing}
+                isSelected={isSelected}
+                canSelect={canSelect}
+                onToggle={handleListingToggle}
+              />
             );
           })}
           
@@ -218,7 +152,6 @@ const FeaturedListingsSelector = ({
         </div>
       </ScrollArea>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-4 pt-4 border-t">
           <Pagination>
