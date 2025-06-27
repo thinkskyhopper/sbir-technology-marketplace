@@ -38,8 +38,12 @@ const saveCacheToStorage = () => {
   }
 };
 
-// Initialize cache from localStorage
+// Initialize cache from localStorage but clear hardware cache immediately
 loadCacheFromStorage();
+// Clear hardware cache to force refresh
+imageCache.delete('Hardware');
+saveCacheToStorage();
+console.log('Cleared Hardware category cache to force image refresh');
 
 export const getCachedEntry = (category: string): CacheEntry | undefined => {
   const cached = imageCache.get(category);
