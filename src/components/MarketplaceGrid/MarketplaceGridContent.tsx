@@ -1,3 +1,4 @@
+
 import React from "react";
 import MarketplaceFilters from "@/components/MarketplaceFilters";
 import MarketplaceResultsGrid from "@/components/MarketplaceResultsGrid";
@@ -33,6 +34,8 @@ interface MarketplaceGridContentProps {
   hasPreviousPage: boolean;
   showFilters: boolean;
   showPaginationInfo: boolean;
+  categories: string[];
+  onClearFilters: () => void;
 }
 
 const MarketplaceGridContent = ({
@@ -49,7 +52,9 @@ const MarketplaceGridContent = ({
   hasNextPage,
   hasPreviousPage,
   showFilters,
-  showPaginationInfo
+  showPaginationInfo,
+  categories,
+  onClearFilters
 }: MarketplaceGridContentProps) => {
   const navigate = useNavigate();
 
@@ -63,19 +68,24 @@ const MarketplaceGridContent = ({
 
   if (error) {
     console.error("Error loading listings:", error);
-    return <MarketplaceNoResults />;
+    return <MarketplaceNoResults onClearFilters={onClearFilters} />;
   }
 
   return (
     <div className="space-y-6">
       {showFilters && (
         <MarketplaceFilters
-          searchQuery={filters.localSearchQuery}
+          localSearchQuery={filters.localSearchQuery}
           phaseFilter={filters.phaseFilter}
           categoryFilter={filters.categoryFilter}
           statusFilter={filters.statusFilter}
           sortFilter={filters.sortFilter}
-          onFiltersChange={onFiltersChange}
+          categories={categories}
+          onSearchQueryChange={(query) => onFiltersChange({ ...filters, localSearchQuery: query })}
+          onPhaseFilterChange={(phase) => onFiltersChange({ ...filters, phaseFilter: phase })}
+          onCategoryFilterChange={(category) => onFiltersChange({ ...filters, categoryFilter: category })}
+          onStatusFilterChange={(status) => onFiltersChange({ ...filters, statusFilter: status })}
+          onSortFilterChange={(sort) => onFiltersChange({ ...filters, sortFilter: sort })}
         />
       )}
 

@@ -1,7 +1,9 @@
+
 import React from "react";
-import { useMarketplaceData } from "@/hooks/useMarketplaceData";
 import { useMarketplaceFilters } from "@/hooks/useMarketplaceFilters";
+import { useMarketplaceData } from "@/hooks/useMarketplaceData";
 import { usePagination } from "@/hooks/usePagination";
+import { useListings } from "@/hooks/useListings";
 import MarketplaceGridContent from "./MarketplaceGridContent";
 import type { SBIRListing } from "@/types/listings";
 
@@ -36,34 +38,78 @@ const MarketplaceGridContainer = ({
   maxListings,
   showPaginationInfo = true
 }: MarketplaceGridContainerProps) => {
-  const { filters, handleFiltersChange } = useMarketplaceFilters({
-    initialFilters: preservedFilters,
-    onFiltersChange: onFiltersChange
-  });
-
   const {
-    data: listings,
-    isLoading,
-    error
-  } = useMarketplaceData({
-    searchQuery: filters.localSearchQuery,
-    phaseFilter: filters.phaseFilter,
-    categoryFilter: filters.categoryFilter,
-    statusFilter: filters.statusFilter,
-    sortFilter: filters.sortFilter,
-    page: currentPage,
-    limit: maxListings || 15
+    localSearchQuery,
+    setLocalSearchQuery,
+    phaseFilter,
+    setPhaseFilter,
+    categoryFilter,
+    setCategoryFilter,
+    statusFilter,
+    setStatusFilter,
+    sortFilter,
+    setSortFilter,
+    handleClearFilters
+  } = useMarketplaceFilters({
+    preservedFilters,
+    onFiltersChange
   });
 
-  const { currentPage, totalPages, onPageChange, hasNextPage, hasPreviousPage } = usePagination({
-    totalItems: listings?.totalCount || 0,
+  // Get all listings
+  const { data: allListings = [], isLoading, error } = useListings();
+
+  // Apply filters to get filtered listings
+  const { filteredListings, categories } = useMarketplaceData({
+    listings: allListings,
+    searchQuery,
+    localSearchQuery,
+    phaseFilter,
+    categoryFilter,
+    statusFilter,
+    sortFilter,
+    maxListings
+  });
+
+  // Setup pagination with filtered listings
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToPage,
+    hasNextPage,
+    hasPreviousPage,
+    totalItems
+  } = usePagination({
+    data: filteredListings,
     itemsPerPage: maxListings || 15
   });
 
+  const handleFiltersChange = (filters: {
+    localSearchQuery: string;
+    phaseFilter: string;
+    categoryFilter: string;
+    statusFilter: string;
+    sortFilter: string;
+  }) => {
+    setLocalSearchQuery(filters.localSearchQuery);
+    setPhaseFilter(filters.phaseFilter);
+    setCategoryFilter(filters.categoryFilter);
+    setStatusFilter(filters.statusFilter);
+    setSortFilter(filters.sortFilter);
+  };
+
+  const filters = {
+    localSearchQuery,
+    phaseFilter,
+    categoryFilter,
+    statusFilter,
+    sortFilter
+  };
+
   return (
     <MarketplaceGridContent
-      listings={listings?.data || []}
-      totalCount={listings?.totalCount || 0}
+      listings={maxListings ? filteredListings : paginatedData}
+      totalCount={totalItems}
       isLoading={isLoading}
       error={error}
       filters={filters}
@@ -71,11 +117,13 @@ const MarketplaceGridContainer = ({
       onContactAdmin={onContactAdmin}
       currentPage={currentPage}
       totalPages={totalPages}
-      onPageChange={onPageChange}
+      onPageChange={goToPage}
       hasNextPage={hasNextPage}
       hasPreviousPage={hasPreviousPage}
       showFilters={showFilters}
       showPaginationInfo={showPaginationInfo}
+      categories={categories}
+      onClearFilters={handleClearFilters}
     />
   );
 };
