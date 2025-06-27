@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,9 +18,12 @@ interface ContactFormProps {
 }
 
 interface FormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   company: string;
+  howDidYouFindUs: string;
+  otherSource: string;
   message: string;
   honeypot: string; // Hidden field to catch bots
 }
@@ -28,9 +32,12 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     company: "",
+    howDidYouFindUs: "",
+    otherSource: "",
     message: "",
     honeypot: ""
   });
@@ -56,11 +63,18 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
         userEmail
       });
 
+      // Combine first and last name for the email
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      const howDidYouFindUs = formData.howDidYouFindUs === "Other (Please specify)" 
+        ? `Other: ${formData.otherSource}` 
+        : formData.howDidYouFindUs;
+
       const { data, error } = await supabase.functions.invoke('send-contact-email', {
         body: {
-          name: formData.name,
+          name: fullName,
           email: formData.email,
           company: formData.company,
+          howDidYouFindUs: howDidYouFindUs,
           message: formData.message,
           listing: {
             id: "general-inquiry",
@@ -86,9 +100,12 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
       });
       onOpenChange(false);
       setFormData({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         company: "",
+        howDidYouFindUs: "",
+        otherSource: "",
         message: "",
         honeypot: ""
       });
@@ -131,24 +148,34 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="name">Full Name *</Label>
+              <Label htmlFor="firstName">First Name *</Label>
               <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                id="firstName"
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                 required
               />
             </div>
             <div>
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="lastName">Last Name *</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                id="lastName"
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 required
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="email">Email *</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
           </div>
 
           <div>
@@ -159,6 +186,35 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
               onChange={(e) => setFormData({ ...formData, company: e.target.value })}
             />
           </div>
+
+          <div>
+            <Label htmlFor="howDidYouFindUs">How did you find us? *</Label>
+            <Select value={formData.howDidYouFindUs} onValueChange={(value) => setFormData({ ...formData, howDidYouFindUs: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Please select how you found us" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Google">Google</SelectItem>
+                <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                <SelectItem value="Podcast">Podcast</SelectItem>
+                <SelectItem value="Word of mouth">Word of mouth</SelectItem>
+                <SelectItem value="Other (Please specify)">Other (Please specify)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {formData.howDidYouFindUs === "Other (Please specify)" && (
+            <div>
+              <Label htmlFor="otherSource">Please specify *</Label>
+              <Input
+                id="otherSource"
+                value={formData.otherSource}
+                onChange={(e) => setFormData({ ...formData, otherSource: e.target.value })}
+                placeholder="Please tell us how you found us"
+                required
+              />
+            </div>
+          )}
 
           <div>
             <Label htmlFor="message">Your Message</Label>

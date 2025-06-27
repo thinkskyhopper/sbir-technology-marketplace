@@ -7,6 +7,7 @@ export interface ContactEmailRequest {
   experience?: string;
   timeline?: string;
   message: string;
+  howDidYouFindUs?: string;
   listing: {
     id: string;
     title: string;

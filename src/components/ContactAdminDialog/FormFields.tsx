@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface FormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   company: string;
   interestLevel: string;
@@ -29,24 +30,34 @@ const FormFields = ({ formData, onFormDataChange }: FormFieldsProps) => {
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="name">Full Name *</Label>
+          <Label htmlFor="firstName">First Name *</Label>
           <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => updateField('name', e.target.value)}
+            id="firstName"
+            value={formData.firstName}
+            onChange={(e) => updateField('firstName', e.target.value)}
             required
           />
         </div>
         <div>
-          <Label htmlFor="email">Email *</Label>
+          <Label htmlFor="lastName">Last Name *</Label>
           <Input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => updateField('email', e.target.value)}
+            id="lastName"
+            value={formData.lastName}
+            onChange={(e) => updateField('lastName', e.target.value)}
             required
           />
         </div>
+      </div>
+
+      <div>
+        <Label htmlFor="email">Email *</Label>
+        <Input
+          id="email"
+          type="email"
+          value={formData.email}
+          onChange={(e) => updateField('email', e.target.value)}
+          required
+        />
       </div>
 
       <div>

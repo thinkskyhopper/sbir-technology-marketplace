@@ -15,7 +15,8 @@ export const useContactForm = ({ user, listing, onSuccess }: UseContactFormProps
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     company: "",
     interestLevel: "",
@@ -26,7 +27,8 @@ export const useContactForm = ({ user, listing, onSuccess }: UseContactFormProps
 
   const resetForm = () => {
     setFormData({
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       company: "",
       interestLevel: "",
@@ -43,8 +45,12 @@ export const useContactForm = ({ user, listing, onSuccess }: UseContactFormProps
     setLoading(true);
     
     try {
+      // Combine first and last name for the email
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+
       console.log('Sending contact inquiry...', {
         formData,
+        fullName,
         listing: {
           id: listing.id,
           title: listing.title,
@@ -57,7 +63,13 @@ export const useContactForm = ({ user, listing, onSuccess }: UseContactFormProps
 
       const { data, error } = await supabase.functions.invoke('send-contact-email', {
         body: {
-          ...formData,
+          name: fullName,
+          email: formData.email,
+          company: formData.company,
+          interestLevel: formData.interestLevel,
+          experience: formData.experience,
+          timeline: formData.timeline,
+          message: formData.message,
           listing: {
             id: listing.id,
             title: listing.title,
