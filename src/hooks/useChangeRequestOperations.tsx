@@ -8,6 +8,8 @@ import {
 } from '@/services/changeRequests/changeRequestOperations';
 import { handleApprovedDeletion, handleApprovedChanges } from '@/services/changeRequests/listingUpdateOperations';
 import { sendChangeRequestNotification } from '@/services/changeRequests/notificationService';
+import { sendChangeRequestStatusNotification } from '@/services/changeRequests/statusNotificationService';
+import { supabase } from '@/integrations/supabase/client';
 import type { CreateChangeRequestData, ListingChangeRequest } from '@/types/changeRequests';
 
 export const useChangeRequestOperations = () => {
@@ -54,7 +56,8 @@ export const useChangeRequestOperations = () => {
   const updateChangeRequestStatus = async (
     requestId: string, 
     status: 'approved' | 'rejected', 
-    adminNotes?: string
+    adminNotes?: string,
+    adminNotesForUser?: string
   ) => {
     if (!user) {
       throw new Error('Must be authenticated to update change requests');
@@ -66,8 +69,30 @@ export const useChangeRequestOperations = () => {
         requestId, 
         status, 
         user.id, 
-        adminNotes
+        adminNotes,
+        adminNotesForUser
       );
+
+      // Get user information for the notification
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('email, full_name')
+        .eq('id', changeRequest.user_id)
+        .single();
+
+      if (userProfile) {
+        // Send status notification to the user
+        await sendChangeRequestStatusNotification(
+          {
+            ...changeRequest,
+            status,
+            admin_notes_for_user: adminNotesForUser,
+            processed_at: new Date().toISOString()
+          },
+          userProfile.email,
+          userProfile.full_name || 'User'
+        );
+      }
 
       // Handle approved requests
       if (status === 'approved') {

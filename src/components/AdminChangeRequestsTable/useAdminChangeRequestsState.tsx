@@ -14,6 +14,7 @@ export const useAdminChangeRequestsState = () => {
   const [selectedRequest, setSelectedRequest] = useState<ListingChangeRequest | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
+  const [adminNotesForUser, setAdminNotesForUser] = useState("");
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [adminProfiles, setAdminProfiles] = useState<{ [key: string]: AdminProfile }>({});
   
@@ -63,13 +64,14 @@ export const useAdminChangeRequestsState = () => {
   const handleViewDetails = (request: ListingChangeRequest) => {
     setSelectedRequest(request);
     setAdminNotes("");
+    setAdminNotesForUser("");
     setShowDetailsDialog(true);
   };
 
   const handleApprove = async (requestId: string) => {
     try {
       setProcessingId(requestId);
-      await updateChangeRequestStatus(requestId, 'approved', adminNotes);
+      await updateChangeRequestStatus(requestId, 'approved', adminNotes, adminNotesForUser);
       toast({
         title: "Request Approved",
         description: "The change request has been approved successfully.",
@@ -90,7 +92,7 @@ export const useAdminChangeRequestsState = () => {
   const handleReject = async (requestId: string) => {
     try {
       setProcessingId(requestId);
-      await updateChangeRequestStatus(requestId, 'rejected', adminNotes);
+      await updateChangeRequestStatus(requestId, 'rejected', adminNotes, adminNotesForUser);
       toast({
         title: "Request Rejected",
         description: "The change request has been rejected.",
@@ -122,6 +124,8 @@ export const useAdminChangeRequestsState = () => {
     setShowDetailsDialog,
     adminNotes,
     setAdminNotes,
+    adminNotesForUser,
+    setAdminNotesForUser,
     processingId,
     adminProfiles,
     handleViewDetails,

@@ -74,7 +74,8 @@ export const updateChangeRequestStatusOperation = async (
   requestId: string,
   status: 'approved' | 'rejected',
   userId: string,
-  adminNotes?: string
+  adminNotes?: string,
+  adminNotesForUser?: string
 ) => {
   console.log('🔄 Updating change request status...', { requestId, status });
   
@@ -100,6 +101,7 @@ export const updateChangeRequestStatusOperation = async (
     .update({
       status,
       admin_notes: adminNotes,
+      admin_notes_for_user: adminNotesForUser,
       processed_by: userId,
       processed_at: new Date().toISOString(),
     })

@@ -18,6 +18,8 @@ const AdminChangeRequestsTableContainer = () => {
     setShowDetailsDialog,
     adminNotes,
     setAdminNotes,
+    adminNotesForUser,
+    setAdminNotesForUser,
     processingId,
     adminProfiles,
     handleViewDetails,
@@ -84,6 +86,8 @@ const AdminChangeRequestsTableContainer = () => {
         setShowDetailsDialog={setShowDetailsDialog}
         adminNotes={adminNotes}
         setAdminNotes={setAdminNotes}
+        adminNotesForUser={adminNotesForUser}
+        setAdminNotesForUser={setAdminNotesForUser}
         processingId={processingId}
         onApprove={handleApprove}
         onReject={handleReject}

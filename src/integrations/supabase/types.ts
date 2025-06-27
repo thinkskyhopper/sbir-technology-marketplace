@@ -86,6 +86,7 @@ export type Database = {
       listing_change_requests: {
         Row: {
           admin_notes: string | null
+          admin_notes_for_user: string | null
           created_at: string
           id: string
           listing_agency: string | null
@@ -102,6 +103,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          admin_notes_for_user?: string | null
           created_at?: string
           id?: string
           listing_agency?: string | null
@@ -118,6 +120,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          admin_notes_for_user?: string | null
           created_at?: string
           id?: string
           listing_agency?: string | null

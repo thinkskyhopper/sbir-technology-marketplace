@@ -8,6 +8,7 @@ export interface ListingChangeRequest {
   reason?: string;
   status: 'pending' | 'approved' | 'rejected';
   admin_notes?: string;
+  admin_notes_for_user?: string; // New field for user-facing notes
   processed_by?: string;
   processed_at?: string;
   created_at: string;
