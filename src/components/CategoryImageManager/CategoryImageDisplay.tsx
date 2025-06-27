@@ -1,4 +1,3 @@
-
 import { Skeleton } from "@/components/ui/skeleton";
 import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
 
@@ -33,6 +32,22 @@ const CategoryImageDisplay = ({
   // Use fallback image if there's an error
   const displayImageUrl = imageLoadError ? getDefaultCategoryImage(category) : imageUrl;
   
+  // Handle image error - prevent infinite loops by not calling onImageError for fallback images
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    const currentSrc = target.src;
+    const defaultImageUrl = getDefaultCategoryImage(category);
+    
+    // If the current failing image is already the default image, don't try to reload
+    if (currentSrc.includes(defaultImageUrl.split('?')[0])) {
+      console.error('Default image also failed to load for category:', category);
+      return;
+    }
+    
+    // Otherwise, let the parent handle the error (which will trigger fallback)
+    onImageError(e);
+  };
+  
   return (
     <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted relative">
       {/* Loading overlay for actions */}
@@ -58,7 +73,7 @@ const CategoryImageDisplay = ({
           showSkeleton ? 'opacity-0' : 'opacity-100'
         }`}
         onLoad={onImageLoad}
-        onError={onImageError}
+        onError={handleImageError}
         loading="eager"
       />
       
