@@ -1,5 +1,6 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
 
 interface CategoryImageDisplayProps {
   category: string;
@@ -29,6 +30,9 @@ const CategoryImageDisplay = ({
   // Only show skeleton if we're truly uncertain about the image
   const showSkeleton = isLoading && isUploaded === null;
   
+  // Use fallback image if there's an error
+  const displayImageUrl = imageLoadError ? getDefaultCategoryImage(category) : imageUrl;
+  
   return (
     <div className="aspect-[5/2] border rounded-lg overflow-hidden bg-muted relative">
       {/* Loading overlay for actions */}
@@ -45,20 +49,10 @@ const CategoryImageDisplay = ({
         <Skeleton className="w-full h-full absolute inset-0" />
       )}
       
-      {/* Error state */}
-      {imageLoadError && (
-        <div className="w-full h-full flex items-center justify-center bg-muted">
-          <div className="text-center text-muted-foreground">
-            <p className="text-sm">Failed to load image</p>
-            <p className="text-xs">Using fallback</p>
-          </div>
-        </div>
-      )}
-      
-      {/* Main image - always render but control opacity */}
+      {/* Main image - always render but use fallback URL if error */}
       <img
         key={`${category}-${imageKey}`}
-        src={imageUrl}
+        src={displayImageUrl}
         alt={`${category} category`}
         className={`w-full h-full object-cover transition-opacity duration-200 ${
           showSkeleton ? 'opacity-0' : 'opacity-100'
@@ -69,9 +63,16 @@ const CategoryImageDisplay = ({
       />
       
       {/* Upload status indicator */}
-      {isUploaded === true && !isLoading && (
+      {isUploaded === true && !isLoading && !imageLoadError && (
         <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs">
           Custom
+        </div>
+      )}
+
+      {/* Error state indicator */}
+      {imageLoadError && (
+        <div className="absolute bottom-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs">
+          Using Default
         </div>
       )}
     </div>
