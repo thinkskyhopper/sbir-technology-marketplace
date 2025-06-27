@@ -32,6 +32,20 @@ export const AdminChangeRequestsTableRow = ({
     }
   };
 
+  const getStatusBadgeClassName = (status: string) => {
+    if (status === 'approved') {
+      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+    }
+    return '';
+  };
+
+  const getRequestTypeBadgeClassName = (requestType: string) => {
+    if (requestType === 'change') {
+      return 'bg-yellow-500 hover:bg-yellow-600 text-white border-transparent';
+    }
+    return '';
+  };
+
   // Use preserved listing information if available, otherwise fall back to joined data
   const listingTitle = request.listing_title || 
                       (request as any).sbir_listings?.title || 
@@ -59,12 +73,18 @@ export const AdminChangeRequestsTableRow = ({
         </div>
       </TableCell>
       <TableCell>
-        <Badge variant={request.request_type === 'change' ? 'default' : 'destructive'}>
+        <Badge 
+          variant={request.request_type === 'change' ? 'default' : 'destructive'}
+          className={getRequestTypeBadgeClassName(request.request_type)}
+        >
           {request.request_type === 'change' ? 'Change' : 'Deletion'}
         </Badge>
       </TableCell>
       <TableCell>
-        <Badge variant={getStatusBadgeVariant(request.status)}>
+        <Badge 
+          variant={getStatusBadgeVariant(request.status)}
+          className={getStatusBadgeClassName(request.status)}
+        >
           {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
         </Badge>
       </TableCell>
