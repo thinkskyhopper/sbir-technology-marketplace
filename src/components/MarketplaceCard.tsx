@@ -8,6 +8,7 @@ import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import ContactAdminDialog from "./ContactAdminDialog";
+import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
 
 interface MarketplaceCardProps {
   listing: SBIRListing;
@@ -21,6 +22,10 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
   const [searchParams] = useSearchParams();
   const { isAdmin } = useAuth();
   const [showContactDialog, setShowContactDialog] = useState(false);
+
+  // Check if listing has a custom image
+  const hasCustomImage = listing.photo_url && listing.photo_url.trim() !== '';
+  const imageUrl = hasCustomImage ? listing.photo_url : getDefaultCategoryImage(listing.category);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

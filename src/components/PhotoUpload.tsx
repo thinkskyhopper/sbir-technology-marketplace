@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Upload, X, Image } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -70,7 +71,7 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
 
       toast({
         title: "Photo uploaded",
-        description: "The listing photo has been uploaded successfully.",
+        description: "The custom listing photo has been uploaded successfully.",
       });
     } catch (error) {
       console.error('Error uploading photo:', error);
@@ -110,19 +111,31 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+
+    toast({
+      title: "Photo removed",
+      description: "The custom photo has been removed. The listing will now use the default category image.",
+    });
   };
 
   return (
     <div className="space-y-4">
-      <Label>Listing Photo</Label>
+      <div className="flex items-center justify-between">
+        <Label>Custom Listing Photo</Label>
+        {previewUrl && (
+          <Badge variant="secondary" className="bg-blue-500 text-white">
+            Custom Image
+          </Badge>
+        )}
+      </div>
       
       {previewUrl ? (
         <div className="relative">
-          <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-muted">
+          <div className="relative w-full max-h-48 border rounded-lg overflow-hidden bg-muted">
             <img
               src={previewUrl}
               alt="Listing preview"
-              className="w-full h-full object-cover"
+              className="w-full max-h-48 object-contain"
             />
           </div>
           <Button
@@ -143,7 +156,7 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
             <div className="mt-4">
               <Label htmlFor="photo-upload" className="cursor-pointer">
                 <span className="text-sm font-medium text-primary hover:text-primary/80">
-                  Upload a photo
+                  Upload a custom photo
                 </span>
                 <Input
                   id="photo-upload"
@@ -159,6 +172,9 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
             <p className="text-xs text-muted-foreground mt-2">
               PNG, JPG, GIF up to 5MB
             </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              If no custom photo is uploaded, the default category image will be used
+            </p>
           </div>
         </div>
       )}
@@ -172,7 +188,7 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
           className="w-full"
         >
           <Upload className="w-4 h-4 mr-2" />
-          {isUploading ? "Uploading..." : "Choose Photo"}
+          {isUploading ? "Uploading..." : "Choose Custom Photo"}
         </Button>
       )}
     </div>
