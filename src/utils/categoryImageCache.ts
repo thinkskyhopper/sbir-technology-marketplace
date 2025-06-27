@@ -38,12 +38,15 @@ const saveCacheToStorage = () => {
   }
 };
 
-// Initialize cache from localStorage but clear hardware cache immediately
+// Initialize cache from localStorage but clear specific category caches immediately
 loadCacheFromStorage();
-// Clear hardware cache to force refresh
-imageCache.delete('Hardware');
+// Clear caches for updated categories to force refresh
+const categoriesToClear = ['AI', 'Hardware', 'Wearables', 'Biomedical Technology'];
+categoriesToClear.forEach(category => {
+  imageCache.delete(category);
+});
 saveCacheToStorage();
-console.log('Cleared Hardware category cache to force image refresh');
+console.log('Cleared cache for updated categories:', categoriesToClear);
 
 export const getCachedEntry = (category: string): CacheEntry | undefined => {
   const cached = imageCache.get(category);
