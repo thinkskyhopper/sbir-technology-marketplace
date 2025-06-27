@@ -21,7 +21,7 @@ export const getDefaultCategoryImage = (category: string): string => {
   } else if (categoryLower.includes('software')) {
     return "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('hardware') || categoryLower.includes('electronic')) {
-    return "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('wearables')) {
     return "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('training')) {
