@@ -8,6 +8,7 @@ export const useAdminListingsTableState = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
   const [agencyFilter, setAgencyFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   // Clear all filters helper
   const handleClearFilters = () => {
@@ -15,10 +16,11 @@ export const useAdminListingsTableState = () => {
     setStatusFilter("all");
     setPhaseFilter("all");
     setAgencyFilter("all");
+    setCategoryFilter("all");
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all";
+  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all" || categoryFilter !== "all";
 
   return {
     searchTerm,
@@ -29,6 +31,8 @@ export const useAdminListingsTableState = () => {
     setPhaseFilter,
     agencyFilter,
     setAgencyFilter,
+    categoryFilter,
+    setCategoryFilter,
     handleClearFilters,
     hasActiveFilters,
   };
@@ -39,7 +43,8 @@ export const useAdminListingsTableLogic = (
   searchTerm: string,
   statusFilter: string,
   phaseFilter: string,
-  agencyFilter: string
+  agencyFilter: string,
+  categoryFilter: string
 ) => {
   // Filter and search listings
   const filteredListings = useMemo(() => {
@@ -52,10 +57,11 @@ export const useAdminListingsTableLogic = (
       const matchesStatus = statusFilter === "all" || listing.status === statusFilter;
       const matchesPhase = phaseFilter === "all" || listing.phase === phaseFilter;
       const matchesAgency = agencyFilter === "all" || listing.agency === agencyFilter;
+      const matchesCategory = categoryFilter === "all" || listing.category === categoryFilter;
       
-      return matchesSearch && matchesStatus && matchesPhase && matchesAgency;
+      return matchesSearch && matchesStatus && matchesPhase && matchesAgency && matchesCategory;
     });
-  }, [listings, searchTerm, statusFilter, phaseFilter, agencyFilter]);
+  }, [listings, searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter]);
 
   // Get unique agencies for filter dropdown
   const uniqueAgencies = useMemo(() => {

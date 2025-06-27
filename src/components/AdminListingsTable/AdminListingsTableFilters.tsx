@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, RotateCcw } from "lucide-react";
+import { CATEGORIES } from "@/utils/categoryConstants";
 
 interface AdminListingsTableFiltersProps {
   searchTerm: string;
@@ -14,6 +15,8 @@ interface AdminListingsTableFiltersProps {
   setPhaseFilter: (phase: string) => void;
   agencyFilter: string;
   setAgencyFilter: (agency: string) => void;
+  categoryFilter: string;
+  setCategoryFilter: (category: string) => void;
   uniqueAgencies: string[];
   onClearFilters: () => void;
   hasActiveFilters: boolean;
@@ -28,12 +31,21 @@ const AdminListingsTableFilters = ({
   setPhaseFilter,
   agencyFilter,
   setAgencyFilter,
+  categoryFilter,
+  setCategoryFilter,
   uniqueAgencies,
   onClearFilters,
   hasActiveFilters,
 }: AdminListingsTableFiltersProps) => {
+  // Sort categories alphabetically, but put "Other" at the end
+  const sortedCategories = [...CATEGORIES].sort((a, b) => {
+    if (a.toLowerCase() === "other") return 1;
+    if (b.toLowerCase() === "other") return -1;
+    return a.localeCompare(b);
+  });
+
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-4 flex-wrap gap-2">
       <div className="relative">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
@@ -74,6 +86,17 @@ const AdminListingsTableFilters = ({
           <SelectItem value="all">All Agencies</SelectItem>
           {uniqueAgencies.map(agency => (
             <SelectItem key={agency} value={agency}>{agency}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+        <SelectTrigger className="w-40">
+          <SelectValue placeholder="Category" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Categories</SelectItem>
+          {sortedCategories.map(category => (
+            <SelectItem key={category} value={category}>{category}</SelectItem>
           ))}
         </SelectContent>
       </Select>

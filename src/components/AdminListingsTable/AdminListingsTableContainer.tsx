@@ -29,6 +29,8 @@ const AdminListingsTableContainer = () => {
     setPhaseFilter,
     agencyFilter,
     setAgencyFilter,
+    categoryFilter,
+    setCategoryFilter,
     handleClearFilters,
     hasActiveFilters,
   } = useAdminListingsTableState();
@@ -39,7 +41,8 @@ const AdminListingsTableContainer = () => {
     searchTerm,
     statusFilter,
     phaseFilter,
-    agencyFilter
+    agencyFilter,
+    categoryFilter
   );
   
   const {
@@ -98,7 +101,7 @@ const AdminListingsTableContainer = () => {
   // Reset pagination when filters change - use useEffect to avoid infinite loops
   useEffect(() => {
     resetPagination();
-  }, [searchTerm, statusFilter, phaseFilter, agencyFilter]);
+  }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter]);
 
   // Load change request data for indicators (optimized to avoid repeated calls)
   const { refetch: refetchChangeRequests } = useListingChangeRequests();
@@ -133,6 +136,8 @@ const AdminListingsTableContainer = () => {
               setPhaseFilter={setPhaseFilter}
               agencyFilter={agencyFilter}
               setAgencyFilter={setAgencyFilter}
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
               uniqueAgencies={uniqueAgencies}
               onClearFilters={handleClearFilters}
               hasActiveFilters={hasActiveFilters}
