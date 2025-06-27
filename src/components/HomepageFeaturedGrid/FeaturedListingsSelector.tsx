@@ -98,10 +98,14 @@ const FeaturedListingsSelector = ({
     }
   };
 
-  // Reset pagination when filters change
+  // Only reset pagination when the filtered results change significantly
+  // or when filters are cleared entirely
   useEffect(() => {
-    resetPagination();
-  }, [searchTerm, phaseFilter, agencyFilter, categoryFilter, resetPagination]);
+    // Only reset if we're beyond the available pages
+    if (currentPage > Math.ceil(filteredListings.length / 12)) {
+      resetPagination();
+    }
+  }, [filteredListings.length, currentPage, resetPagination]);
 
   const PaginationComponent = () => (
     totalPages > 1 && (
@@ -162,9 +166,6 @@ const FeaturedListingsSelector = ({
         displayedCount={paginatedListings.length}
         totalCount={filteredListings.length}
       />
-
-      {/* Top Pagination */}
-      <PaginationComponent />
 
       <ScrollArea className="flex-1 min-h-0">
         <div className="space-y-2 pr-4">
