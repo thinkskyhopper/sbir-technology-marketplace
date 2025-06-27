@@ -80,10 +80,10 @@ export const AdminChangeRequestsTableDialog = ({
             </CardHeader>
             <CardContent className="space-y-2">
               <div>
-                <strong>Title:</strong> {selectedRequest.listing_title || selectedRequest.sbir_listings?.title || 'Unknown'}
+                <strong>Title:</strong> {selectedRequest.listing_title || 'Unknown'}
               </div>
               <div>
-                <strong>Agency:</strong> {selectedRequest.listing_agency || selectedRequest.sbir_listings?.agency || 'Unknown'}
+                <strong>Agency:</strong> {selectedRequest.listing_agency || 'Unknown'}
               </div>
               <div>
                 <strong>Request Type:</strong> 
