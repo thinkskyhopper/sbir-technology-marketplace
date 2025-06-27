@@ -103,8 +103,44 @@ const FeaturedListingsSelector = ({
     resetPagination();
   }, [searchTerm, phaseFilter, agencyFilter, categoryFilter, resetPagination]);
 
+  const PaginationComponent = () => (
+    totalPages > 1 && (
+      <div className="py-4">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={goToPreviousPage}
+                className={!hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+              />
+            </PaginationItem>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  onClick={() => goToPage(page)}
+                  isActive={currentPage === page}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            
+            <PaginationItem>
+              <PaginationNext 
+                onClick={goToNextPage}
+                className={!hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+    )
+  );
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full max-h-[70vh]">
       <FilterBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -127,8 +163,11 @@ const FeaturedListingsSelector = ({
         totalCount={filteredListings.length}
       />
 
-      <ScrollArea className="flex-1">
-        <div className="space-y-2">
+      {/* Top Pagination */}
+      <PaginationComponent />
+
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="space-y-2 pr-4">
           {paginatedListings.map((listing) => {
             const isSelected = selectedIds.has(listing.id);
             const canSelect = selectedListings.length < 6 || isSelected;
@@ -152,39 +191,8 @@ const FeaturedListingsSelector = ({
         </div>
       </ScrollArea>
 
-      {totalPages > 1 && (
-        <div className="mt-4 pt-4 border-t">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={goToPreviousPage}
-                  className={!hasPreviousPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                />
-              </PaginationItem>
-              
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    onClick={() => goToPage(page)}
-                    isActive={currentPage === page}
-                    className="cursor-pointer"
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={goToNextPage}
-                  className={!hasNextPage ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
+      {/* Bottom Pagination */}
+      <PaginationComponent />
     </div>
   );
 };
