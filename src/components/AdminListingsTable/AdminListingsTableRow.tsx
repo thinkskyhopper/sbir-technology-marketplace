@@ -41,6 +41,13 @@ const AdminListingsTableRow = ({
     }
   };
 
+  const getStatusBadgeClassName = (status: string) => {
+    if (status === 'Active') {
+      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+    }
+    return '';
+  };
+
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -109,7 +116,10 @@ const AdminListingsTableRow = ({
         <span className="text-sm">{format(new Date(listing.deadline), 'MMM d, yyyy')}</span>
       </TableCell>
       <TableCell>
-        <Badge variant={getStatusBadgeVariant(listing.status)} className="text-xs">
+        <Badge 
+          variant={getStatusBadgeVariant(listing.status)} 
+          className={`text-xs ${getStatusBadgeClassName(listing.status)}`}
+        >
           {listing.status}
         </Badge>
       </TableCell>
