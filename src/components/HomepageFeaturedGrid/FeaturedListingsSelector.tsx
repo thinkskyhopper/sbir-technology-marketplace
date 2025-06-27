@@ -1,5 +1,5 @@
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -102,7 +102,7 @@ const FeaturedListingsSelector = ({
   };
 
   // Reset pagination when filters change
-  useMemo(() => {
+  useEffect(() => {
     resetPagination();
   }, [searchTerm, phaseFilter, agencyFilter, categoryFilter, resetPagination]);
 
