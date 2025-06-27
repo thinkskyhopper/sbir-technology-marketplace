@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Upload, X, Image } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface PhotoUploadProps {
   currentPhotoUrl?: string;
@@ -17,7 +16,6 @@ interface PhotoUploadProps {
 const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentPhotoUrl || null);
-  const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -68,7 +66,6 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
         .getPublicUrl(filePath);
 
       setPreviewUrl(publicUrl);
-      setImageError(false);
       onPhotoChange(publicUrl);
 
       toast({
@@ -109,20 +106,10 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
     }
 
     setPreviewUrl(null);
-    setImageError(false);
     onPhotoChange(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-
-    toast({
-      title: "Photo removed",
-      description: "The listing photo has been removed successfully.",
-    });
-  };
-
-  const handleImageError = () => {
-    setImageError(true);
   };
 
   return (
@@ -131,23 +118,13 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
       
       {previewUrl ? (
         <div className="relative">
-          <AspectRatio ratio={16 / 9} className="border rounded-lg overflow-hidden bg-muted">
-            {!imageError ? (
-              <img
-                src={previewUrl}
-                alt="Listing preview"
-                className="w-full h-full object-cover"
-                onError={handleImageError}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-muted">
-                <div className="text-center">
-                  <Image className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Image failed to load</p>
-                </div>
-              </div>
-            )}
-          </AspectRatio>
+          <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-muted">
+            <img
+              src={previewUrl}
+              alt="Listing preview"
+              className="w-full h-full object-cover"
+            />
+          </div>
           <Button
             type="button"
             variant="destructive"
@@ -160,32 +137,30 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
           </Button>
         </div>
       ) : (
-        <AspectRatio ratio={16 / 9} className="border-2 border-dashed border-muted-foreground/25 rounded-lg">
-          <div className="h-full flex items-center justify-center p-6">
-            <div className="text-center">
-              <Image className="mx-auto h-12 w-12 text-muted-foreground" />
-              <div className="mt-4">
-                <Label htmlFor="photo-upload" className="cursor-pointer">
-                  <span className="text-sm font-medium text-primary hover:text-primary/80">
-                    Upload a photo
-                  </span>
-                  <Input
-                    id="photo-upload"
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileSelect}
-                    disabled={disabled || isUploading}
-                    className="sr-only"
-                  />
-                </Label>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                PNG, JPG, GIF up to 5MB (16:9 aspect ratio recommended)
-              </p>
+        <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
+          <div className="text-center">
+            <Image className="mx-auto h-12 w-12 text-muted-foreground" />
+            <div className="mt-4">
+              <Label htmlFor="photo-upload" className="cursor-pointer">
+                <span className="text-sm font-medium text-primary hover:text-primary/80">
+                  Upload a photo
+                </span>
+                <Input
+                  id="photo-upload"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  disabled={disabled || isUploading}
+                  className="sr-only"
+                />
+              </Label>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              PNG, JPG, GIF up to 5MB
+            </p>
           </div>
-        </AspectRatio>
+        </div>
       )}
 
       {!previewUrl && (
