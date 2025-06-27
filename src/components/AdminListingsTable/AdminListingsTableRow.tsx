@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import AdminListingsTableActions from "./AdminListingsTableActions";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
 import { AlertTriangle } from "lucide-react";
@@ -57,7 +58,12 @@ const AdminListingsTableRow = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <p className="font-medium line-clamp-2 text-sm cursor-help">{listing.title}</p>
+                  <Link 
+                    to={`/listing/${listing.id}`}
+                    className="font-medium line-clamp-2 text-sm cursor-pointer hover:text-primary transition-colors"
+                  >
+                    {listing.title}
+                  </Link>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-xs">
                   <p className="text-sm">{listing.title}</p>
@@ -91,19 +97,10 @@ const AdminListingsTableRow = ({
         </div>
       </TableCell>
       <TableCell className="max-w-[120px]">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <p className="text-sm truncate cursor-help">{listing.agency}</p>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">{listing.agency}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <p className="text-sm truncate">{listing.agency}</p>
       </TableCell>
       <TableCell>
-        <Badge variant="outline" className="text-xs">{listing.phase}</Badge>
+        <Badge variant="default" className="text-xs">{listing.phase}</Badge>
       </TableCell>
       <TableCell className="text-right">
         <span className="text-sm font-medium">{formatCurrency(listing.value)}</span>
@@ -116,16 +113,16 @@ const AdminListingsTableRow = ({
           {listing.status}
         </Badge>
       </TableCell>
-      <TableCell className="max-w-[140px]">
+      <TableCell className="min-w-[180px]">
         {listing.profiles ? (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="cursor-help">
-                  <p className="text-sm font-medium truncate">
+                  <p className="text-sm font-medium">
                     {listing.profiles.full_name || 'N/A'}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">
+                  <p className="text-xs text-muted-foreground">
                     {listing.profiles.email}
                   </p>
                 </div>
@@ -145,7 +142,7 @@ const AdminListingsTableRow = ({
       <TableCell>
         <span className="text-sm">{format(new Date(listing.submitted_at), 'MMM d, yyyy')}</span>
       </TableCell>
-      <TableCell>
+      <TableCell className="w-16">
         <AdminListingsTableActions
           listing={listing}
           processingId={processingId}
