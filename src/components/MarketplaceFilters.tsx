@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, RotateCcw } from "lucide-react";
 
 interface MarketplaceFiltersProps {
   localSearchQuery: string;
@@ -35,6 +34,22 @@ const MarketplaceFilters = ({
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Since filters apply automatically, we don't need to do anything here
+  };
+
+  // Check if any filters are active (different from defaults)
+  const hasActiveFilters = 
+    localSearchQuery !== "" || 
+    phaseFilter !== "all" || 
+    categoryFilter !== "all" || 
+    statusFilter !== "active" || 
+    sortFilter !== "newest";
+
+  const handleResetFilters = () => {
+    onSearchQueryChange("");
+    onPhaseFilterChange("all");
+    onCategoryFilterChange("all");
+    onStatusFilterChange("active");
+    onSortFilterChange("newest");
   };
 
   // Sort categories alphabetically, but put "Other" at the end
@@ -113,6 +128,19 @@ const MarketplaceFilters = ({
             <SelectItem value="Sold">Sold</SelectItem>
           </SelectContent>
         </Select>
+
+        {/* Reset Button */}
+        {hasActiveFilters && (
+          <Button
+            variant="outline"
+            size="default"
+            onClick={handleResetFilters}
+            className="w-full md:w-auto"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, RotateCcw } from "lucide-react";
 
 interface AdminListingsTableFiltersProps {
   searchTerm: string;
@@ -83,7 +83,8 @@ const AdminListingsTableFilters = ({
           size="sm"
           onClick={onClearFilters}
         >
-          Clear Filters
+          <RotateCcw className="w-4 h-4 mr-2" />
+          Reset
         </Button>
       )}
     </div>
