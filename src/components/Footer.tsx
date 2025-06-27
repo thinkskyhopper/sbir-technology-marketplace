@@ -12,6 +12,11 @@ const Footer = () => {
     window.scrollTo(0, 0);
   };
 
+  const handleMarketplaceClick = () => {
+    navigate('/?view=marketplace');
+    window.scrollTo(0, 0);
+  };
+
   const handlePrivacyPolicyClick = () => {
     navigate('/privacy-policy');
     window.scrollTo(0, 0);
@@ -42,11 +47,16 @@ const Footer = () => {
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">S</span>
+            <div className="flex flex-col items-center md:items-start space-y-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
+                  <span className="text-primary-foreground font-bold text-sm">S</span>
+                </div>
+                <span className="text-xl font-bold text-gradient">The SBIR Tech Marketplace</span>
               </div>
-              <span className="text-xl font-bold text-gradient">The SBIR Tech Marketplace</span>
+              <p className="text-sm text-muted-foreground">
+                © 2025 The SBIR Tech Marketplace
+              </p>
             </div>
 
             {/* Navigation Links */}
@@ -56,6 +66,12 @@ const Footer = () => {
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Home
+              </button>
+              <button 
+                onClick={handleMarketplaceClick}
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+              >
+                Marketplace
               </button>
               <button 
                 onClick={handleLearnMoreClick}
