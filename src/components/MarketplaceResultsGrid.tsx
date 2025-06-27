@@ -34,23 +34,23 @@ const MarketplaceResultsGrid = ({
 
   return (
     <div className="space-y-6">
-      {/* Results info and Top Pagination - inline */}
+      {/* Top section with listing count (left), pagination (center), and page info (right) */}
       <div className="flex justify-between items-center">
-        <div className="text-sm text-muted-foreground">
-          <span>
-            Showing {startItem}-{endItem} of {totalItems} listings
-          </span>
-          <span className="ml-4">
-            Page {currentPage} of {totalPages}
-          </span>
+        <div className="text-sm text-muted-foreground flex-1">
+          Showing {startItem}-{endItem} of {totalItems} listings
         </div>
-        <MarketplacePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-          hasNextPage={hasNextPage}
-          hasPreviousPage={hasPreviousPage}
-        />
+        <div className="flex-1 flex justify-center">
+          <MarketplacePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            hasNextPage={hasNextPage}
+            hasPreviousPage={hasPreviousPage}
+          />
+        </div>
+        <div className="text-sm text-muted-foreground flex-1 text-right">
+          Page {currentPage} of {totalPages}
+        </div>
       </div>
 
       {/* Results grid */}
