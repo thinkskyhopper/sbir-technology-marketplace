@@ -32,20 +32,22 @@ const MarketplaceFilters = ({
   onStatusFilterChange,
   onSortFilterChange
 }: MarketplaceFiltersProps) => {
-  // Local state for search input to prevent interference from URL updates
+  // Local state for search input to maintain user input during typing
   const [searchInputValue, setSearchInputValue] = useState(localSearchQuery);
   const [isUserTyping, setIsUserTyping] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Update local input value when not actively typing and external value changes
+  // Only update search input value when not actively typing AND the external value is different
   useEffect(() => {
     if (!isUserTyping && localSearchQuery !== searchInputValue) {
+      console.log('Updating search input from external:', localSearchQuery);
       setSearchInputValue(localSearchQuery);
     }
   }, [localSearchQuery, isUserTyping, searchInputValue]);
 
   const handleSearchInputChange = (value: string) => {
+    console.log('Search input changed:', value);
     setSearchInputValue(value);
     setIsUserTyping(true);
 
@@ -56,9 +58,10 @@ const MarketplaceFilters = ({
 
     // Set new timeout for debounced search
     searchTimeoutRef.current = setTimeout(() => {
+      console.log('Debounced search triggered:', value);
       onSearchQueryChange(value);
       setIsUserTyping(false);
-    }, 300); // 300ms debounce
+    }, 300);
   };
 
   const handleLocalSearch = (e: React.FormEvent) => {
@@ -67,6 +70,7 @@ const MarketplaceFilters = ({
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
+    console.log('Form submitted with search:', searchInputValue);
     onSearchQueryChange(searchInputValue);
     setIsUserTyping(false);
   };

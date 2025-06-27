@@ -28,12 +28,12 @@ export const useMarketplaceFilters = ({
   const [statusFilter, setStatusFilter] = useState<string>(preservedFilters?.statusFilter || "active");
   const [sortFilter, setSortFilter] = useState<string>(preservedFilters?.sortFilter || "newest");
   const isInitialMount = useRef(true);
-  const isSyncingFromURL = useRef(false);
   const lastNotifiedFilters = useRef<string>("");
+  const isNotifyingParent = useRef(false);
 
-  // Update local state when preservedFilters change, but only if they're actually different
+  // Update local state when preservedFilters change, but only if we're not in the middle of notifying parent
   useEffect(() => {
-    if (preservedFilters) {
+    if (preservedFilters && !isNotifyingParent.current) {
       const newFiltersString = JSON.stringify(preservedFilters);
       const currentFiltersString = JSON.stringify({
         localSearchQuery,
@@ -45,17 +45,12 @@ export const useMarketplaceFilters = ({
 
       // Only sync if the filters are actually different
       if (newFiltersString !== currentFiltersString) {
-        isSyncingFromURL.current = true;
+        console.log('Syncing filters from URL:', preservedFilters);
         setLocalSearchQuery(preservedFilters.localSearchQuery);
         setPhaseFilter(preservedFilters.phaseFilter);
         setCategoryFilter(preservedFilters.categoryFilter);
         setStatusFilter(preservedFilters.statusFilter);
         setSortFilter(preservedFilters.sortFilter || "newest");
-        
-        // Reset the flag after state updates
-        setTimeout(() => {
-          isSyncingFromURL.current = false;
-        }, 0);
       }
     }
   }, [preservedFilters, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter]);
@@ -67,10 +62,6 @@ export const useMarketplaceFilters = ({
       return;
     }
     
-    if (isSyncingFromURL.current) {
-      return;
-    }
-    
     const currentFiltersString = JSON.stringify({
       localSearchQuery,
       phaseFilter,
@@ -79,9 +70,21 @@ export const useMarketplaceFilters = ({
       sortFilter
     });
 
-    // Only notify if filters actually changed
+    // Only notify if filters actually changed and we have a callback
     if (currentFiltersString !== lastNotifiedFilters.current && onFiltersChange) {
       lastNotifiedFilters.current = currentFiltersString;
+      
+      // Set flag to prevent sync during notification
+      isNotifyingParent.current = true;
+      
+      console.log('Notifying parent of filter change:', {
+        localSearchQuery,
+        phaseFilter,
+        categoryFilter,
+        statusFilter,
+        sortFilter
+      });
+      
       onFiltersChange({
         localSearchQuery,
         phaseFilter,
@@ -89,6 +92,11 @@ export const useMarketplaceFilters = ({
         statusFilter,
         sortFilter
       });
+      
+      // Reset flag after a short delay to allow URL update to complete
+      setTimeout(() => {
+        isNotifyingParent.current = false;
+      }, 100);
     }
   }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, onFiltersChange]);
 
