@@ -29,24 +29,38 @@ export const useMarketplaceFilters = ({
   const [sortFilter, setSortFilter] = useState<string>(preservedFilters?.sortFilter || "newest");
   const isInitialMount = useRef(true);
   const isSyncingFromURL = useRef(false);
+  const lastNotifiedFilters = useRef<string>("");
 
-  // Update local state when preservedFilters change
+  // Update local state when preservedFilters change, but only if they're actually different
   useEffect(() => {
     if (preservedFilters) {
-      isSyncingFromURL.current = true;
-      setLocalSearchQuery(preservedFilters.localSearchQuery);
-      setPhaseFilter(preservedFilters.phaseFilter);
-      setCategoryFilter(preservedFilters.categoryFilter);
-      setStatusFilter(preservedFilters.statusFilter);
-      setSortFilter(preservedFilters.sortFilter || "newest");
-      // Reset the flag after a brief delay to allow state updates to complete
-      setTimeout(() => {
-        isSyncingFromURL.current = false;
-      }, 0);
-    }
-  }, [preservedFilters]);
+      const newFiltersString = JSON.stringify(preservedFilters);
+      const currentFiltersString = JSON.stringify({
+        localSearchQuery,
+        phaseFilter,
+        categoryFilter,
+        statusFilter,
+        sortFilter
+      });
 
-  // Notify parent component when filters change, but skip initial mount and URL sync
+      // Only sync if the filters are actually different
+      if (newFiltersString !== currentFiltersString) {
+        isSyncingFromURL.current = true;
+        setLocalSearchQuery(preservedFilters.localSearchQuery);
+        setPhaseFilter(preservedFilters.phaseFilter);
+        setCategoryFilter(preservedFilters.categoryFilter);
+        setStatusFilter(preservedFilters.statusFilter);
+        setSortFilter(preservedFilters.sortFilter || "newest");
+        
+        // Reset the flag after state updates
+        setTimeout(() => {
+          isSyncingFromURL.current = false;
+        }, 0);
+      }
+    }
+  }, [preservedFilters, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter]);
+
+  // Notify parent component when filters change, but avoid duplicate notifications
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -57,7 +71,17 @@ export const useMarketplaceFilters = ({
       return;
     }
     
-    if (onFiltersChange) {
+    const currentFiltersString = JSON.stringify({
+      localSearchQuery,
+      phaseFilter,
+      categoryFilter,
+      statusFilter,
+      sortFilter
+    });
+
+    // Only notify if filters actually changed
+    if (currentFiltersString !== lastNotifiedFilters.current && onFiltersChange) {
+      lastNotifiedFilters.current = currentFiltersString;
       onFiltersChange({
         localSearchQuery,
         phaseFilter,

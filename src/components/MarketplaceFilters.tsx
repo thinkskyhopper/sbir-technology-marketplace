@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -31,10 +32,53 @@ const MarketplaceFilters = ({
   onStatusFilterChange,
   onSortFilterChange
 }: MarketplaceFiltersProps) => {
+  // Local state for search input to prevent interference from URL updates
+  const [searchInputValue, setSearchInputValue] = useState(localSearchQuery);
+  const [isUserTyping, setIsUserTyping] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Update local input value when not actively typing and external value changes
+  useEffect(() => {
+    if (!isUserTyping && localSearchQuery !== searchInputValue) {
+      setSearchInputValue(localSearchQuery);
+    }
+  }, [localSearchQuery, isUserTyping, searchInputValue]);
+
+  const handleSearchInputChange = (value: string) => {
+    setSearchInputValue(value);
+    setIsUserTyping(true);
+
+    // Clear existing timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Set new timeout for debounced search
+    searchTimeoutRef.current = setTimeout(() => {
+      onSearchQueryChange(value);
+      setIsUserTyping(false);
+    }, 300); // 300ms debounce
+  };
+
   const handleLocalSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Since filters apply automatically, we don't need to do anything here
+    // Clear timeout and immediately update search
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    onSearchQueryChange(searchInputValue);
+    setIsUserTyping(false);
   };
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Check if any filters are active (different from defaults)
   const hasActiveFilters = 
@@ -45,6 +89,11 @@ const MarketplaceFilters = ({
     sortFilter !== "newest";
 
   const handleResetFilters = () => {
+    setSearchInputValue("");
+    setIsUserTyping(false);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
     onSearchQueryChange("");
     onPhaseFilterChange("all");
     onCategoryFilterChange("all");
@@ -69,10 +118,11 @@ const MarketplaceFilters = ({
           <form onSubmit={handleLocalSearch} className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
+              ref={inputRef}
               type="text"
               placeholder="Search..."
-              value={localSearchQuery}
-              onChange={(e) => onSearchQueryChange(e.target.value)}
+              value={searchInputValue}
+              onChange={(e) => handleSearchInputChange(e.target.value)}
               className="pl-10"
             />
           </form>
