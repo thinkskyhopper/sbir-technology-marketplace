@@ -13,7 +13,8 @@ export const getDefaultCategoryImage = (category: string): string => {
   } else if (categoryLower.includes('autonomous')) {
     return "https://images.unsplash.com/photo-1487887235947-a955ef187fcc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('biomedical') || categoryLower.includes('medical')) {
-    return "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+    // Using a different, more reliable medical/biotech image
+    return "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('quantum')) {
     return "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
   } else if (categoryLower.includes('space')) {
