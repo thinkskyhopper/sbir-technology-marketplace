@@ -1,14 +1,8 @@
-
-import { useState, useEffect } from "react";
-import EditListingDialog from "../EditListingDialog";
-import MarketplaceGridContent from "./MarketplaceGridContent";
-import MarketplaceLoading from "../MarketplaceLoading";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { useListings } from "@/hooks/useListings";
-import { usePagination } from "@/hooks/usePagination";
-import { useMarketplaceFilters } from "@/hooks/useMarketplaceFilters";
+import React from "react";
 import { useMarketplaceData } from "@/hooks/useMarketplaceData";
+import { useMarketplaceFilters } from "@/hooks/useMarketplaceFilters";
+import { usePagination } from "@/hooks/usePagination";
+import MarketplaceGridContent from "./MarketplaceGridContent";
 import type { SBIRListing } from "@/types/listings";
 
 interface MarketplaceGridContainerProps {
@@ -30,6 +24,7 @@ interface MarketplaceGridContainerProps {
   }) => void;
   showFilters?: boolean;
   maxListings?: number;
+  showPaginationInfo?: boolean;
 }
 
 const MarketplaceGridContainer = ({ 
@@ -38,118 +33,50 @@ const MarketplaceGridContainer = ({
   preservedFilters,
   onFiltersChange,
   showFilters = true,
-  maxListings
+  maxListings,
+  showPaginationInfo = true
 }: MarketplaceGridContainerProps) => {
-  const { listings, loading, error } = useListings();
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
+  const { filters, handleFiltersChange } = useMarketplaceFilters({
+    initialFilters: preservedFilters,
+    onFiltersChange: onFiltersChange
+  });
 
   const {
-    localSearchQuery,
-    setLocalSearchQuery,
-    phaseFilter,
-    setPhaseFilter,
-    categoryFilter,
-    setCategoryFilter,
-    statusFilter,
-    setStatusFilter,
-    sortFilter,
-    setSortFilter,
-    handleClearFilters
-  } = useMarketplaceFilters({
-    preservedFilters,
-    onFiltersChange
+    data: listings,
+    isLoading,
+    error
+  } = useMarketplaceData({
+    searchQuery: filters.localSearchQuery,
+    phaseFilter: filters.phaseFilter,
+    categoryFilter: filters.categoryFilter,
+    statusFilter: filters.statusFilter,
+    sortFilter: filters.sortFilter,
+    page: currentPage,
+    limit: maxListings || 15
   });
 
-  const { filteredListings, categories, shouldResetPagination, consumePaginationReset } = useMarketplaceData({
-    listings,
-    searchQuery,
-    localSearchQuery,
-    phaseFilter,
-    categoryFilter,
-    statusFilter,
-    sortFilter,
-    maxListings
+  const { currentPage, totalPages, onPageChange, hasNextPage, hasPreviousPage } = usePagination({
+    totalItems: listings?.totalCount || 0,
+    itemsPerPage: maxListings || 15
   });
-
-  // Pagination with the filtered data
-  const {
-    currentPage,
-    totalPages,
-    paginatedData,
-    goToPage,
-    hasNextPage,
-    hasPreviousPage,
-    totalItems,
-    resetPagination
-  } = usePagination({
-    data: filteredListings,
-    itemsPerPage: 15
-  });
-
-  // Reset pagination when filters change
-  useEffect(() => {
-    if (shouldResetPagination) {
-      resetPagination();
-      consumePaginationReset();
-    }
-  }, [shouldResetPagination, resetPagination, consumePaginationReset]);
-
-  const handleEditListing = (listing: SBIRListing) => {
-    setSelectedListing(listing);
-    setShowEditDialog(true);
-  };
-
-  if (loading) {
-    return <MarketplaceLoading />;
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Error loading contracts: {error}
-        </AlertDescription>
-      </Alert>
-    );
-  }
 
   return (
-    <>
-      <MarketplaceGridContent
-        showFilters={showFilters}
-        filteredListings={filteredListings}
-        categories={categories}
-        localSearchQuery={localSearchQuery}
-        phaseFilter={phaseFilter}
-        categoryFilter={categoryFilter}
-        statusFilter={statusFilter}
-        sortFilter={sortFilter}
-        onSearchQueryChange={setLocalSearchQuery}
-        onPhaseFilterChange={setPhaseFilter}
-        onCategoryFilterChange={setCategoryFilter}
-        onStatusFilterChange={setStatusFilter}
-        onSortFilterChange={setSortFilter}
-        onClearFilters={handleClearFilters}
-        onEditListing={handleEditListing}
-        onContactAdmin={onContactAdmin}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        paginatedData={paginatedData}
-        onPageChange={goToPage}
-        hasNextPage={hasNextPage}
-        hasPreviousPage={hasPreviousPage}
-        totalItems={totalItems}
-      />
-
-      {/* Edit Dialog */}
-      <EditListingDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        listing={selectedListing}
-      />
-    </>
+    <MarketplaceGridContent
+      listings={listings?.data || []}
+      totalCount={listings?.totalCount || 0}
+      isLoading={isLoading}
+      error={error}
+      filters={filters}
+      onFiltersChange={handleFiltersChange}
+      onContactAdmin={onContactAdmin}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={onPageChange}
+      hasNextPage={hasNextPage}
+      hasPreviousPage={hasPreviousPage}
+      showFilters={showFilters}
+      showPaginationInfo={showPaginationInfo}
+    />
   );
 };
 
