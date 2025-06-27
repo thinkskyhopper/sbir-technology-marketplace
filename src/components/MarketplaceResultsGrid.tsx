@@ -14,6 +14,7 @@ interface MarketplaceResultsGridProps {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   totalItems: number;
+  showPaginationInfo?: boolean;
 }
 
 const MarketplaceResultsGrid = ({ 
@@ -25,7 +26,8 @@ const MarketplaceResultsGrid = ({
   onPageChange,
   hasNextPage,
   hasPreviousPage,
-  totalItems
+  totalItems,
+  showPaginationInfo = true
 }: MarketplaceResultsGridProps) => {
   const { isAdmin } = useAuth();
 
@@ -35,23 +37,25 @@ const MarketplaceResultsGrid = ({
   return (
     <div className="space-y-6">
       {/* Top section with listing count (left), pagination (center), and page info (right) */}
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-muted-foreground flex-1">
-          Showing {startItem}-{endItem} of {totalItems} listings
+      {showPaginationInfo && (
+        <div className="flex justify-between items-center">
+          <div className="text-sm text-muted-foreground flex-1">
+            Showing {startItem}-{endItem} of {totalItems} listings
+          </div>
+          <div className="flex-1 flex justify-center">
+            <MarketplacePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              hasNextPage={hasNextPage}
+              hasPreviousPage={hasPreviousPage}
+            />
+          </div>
+          <div className="text-sm text-muted-foreground flex-1 text-right">
+            Page {currentPage} of {totalPages}
+          </div>
         </div>
-        <div className="flex-1 flex justify-center">
-          <MarketplacePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            hasNextPage={hasNextPage}
-            hasPreviousPage={hasPreviousPage}
-          />
-        </div>
-        <div className="text-sm text-muted-foreground flex-1 text-right">
-          Page {currentPage} of {totalPages}
-        </div>
-      </div>
+      )}
 
       {/* Results grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -66,13 +70,15 @@ const MarketplaceResultsGrid = ({
       </div>
 
       {/* Bottom Pagination */}
-      <MarketplacePagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-        hasNextPage={hasNextPage}
-        hasPreviousPage={hasPreviousPage}
-      />
+      {showPaginationInfo && (
+        <MarketplacePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          hasNextPage={hasNextPage}
+          hasPreviousPage={hasPreviousPage}
+        />
+      )}
     </div>
   );
 };

@@ -21,6 +21,7 @@ interface MarketplaceGridProps {
   }) => void;
   showFilters?: boolean;
   maxListings?: number;
+  showPaginationInfo?: boolean;
 }
 
 const MarketplaceGrid = (props: MarketplaceGridProps) => {
