@@ -1,11 +1,16 @@
 
 export const CATEGORIES = [
   "Advanced Materials",
+  "AI",
   "Autonomous Systems", 
   "Biomedical Technology",
   "Cybersecurity",
+  "Hardware",
   "Quantum Technology",
+  "Software",
   "Space Technology",
+  "Training",
+  "Wearables",
   "Other"
 ];
 

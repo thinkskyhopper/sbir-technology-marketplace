@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { ListingFormData } from "./listingSchema";
+import { CATEGORIES } from "@/utils/categoryConstants";
 
 interface CategoryFieldProps {
   form: UseFormReturn<ListingFormData>;
@@ -35,13 +36,11 @@ const CategoryField = ({ form }: CategoryFieldProps) => {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value="Advanced Materials">Advanced Materials</SelectItem>
-              <SelectItem value="Autonomous Systems">Autonomous Systems</SelectItem>
-              <SelectItem value="Biomedical Technology">Biomedical Technology</SelectItem>
-              <SelectItem value="Cybersecurity">Cybersecurity</SelectItem>
-              <SelectItem value="Quantum Technology">Quantum Technology</SelectItem>
-              <SelectItem value="Space Technology">Space Technology</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
+              {CATEGORIES.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <FormMessage />
