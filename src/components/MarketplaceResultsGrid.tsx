@@ -34,24 +34,24 @@ const MarketplaceResultsGrid = ({
 
   return (
     <div className="space-y-6">
-      {/* Results info */}
-      <div className="flex justify-between items-center text-sm text-muted-foreground">
-        <span>
-          Showing {startItem}-{endItem} of {totalItems} listings
-        </span>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
+      {/* Results info and Top Pagination - inline */}
+      <div className="flex justify-between items-center">
+        <div className="text-sm text-muted-foreground">
+          <span>
+            Showing {startItem}-{endItem} of {totalItems} listings
+          </span>
+          <span className="ml-4">
+            Page {currentPage} of {totalPages}
+          </span>
+        </div>
+        <MarketplacePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          hasNextPage={hasNextPage}
+          hasPreviousPage={hasPreviousPage}
+        />
       </div>
-
-      {/* Top Pagination */}
-      <MarketplacePagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-        hasNextPage={hasNextPage}
-        hasPreviousPage={hasPreviousPage}
-      />
 
       {/* Results grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
