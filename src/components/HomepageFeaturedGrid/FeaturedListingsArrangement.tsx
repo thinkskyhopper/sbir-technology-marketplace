@@ -34,7 +34,7 @@ const FeaturedListingsArrangement = ({
       <div className="mb-4 pb-4 border-b">
         <h3 className="font-medium mb-2">Selected Featured Listings</h3>
         <p className="text-sm text-muted-foreground">
-          Drag and drop to reorder. The first 6 listings will be displayed on the homepage.
+          Drag and drop to reorder. Up to 6 listings will be displayed on the homepage. If less are chosen, the newest listings will also be shown.
         </p>
       </div>
 
