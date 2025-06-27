@@ -23,12 +23,7 @@ const HomePage = ({ onExploreClick, onContactAdmin }: HomePageProps) => {
           </div>
           
           <div className="max-w-4xl mx-auto">
-            <MarketplaceGrid 
-              onContactAdmin={onContactAdmin} 
-              showFilters={false} 
-              maxListings={6} 
-              showPaginationInfo={false}
-            />
+            <MarketplaceGrid onContactAdmin={onContactAdmin} showFilters={false} maxListings={6} />
           </div>
           
           <div className="text-center mt-8">

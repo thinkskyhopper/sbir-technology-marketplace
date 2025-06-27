@@ -1,106 +1,95 @@
 
-import React from "react";
-import MarketplaceFilters from "@/components/MarketplaceFilters";
-import MarketplaceResultsGrid from "@/components/MarketplaceResultsGrid";
-import MarketplaceLoading from "@/components/MarketplaceLoading";
-import MarketplaceNoResults from "@/components/MarketplaceNoResults";
+import MarketplaceFilters from "../MarketplaceFilters";
+import MarketplaceResultsGrid from "../MarketplaceResultsGrid";
+import MarketplaceNoResults from "../MarketplaceNoResults";
 import type { SBIRListing } from "@/types/listings";
-import { useNavigate } from "react-router-dom";
 
 interface MarketplaceGridContentProps {
-  listings: SBIRListing[];
-  totalCount: number;
-  isLoading: boolean;
-  error: any;
-  filters: {
-    localSearchQuery: string;
-    phaseFilter: string;
-    categoryFilter: string;
-    statusFilter: string;
-    sortFilter: string;
-  };
-  onFiltersChange: (filters: {
-    localSearchQuery: string;
-    phaseFilter: string;
-    categoryFilter: string;
-    statusFilter: string;
-    sortFilter: string;
-  }) => void;
+  showFilters: boolean;
+  filteredListings: SBIRListing[];
+  categories: string[];
+  localSearchQuery: string;
+  phaseFilter: string;
+  categoryFilter: string;
+  statusFilter: string;
+  sortFilter: string;
+  onSearchQueryChange: (query: string) => void;
+  onPhaseFilterChange: (phase: string) => void;
+  onCategoryFilterChange: (category: string) => void;
+  onStatusFilterChange: (status: string) => void;
+  onSortFilterChange: (sort: string) => void;
+  onClearFilters: () => void;
+  onEditListing: (listing: SBIRListing) => void;
   onContactAdmin?: (listing: SBIRListing) => void;
   currentPage: number;
   totalPages: number;
+  paginatedData: SBIRListing[];
   onPageChange: (page: number) => void;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  showFilters: boolean;
-  showPaginationInfo: boolean;
-  categories: string[];
-  onClearFilters: () => void;
+  totalItems: number;
 }
 
 const MarketplaceGridContent = ({
-  listings,
-  totalCount,
-  isLoading,
-  error,
-  filters,
-  onFiltersChange,
+  showFilters,
+  filteredListings,
+  categories,
+  localSearchQuery,
+  phaseFilter,
+  categoryFilter,
+  statusFilter,
+  sortFilter,
+  onSearchQueryChange,
+  onPhaseFilterChange,
+  onCategoryFilterChange,
+  onStatusFilterChange,
+  onSortFilterChange,
+  onClearFilters,
+  onEditListing,
   onContactAdmin,
   currentPage,
   totalPages,
+  paginatedData,
   onPageChange,
   hasNextPage,
   hasPreviousPage,
-  showFilters,
-  showPaginationInfo,
-  categories,
-  onClearFilters
+  totalItems
 }: MarketplaceGridContentProps) => {
-  const navigate = useNavigate();
-
-  const handleEditListing = (listing: SBIRListing) => {
-    navigate(`/admin/edit/${listing.id}`);
-  };
-
-  if (isLoading) {
-    return <MarketplaceLoading />;
-  }
-
-  if (error) {
-    console.error("Error loading listings:", error);
-    return <MarketplaceNoResults onClearFilters={onClearFilters} />;
-  }
-
   return (
     <div className="space-y-6">
+      {/* Search and Filters - Only show if showFilters is true */}
       {showFilters && (
         <MarketplaceFilters
-          localSearchQuery={filters.localSearchQuery}
-          phaseFilter={filters.phaseFilter}
-          categoryFilter={filters.categoryFilter}
-          statusFilter={filters.statusFilter}
-          sortFilter={filters.sortFilter}
+          localSearchQuery={localSearchQuery}
+          phaseFilter={phaseFilter}
+          categoryFilter={categoryFilter}
+          statusFilter={statusFilter}
+          sortFilter={sortFilter}
           categories={categories}
-          onSearchQueryChange={(query) => onFiltersChange({ ...filters, localSearchQuery: query })}
-          onPhaseFilterChange={(phase) => onFiltersChange({ ...filters, phaseFilter: phase })}
-          onCategoryFilterChange={(category) => onFiltersChange({ ...filters, categoryFilter: category })}
-          onStatusFilterChange={(status) => onFiltersChange({ ...filters, statusFilter: status })}
-          onSortFilterChange={(sort) => onFiltersChange({ ...filters, sortFilter: sort })}
+          onSearchQueryChange={onSearchQueryChange}
+          onPhaseFilterChange={onPhaseFilterChange}
+          onCategoryFilterChange={onCategoryFilterChange}
+          onStatusFilterChange={onStatusFilterChange}
+          onSortFilterChange={onSortFilterChange}
         />
       )}
 
-      <MarketplaceResultsGrid
-        listings={listings}
-        onEditListing={handleEditListing}
-        onContactAdmin={onContactAdmin}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-        hasNextPage={hasNextPage}
-        hasPreviousPage={hasPreviousPage}
-        totalItems={totalCount}
-        showPaginationInfo={showPaginationInfo}
-      />
+      {/* Results */}
+      {filteredListings.length > 0 ? (
+        <MarketplaceResultsGrid
+          listings={paginatedData}
+          onEditListing={onEditListing}
+          onContactAdmin={onContactAdmin}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          hasNextPage={hasNextPage}
+          hasPreviousPage={hasPreviousPage}
+          totalItems={totalItems}
+        />
+      ) : (
+        <MarketplaceNoResults onClearFilters={onClearFilters} />
+      )}
     </div>
   );
 };
