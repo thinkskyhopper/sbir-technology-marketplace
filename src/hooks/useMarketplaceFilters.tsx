@@ -29,36 +29,27 @@ export const useMarketplaceFilters = ({
   const [sortFilter, setSortFilter] = useState<string>(preservedFilters?.sortFilter || "newest");
   const isInitialMount = useRef(true);
   const lastNotifiedFilters = useRef<string>("");
-  const isNotifyingParent = useRef(false);
+  const hasUserInteracted = useRef(false);
 
-  // Update local state when preservedFilters change, but only if we're not in the middle of notifying parent
+  // Only sync from URL on initial mount or when user hasn't interacted yet
   useEffect(() => {
-    if (preservedFilters && !isNotifyingParent.current) {
-      const newFiltersString = JSON.stringify(preservedFilters);
-      const currentFiltersString = JSON.stringify({
-        localSearchQuery,
-        phaseFilter,
-        categoryFilter,
-        statusFilter,
-        sortFilter
-      });
-
-      // Only sync if the filters are actually different
-      if (newFiltersString !== currentFiltersString) {
-        console.log('Syncing filters from URL:', preservedFilters);
-        setLocalSearchQuery(preservedFilters.localSearchQuery);
-        setPhaseFilter(preservedFilters.phaseFilter);
-        setCategoryFilter(preservedFilters.categoryFilter);
-        setStatusFilter(preservedFilters.statusFilter);
-        setSortFilter(preservedFilters.sortFilter || "newest");
+    if (preservedFilters && (!hasUserInteracted.current || isInitialMount.current)) {
+      console.log('Initial sync from URL:', preservedFilters);
+      setLocalSearchQuery(preservedFilters.localSearchQuery);
+      setPhaseFilter(preservedFilters.phaseFilter);
+      setCategoryFilter(preservedFilters.categoryFilter);
+      setStatusFilter(preservedFilters.statusFilter);
+      setSortFilter(preservedFilters.sortFilter || "newest");
+      
+      if (isInitialMount.current) {
+        isInitialMount.current = false;
       }
     }
-  }, [preservedFilters, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter]);
+  }, [preservedFilters]);
 
   // Notify parent component when filters change, but avoid duplicate notifications
   useEffect(() => {
     if (isInitialMount.current) {
-      isInitialMount.current = false;
       return;
     }
     
@@ -73,9 +64,6 @@ export const useMarketplaceFilters = ({
     // Only notify if filters actually changed and we have a callback
     if (currentFiltersString !== lastNotifiedFilters.current && onFiltersChange) {
       lastNotifiedFilters.current = currentFiltersString;
-      
-      // Set flag to prevent sync during notification
-      isNotifyingParent.current = true;
       
       console.log('Notifying parent of filter change:', {
         localSearchQuery,
@@ -92,15 +80,36 @@ export const useMarketplaceFilters = ({
         statusFilter,
         sortFilter
       });
-      
-      // Reset flag after a short delay to allow URL update to complete
-      setTimeout(() => {
-        isNotifyingParent.current = false;
-      }, 100);
     }
   }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, onFiltersChange]);
 
+  const handleSetLocalSearchQuery = (query: string) => {
+    hasUserInteracted.current = true;
+    setLocalSearchQuery(query);
+  };
+
+  const handleSetPhaseFilter = (phase: string) => {
+    hasUserInteracted.current = true;
+    setPhaseFilter(phase);
+  };
+
+  const handleSetCategoryFilter = (category: string) => {
+    hasUserInteracted.current = true;
+    setCategoryFilter(category);
+  };
+
+  const handleSetStatusFilter = (status: string) => {
+    hasUserInteracted.current = true;
+    setStatusFilter(status);
+  };
+
+  const handleSetSortFilter = (sort: string) => {
+    hasUserInteracted.current = true;
+    setSortFilter(sort);
+  };
+
   const handleClearFilters = () => {
+    hasUserInteracted.current = true;
     setLocalSearchQuery("");
     setPhaseFilter("all");
     setCategoryFilter("all");
@@ -110,15 +119,15 @@ export const useMarketplaceFilters = ({
 
   return {
     localSearchQuery,
-    setLocalSearchQuery,
+    setLocalSearchQuery: handleSetLocalSearchQuery,
     phaseFilter,
-    setPhaseFilter,
+    setPhaseFilter: handleSetPhaseFilter,
     categoryFilter,
-    setCategoryFilter,
+    setCategoryFilter: handleSetCategoryFilter,
     statusFilter,
-    setStatusFilter,
+    setStatusFilter: handleSetStatusFilter,
     sortFilter,
-    setSortFilter,
+    setSortFilter: handleSetSortFilter,
     handleClearFilters
   };
 };
