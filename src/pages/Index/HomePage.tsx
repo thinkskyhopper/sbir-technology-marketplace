@@ -1,15 +1,16 @@
 
 import React from 'react';
 import Hero from "@/components/Hero";
-import MarketplaceGrid from "@/components/MarketplaceGrid";
+import HomepageFeaturedGrid from "@/components/HomepageFeaturedGrid";
 import type { SBIRListing } from "@/types/listings";
 
 interface HomePageProps {
   onExploreClick: () => void;
   onContactAdmin: (listing: SBIRListing) => void;
+  onEditListing?: (listing: SBIRListing) => void;
 }
 
-const HomePage = ({ onExploreClick, onContactAdmin }: HomePageProps) => {
+const HomePage = ({ onExploreClick, onContactAdmin, onEditListing }: HomePageProps) => {
   return (
     <>
       <Hero onExploreClick={onExploreClick} />
@@ -22,8 +23,11 @@ const HomePage = ({ onExploreClick, onContactAdmin }: HomePageProps) => {
             <p className="text-muted-foreground max-w-2xl mx-auto">Discover high-value SBIR technology from leading defense industry partners</p>
           </div>
           
-          <div className="max-w-4xl mx-auto">
-            <MarketplaceGrid onContactAdmin={onContactAdmin} showFilters={false} maxListings={6} />
+          <div className="max-w-6xl mx-auto">
+            <HomepageFeaturedGrid 
+              onContactAdmin={onContactAdmin}
+              onEditListing={onEditListing}
+            />
           </div>
           
           <div className="text-center mt-8">

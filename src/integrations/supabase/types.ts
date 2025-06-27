@@ -44,6 +44,45 @@ export type Database = {
           },
         ]
       }
+      featured_listings: {
+        Row: {
+          created_at: string
+          created_by: string
+          display_order: number
+          id: string
+          listing_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          display_order?: number
+          id?: string
+          listing_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          display_order?: number
+          id?: string
+          listing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_listings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "featured_listings_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "sbir_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_change_requests: {
         Row: {
           admin_notes: string | null

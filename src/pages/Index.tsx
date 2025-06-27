@@ -1,14 +1,19 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CreateListingDialog from "@/components/CreateListingDialog";
+import EditListingDialog from "@/components/EditListingDialog";
 import HomePage from "./Index/HomePage";
 import MarketplacePage from "./Index/MarketplacePage";
 import { useIndexState } from "@/hooks/useIndexState";
 import { useIndexNavigation } from "@/hooks/useIndexNavigation";
+import type { SBIRListing } from "@/types/listings";
 
 const Index = () => {
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
+
   const {
     searchQuery,
     currentView,
@@ -32,6 +37,11 @@ const Index = () => {
     handleFiltersChange(filters);
   };
 
+  const handleEditListing = (listing: SBIRListing) => {
+    setSelectedListing(listing);
+    setShowEditDialog(true);
+  };
+
   console.log("Current view rendering:", currentView);
   
   return (
@@ -43,6 +53,7 @@ const Index = () => {
           <HomePage 
             onExploreClick={handleExploreMarketplace}
             onContactAdmin={handleContactAdmin}
+            onEditListing={handleEditListing}
           />
         ) : (
           <MarketplacePage
@@ -59,6 +70,12 @@ const Index = () => {
       <CreateListingDialog 
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
+      />
+
+      <EditListingDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        listing={selectedListing}
       />
     </div>
   );
