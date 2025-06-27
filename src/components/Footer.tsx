@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericContactDialog from "./GenericContactDialog";
+import { Separator } from "@/components/ui/separator";
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -46,57 +47,57 @@ const Footer = () => {
       <footer className="border-t border-border bg-card/50 backdrop-blur-sm mt-auto">
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            {/* Logo */}
-            <div className="flex flex-col items-center md:items-start space-y-2">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-sm">S</span>
-                </div>
-                <span className="text-xl font-bold text-gradient">The SBIR Tech Marketplace</span>
-              </div>
+            {/* Copyright */}
+            <div className="flex flex-col items-center md:items-start">
               <p className="text-sm text-muted-foreground">
-                © 2025 The SBIR Tech Marketplace
+                © 2025 The SBIR Tech Marketplace. All rights reserved.
               </p>
             </div>
 
             {/* Navigation Links */}
-            <nav className="flex items-center space-x-8">
+            <nav className="flex items-center space-x-4">
               <button 
                 onClick={handleHomeClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Home
               </button>
+              <Separator orientation="vertical" className="h-4" />
               <button 
                 onClick={handleMarketplaceClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Marketplace
               </button>
+              <Separator orientation="vertical" className="h-4" />
               <button 
                 onClick={handleLearnMoreClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Learn More
               </button>
+              <Separator orientation="vertical" className="h-4" />
               <button 
                 onClick={handleLegalDisclaimerClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Legal Disclaimer
               </button>
+              <Separator orientation="vertical" className="h-4" />
               <button 
                 onClick={handlePrivacyPolicyClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Privacy Policy
               </button>
+              <Separator orientation="vertical" className="h-4" />
               <button 
                 onClick={handleTeamClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Our Team
               </button>
+              <Separator orientation="vertical" className="h-4" />
               <button 
                 onClick={handleContactUsClick}
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"
