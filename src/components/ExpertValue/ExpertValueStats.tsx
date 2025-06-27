@@ -1,10 +1,17 @@
 
+import { useListings } from "@/hooks/useListings";
+
 const ExpertValueStats = () => {
+  const { listings } = useListings();
+  
+  // Count active listings
+  const activeListingsCount = listings.filter(listing => listing.status === 'Active').length;
+
   return (
     <section className="grid md:grid-cols-3 gap-8 mb-16">
       <div className="text-center">
-        <div className="text-3xl font-bold text-primary mb-2">98%</div>
-        <div className="text-muted-foreground">Success Rate</div>
+        <div className="text-3xl font-bold text-primary mb-2">{activeListingsCount}</div>
+        <div className="text-muted-foreground">Active Listings</div>
       </div>
       <div className="text-center">
         <div className="text-3xl font-bold text-primary mb-2">$500M+</div>
