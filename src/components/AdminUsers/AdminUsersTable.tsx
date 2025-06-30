@@ -1,9 +1,11 @@
 
-import { Users, Mail, Calendar, FileText } from "lucide-react";
+import { Users, Mail, Calendar, FileText, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useSorting } from "@/hooks/useSorting";
 
 interface UserWithStats {
   id: string;
@@ -20,10 +22,39 @@ interface AdminUsersTableProps {
 
 const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const navigate = useNavigate();
+  
+  const { sortedData, sortState, handleSort } = useSorting(users || [], {
+    column: 'created_at',
+    direction: 'desc'
+  });
 
   const handleUserClick = (userId: string) => {
     navigate(`/profile?userId=${userId}`);
   };
+
+  const getSortIcon = (column: string) => {
+    if (sortState.column !== column) {
+      return <ArrowUpDown className="w-4 h-4" />;
+    }
+    return sortState.direction === 'asc' ? 
+      <ArrowUp className="w-4 h-4" /> : 
+      <ArrowDown className="w-4 h-4" />;
+  };
+
+  const SortableTableHead = ({ column, children }: { column: string; children: React.ReactNode }) => (
+    <TableHead>
+      <Button
+        variant="ghost"
+        onClick={() => handleSort(column)}
+        className="h-auto p-0 font-medium text-muted-foreground hover:text-foreground"
+      >
+        <div className="flex items-center space-x-2">
+          <span>{children}</span>
+          {getSortIcon(column)}
+        </div>
+      </Button>
+    </TableHead>
+  );
 
   return (
     <Card>
@@ -37,14 +68,14 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Listings</TableHead>
-              <TableHead>Joined</TableHead>
+              <SortableTableHead column="full_name">User</SortableTableHead>
+              <SortableTableHead column="role">Role</SortableTableHead>
+              <SortableTableHead column="listing_count">Listings</SortableTableHead>
+              <SortableTableHead column="created_at">Joined</SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users?.map((user) => (
+            {sortedData?.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>
                   <div className="space-y-1">
