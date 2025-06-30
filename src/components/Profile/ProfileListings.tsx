@@ -56,15 +56,8 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           .from('sbir_listings')
           .select('*')
           .eq('user_id', targetUserId)
+          .in('status', ['Active', 'Sold'])
           .order('created_at', { ascending: false });
-
-        // Show all statuses for own profile or admin, only active for others
-        if (!isOwnProfile && !isAdmin) {
-          console.log('🔒 Filtering to Active listings only (not own profile or admin)');
-          query = query.eq('status', 'Active');
-        } else {
-          console.log('👁️ Showing all listings (own profile or admin)');
-        }
 
         const { data, error } = await query;
 
