@@ -1,26 +1,20 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Users, TrendingUp } from "lucide-react";
 import { UserWithStats } from "./types";
-
 interface NotificationStatsProps {
   users: UserWithStats[] | undefined;
 }
-
-export const NotificationStats = ({ users }: NotificationStatsProps) => {
+export const NotificationStats = ({
+  users
+}: NotificationStatsProps) => {
   if (!users) return null;
 
   // Calculate notification statistics
-  const usersWithNotifications = users.filter(user => 
-    user.notification_categories && 
-    Array.isArray(user.notification_categories) && 
-    user.notification_categories.length > 0
-  );
-
+  const usersWithNotifications = users.filter(user => user.notification_categories && Array.isArray(user.notification_categories) && user.notification_categories.length > 0);
   const totalUsersWithNotifications = usersWithNotifications.length;
   const totalUsers = users.length;
-  const notificationRate = totalUsers > 0 ? Math.round((totalUsersWithNotifications / totalUsers) * 100) : 0;
+  const notificationRate = totalUsers > 0 ? Math.round(totalUsersWithNotifications / totalUsers * 100) : 0;
 
   // Count subscriptions per category
   const categoryStats: Record<string, number> = {};
@@ -33,13 +27,9 @@ export const NotificationStats = ({ users }: NotificationStatsProps) => {
       });
     }
   });
+  const sortedCategories = Object.entries(categoryStats).sort(([, a], [, b]) => b - a).slice(0, 10); // Show top 10 categories
 
-  const sortedCategories = Object.entries(categoryStats)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10); // Show top 10 categories
-
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  return <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -76,29 +66,22 @@ export const NotificationStats = ({ users }: NotificationStatsProps) => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Popular Categories</CardTitle>
+          <CardTitle>Popular Notification Categories</CardTitle>
         </CardHeader>
         <CardContent>
-          {sortedCategories.length > 0 ? (
-            <div className="space-y-3">
-              {sortedCategories.map(([category, count]) => (
-                <div key={category} className="flex items-center justify-between">
+          {sortedCategories.length > 0 ? <div className="space-y-3">
+              {sortedCategories.map(([category, count]) => <div key={category} className="flex items-center justify-between">
                   <Badge variant="outline" className="text-xs">
                     {category}
                   </Badge>
                   <span className="text-sm font-medium">
                     {count} user{count !== 1 ? 's' : ''}
                   </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">
+                </div>)}
+            </div> : <p className="text-sm text-muted-foreground">
               No category subscriptions found.
-            </p>
-          )}
+            </p>}
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
