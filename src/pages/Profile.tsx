@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
 import ProfileListings from "@/components/Profile/ProfileListings";
 import EditProfileDialog from "@/components/Profile/EditProfileDialog";
@@ -25,11 +27,11 @@ interface Profile {
 }
 
 const Profile = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [displayProfile, setDisplayProfile] = useState<Profile | null>(profile);
+  const [displayProfile, setDisplayProfile] = useState<Profile | null>(null);
   const [isOtherUserProfile, setIsOtherUserProfile] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -43,19 +45,24 @@ const Profile = () => {
     } else {
       setDisplayProfile(profile);
       setIsOtherUserProfile(false);
+      setLoading(false);
     }
   }, [userId, user?.id, profile]);
 
   const fetchOtherUserProfile = async (targetUserId: string) => {
     setLoading(true);
     try {
+      console.log('Fetching profile for user:', targetUserId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', targetUserId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        throw error;
+      }
 
       // Transform the data to match our Profile interface
       const transformedProfile: Profile = {
@@ -65,6 +72,7 @@ const Profile = () => {
           : []
       };
 
+      console.log('Other user profile fetched:', transformedProfile);
       setDisplayProfile(transformedProfile);
       setIsOtherUserProfile(true);
     } catch (error) {
@@ -74,71 +82,86 @@ const Profile = () => {
         description: "Failed to load user profile",
         variant: "destructive",
       });
+      setDisplayProfile(null);
+      setIsOtherUserProfile(false);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) {
+  // Show loading while auth is loading or we're fetching profile
+  if (authLoading || loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="text-center py-8">
-            <p>Please sign in to view profiles.</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="text-center py-8">
+              <p>Loading profile...</p>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
-  if (loading) {
+  if (!user) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="text-center py-8">
-            <p>Loading profile...</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="text-center py-8">
+              <p>Please sign in to view profiles.</p>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <ProfileHeader 
-        profile={displayProfile}
-        isOwnProfile={!isOtherUserProfile}
-        onEdit={() => setIsEditDialogOpen(true)}
-        userId={isOtherUserProfile ? userId : undefined}
-      />
-      
-      <Tabs defaultValue="listings" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="listings">Listings</TabsTrigger>
-          {!isOtherUserProfile && (
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          )}
-        </TabsList>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-1 container mx-auto px-4 py-8 space-y-6">
+        <ProfileHeader 
+          profile={displayProfile}
+          isOwnProfile={!isOtherUserProfile}
+          onEdit={() => setIsEditDialogOpen(true)}
+          userId={isOtherUserProfile ? userId : undefined}
+        />
         
-        <TabsContent value="listings">
-          <ProfileListings 
-            userId={isOtherUserProfile ? userId : undefined}
-            isOwnProfile={!isOtherUserProfile}
-          />
-        </TabsContent>
-        
-        {!isOtherUserProfile && (
-          <TabsContent value="notifications">
-            <NotificationPreferences />
+        <Tabs defaultValue="listings" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="listings">Listings</TabsTrigger>
+            {!isOtherUserProfile && (
+              <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            )}
+          </TabsList>
+          
+          <TabsContent value="listings">
+            <ProfileListings 
+              userId={isOtherUserProfile ? userId : undefined}
+              isOwnProfile={!isOtherUserProfile}
+            />
           </TabsContent>
-        )}
-      </Tabs>
+          
+          {!isOtherUserProfile && (
+            <TabsContent value="notifications">
+              <NotificationPreferences />
+            </TabsContent>
+          )}
+        </Tabs>
 
-      <EditProfileDialog
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        profile={displayProfile}
-      />
+        <EditProfileDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          profile={displayProfile}
+        />
+      </div>
+      <Footer />
     </div>
   );
 };
