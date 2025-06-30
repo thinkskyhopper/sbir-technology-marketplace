@@ -13,22 +13,11 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
     console.log("Logo clicked - navigating to homepage");
     console.log("Current location:", location.pathname);
     
-    // Always scroll to top when navigating to homepage
-    window.scrollTo(0, 0);
-    
     if (location.pathname === '/') {
-      // If already on homepage, force a refresh by navigating away and back
-      navigate('/temp', {
-        replace: true
-      });
-      setTimeout(() => {
-        navigate('/', {
-          replace: true
-        });
-        // Ensure scroll to top after navigation
-        setTimeout(() => window.scrollTo(0, 0), 0);
-      }, 0);
+      // If already on homepage, just scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      // Navigate to homepage and scroll to top
       navigate('/');
       // Ensure scroll to top after navigation
       setTimeout(() => window.scrollTo(0, 0), 0);
