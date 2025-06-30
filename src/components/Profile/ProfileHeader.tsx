@@ -29,7 +29,6 @@ const ProfileHeader = () => {
 
   if (!user) return null;
 
-  const displayEmail = profile?.display_email || user.email;
   const fullName = profile?.full_name || 'User Profile';
   const notificationCategories = Array.isArray(profile?.notification_categories) 
     ? profile.notification_categories as string[]
@@ -67,10 +66,12 @@ const ProfileHeader = () => {
       <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center space-x-3">
-              <Mail className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">{displayEmail}</span>
-            </div>
+            {profile?.display_email && (
+              <div className="flex items-center space-x-3">
+                <Mail className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm">{profile.display_email}</span>
+              </div>
+            )}
             
             {profile?.company_name && (
               <div className="flex items-center space-x-3">
