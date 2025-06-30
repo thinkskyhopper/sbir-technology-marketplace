@@ -18,8 +18,13 @@ export const AdminUsersTableRow = ({
   onPermissionChange, 
   isUpdating 
 }: AdminUsersTableRowProps) => {
-  // Add logging for each user's can_submit_listings value
   console.log(`User ${user.email} can_submit_listings:`, user.can_submit_listings);
+  
+  const handlePermissionChange = (value: string) => {
+    const canSubmit = value === 'enabled';
+    console.log(`Changing permission for ${user.email} to:`, canSubmit);
+    onPermissionChange(user.id, canSubmit);
+  };
   
   return (
     <TableRow key={user.id}>
@@ -72,15 +77,15 @@ export const AdminUsersTableRow = ({
       <TableCell>
         <Select
           value={user.can_submit_listings ? 'enabled' : 'disabled'}
-          onValueChange={(value) => onPermissionChange(user.id, value === 'enabled')}
+          onValueChange={handlePermissionChange}
           disabled={isUpdating}
         >
-          <SelectTrigger className="w-28">
+          <SelectTrigger className="w-28 bg-white border border-gray-300">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="enabled">Enabled</SelectItem>
-            <SelectItem value="disabled">Disabled</SelectItem>
+          <SelectContent className="bg-white border border-gray-300 shadow-lg z-50">
+            <SelectItem value="enabled" className="hover:bg-gray-100">Enabled</SelectItem>
+            <SelectItem value="disabled" className="hover:bg-gray-100">Disabled</SelectItem>
           </SelectContent>
         </Select>
         {isUpdating && (

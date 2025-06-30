@@ -13,10 +13,6 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
   const handleSubmissionPermissionChange = async (userId: string, canSubmit: boolean) => {
     console.log('Starting permission update for user:', userId, 'to:', canSubmit);
     
-    // Log current user data before update
-    const currentUser = users?.find(u => u.id === userId);
-    console.log('Current user data before update:', currentUser);
-    
     // Add user to updating set to show loading state
     setUpdatingUsers(prev => new Set(prev).add(userId));
     
@@ -27,7 +23,7 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
         .from('profiles')
         .update({ can_submit_listings: canSubmit })
         .eq('id', userId)
-        .select(); // Add select to see what was actually updated
+        .select();
 
       if (error) {
         console.error('Database error:', error);
@@ -37,22 +33,16 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
       console.log('Database update result:', data);
       console.log('Successfully updated submission permissions');
 
-      // Show success toast
+      // Show success toast without custom duration to allow auto-dismiss
       toast({
         title: "Success",
         description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
       });
 
-      // Invalidate and refetch the users query to refresh the UI
+      // Force refresh the query data
       await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      console.log('Query invalidated and refetch triggered');
-      
-      // Wait a moment and then log the updated data
-      setTimeout(() => {
-        const updatedUsers = queryClient.getQueryData(['admin-users']) as UserWithStats[];
-        const updatedUser = updatedUsers?.find(u => u.id === userId);
-        console.log('User data after refresh:', updatedUser);
-      }, 1000);
+      await queryClient.refetchQueries({ queryKey: ['admin-users'] });
+      console.log('Query invalidated and refetched');
       
     } catch (error) {
       console.error('Error updating submission permissions:', error);
