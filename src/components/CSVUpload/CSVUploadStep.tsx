@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, FileText, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { parseCSV } from "@/utils/csvParser";
 import type { ParsedListing } from "./types";
 
 interface CSVUploadStepProps {
@@ -28,66 +29,101 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
-      const lines = text.split('\n').filter(line => line.trim());
+      console.log('📄 Raw CSV content preview:', text.substring(0, 200));
       
-      if (lines.length < 2) {
-        const errorMsg = ['CSV file must contain at least a header row and one data row'];
-        setErrors(errorMsg);
-        onErrors(errorMsg);
+      const { headers, rows, errors: parseErrors } = parseCSV(text);
+      
+      if (parseErrors.length > 0) {
+        console.error('❌ CSV parsing errors:', parseErrors);
+        setErrors(parseErrors);
+        onErrors(parseErrors);
         return;
       }
 
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      console.log('📊 Parsed CSV headers:', headers);
+      console.log('📊 Number of data rows:', rows.length);
+
+      // Validate required headers
       const requiredHeaders = ['title', 'description', 'agency', 'phase', 'value', 'deadline', 'category'];
       const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
 
       if (missingHeaders.length > 0) {
         const errorMsg = [`Missing required headers: ${missingHeaders.join(', ')}`];
+        console.error('❌ Missing headers:', missingHeaders);
         setErrors(errorMsg);
         onErrors(errorMsg);
         return;
       }
 
       const parsed: ParsedListing[] = [];
-      const parseErrors: string[] = [];
+      const validationErrors: string[] = [];
 
-      for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(',').map(cell => cell.trim().replace(/^"|"$/g, ''));
+      // Create header index map for efficient lookup
+      const headerIndexMap = headers.reduce((acc, header, index) => {
+        acc[header] = index;
+        return acc;
+      }, {} as Record<string, number>);
+
+      console.log('🗺️ Header index map:', headerIndexMap);
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const rowNumber = i + 2; // +2 because array is 0-indexed and we skip header row
         
-        if (row.length !== headers.length) {
-          parseErrors.push(`Row ${i + 1}: Incorrect number of columns`);
+        console.log(`📝 Processing row ${rowNumber}:`, row);
+
+        // Skip empty rows
+        if (row.every(cell => !cell.trim())) {
+          console.log(`⏭️ Skipping empty row ${rowNumber}`);
           continue;
         }
 
         const listing: ParsedListing = {
-          title: row[headers.indexOf('title')] || '',
-          description: row[headers.indexOf('description')] || '',
-          agency: row[headers.indexOf('agency')] || '',
-          phase: row[headers.indexOf('phase')] as 'Phase I' | 'Phase II',
-          value: parseFloat(row[headers.indexOf('value')] || '0'),
-          deadline: row[headers.indexOf('deadline')] || '',
-          category: row[headers.indexOf('category')] || '',
-          photo_url: row[headers.indexOf('photo_url')] || '',
+          title: row[headerIndexMap['title']] || '',
+          description: row[headerIndexMap['description']] || '',
+          agency: row[headerIndexMap['agency']] || '',
+          phase: row[headerIndexMap['phase']] as 'Phase I' | 'Phase II',
+          value: parseFloat(row[headerIndexMap['value']] || '0'),
+          deadline: row[headerIndexMap['deadline']] || '',
+          category: row[headerIndexMap['category']] || '',
+          photo_url: row[headerIndexMap['photo_url']] || '',
           status: 'Pending',
-          rowNumber: i + 1
+          rowNumber
         };
 
-        // Basic validation
-        if (!listing.title) parseErrors.push(`Row ${i + 1}: Title is required`);
-        if (!listing.description) parseErrors.push(`Row ${i + 1}: Description is required`);
-        if (!listing.agency) parseErrors.push(`Row ${i + 1}: Agency is required`);
-        if (!['Phase I', 'Phase II'].includes(listing.phase)) parseErrors.push(`Row ${i + 1}: Phase must be "Phase I" or "Phase II"`);
-        if (isNaN(listing.value) || listing.value <= 0) parseErrors.push(`Row ${i + 1}: Value must be a positive number`);
-        if (!listing.deadline) parseErrors.push(`Row ${i + 1}: Deadline is required`);
-        if (!listing.category) parseErrors.push(`Row ${i + 1}: Category is required`);
+        // Comprehensive validation
+        if (!listing.title.trim()) {
+          validationErrors.push(`Row ${rowNumber}: Title is required`);
+        }
+        if (!listing.description.trim()) {
+          validationErrors.push(`Row ${rowNumber}: Description is required`);
+        }
+        if (!listing.agency.trim()) {
+          validationErrors.push(`Row ${rowNumber}: Agency is required`);
+        }
+        if (!['Phase I', 'Phase II'].includes(listing.phase)) {
+          validationErrors.push(`Row ${rowNumber}: Phase must be "Phase I" or "Phase II", got "${listing.phase}"`);
+        }
+        if (isNaN(listing.value) || listing.value <= 0) {
+          validationErrors.push(`Row ${rowNumber}: Value must be a positive number, got "${row[headerIndexMap['value']]}"`);
+        }
+        if (!listing.deadline.trim()) {
+          validationErrors.push(`Row ${rowNumber}: Deadline is required`);
+        }
+        if (!listing.category.trim()) {
+          validationErrors.push(`Row ${rowNumber}: Category is required`);
+        }
 
         parsed.push(listing);
       }
 
-      setErrors(parseErrors);
-      onErrors(parseErrors);
+      console.log('✅ Successfully parsed listings:', parsed.length);
+      console.log('⚠️ Validation errors:', validationErrors.length);
+
+      setErrors(validationErrors);
+      onErrors(validationErrors);
       
-      if (parseErrors.length === 0) {
+      if (validationErrors.length === 0) {
         onFileParsed(parsed, file);
       }
     };
@@ -108,6 +144,9 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
         <p className="text-sm text-muted-foreground">
           CSV must include columns: title, description, agency, phase, value, deadline, category
         </p>
+        <p className="text-xs text-muted-foreground">
+          Note: Fields containing commas should be enclosed in double quotes (e.g., "Agency Name, LLC")
+        </p>
       </div>
 
       {file && (
@@ -124,14 +163,14 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
           <AlertCircle className="w-4 h-4" />
           <AlertDescription>
             <div className="space-y-1">
-              <p className="font-medium">Errors found in CSV:</p>
+              <p className="font-medium">Issues found in CSV:</p>
               <ul className="list-disc list-inside space-y-1">
                 {errors.slice(0, 10).map((error, index) => (
                   <li key={index} className="text-sm">{error}</li>
                 ))}
               </ul>
               {errors.length > 10 && (
-                <p className="text-sm">... and {errors.length - 10} more errors</p>
+                <p className="text-sm">... and {errors.length - 10} more issues</p>
               )}
             </div>
           </AlertDescription>
