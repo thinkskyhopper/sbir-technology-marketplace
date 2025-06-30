@@ -1,4 +1,3 @@
-
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -125,29 +124,17 @@ const AdminListingsTableRow = ({
       </TableCell>
       <TableCell className="min-w-[180px]">
         {listing.profiles ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="cursor-help">
-                  <Link 
-                    to={`/profile?userId=${listing.user_id}`}
-                    className="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
-                  >
-                    {listing.profiles.full_name || 'N/A'}
-                  </Link>
-                  <p className="text-xs text-muted-foreground">
-                    {listing.profiles.email}
-                  </p>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="text-sm">
-                  <p className="font-medium">{listing.profiles.full_name || 'N/A'}</p>
-                  <p>{listing.profiles.email}</p>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div>
+            <Link 
+              to={`/profile?userId=${listing.user_id}`}
+              className="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+            >
+              {listing.profiles.full_name || 'N/A'}
+            </Link>
+            <p className="text-xs text-muted-foreground">
+              {listing.profiles.email}
+            </p>
+          </div>
         ) : (
           <span className="text-sm text-muted-foreground">Unknown</span>
         )}
