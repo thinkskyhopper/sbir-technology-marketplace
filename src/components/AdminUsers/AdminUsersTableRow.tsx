@@ -76,16 +76,17 @@ export const AdminUsersTableRow = ({
       </TableCell>
       <TableCell>
         <Select
+          key={`${user.id}-${user.can_submit_listings}`}
           value={user.can_submit_listings ? 'enabled' : 'disabled'}
           onValueChange={handlePermissionChange}
           disabled={isUpdating}
         >
-          <SelectTrigger className="w-28 bg-white border border-gray-300">
+          <SelectTrigger className="w-28">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-white border border-gray-300 shadow-lg z-50">
-            <SelectItem value="enabled" className="hover:bg-gray-100">Enabled</SelectItem>
-            <SelectItem value="disabled" className="hover:bg-gray-100">Disabled</SelectItem>
+          <SelectContent>
+            <SelectItem value="enabled">Enabled</SelectItem>
+            <SelectItem value="disabled">Disabled</SelectItem>
           </SelectContent>
         </Select>
         {isUpdating && (

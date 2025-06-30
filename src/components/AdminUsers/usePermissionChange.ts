@@ -33,16 +33,22 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
       console.log('Database update result:', data);
       console.log('Successfully updated submission permissions');
 
-      // Show success toast without custom duration to allow auto-dismiss
+      // Show success toast
       toast({
         title: "Success",
         description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
       });
 
-      // Force refresh the query data
+      // Invalidate queries and wait for refetch to complete
       await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      await queryClient.refetchQueries({ queryKey: ['admin-users'] });
-      console.log('Query invalidated and refetched');
+      
+      // Force a fresh fetch of the data
+      await queryClient.refetchQueries({ 
+        queryKey: ['admin-users'],
+        type: 'active'
+      });
+      
+      console.log('Query data refreshed successfully');
       
     } catch (error) {
       console.error('Error updating submission permissions:', error);
