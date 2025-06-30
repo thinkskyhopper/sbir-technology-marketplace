@@ -1,4 +1,3 @@
-
 import { Users, Mail, Calendar, FileText, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,22 +43,28 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const handleSubmissionPermissionChange = async (userId: string, canSubmit: boolean) => {
     console.log('Starting permission update for user:', userId, 'to:', canSubmit);
     
+    // Log current user data before update
+    const currentUser = users?.find(u => u.id === userId);
+    console.log('Current user data before update:', currentUser);
+    
     // Add user to updating set to show loading state
     setUpdatingUsers(prev => new Set(prev).add(userId));
     
     try {
       console.log('Updating submission permissions for user:', userId, 'to:', canSubmit);
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update({ can_submit_listings: canSubmit })
-        .eq('id', userId);
+        .eq('id', userId)
+        .select(); // Add select to see what was actually updated
 
       if (error) {
         console.error('Database error:', error);
         throw error;
       }
 
+      console.log('Database update result:', data);
       console.log('Successfully updated submission permissions');
 
       // Show success toast
@@ -71,6 +76,13 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
       // Invalidate and refetch the users query to refresh the UI
       await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       console.log('Query invalidated and refetch triggered');
+      
+      // Wait a moment and then log the updated data
+      setTimeout(() => {
+        const updatedUsers = queryClient.getQueryData(['admin-users']) as UserWithStats[];
+        const updatedUser = updatedUsers?.find(u => u.id === userId);
+        console.log('User data after refresh:', updatedUser);
+      }, 1000);
       
     } catch (error) {
       console.error('Error updating submission permissions:', error);
@@ -133,80 +145,85 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedData?.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="text-sm font-medium text-primary">
-                          {(user.full_name || user.email)?.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                      <div>
-                        <button
-                          onClick={() => handleUserClick(user.id)}
-                          className="font-medium text-primary hover:underline cursor-pointer"
-                        >
-                          {user.full_name || 'No name provided'}
-                        </button>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Mail className="w-3 h-3 mr-1" />
-                          {user.email}
+            {sortedData?.map((user) => {
+              // Add logging for each user's can_submit_listings value
+              console.log(`User ${user.email} can_submit_listings:`, user.can_submit_listings);
+              
+              return (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <span className="text-sm font-medium text-primary">
+                            {(user.full_name || user.email)?.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <button
+                            onClick={() => handleUserClick(user.id)}
+                            className="font-medium text-primary hover:underline cursor-pointer"
+                          >
+                            {user.full_name || 'No name provided'}
+                          </button>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Mail className="w-3 h-3 mr-1" />
+                            {user.email}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge 
-                    variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
-                    className={
-                      user.role === 'admin' 
-                        ? 'bg-amber-500 hover:bg-amber-600' 
-                        : user.role === 'consultant'
-                        ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
-                        : ''
-                    }
-                  >
-                    {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-1">
-                    <FileText className="w-3 h-3 text-muted-foreground" />
-                    <span className="font-medium">{user.listing_count}</span>
-                    <span className="text-muted-foreground text-sm">
-                      listing{user.listing_count !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Select
-                    value={user.can_submit_listings ? 'enabled' : 'disabled'}
-                    onValueChange={(value) => handleSubmissionPermissionChange(user.id, value === 'enabled')}
-                    disabled={updatingUsers.has(user.id)}
-                  >
-                    <SelectTrigger className="w-28">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="enabled">Enabled</SelectItem>
-                      <SelectItem value="disabled">Disabled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {updatingUsers.has(user.id) && (
-                    <div className="text-xs text-muted-foreground mt-1">Updating...</div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
+                      className={
+                        user.role === 'admin' 
+                          ? 'bg-amber-500 hover:bg-amber-600' 
+                          : user.role === 'consultant'
+                          ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
+                          : ''
+                      }
+                    >
+                      {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1">
+                      <FileText className="w-3 h-3 text-muted-foreground" />
+                      <span className="font-medium">{user.listing_count}</span>
+                      <span className="text-muted-foreground text-sm">
+                        listing{user.listing_count !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={user.can_submit_listings ? 'enabled' : 'disabled'}
+                      onValueChange={(value) => handleSubmissionPermissionChange(user.id, value === 'enabled')}
+                      disabled={updatingUsers.has(user.id)}
+                    >
+                      <SelectTrigger className="w-28">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="enabled">Enabled</SelectItem>
+                        <SelectItem value="disabled">Disabled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {updatingUsers.has(user.id) && (
+                      <div className="text-xs text-muted-foreground mt-1">Updating...</div>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Calendar className="w-3 h-3 mr-1" />
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
         
