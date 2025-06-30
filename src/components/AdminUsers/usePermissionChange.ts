@@ -33,13 +33,12 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
 
       console.log('Current user state:', currentUser);
 
-      // Now update the user's permission
+      // Now update the user's permission - don't use .single() here
       const { data, error } = await supabase
         .from('profiles')
         .update({ can_submit_listings: canSubmit })
         .eq('id', userId)
-        .select('id, can_submit_listings')
-        .single();
+        .select('id, can_submit_listings');
 
       if (error) {
         console.error('Database error:', error);
@@ -48,14 +47,19 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
 
       console.log('Database update result:', data);
       
-      if (data) {
-        console.log('Permission updated successfully. New value:', data.can_submit_listings);
-        
-        // Verify the update actually worked
-        if (data.can_submit_listings !== canSubmit) {
-          console.error('Database update failed - expected:', canSubmit, 'got:', data.can_submit_listings);
-          throw new Error('Database update did not persist correctly');
-        }
+      // Check if any rows were updated
+      if (!data || data.length === 0) {
+        console.error('No rows were updated - user might not exist');
+        throw new Error('Failed to update user permissions - user not found');
+      }
+      
+      const updatedUser = data[0];
+      console.log('Permission updated successfully. New value:', updatedUser.can_submit_listings);
+      
+      // Verify the update actually worked
+      if (updatedUser.can_submit_listings !== canSubmit) {
+        console.error('Database update failed - expected:', canSubmit, 'got:', updatedUser.can_submit_listings);
+        throw new Error('Database update did not persist correctly');
       }
 
       // Show success toast
