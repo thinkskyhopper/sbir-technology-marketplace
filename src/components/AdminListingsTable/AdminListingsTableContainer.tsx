@@ -5,19 +5,22 @@ import { usePagination } from "@/hooks/usePagination";
 import { useAdminListingsTableState as useComponentState } from "@/hooks/useAdminListingsTableState";
 import { useAdminListingsTableHandlers } from "@/hooks/useAdminListingsTableHandlers";
 import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Download } from "lucide-react";
 import AdminListingsTableFilters from "./AdminListingsTableFilters";
 import AdminListingsTableContent from "./AdminListingsTableContent";
 import AdminListingsTableLoading from "./AdminListingsTableLoading";
 import AdminListingsTableDialogs from "./AdminListingsTableDialogs";
 import AdminListingsTablePagination from "./AdminListingsTablePagination";
+import { ExportListingsDialog } from "./ExportListingsDialog";
 import { useAdminListingsTableState, useAdminListingsTableLogic } from "./AdminListingsTableState";
 
 const AdminListingsTableContainer = () => {
   const { listings, loading, error, approveListing, rejectListing, hideListing, deleteListing } = useListings();
+  const [showExportDialog, setShowExportDialog] = useState(false);
   
   // Filter and search state
   const {
@@ -126,11 +129,21 @@ const AdminListingsTableContainer = () => {
       <Card>
         <CardHeader>
           <div className="space-y-3">
-            <div>
-              <CardTitle>All SBIR Listings</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                {totalItems} total listings, {filteredListings.length} showing
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>All SBIR Listings</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {totalItems} total listings, {filteredListings.length} showing
+                </p>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowExportDialog(true)}
+                className="flex items-center space-x-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export</span>
+              </Button>
             </div>
             <AdminListingsTableFilters
               searchTerm={searchTerm}
@@ -192,6 +205,13 @@ const AdminListingsTableContainer = () => {
         confirmAction={confirmAction}
         setConfirmAction={setConfirmAction}
         onConfirmAction={handleConfirmAction}
+      />
+
+      <ExportListingsDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        listings={listings}
+        uniqueAgencies={uniqueAgencies}
       />
     </>
   );
