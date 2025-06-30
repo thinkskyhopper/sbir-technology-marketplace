@@ -18,21 +18,22 @@ const ProfileHeader = () => {
               <User className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold">
-                {user.user_metadata?.full_name || 'User Profile'}
-              </CardTitle>
+              <div className="flex items-center gap-3 mb-1">
+                <CardTitle className="text-2xl font-bold">
+                  {user.user_metadata?.full_name || 'User Profile'}
+                </CardTitle>
+                {isAdmin && (
+                  <Badge variant="default" className="bg-amber-500 hover:bg-amber-600 text-white flex items-center space-x-1">
+                    <Shield className="w-3 h-3" />
+                    <span>Administrator</span>
+                  </Badge>
+                )}
+              </div>
               <p className="text-muted-foreground">
                 Member since {new Date(user.created_at).toLocaleDateString()}
               </p>
             </div>
           </div>
-          
-          {isAdmin && (
-            <Badge variant="secondary" className="flex items-center space-x-1">
-              <Shield className="w-3 h-3" />
-              <span>Administrator</span>
-            </Badge>
-          )}
         </div>
       </CardHeader>
       
