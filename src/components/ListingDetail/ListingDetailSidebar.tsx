@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, DollarSign, Building, Mail, Clock } from "lucide-react";
+import { Calendar, DollarSign, Building, Mail, Clock, Tag, Settings } from "lucide-react";
 
 interface ListingDetailSidebarProps {
   listing: {
@@ -10,6 +10,8 @@ interface ListingDetailSidebarProps {
     agency: string;
     submitted_at: string;
     approved_at?: string | null;
+    category: string;
+    phase: string;
   };
   onContactAdmin: () => void;
 }
@@ -85,6 +87,22 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
             <div>
               <p className="font-semibold">Agency</p>
               <p className="text-muted-foreground">{listing.agency}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center text-sm">
+            <Settings className="w-4 h-4 mr-2 text-purple-500" />
+            <div>
+              <p className="font-semibold">Phase</p>
+              <p className="text-muted-foreground">{listing.phase}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center text-sm">
+            <Tag className="w-4 h-4 mr-2 text-orange-500" />
+            <div>
+              <p className="font-semibold">Category</p>
+              <p className="text-muted-foreground">{listing.category}</p>
             </div>
           </div>
         </CardContent>

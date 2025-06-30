@@ -3,7 +3,6 @@ import type { SBIRListing } from "@/types/listings";
 import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader";
 import ListingDetailHeroImage from "@/components/ListingDetail/ListingDetailHeroImage";
 import ListingDetailDescription from "@/components/ListingDetail/ListingDetailDescription";
-import ListingDetailInfo from "@/components/ListingDetail/ListingDetailInfo";
 import ListingDetailSidebar from "@/components/ListingDetail/ListingDetailSidebar";
 
 interface ListingDetailContentProps {
@@ -45,7 +44,6 @@ const ListingDetailContent = ({
           <div className="lg:col-span-2 space-y-6">
             <ListingDetailHeroImage listing={listing} />
             <ListingDetailDescription description={listing.description} />
-            <ListingDetailInfo listing={listing} />
           </div>
 
           <ListingDetailSidebar
