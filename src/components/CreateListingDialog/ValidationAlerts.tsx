@@ -1,8 +1,6 @@
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import PermissionDeniedMessage from "./PermissionDeniedMessage";
 
 interface ValidationAlertsProps {
   userAttempts: boolean;
@@ -17,15 +15,8 @@ const ValidationAlerts = ({
   validationErrors, 
   spamScore 
 }: ValidationAlertsProps) => {
-  const { profile, isAdmin } = useAuth();
-  
-  // Check if user has permission to submit listings (admins always can)
-  const canSubmitListings = isAdmin || (profile?.can_submit_listings ?? false);
-
   return (
     <>
-      {!canSubmitListings && <PermissionDeniedMessage />}
-
       {userAttempts && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />

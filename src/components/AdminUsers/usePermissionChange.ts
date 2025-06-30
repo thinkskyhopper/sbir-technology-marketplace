@@ -23,7 +23,7 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
         .from('profiles')
         .update({ can_submit_listings: canSubmit })
         .eq('id', userId)
-        .select();
+        .select('id, can_submit_listings');
 
       if (error) {
         console.error('Database error:', error);
@@ -31,7 +31,10 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
       }
 
       console.log('Database update result:', data);
-      console.log('Successfully updated submission permissions');
+      
+      if (data && data.length > 0) {
+        console.log('Permission updated successfully. New value:', data[0].can_submit_listings);
+      }
 
       // Show success toast
       toast({
@@ -39,13 +42,21 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
         description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
       });
 
-      // Invalidate queries and wait for refetch to complete
-      await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      // Update the local query cache immediately
+      queryClient.setQueryData(['admin-users'], (oldData: UserWithStats[] | undefined) => {
+        if (!oldData) return oldData;
+        
+        return oldData.map(user => 
+          user.id === userId 
+            ? { ...user, can_submit_listings: canSubmit }
+            : user
+        );
+      });
       
-      // Force a fresh fetch of the data
-      await queryClient.refetchQueries({ 
+      // Also invalidate and refetch to ensure consistency
+      await queryClient.invalidateQueries({ 
         queryKey: ['admin-users'],
-        type: 'active'
+        exact: true
       });
       
       console.log('Query data refreshed successfully');

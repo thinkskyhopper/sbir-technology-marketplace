@@ -78,18 +78,12 @@ export const AdminUsersTableRow = ({
       </TableCell>
       <TableCell>
         {isAdmin ? (
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              Always Enabled
-            </Badge>
-            <span className="text-xs text-muted-foreground">
-              (Admin privilege)
-            </span>
+          <div className="text-sm text-muted-foreground">
+            {/* Admin users don't show any permission controls */}
           </div>
         ) : (
           <>
             <Select
-              key={`${user.id}-${user.can_submit_listings}`}
               value={user.can_submit_listings ? 'enabled' : 'disabled'}
               onValueChange={handlePermissionChange}
               disabled={isUpdating}

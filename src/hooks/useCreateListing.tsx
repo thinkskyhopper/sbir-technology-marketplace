@@ -38,7 +38,7 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
     if (!canSubmitListings) {
       toast({
         title: "Submission Not Allowed",
-        description: "Your account does not have permission to submit listings. Please contact an administrator if you believe this is an error.",
+        description: "Your account does not have permission to submit listings. Please contact support if you believe this is an error.",
         variant: "destructive",
       });
       return;
