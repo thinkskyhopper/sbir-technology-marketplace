@@ -1,112 +1,120 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Shield, Mail, Building, FileText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { User, Mail, Building, Calendar } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import EditProfileDialog from "./EditProfileDialog";
 
-const ProfileHeader = () => {
-  const { user, isAdmin } = useAuth();
+interface ProfileHeaderProps {
+  userId?: string | null;
+}
 
-  const { data: profile } = useQuery({
-    queryKey: ['profile', user?.id],
+const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
+  const { user } = useAuth();
+  const isViewingOwnProfile = !userId || userId === user?.id;
+  const targetUserId = userId || user?.id;
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ['profile', targetUserId],
     queryFn: async () => {
-      if (!user?.id) return null;
-
+      if (!targetUserId) return null;
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', targetUserId)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id
+    enabled: !!targetUserId
   });
 
-  if (!user) return null;
+  if (isLoading) {
+    return (
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const fullName = profile?.full_name || 'User Profile';
-  const notificationCategories = Array.isArray(profile?.notification_categories) 
-    ? profile.notification_categories as string[]
-    : [];
+  if (!profile) {
+    return (
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">
+            Profile not found
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mb-8">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-full bg-primary/10">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
               <User className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <CardTitle className="text-2xl font-bold">
-                  {fullName}
-                </CardTitle>
-                {isAdmin && (
-                  <Badge variant="default" className="bg-amber-500 hover:bg-amber-600 text-white flex items-center space-x-1">
-                    <Shield className="w-3 h-3" />
-                    <span>Administrator</span>
-                  </Badge>
-                )}
+              <CardTitle className="text-2xl">
+                {profile.full_name || 'No name provided'}
+              </CardTitle>
+              <div className="flex items-center space-x-4 mt-2">
+                <div className="flex items-center text-muted-foreground">
+                  <Mail className="w-4 h-4 mr-1" />
+                  <span className="text-sm">{profile.display_email || profile.email}</span>
+                </div>
+                <Badge 
+                  variant={profile.role === 'admin' ? 'default' : profile.role === 'consultant' ? 'secondary' : 'outline'}
+                  className={
+                    profile.role === 'admin' 
+                      ? 'bg-amber-500 hover:bg-amber-600' 
+                      : profile.role === 'consultant'
+                      ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                      : ''
+                  }
+                >
+                  {profile.role === 'admin' ? 'Administrator' : profile.role === 'consultant' ? 'Consultant' : 'User'}
+                </Badge>
               </div>
-              <p className="text-muted-foreground">
-                Member since {new Date(user.created_at).toLocaleDateString()}
-              </p>
             </div>
           </div>
-          <EditProfileDialog />
+          {isViewingOwnProfile && <EditProfileDialog />}
         </div>
       </CardHeader>
-      
       <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {profile?.display_email && (
-              <div className="flex items-center space-x-3">
-                <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm">{profile.display_email}</span>
-              </div>
-            )}
-            
-            {profile?.company_name && (
-              <div className="flex items-center space-x-3">
-                <Building className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm">{profile.company_name}</span>
-              </div>
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {profile.company_name && (
+            <div className="flex items-center space-x-2">
+              <Building className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm">{profile.company_name}</span>
+            </div>
+          )}
+          <div className="flex items-center space-x-2">
+            <Calendar className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm">
+              Joined {new Date(profile.created_at).toLocaleDateString()}
+            </span>
           </div>
-
-          {profile?.bio && (
-            <div className="flex items-start space-x-3 pt-2">
-              <FileText className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-muted-foreground font-medium mb-1">Bio</p>
-                <p className="text-sm whitespace-pre-wrap">{profile.bio}</p>
-              </div>
-            </div>
-          )}
-
-          {notificationCategories.length > 0 && (
-            <div className="flex items-start space-x-3 pt-2">
-              <Mail className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-muted-foreground font-medium mb-2">Email Notifications</p>
-                <div className="flex flex-wrap gap-1">
-                  {notificationCategories.map((category: string) => (
-                    <Badge key={category} variant="secondary" className="text-xs">
-                      {category}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
+        {profile.bio && (
+          <div className="mt-4">
+            <h4 className="font-medium mb-2">About</h4>
+            <p className="text-sm text-muted-foreground">{profile.bio}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

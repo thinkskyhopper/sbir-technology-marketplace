@@ -2,95 +2,150 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
-import { FileText } from "lucide-react";
+import { FileText, Calendar, DollarSign, Building } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import MarketplaceCard from "@/components/MarketplaceCard";
-import type { SBIRListing } from "@/types/listings";
+import CreateListingDialog from "../CreateListingDialog";
+import EditListingDialog from "../EditListingDialog";
+import RequestChangeDialog from "../RequestChangeDialog";
 
-const ProfileListings = () => {
+interface ProfileListingsProps {
+  userId?: string | null;
+}
+
+const ProfileListings = ({ userId }: ProfileListingsProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isViewingOwnProfile = !userId || userId === user?.id;
+  const targetUserId = userId || user?.id;
 
   const { data: listings, isLoading } = useQuery({
-    queryKey: ['profile-listings', user?.id],
+    queryKey: ['profile-listings', targetUserId],
     queryFn: async () => {
-      if (!user?.id) return [];
-
+      if (!targetUserId) return [];
+      
       const { data, error } = await supabase
         .from('sbir_listings')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', targetUserId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-
-      return data?.map(listing => ({
-        ...listing,
-        value: listing.value / 100, // Convert cents to dollars
-        deadline: new Date(listing.deadline).toISOString().split('T')[0],
-        profiles: null
-      })) as SBIRListing[];
+      return data;
     },
-    enabled: !!user?.id
+    enabled: !!targetUserId
   });
+
+  const handleViewListing = (listingId: string) => {
+    navigate(`/listing/${listingId}`);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Published':
+        return 'bg-green-500 hover:bg-green-600';
+      case 'Pending':
+        return 'bg-yellow-500 hover:bg-yellow-600';
+      case 'Rejected':
+        return 'bg-red-500 hover:bg-red-600';
+      default:
+        return 'bg-gray-500 hover:bg-gray-600';
+    }
+  };
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Your SBIR Listings</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <div className="p-6">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="space-y-2">
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                  <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-20 bg-gray-200 rounded"></div>
+            <div className="h-20 bg-gray-200 rounded"></div>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Your SBIR Listings</h2>
-        <p className="text-muted-foreground">
-          {listings?.length || 0} listing{listings?.length !== 1 ? 's' : ''}
-        </p>
-      </div>
-
-      {!listings || listings.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center">
-            <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">No listings yet</h3>
-            <p className="text-muted-foreground mb-4">
-              You haven't posted any SBIR listings yet. Start by creating your first listing.
-            </p>
-            <Button onClick={() => navigate('/')}>
-              Create Your First Listing
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings.map((listing) => (
-            <MarketplaceCard
-              key={listing.id}
-              listing={listing}
-            />
-          ))}
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center space-x-2">
+            <FileText className="w-5 h-5" />
+            <span>SBIR Listings</span>
+            <Badge variant="secondary">{listings?.length || 0}</Badge>
+          </CardTitle>
+          {isViewingOwnProfile && <CreateListingDialog />}
         </div>
-      )}
-    </div>
+      </CardHeader>
+      <CardContent>
+        {listings?.length === 0 ? (
+          <div className="text-center text-muted-foreground py-8">
+            {isViewingOwnProfile ? "You haven't created any SBIR listings yet." : "This user hasn't created any SBIR listings yet."}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {listings?.map((listing) => (
+              <Card key={listing.id} className="border-l-4 border-l-primary/20">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <h3 className="font-semibold text-lg">{listing.title}</h3>
+                        <Badge 
+                          className={`text-white ${getStatusColor(listing.status)}`}
+                        >
+                          {listing.status}
+                        </Badge>
+                      </div>
+                      <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                        {listing.description}
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <Building className="w-4 h-4 text-muted-foreground" />
+                          <span>{listing.agency}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
+                          <span>${listing.value?.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
+                          <span>Due: {new Date(listing.deadline).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewListing(listing.id)}
+                      >
+                        View
+                      </Button>
+                      {isViewingOwnProfile && (
+                        <>
+                          {listing.status === 'Published' && (
+                            <RequestChangeDialog listing={listing} />
+                          )}
+                          {(listing.status === 'Pending' || listing.status === 'Rejected') && (
+                            <EditListingDialog listing={listing} />
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
