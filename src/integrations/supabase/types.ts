@@ -145,6 +145,68 @@ export type Database = {
           },
         ]
       }
+      notification_batches: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_batches_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "sbir_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_job_runs: {
+        Row: {
+          completed_at: string | null
+          errors: Json | null
+          id: string
+          run_date: string
+          started_at: string
+          total_emails_sent: number | null
+          total_users_processed: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          errors?: Json | null
+          id?: string
+          run_date: string
+          started_at?: string
+          total_emails_sent?: number | null
+          total_users_processed?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          errors?: Json | null
+          id?: string
+          run_date?: string
+          started_at?: string
+          total_emails_sent?: number | null
+          total_users_processed?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           bio: string | null

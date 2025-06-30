@@ -3,3 +3,6 @@ project_id = "amhznlnhrrugxatbeayo"
 
 [functions.meta-tags]
 verify_jwt = false
+
+[functions.send-daily-notifications]
+verify_jwt = false
