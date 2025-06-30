@@ -30,7 +30,11 @@ const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
           <div className="mt-8">
             <div className={`grid gap-6 ${promotions.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
               {promotions.map((promotion, index) => (
-                <PromotionCard key={promotion.id || `promotion-${index}`} promotion={promotion} />
+                <PromotionCard 
+                  key={promotion.id || `promotion-${index}`} 
+                  promotion={promotion} 
+                  isSingleCard={promotions.length === 1}
+                />
               ))}
             </div>
           </div>

@@ -13,9 +13,10 @@ interface Promotion {
 
 interface PromotionCardProps {
   promotion: Promotion;
+  isSingleCard?: boolean;
 }
 
-const PromotionCard = ({ promotion }: PromotionCardProps) => {
+const PromotionCard = ({ promotion, isSingleCard = false }: PromotionCardProps) => {
   if (!promotion.title && !promotion.description && !promotion.photo_url) {
     return null;
   }
@@ -81,7 +82,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
   return (
     <Card className={`bg-background/50 border transition-all duration-200 ${
       hasLink ? 'group hover:shadow-lg cursor-pointer' : ''
-    }`}>
+    } ${isSingleCard ? 'max-w-md mx-auto' : ''}`}>
       <CardContent className="p-6">
         {/* Promotion Title at top */}
         {promotion.title && <TitleComponent />}
