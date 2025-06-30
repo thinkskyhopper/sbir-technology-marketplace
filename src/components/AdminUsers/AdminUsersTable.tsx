@@ -1,129 +1,27 @@
-import { Users, Mail, Calendar, FileText, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
+import { Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { useSorting } from "@/hooks/useSorting";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-
-interface UserWithStats {
-  id: string;
-  email: string;
-  full_name: string | null;
-  role: string;
-  created_at: string;
-  listing_count: number;
-  can_submit_listings: boolean;
-}
-
-interface AdminUsersTableProps {
-  users: UserWithStats[] | undefined;
-}
+import { AdminUsersTableProps } from "./types";
+import { usePermissionChange } from "./usePermissionChange";
+import { SortableTableHead } from "./SortableTableHead";
+import { AdminUsersTableRow } from "./AdminUsersTableRow";
 
 const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set());
   
   const { sortedData, sortState, handleSort } = useSorting(users || [], {
     column: 'created_at',
     direction: 'desc'
   });
 
+  const { updatingUsers, handleSubmissionPermissionChange } = usePermissionChange(users);
+
   const handleUserClick = (userId: string) => {
     navigate(`/profile?userId=${userId}`);
   };
-
-  const handleSubmissionPermissionChange = async (userId: string, canSubmit: boolean) => {
-    console.log('Starting permission update for user:', userId, 'to:', canSubmit);
-    
-    // Log current user data before update
-    const currentUser = users?.find(u => u.id === userId);
-    console.log('Current user data before update:', currentUser);
-    
-    // Add user to updating set to show loading state
-    setUpdatingUsers(prev => new Set(prev).add(userId));
-    
-    try {
-      console.log('Updating submission permissions for user:', userId, 'to:', canSubmit);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({ can_submit_listings: canSubmit })
-        .eq('id', userId)
-        .select(); // Add select to see what was actually updated
-
-      if (error) {
-        console.error('Database error:', error);
-        throw error;
-      }
-
-      console.log('Database update result:', data);
-      console.log('Successfully updated submission permissions');
-
-      // Show success toast
-      toast({
-        title: "Success",
-        description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
-      });
-
-      // Invalidate and refetch the users query to refresh the UI
-      await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      console.log('Query invalidated and refetch triggered');
-      
-      // Wait a moment and then log the updated data
-      setTimeout(() => {
-        const updatedUsers = queryClient.getQueryData(['admin-users']) as UserWithStats[];
-        const updatedUser = updatedUsers?.find(u => u.id === userId);
-        console.log('User data after refresh:', updatedUser);
-      }, 1000);
-      
-    } catch (error) {
-      console.error('Error updating submission permissions:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update user permissions",
-        variant: "destructive",
-      });
-    } finally {
-      // Remove user from updating set
-      setUpdatingUsers(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(userId);
-        return newSet;
-      });
-    }
-  };
-
-  const getSortIcon = (column: string) => {
-    if (sortState.column !== column) {
-      return <ArrowUpDown className="w-4 h-4" />;
-    }
-    return sortState.direction === 'asc' ? 
-      <ArrowUp className="w-4 h-4" /> : 
-      <ArrowDown className="w-4 h-4" />;
-  };
-
-  const SortableTableHead = ({ column, children }: { column: string; children: React.ReactNode }) => (
-    <TableHead>
-      <Button
-        variant="ghost"
-        onClick={() => handleSort(column)}
-        className="h-auto p-0 font-medium text-muted-foreground hover:text-foreground"
-      >
-        <div className="flex items-center space-x-2">
-          <span>{children}</span>
-          {getSortIcon(column)}
-        </div>
-      </Button>
-    </TableHead>
-  );
 
   return (
     <Card>
@@ -137,93 +35,31 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <SortableTableHead column="full_name">User</SortableTableHead>
-              <SortableTableHead column="role">Role</SortableTableHead>
-              <SortableTableHead column="listing_count">Listings</SortableTableHead>
+              <SortableTableHead column="full_name" sortState={sortState} onSort={handleSort}>
+                User
+              </SortableTableHead>
+              <SortableTableHead column="role" sortState={sortState} onSort={handleSort}>
+                Role
+              </SortableTableHead>
+              <SortableTableHead column="listing_count" sortState={sortState} onSort={handleSort}>
+                Listings
+              </SortableTableHead>
               <TableHead>Can Submit</TableHead>
-              <SortableTableHead column="created_at">Joined</SortableTableHead>
+              <SortableTableHead column="created_at" sortState={sortState} onSort={handleSort}>
+                Joined
+              </SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedData?.map((user) => {
-              // Add logging for each user's can_submit_listings value
-              console.log(`User ${user.email} can_submit_listings:`, user.can_submit_listings);
-              
-              return (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-sm font-medium text-primary">
-                            {(user.full_name || user.email)?.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <div>
-                          <button
-                            onClick={() => handleUserClick(user.id)}
-                            className="font-medium text-primary hover:underline cursor-pointer"
-                          >
-                            {user.full_name || 'No name provided'}
-                          </button>
-                          <div className="flex items-center text-sm text-muted-foreground">
-                            <Mail className="w-3 h-3 mr-1" />
-                            {user.email}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
-                      className={
-                        user.role === 'admin' 
-                          ? 'bg-amber-500 hover:bg-amber-600' 
-                          : user.role === 'consultant'
-                          ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
-                          : ''
-                      }
-                    >
-                      {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <FileText className="w-3 h-3 text-muted-foreground" />
-                      <span className="font-medium">{user.listing_count}</span>
-                      <span className="text-muted-foreground text-sm">
-                        listing{user.listing_count !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      value={user.can_submit_listings ? 'enabled' : 'disabled'}
-                      onValueChange={(value) => handleSubmissionPermissionChange(user.id, value === 'enabled')}
-                      disabled={updatingUsers.has(user.id)}
-                    >
-                      <SelectTrigger className="w-28">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="enabled">Enabled</SelectItem>
-                        <SelectItem value="disabled">Disabled</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {updatingUsers.has(user.id) && (
-                      <div className="text-xs text-muted-foreground mt-1">Updating...</div>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="w-3 h-3 mr-1" />
-                      {new Date(user.created_at).toLocaleDateString()}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {sortedData?.map((user) => (
+              <AdminUsersTableRow
+                key={user.id}
+                user={user}
+                onUserClick={handleUserClick}
+                onPermissionChange={handleSubmissionPermissionChange}
+                isUpdating={updatingUsers.has(user.id)}
+              />
+            ))}
           </TableBody>
         </Table>
         

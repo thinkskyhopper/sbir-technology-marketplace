@@ -8,16 +8,7 @@ import AdminUsersStats from "@/components/AdminUsers/AdminUsersStats";
 import AdminUsersTable from "@/components/AdminUsers/AdminUsersTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-interface UserWithStats {
-  id: string;
-  email: string;
-  full_name: string | null;
-  role: string;
-  created_at: string;
-  listing_count: number;
-  can_submit_listings: boolean;
-}
+import { UserWithStats } from "@/components/AdminUsers/types";
 
 const AdminUsers = () => {
   const { user } = useAuth();
