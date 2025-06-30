@@ -39,7 +39,7 @@ const AdminUsers = () => {
 
       console.log('Fetched profiles:', profiles?.length);
 
-      // Get listing counts for each user
+      // Get listing counts for each user and properly type the notification_categories
       const usersWithStats: UserWithStats[] = await Promise.all(
         profiles.map(async (profile) => {
           const { count } = await supabase
@@ -47,9 +47,17 @@ const AdminUsers = () => {
             .select('*', { count: 'exact', head: true })
             .eq('user_id', profile.id);
 
+          // Properly cast notification_categories from Json to string[] | null
+          const notificationCategories = profile.notification_categories 
+            ? (Array.isArray(profile.notification_categories) 
+                ? profile.notification_categories as string[]
+                : [])
+            : null;
+
           return {
             ...profile,
-            listing_count: count || 0
+            listing_count: count || 0,
+            notification_categories: notificationCategories
           };
         })
       );
