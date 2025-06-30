@@ -47,13 +47,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('🔍 Fetching profile for user:', userId);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching profile:', error);
+        
+        // If profile doesn't exist, create one
+        if (error.code === 'PGRST116') {
+          console.log('📝 Profile not found, creating new profile...');
+          const { data: userData } = await supabase.auth.getUser();
+          
+          if (userData.user) {
+            const { data: newProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert({
+                id: userId,
+                email: userData.user.email || '',
+                full_name: userData.user.user_metadata?.full_name || null,
+                display_email: userData.user.email || '',
+                role: 'user'
+              })
+              .select()
+              .single();
+
+            if (createError) {
+              console.error('❌ Error creating profile:', createError);
+              throw createError;
+            } else {
+              console.log('✅ Profile created successfully:', newProfile);
+              const transformedProfile: Profile = {
+                ...newProfile,
+                notification_categories: Array.isArray(newProfile.notification_categories) 
+                  ? newProfile.notification_categories as string[]
+                  : []
+              };
+              setProfile(transformedProfile);
+              setIsAdmin(newProfile.role === 'admin');
+              return;
+            }
+          }
+        }
+        
+        throw error;
+      }
       
       // Transform the data to match our Profile interface
       const transformedProfile: Profile = {
@@ -63,21 +105,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           : []
       };
       
+      console.log('✅ Profile fetched successfully:', transformedProfile);
       setProfile(transformedProfile);
       setIsAdmin(data?.role === 'admin');
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('💥 Fatal error in fetchProfile:', error);
       setProfile(null);
       setIsAdmin(false);
     }
   };
 
   useEffect(() => {
-    console.log('Setting up auth state listener...');
+    console.log('🚀 Setting up auth state listener...');
     
     // Check for existing session first
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.email);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('❌ Error getting session:', error);
+      }
+      
+      console.log('🔍 Initial session check:', session?.user?.email || 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -86,15 +133,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setProfile(null);
         setIsAdmin(false);
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
     
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+        console.log('🔄 Auth state changed:', event, session?.user?.email || 'No session');
         
         setSession(session);
         setUser(session?.user ?? null);
@@ -111,7 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     return () => {
-      console.log('Cleaning up auth subscription');
+      console.log('🧹 Cleaning up auth subscription');
       subscription.unsubscribe();
     };
   }, []);

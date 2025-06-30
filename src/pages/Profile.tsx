@@ -27,7 +27,7 @@ interface Profile {
 }
 
 const Profile = () => {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile: authProfile, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -39,25 +39,35 @@ const Profile = () => {
   const userId = searchParams.get('userId');
 
   useEffect(() => {
-    console.log('Profile page useEffect:', { userId, userIdFromAuth: user?.id, profile });
+    console.log('👤 Profile page useEffect:', { 
+      userId, 
+      userIdFromAuth: user?.id, 
+      authProfile: authProfile?.email || 'null',
+      authLoading 
+    });
+    
+    if (authLoading) {
+      console.log('⏳ Still loading auth, waiting...');
+      return;
+    }
     
     if (userId && userId !== user?.id) {
       // Viewing another user's profile
-      console.log('Fetching other user profile for:', userId);
+      console.log('👥 Fetching other user profile for:', userId);
       fetchOtherUserProfile(userId);
     } else {
       // Viewing own profile
-      console.log('Setting own profile:', profile);
-      setDisplayProfile(profile);
+      console.log('👤 Setting own profile:', authProfile?.email || 'null');
+      setDisplayProfile(authProfile);
       setIsOtherUserProfile(false);
       setLoading(false);
     }
-  }, [userId, user?.id, profile]);
+  }, [userId, user?.id, authProfile, authLoading]);
 
   const fetchOtherUserProfile = async (targetUserId: string) => {
     setLoading(true);
     try {
-      console.log('Fetching profile for user:', targetUserId);
+      console.log('🔍 Fetching profile for user:', targetUserId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -65,7 +75,7 @@ const Profile = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching user profile:', error);
+        console.error('❌ Error fetching user profile:', error);
         throw error;
       }
 
@@ -77,11 +87,11 @@ const Profile = () => {
           : []
       };
 
-      console.log('Other user profile fetched:', transformedProfile);
+      console.log('✅ Other user profile fetched:', transformedProfile.email);
       setDisplayProfile(transformedProfile);
       setIsOtherUserProfile(true);
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error('💥 Error fetching user profile:', error);
       toast({
         title: "Error",
         description: "Failed to load user profile",
@@ -126,6 +136,12 @@ const Profile = () => {
       </div>
     );
   }
+
+  console.log('🎨 Rendering profile page:', {
+    displayProfile: displayProfile?.email || 'null',
+    isOtherUserProfile,
+    user: user?.email
+  });
 
   return (
     <div className="min-h-screen flex flex-col">

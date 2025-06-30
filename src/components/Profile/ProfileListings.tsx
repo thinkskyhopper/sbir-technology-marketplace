@@ -29,15 +29,27 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   const [requestChangeDialogOpen, setRequestChangeDialogOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
 
+  console.log('📋 ProfileListings props:', {
+    userId,
+    isOwnProfile,
+    targetUserId,
+    userEmail: user?.email,
+    isAdmin
+  });
+
   const { data: listings, isLoading, error } = useQuery({
     queryKey: ['profile-listings', targetUserId],
     queryFn: async () => {
       if (!targetUserId) {
-        console.log('No target user ID, returning empty array');
+        console.log('❌ No target user ID, returning empty array');
         return [];
       }
       
-      console.log('Fetching listings for user:', targetUserId, 'isOwnProfile:', isOwnProfile, 'isAdmin:', isAdmin);
+      console.log('🔍 Fetching listings for user:', targetUserId, {
+        isOwnProfile, 
+        isAdmin,
+        userEmail: user?.email
+      });
       
       try {
         let query = supabase
@@ -48,24 +60,33 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
 
         // Show all statuses for own profile or admin, only active for others
         if (!isOwnProfile && !isAdmin) {
+          console.log('🔒 Filtering to Active listings only (not own profile or admin)');
           query = query.eq('status', 'Active');
+        } else {
+          console.log('👁️ Showing all listings (own profile or admin)');
         }
 
         const { data, error } = await query;
 
         if (error) {
-          console.error('Error fetching profile listings:', error);
+          console.error('❌ Error fetching profile listings:', error);
           throw error;
         }
 
-        console.log('Profile listings fetched successfully:', data?.length || 0);
+        console.log('✅ Profile listings fetched successfully:', {
+          count: data?.length || 0,
+          listings: data?.map(l => ({ id: l.id, title: l.title, status: l.status })) || []
+        });
+        
         return data || [];
       } catch (error) {
-        console.error('Query failed:', error);
+        console.error('💥 Query failed:', error);
         throw error;
       }
     },
-    enabled: !!targetUserId
+    enabled: !!targetUserId,
+    retry: 1,
+    staleTime: 30000 // 30 seconds
   });
 
   const handleEditListing = (listing: SBIRListing) => {
@@ -79,11 +100,12 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   };
 
   if (isLoading) {
+    console.log('⏳ ProfileListings showing loading state');
     return <ProfileListingsLoading />;
   }
 
   if (error) {
-    console.error('ProfileListings error:', error);
+    console.error('💥 ProfileListings error:', error);
     return (
       <Card>
         <CardContent className="p-6">
@@ -94,6 +116,12 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
       </Card>
     );
   }
+
+  console.log('🎨 Rendering ProfileListings:', {
+    listingsCount: listings?.length || 0,
+    isOwnProfile,
+    targetUserId
+  });
 
   return (
     <>
