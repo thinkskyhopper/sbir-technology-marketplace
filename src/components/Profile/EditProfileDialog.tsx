@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +18,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 const SBIR_CATEGORIES = [
   "Aerospace",
   "Biotechnology",
-  "Defense",
+  "Defense", 
   "Energy",
   "Healthcare",
   "Information Technology",
