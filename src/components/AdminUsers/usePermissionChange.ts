@@ -22,7 +22,7 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
       // First, let's verify the user exists and get their current state
       const { data: currentUser, error: fetchError } = await supabase
         .from('profiles')
-        .select('id, can_submit_listings')
+        .select('id, can_submit_listings, role')
         .eq('id', userId)
         .single();
 
@@ -33,27 +33,57 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
 
       console.log('Current user state:', currentUser);
 
-      // Now update the user's permission - don't use .single() here
-      const { data, error } = await supabase
+      // Check if user is admin (admins should always have can_submit_listings = true)
+      if (currentUser.role === 'admin' && !canSubmit) {
+        console.log('Cannot disable submission for admin users');
+        toast({
+          title: "Cannot Update",
+          description: "Admin users must always have submission permissions enabled.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Try the update with more detailed logging
+      console.log('Attempting database update...');
+      const updateResult = await supabase
         .from('profiles')
         .update({ can_submit_listings: canSubmit })
         .eq('id', userId)
-        .select('id, can_submit_listings');
+        .select('id, can_submit_listings, role');
 
-      if (error) {
-        console.error('Database error:', error);
-        throw error;
+      console.log('Raw update result:', updateResult);
+
+      if (updateResult.error) {
+        console.error('Database error:', updateResult.error);
+        throw updateResult.error;
       }
 
-      console.log('Database update result:', data);
-      
       // Check if any rows were updated
-      if (!data || data.length === 0) {
-        console.error('No rows were updated - user might not exist');
-        throw new Error('Failed to update user permissions - user not found');
+      if (!updateResult.data || updateResult.data.length === 0) {
+        console.error('No rows were updated - possible RLS issue');
+        
+        // Try to get more information about the current user's permissions
+        const { data: authUser } = await supabase.auth.getUser();
+        console.log('Current auth user:', authUser?.user?.id);
+        
+        // Check if the current user has admin role
+        const { data: currentUserProfile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', authUser?.user?.id)
+          .single();
+        
+        console.log('Current user profile:', currentUserProfile);
+        
+        if (currentUserProfile?.role !== 'admin') {
+          throw new Error('Insufficient permissions - admin access required');
+        } else {
+          throw new Error('Failed to update user permissions - database constraint or RLS policy issue');
+        }
       }
       
-      const updatedUser = data[0];
+      const updatedUser = updateResult.data[0];
       console.log('Permission updated successfully. New value:', updatedUser.can_submit_listings);
       
       // Verify the update actually worked
@@ -78,9 +108,22 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
       
     } catch (error) {
       console.error('Error updating submission permissions:', error);
+      
+      let errorMessage = "Failed to update user permissions";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Insufficient permissions')) {
+          errorMessage = "You don't have permission to update user settings";
+        } else if (error.message.includes('RLS policy')) {
+          errorMessage = "Database security policy prevented the update";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to update user permissions",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
