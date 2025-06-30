@@ -4,16 +4,12 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminDashboardCard from "@/components/AdminDashboardCard";
-import { CSVUploadDialog } from "@/components/CSVUpload";
 import { useAdminDashboardStats } from "@/hooks/useAdminDashboardStats";
-import { FileText, Building2, Images, Users, Upload } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { FileText, Building2, Images, Users } from "lucide-react";
 
 const Admin = () => {
   const { user } = useAuth();
   const { pendingChangeRequests, pendingListings, loading } = useAdminDashboardStats();
-  const [showCSVUpload, setShowCSVUpload] = useState(false);
 
   const adminCards = [
     {
@@ -46,11 +42,6 @@ const Admin = () => {
     }
   ];
 
-  const handleCSVUploadSuccess = () => {
-    // Refresh the dashboard stats after successful upload
-    window.location.reload();
-  };
-
   return (
     <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen bg-background flex flex-col">
@@ -58,21 +49,14 @@ const Admin = () => {
         
         <div className="container mx-auto px-6 py-8 flex-1">
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-3">
-                <Users className="w-8 h-8 text-primary" />
-                <div>
-                  <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                  <p className="text-muted-foreground">
-                    Welcome back, {user?.user_metadata?.full_name || 'Admin'}. Manage SBIR listings and platform content.
-                  </p>
-                </div>
+            <div className="flex items-center space-x-3">
+              <Users className="w-8 h-8 text-primary" />
+              <div>
+                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                <p className="text-muted-foreground">
+                  Welcome back, {user?.user_metadata?.full_name || 'Admin'}. Manage SBIR listings and platform content.
+                </p>
               </div>
-              
-              <Button onClick={() => setShowCSVUpload(true)} className="flex items-center gap-2">
-                <Upload className="w-4 h-4" />
-                Bulk Import CSV
-              </Button>
             </div>
           </div>
 
@@ -104,12 +88,6 @@ const Admin = () => {
               </div>
             </div>
           )}
-
-          <CSVUploadDialog
-            open={showCSVUpload}
-            onOpenChange={setShowCSVUpload}
-            onSuccess={handleCSVUploadSuccess}
-          />
         </div>
 
         <Footer />

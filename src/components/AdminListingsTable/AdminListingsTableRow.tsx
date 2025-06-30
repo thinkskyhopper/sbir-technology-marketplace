@@ -129,9 +129,12 @@ const AdminListingsTableRow = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="cursor-help">
-                  <p className="text-sm font-medium">
+                  <Link 
+                    to={`/profile?userId=${listing.user_id}`}
+                    className="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+                  >
                     {listing.profiles.full_name || 'N/A'}
-                  </p>
+                  </Link>
                   <p className="text-xs text-muted-foreground">
                     {listing.profiles.email}
                   </p>
