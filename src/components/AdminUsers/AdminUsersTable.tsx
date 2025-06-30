@@ -41,26 +41,37 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
 
   const handleSubmissionPermissionChange = async (userId: string, canSubmit: boolean) => {
     try {
+      console.log('Updating submission permissions for user:', userId, 'to:', canSubmit);
+      
       const { error } = await supabase
         .from('profiles')
         .update({ can_submit_listings: canSubmit })
         .eq('id', userId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+
+      console.log('Successfully updated submission permissions');
 
       toast({
         title: "Success",
         description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
+        duration: 5000, // Auto-dismiss after 5 seconds
       });
 
-      // Invalidate and refetch the users query
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      // Invalidate and refetch the users query to refresh the UI
+      await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      console.log('Query invalidated and refetch triggered');
+      
     } catch (error) {
       console.error('Error updating submission permissions:', error);
       toast({
         title: "Error",
         description: "Failed to update user permissions",
         variant: "destructive",
+        duration: 5000, // Auto-dismiss after 5 seconds
       });
     }
   };
