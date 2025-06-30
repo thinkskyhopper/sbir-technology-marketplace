@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               email: userData.user.email || '',
               full_name: userData.user.user_metadata?.full_name || null,
               display_email: userData.user.email || '',
-              role: 'user'
+              role: 'user' as const
             };
             
             console.log('📝 Creating profile with data:', newProfileData);
