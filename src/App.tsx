@@ -9,6 +9,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import AdminChangeRequests from "./pages/AdminChangeRequests";
+import AdminListings from "./pages/AdminListings";
+import AdminCategoryImages from "./pages/AdminCategoryImages";
 import ExpertValue from "./pages/ExpertValue";
 import ListingDetail from "./pages/ListingDetail";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -29,6 +32,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/change-requests" element={<AdminChangeRequests />} />
+            <Route path="/admin/listings" element={<AdminListings />} />
+            <Route path="/admin/category-images" element={<AdminCategoryImages />} />
             <Route path="/expert-value" element={<ExpertValue />} />
             <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
