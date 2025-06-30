@@ -5,14 +5,23 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminListingsTable from "@/components/AdminListingsTable";
 import CreateListingDialog from "@/components/CreateListingDialog";
+import { CSVUploadDialog } from "@/components/CSVUpload";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AdminListings = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showCSVUploadDialog, setShowCSVUploadDialog] = useState(false);
+
+  const handleCSVUploadSuccess = () => {
+    // Refresh the listings data after successful CSV upload
+    queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+  };
 
   return (
     <ProtectedRoute requireAdmin={true}>
@@ -38,10 +47,21 @@ const AdminListings = () => {
               </div>
             </div>
             
-            <Button onClick={() => setShowCreateDialog(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add New Listing
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowCSVUploadDialog(true)}
+                className="flex items-center space-x-2"
+              >
+                <Upload className="w-4 h-4" />
+                <span>Import CSV</span>
+              </Button>
+              
+              <Button onClick={() => setShowCreateDialog(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add New Listing
+              </Button>
+            </div>
           </div>
 
           <AdminListingsTable />
@@ -49,6 +69,12 @@ const AdminListings = () => {
           <CreateListingDialog 
             open={showCreateDialog} 
             onOpenChange={setShowCreateDialog} 
+          />
+          
+          <CSVUploadDialog
+            open={showCSVUploadDialog}
+            onOpenChange={setShowCSVUploadDialog}
+            onSuccess={handleCSVUploadSuccess}
           />
         </div>
 
