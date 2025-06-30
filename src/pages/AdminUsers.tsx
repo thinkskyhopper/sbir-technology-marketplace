@@ -3,18 +3,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Users, Mail, Building, Calendar, FileText } from "lucide-react";
+import { Users, Mail, Calendar, FileText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useNavigate } from "react-router-dom";
 
 interface UserWithStats {
   id: string;
   email: string;
   full_name: string | null;
-  company_name: string | null;
   role: string;
   created_at: string;
   listing_count: number;
@@ -22,6 +22,7 @@ interface UserWithStats {
 
 const AdminUsers = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users'],
@@ -33,7 +34,6 @@ const AdminUsers = () => {
           id,
           email,
           full_name,
-          company_name,
           role,
           created_at
         `)
@@ -62,8 +62,12 @@ const AdminUsers = () => {
 
   const totalUsers = users?.length || 0;
   const adminUsers = users?.filter(user => user.role === 'admin').length || 0;
+  const consultantUsers = users?.filter(user => user.role === 'consultant').length || 0;
   const regularUsers = users?.filter(user => user.role === 'user').length || 0;
-  const totalListings = users?.reduce((sum, user) => sum + user.listing_count, 0) || 0;
+
+  const handleUserClick = (userId: string) => {
+    navigate(`/profile?userId=${userId}`);
+  };
 
   if (isLoading) {
     return (
@@ -120,19 +124,19 @@ const AdminUsers = () => {
               
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Regular Users</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Consultants</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{regularUsers}</div>
+                  <div className="text-2xl font-bold">{consultantUsers}</div>
                 </CardContent>
               </Card>
               
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Listings</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Regular Users</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{totalListings}</div>
+                  <div className="text-2xl font-bold">{regularUsers}</div>
                 </CardContent>
               </Card>
             </div>
@@ -151,7 +155,6 @@ const AdminUsers = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>User</TableHead>
-                    <TableHead>Company</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Listings</TableHead>
                     <TableHead>Joined</TableHead>
@@ -169,9 +172,12 @@ const AdminUsers = () => {
                               </span>
                             </div>
                             <div>
-                              <div className="font-medium">
+                              <button
+                                onClick={() => handleUserClick(user.id)}
+                                className="font-medium text-primary hover:underline cursor-pointer"
+                              >
                                 {user.full_name || 'No name provided'}
-                              </div>
+                              </button>
                               <div className="flex items-center text-sm text-muted-foreground">
                                 <Mail className="w-3 h-3 mr-1" />
                                 {user.email}
@@ -181,21 +187,17 @@ const AdminUsers = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {user.company_name ? (
-                          <div className="flex items-center text-sm">
-                            <Building className="w-3 h-3 mr-1 text-muted-foreground" />
-                            {user.company_name}
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">No company</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
                         <Badge 
-                          variant={user.role === 'admin' ? 'default' : 'secondary'}
-                          className={user.role === 'admin' ? 'bg-amber-500 hover:bg-amber-600' : ''}
+                          variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
+                          className={
+                            user.role === 'admin' 
+                              ? 'bg-amber-500 hover:bg-amber-600' 
+                              : user.role === 'consultant'
+                              ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                              : ''
+                          }
                         >
-                          {user.role === 'admin' ? 'Administrator' : 'User'}
+                          {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
                         </Badge>
                       </TableCell>
                       <TableCell>

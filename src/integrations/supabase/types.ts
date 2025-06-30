@@ -310,7 +310,7 @@ export type Database = {
       change_request_type: "change" | "deletion"
       listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
       sbir_phase: "Phase I" | "Phase II"
-      user_role: "admin" | "user"
+      user_role: "admin" | "user" | "consultant"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -430,7 +430,7 @@ export const Constants = {
       change_request_type: ["change", "deletion"],
       listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
       sbir_phase: ["Phase I", "Phase II"],
-      user_role: ["admin", "user"],
+      user_role: ["admin", "user", "consultant"],
     },
   },
 } as const
