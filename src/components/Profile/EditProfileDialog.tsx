@@ -10,21 +10,21 @@ import { Form } from "@/components/ui/form";
 import ProfileFormFields from "./ProfileFormFields";
 import { useProfileForm } from "./useProfileForm";
 
-interface Profile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  display_email: string | null;
-  company_name: string | null;
-  bio: string | null;
-  role: string;
-  notification_categories: string[] | null;
-}
-
 interface EditProfileDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  profile?: Profile | null;
+  profile?: {
+    id: string;
+    email: string;
+    full_name: string | null;
+    display_email: string | null;
+    company_name: string | null;
+    bio: string | null;
+    role: string;
+    notification_categories: string[] | null;
+    created_at?: string;
+    updated_at?: string;
+  } | null;
 }
 
 const EditProfileDialog = ({ open, onOpenChange, profile: propProfile }: EditProfileDialogProps) => {

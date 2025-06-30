@@ -17,8 +17,8 @@ interface Profile {
   bio: string | null;
   role: string;
   notification_categories: string[] | null;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const useProfileForm = (profile?: Profile | null) => {

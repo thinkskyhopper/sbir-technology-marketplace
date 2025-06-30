@@ -15,7 +15,8 @@ interface Profile {
   company_name: string | null;
   bio: string | null;
   role: string;
-  created_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface ProfileHeaderProps {
@@ -121,12 +122,14 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
               <span className="text-sm">{displayProfile.company_name}</span>
             </div>
           )}
-          <div className="flex items-center space-x-2">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm">
-              Joined {new Date(displayProfile.created_at).toLocaleDateString()}
-            </span>
-          </div>
+          {displayProfile.created_at && (
+            <div className="flex items-center space-x-2">
+              <Calendar className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm">
+                Joined {new Date(displayProfile.created_at).toLocaleDateString()}
+              </span>
+            </div>
+          )}
         </div>
         {displayProfile.bio && (
           <div className="mt-4">
