@@ -10,6 +10,7 @@ export interface Profile {
   bio: string | null;
   role: string;
   notification_categories: string[] | null;
+  can_submit_listings: boolean;
   created_at: string;
   updated_at: string;
 }

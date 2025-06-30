@@ -210,6 +210,7 @@ export type Database = {
       profiles: {
         Row: {
           bio: string | null
+          can_submit_listings: boolean
           company_name: string | null
           created_at: string
           display_email: string | null
@@ -222,6 +223,7 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
+          can_submit_listings?: boolean
           company_name?: string | null
           created_at?: string
           display_email?: string | null
@@ -234,6 +236,7 @@ export type Database = {
         }
         Update: {
           bio?: string | null
+          can_submit_listings?: boolean
           company_name?: string | null
           created_at?: string
           display_email?: string | null

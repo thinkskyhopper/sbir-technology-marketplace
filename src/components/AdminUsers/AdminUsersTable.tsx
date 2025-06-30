@@ -4,8 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { useSorting } from "@/hooks/useSorting";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserWithStats {
   id: string;
@@ -14,6 +18,7 @@ interface UserWithStats {
   role: string;
   created_at: string;
   listing_count: number;
+  can_submit_listings: boolean;
 }
 
 interface AdminUsersTableProps {
@@ -22,6 +27,8 @@ interface AdminUsersTableProps {
 
 const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   const { sortedData, sortState, handleSort } = useSorting(users || [], {
     column: 'created_at',
@@ -30,6 +37,32 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
 
   const handleUserClick = (userId: string) => {
     navigate(`/profile?userId=${userId}`);
+  };
+
+  const handleSubmissionPermissionChange = async (userId: string, canSubmit: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ can_submit_listings: canSubmit })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
+      });
+
+      // Invalidate and refetch the users query
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    } catch (error) {
+      console.error('Error updating submission permissions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update user permissions",
+        variant: "destructive",
+      });
+    }
   };
 
   const getSortIcon = (column: string) => {
@@ -71,6 +104,7 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
               <SortableTableHead column="full_name">User</SortableTableHead>
               <SortableTableHead column="role">Role</SortableTableHead>
               <SortableTableHead column="listing_count">Listings</SortableTableHead>
+              <TableHead>Can Submit</TableHead>
               <SortableTableHead column="created_at">Joined</SortableTableHead>
             </TableRow>
           </TableHeader>
@@ -122,6 +156,20 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
                       listing{user.listing_count !== 1 ? 's' : ''}
                     </span>
                   </div>
+                </TableCell>
+                <TableCell>
+                  <Select
+                    value={user.can_submit_listings ? 'enabled' : 'disabled'}
+                    onValueChange={(value) => handleSubmissionPermissionChange(user.id, value === 'enabled')}
+                  >
+                    <SelectTrigger className="w-28">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="enabled">Enabled</SelectItem>
+                      <SelectItem value="disabled">Disabled</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center text-sm text-muted-foreground">

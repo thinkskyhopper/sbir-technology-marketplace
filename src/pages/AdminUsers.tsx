@@ -16,6 +16,7 @@ interface UserWithStats {
   role: string;
   created_at: string;
   listing_count: number;
+  can_submit_listings: boolean;
 }
 
 const AdminUsers = () => {
@@ -24,7 +25,7 @@ const AdminUsers = () => {
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
-      // Get all users with their listing counts
+      // Get all users with their listing counts and submission permissions
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select(`
@@ -32,7 +33,8 @@ const AdminUsers = () => {
           email,
           full_name,
           role,
-          created_at
+          created_at,
+          can_submit_listings
         `)
         .order('created_at', { ascending: false });
 
