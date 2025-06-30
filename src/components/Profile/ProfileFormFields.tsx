@@ -1,5 +1,5 @@
 
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Control } from "react-hook-form";
@@ -13,19 +13,35 @@ interface ProfileFormFieldsProps {
 const ProfileFormFields = ({ control }: ProfileFormFieldsProps) => {
   return (
     <div className="space-y-6">
-      <FormField
-        control={control}
-        name="full_name"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Full Name</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter your full name" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={control}
+          name="first_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter your first name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="last_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter your last name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
 
       <FormField
         control={control}
@@ -40,9 +56,6 @@ const ProfileFormFields = ({ control }: ProfileFormFieldsProps) => {
                 {...field} 
               />
             </FormControl>
-            <FormDescription>
-              This email will be shown publicly instead of your signup email
-            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -62,9 +75,6 @@ const ProfileFormFields = ({ control }: ProfileFormFieldsProps) => {
                 {...field}
               />
             </FormControl>
-            <FormDescription>
-              {field.value?.length || 0}/500 characters
-            </FormDescription>
             <FormMessage />
           </FormItem>
         )}

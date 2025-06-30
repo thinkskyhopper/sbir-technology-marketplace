@@ -33,7 +33,8 @@ export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      full_name: "",
+      first_name: "",
+      last_name: "",
       display_email: "",
       bio: "",
       notification_categories: []
@@ -43,8 +44,14 @@ export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
   // Update form when profile data loads
   useEffect(() => {
     if (profile) {
+      // Split full_name into first and last name
+      const nameParts = (profile.full_name || "").split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
       form.reset({
-        full_name: profile.full_name || "",
+        first_name: firstName,
+        last_name: lastName,
         display_email: profile.display_email || "",
         bio: profile.bio || "",
         notification_categories: Array.isArray(profile.notification_categories) 
@@ -58,11 +65,14 @@ export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
     if (!user?.id) return;
 
     try {
+      // Combine first and last name into full_name for storage
+      const fullName = `${data.first_name} ${data.last_name}`.trim();
+
       const { error } = await supabase
         .from('profiles')
         .update({
-          full_name: data.full_name,
-          display_email: data.display_email,
+          full_name: fullName,
+          display_email: data.display_email || null,
           bio: data.bio || null,
           notification_categories: data.notification_categories || []
         })
