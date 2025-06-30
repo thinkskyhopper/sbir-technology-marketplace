@@ -8,12 +8,25 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { profileSchema, ProfileFormData } from "./profileFormSchema";
 
-export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  display_email: string | null;
+  company_name: string | null;
+  bio: string | null;
+  role: string;
+  notification_categories: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export const useProfileForm = (profile?: Profile | null) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: fetchedProfile, isLoading } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
@@ -25,10 +38,19 @@ export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match our Profile interface
+      return {
+        ...data,
+        notification_categories: Array.isArray(data.notification_categories) 
+          ? data.notification_categories as string[]
+          : []
+      };
     },
-    enabled: !!user?.id && isOpen
+    enabled: !!user?.id && !profile
   });
+
+  const displayProfile = profile || fetchedProfile;
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -43,23 +65,21 @@ export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
 
   // Update form when profile data loads
   useEffect(() => {
-    if (profile) {
+    if (displayProfile) {
       // Split full_name into first and last name
-      const nameParts = (profile.full_name || "").split(" ");
+      const nameParts = (displayProfile.full_name || "").split(" ");
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
 
       form.reset({
         first_name: firstName,
         last_name: lastName,
-        display_email: profile.display_email || "",
-        bio: profile.bio || "",
-        notification_categories: Array.isArray(profile.notification_categories) 
-          ? profile.notification_categories as string[]
-          : []
+        display_email: displayProfile.display_email || "",
+        bio: displayProfile.bio || "",
+        notification_categories: displayProfile.notification_categories || []
       });
     }
-  }, [profile, form]);
+  }, [displayProfile, form]);
 
   const onSubmit = async (data: ProfileFormData) => {
     if (!user?.id) return;
@@ -87,7 +107,6 @@ export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
 
       // Refresh the profile data
       queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
-      onClose();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -100,7 +119,7 @@ export const useProfileForm = (isOpen: boolean, onClose: () => void) => {
 
   return {
     form,
-    profile,
+    profile: displayProfile,
     isLoading,
     onSubmit
   };

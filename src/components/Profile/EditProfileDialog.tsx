@@ -6,6 +6,7 @@ import { Edit } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Form } from "@/components/ui/form";
 import ProfileFormFields from "./ProfileFormFields";
 import { useProfileForm } from "./useProfileForm";
 
@@ -42,7 +43,14 @@ const EditProfileDialog = ({ open, onOpenChange, profile: propProfile }: EditPro
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match our Profile interface
+      return {
+        ...data,
+        notification_categories: Array.isArray(data.notification_categories) 
+          ? data.notification_categories as string[]
+          : []
+      };
     },
     enabled: !!user?.id && !propProfile
   });
@@ -51,7 +59,12 @@ const EditProfileDialog = ({ open, onOpenChange, profile: propProfile }: EditPro
   const dialogOpen = open !== undefined ? open : isOpen;
   const setDialogOpen = onOpenChange || setIsOpen;
 
-  const form = useProfileForm(displayProfile);
+  const formHook = useProfileForm(displayProfile);
+
+  const handleSubmit = async (data: any) => {
+    await formHook.onSubmit(data);
+    setDialogOpen(false);
+  };
 
   if (!displayProfile) return null;
 
@@ -69,7 +82,19 @@ const EditProfileDialog = ({ open, onOpenChange, profile: propProfile }: EditPro
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
-        <ProfileFormFields form={form} onClose={() => setDialogOpen(false)} />
+        <Form {...formHook.form}>
+          <form onSubmit={formHook.form.handleSubmit(handleSubmit)} className="space-y-6">
+            <ProfileFormFields control={formHook.form.control} />
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

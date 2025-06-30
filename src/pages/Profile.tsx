@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,12 +10,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "react-router-dom";
 
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  display_email: string | null;
+  company_name: string | null;
+  bio: string | null;
+  role: string;
+  notification_categories: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const Profile = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [displayProfile, setDisplayProfile] = useState(profile);
+  const [displayProfile, setDisplayProfile] = useState<Profile | null>(profile);
   const [isOtherUserProfile, setIsOtherUserProfile] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +56,15 @@ const Profile = () => {
 
       if (error) throw error;
 
-      setDisplayProfile(data);
+      // Transform the data to match our Profile interface
+      const transformedProfile: Profile = {
+        ...data,
+        notification_categories: Array.isArray(data.notification_categories) 
+          ? data.notification_categories as string[]
+          : []
+      };
+
+      setDisplayProfile(transformedProfile);
       setIsOtherUserProfile(true);
     } catch (error) {
       console.error('Error fetching user profile:', error);

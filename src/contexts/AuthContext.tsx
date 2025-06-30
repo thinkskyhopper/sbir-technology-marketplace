@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,7 +54,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Transform the data to match our Profile interface
+      const transformedProfile: Profile = {
+        ...data,
+        notification_categories: Array.isArray(data.notification_categories) 
+          ? data.notification_categories as string[]
+          : []
+      };
+      
+      setProfile(transformedProfile);
       setIsAdmin(data?.role === 'admin');
     } catch (error) {
       console.error('Error fetching profile:', error);
