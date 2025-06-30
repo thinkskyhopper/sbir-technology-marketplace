@@ -89,10 +89,12 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
                 {displayProfile.full_name || 'No name provided'}
               </CardTitle>
               <div className="flex items-center space-x-4 mt-2">
-                <div className="flex items-center text-muted-foreground">
-                  <Mail className="w-4 h-4 mr-1" />
-                  <span className="text-sm">{displayProfile.display_email || displayProfile.email}</span>
-                </div>
+                {displayProfile.display_email && (
+                  <div className="flex items-center text-muted-foreground">
+                    <Mail className="w-4 h-4 mr-1" />
+                    <span className="text-sm">{displayProfile.display_email}</span>
+                  </div>
+                )}
                 <Badge 
                   variant={displayProfile.role === 'admin' ? 'default' : displayProfile.role === 'consultant' ? 'secondary' : 'outline'}
                   className={

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
 import ProfileListings from "@/components/Profile/ProfileListings";
 import EditProfileDialog from "@/components/Profile/EditProfileDialog";
@@ -81,64 +83,76 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="text-center py-8">
-            <p>Please sign in to view profiles.</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="text-center py-8">
+              <p>Please sign in to view profiles.</p>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="text-center py-8">
-            <p>Loading profile...</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="text-center py-8">
+              <p>Loading profile...</p>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <ProfileHeader 
-        profile={displayProfile}
-        isOwnProfile={!isOtherUserProfile}
-        onEdit={() => setIsEditDialogOpen(true)}
-        userId={isOtherUserProfile ? userId : undefined}
-      />
-      
-      <Tabs defaultValue="listings" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="listings">Listings</TabsTrigger>
-          {!isOtherUserProfile && (
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          )}
-        </TabsList>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex-1 container mx-auto px-4 py-8 space-y-6">
+        <ProfileHeader 
+          profile={displayProfile}
+          isOwnProfile={!isOtherUserProfile}
+          onEdit={() => setIsEditDialogOpen(true)}
+          userId={isOtherUserProfile ? userId : undefined}
+        />
         
-        <TabsContent value="listings">
-          <ProfileListings 
-            userId={isOtherUserProfile ? userId : undefined}
-            isOwnProfile={!isOtherUserProfile}
-          />
-        </TabsContent>
-        
-        {!isOtherUserProfile && (
-          <TabsContent value="notifications">
-            <NotificationPreferences />
+        <Tabs defaultValue="listings" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="listings">Listings</TabsTrigger>
+            {!isOtherUserProfile && (
+              <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            )}
+          </TabsList>
+          
+          <TabsContent value="listings">
+            <ProfileListings 
+              userId={isOtherUserProfile ? userId : undefined}
+              isOwnProfile={!isOtherUserProfile}
+            />
           </TabsContent>
-        )}
-      </Tabs>
+          
+          {!isOtherUserProfile && (
+            <TabsContent value="notifications">
+              <NotificationPreferences />
+            </TabsContent>
+          )}
+        </Tabs>
 
-      <EditProfileDialog
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        profile={displayProfile}
-      />
+        <EditProfileDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          profile={displayProfile}
+        />
+      </div>
+      <Footer />
     </div>
   );
 };
