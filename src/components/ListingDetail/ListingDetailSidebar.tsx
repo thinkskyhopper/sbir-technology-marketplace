@@ -1,7 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, Mail, Clock, Tag, Settings } from "lucide-react";
+import ListingDetailRelatedListings from "./ListingDetailRelatedListings";
+import type { SBIRListing } from "@/types/listings";
 
 interface ListingDetailSidebarProps {
   listing: {
@@ -14,9 +15,16 @@ interface ListingDetailSidebarProps {
     phase: string;
   };
   onContactAdmin: () => void;
+  allListings?: SBIRListing[];
+  isCurrentUserAdmin?: boolean;
 }
 
-const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarProps) => {
+const ListingDetailSidebar = ({ 
+  listing, 
+  onContactAdmin, 
+  allListings = [], 
+  isCurrentUserAdmin = false 
+}: ListingDetailSidebarProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -133,6 +141,15 @@ const ListingDetailSidebar = ({ listing, onContactAdmin }: ListingDetailSidebarP
           </div>
         </CardContent>
       </Card>
+
+      {/* Related Listings */}
+      {allListings.length > 0 && (
+        <ListingDetailRelatedListings
+          currentListing={listing as SBIRListing}
+          allListings={allListings}
+          isCurrentUserAdmin={isCurrentUserAdmin}
+        />
+      )}
     </div>
   );
 };

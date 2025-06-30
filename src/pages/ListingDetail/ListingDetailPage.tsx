@@ -73,6 +73,7 @@ const ListingDetailPage = () => {
         onDeleteListing={handleDeleteListing}
         onRequestChange={handleRequestChange}
         onRequestDeletion={handleRequestDeletion}
+        allListings={listings}
       />
 
       <Footer />

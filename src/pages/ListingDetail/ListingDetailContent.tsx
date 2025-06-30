@@ -14,6 +14,7 @@ interface ListingDetailContentProps {
   onDeleteListing: (listingId: string) => void;
   onRequestChange: () => void;
   onRequestDeletion: () => void;
+  allListings?: SBIRListing[];
 }
 
 const ListingDetailContent = ({
@@ -24,7 +25,8 @@ const ListingDetailContent = ({
   onEditListing,
   onDeleteListing,
   onRequestChange,
-  onRequestDeletion
+  onRequestDeletion,
+  allListings = []
 }: ListingDetailContentProps) => {
   return (
     <>
@@ -49,6 +51,8 @@ const ListingDetailContent = ({
           <ListingDetailSidebar
             listing={listing}
             onContactAdmin={onContactAdmin}
+            allListings={allListings}
+            isCurrentUserAdmin={isAdmin}
           />
         </div>
       </div>
