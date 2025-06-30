@@ -38,6 +38,7 @@ const ProfileListings = ({ userId }: ProfileListingsProps) => {
         .from('sbir_listings')
         .select('*')
         .eq('user_id', targetUserId)
+        .in('status', ['Active', 'Sold'])
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -108,7 +109,7 @@ const ProfileListings = ({ userId }: ProfileListingsProps) => {
         <CardContent>
           {listings?.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
-              {isViewingOwnProfile ? "You haven't created any SBIR listings yet." : "This user hasn't created any SBIR listings yet."}
+              {isViewingOwnProfile ? "You don't have any active or sold SBIR listings." : "This user doesn't have any active or sold SBIR listings."}
             </div>
           ) : (
             <div className="space-y-4">
