@@ -1,9 +1,10 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import { User, Mail, Building, Calendar, Edit } from "lucide-react";
+import { Mail, Building, Calendar, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface Profile {
   id: string;
@@ -42,14 +43,19 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
     );
   }
 
+  // Get the user's initial for the avatar
+  const userInitial = (displayProfile.full_name || displayProfile.email)?.charAt(0).toUpperCase() || '?';
+
   return (
     <Card className="mb-8">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="w-8 h-8 text-primary" />
-            </div>
+            <Avatar className="w-16 h-16">
+              <AvatarFallback className="bg-primary/10 text-primary text-2xl font-medium">
+                {userInitial}
+              </AvatarFallback>
+            </Avatar>
             <div>
               <CardTitle className="text-2xl">
                 {displayProfile.full_name || 'No name provided'}
