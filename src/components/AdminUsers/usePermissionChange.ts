@@ -61,26 +61,8 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
 
       // Check if any rows were updated
       if (!updateResult.data || updateResult.data.length === 0) {
-        console.error('No rows were updated - possible RLS issue');
-        
-        // Try to get more information about the current user's permissions
-        const { data: authUser } = await supabase.auth.getUser();
-        console.log('Current auth user:', authUser?.user?.id);
-        
-        // Check if the current user has admin role
-        const { data: currentUserProfile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', authUser?.user?.id)
-          .single();
-        
-        console.log('Current user profile:', currentUserProfile);
-        
-        if (currentUserProfile?.role !== 'admin') {
-          throw new Error('Insufficient permissions - admin access required');
-        } else {
-          throw new Error('Failed to update user permissions - database constraint or RLS policy issue');
-        }
+        console.error('No rows were updated - this should not happen with the new RLS policy');
+        throw new Error('Failed to update user permissions - unexpected database issue');
       }
       
       const updatedUser = updateResult.data[0];
