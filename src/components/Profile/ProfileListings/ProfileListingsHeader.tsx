@@ -3,6 +3,7 @@ import { FileText } from "lucide-react";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import CreateListingDialog from "../../CreateListingDialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProfileListingsHeaderProps {
   listingCount: number;
@@ -17,6 +18,11 @@ const ProfileListingsHeader = ({
   createDialogOpen,
   onCreateDialogOpenChange
 }: ProfileListingsHeaderProps) => {
+  const { profile, isAdmin } = useAuth();
+  
+  // Check if user has permission to submit listings (admins always can)
+  const canSubmitListings = isAdmin || (profile?.can_submit_listings ?? false);
+
   return (
     <CardHeader>
       <div className="flex items-center justify-between">
@@ -25,7 +31,7 @@ const ProfileListingsHeader = ({
           <span>SBIR Listings</span>
           <Badge variant="secondary">{listingCount}</Badge>
         </CardTitle>
-        {isViewingOwnProfile && (
+        {isViewingOwnProfile && canSubmitListings && (
           <CreateListingDialog 
             open={createDialogOpen} 
             onOpenChange={onCreateDialogOpenChange} 

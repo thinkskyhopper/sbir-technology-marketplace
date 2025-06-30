@@ -26,6 +26,8 @@ export const AdminUsersTableRow = ({
     onPermissionChange(user.id, canSubmit);
   };
   
+  const isAdmin = user.role === 'admin';
+  
   return (
     <TableRow key={user.id}>
       <TableCell>
@@ -75,22 +77,35 @@ export const AdminUsersTableRow = ({
         </div>
       </TableCell>
       <TableCell>
-        <Select
-          key={`${user.id}-${user.can_submit_listings}`}
-          value={user.can_submit_listings ? 'enabled' : 'disabled'}
-          onValueChange={handlePermissionChange}
-          disabled={isUpdating}
-        >
-          <SelectTrigger className="w-28">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="enabled">Enabled</SelectItem>
-            <SelectItem value="disabled">Disabled</SelectItem>
-          </SelectContent>
-        </Select>
-        {isUpdating && (
-          <div className="text-xs text-muted-foreground mt-1">Updating...</div>
+        {isAdmin ? (
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+              Always Enabled
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              (Admin privilege)
+            </span>
+          </div>
+        ) : (
+          <>
+            <Select
+              key={`${user.id}-${user.can_submit_listings}`}
+              value={user.can_submit_listings ? 'enabled' : 'disabled'}
+              onValueChange={handlePermissionChange}
+              disabled={isUpdating}
+            >
+              <SelectTrigger className="w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="enabled">Enabled</SelectItem>
+                <SelectItem value="disabled">Disabled</SelectItem>
+              </SelectContent>
+            </Select>
+            {isUpdating && (
+              <div className="text-xs text-muted-foreground mt-1">Updating...</div>
+            )}
+          </>
         )}
       </TableCell>
       <TableCell>

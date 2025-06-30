@@ -20,7 +20,7 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
   const [spamScore, setSpamScore] = useState(0);
   
   const { createListing } = useListings();
-  const { user, isAdmin } = useAuth();
+  const { user, profile, isAdmin } = useAuth();
   const { toast } = useToast();
   
   // Rate limiting: max 3 submissions per hour per user
@@ -31,6 +31,18 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
 
   const onSubmit = async (data: ListingFormData) => {
     if (!user) return;
+
+    // Check if user has permission to submit listings (admins always can)
+    const canSubmitListings = isAdmin || (profile?.can_submit_listings ?? false);
+    
+    if (!canSubmitListings) {
+      toast({
+        title: "Submission Not Allowed",
+        description: "Your account does not have permission to submit listings. Please contact an administrator if you believe this is an error.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     // Check honeypot field
     if (honeypotValue) {

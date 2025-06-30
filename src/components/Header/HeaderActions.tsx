@@ -10,25 +10,30 @@ interface HeaderActionsProps {
 }
 
 const HeaderActions = ({ onPostListingClick }: HeaderActionsProps) => {
-  const { user } = useAuth();
+  const { user, profile, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleAuthClick = () => {
     navigate('/auth');
   };
 
+  // Check if user can submit listings (admins always can, others based on profile setting)
+  const canSubmitListings = isAdmin || (profile?.can_submit_listings ?? false);
+
   return (
     <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
       {user ? (
         <>
-          <Button 
-            variant="outline" 
-            onClick={onPostListingClick} 
-            className="border-primary/20 hover:border-primary/40 h-8 sm:h-10 text-xs sm:text-sm px-2 sm:px-4"
-          >
-            <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-            <span className="hidden sm:inline">Post Listing</span>
-          </Button>
+          {canSubmitListings && (
+            <Button 
+              variant="outline" 
+              onClick={onPostListingClick} 
+              className="border-primary/20 hover:border-primary/40 h-8 sm:h-10 text-xs sm:text-sm px-2 sm:px-4"
+            >
+              <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Post Listing</span>
+            </Button>
+          )}
           
           <HeaderUserMenu />
         </>
