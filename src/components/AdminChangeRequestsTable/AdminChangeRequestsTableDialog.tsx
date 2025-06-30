@@ -5,7 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, X, Clock, User, Building2, Calendar, FileText } from "lucide-react";
+import { Check, X, Clock, User, Building2, Calendar, FileText, Save } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useChangeRequests } from "@/hooks/useChangeRequests";
 import type { ListingChangeRequest } from "@/types/changeRequests";
 
 interface AdminChangeRequestsTableDialogProps {
@@ -35,15 +38,26 @@ export const AdminChangeRequestsTableDialog = ({
   onReject,
   getAdminInfo
 }: AdminChangeRequestsTableDialogProps) => {
+  const [savingNotes, setSavingNotes] = useState(false);
+  const { updateChangeRequestStatus } = useChangeRequests();
+  const { toast } = useToast();
+
   if (!selectedRequest) return null;
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return 'secondary';
+      case 'approved': return 'default';
+      case 'rejected': return 'destructive';
+      default: return 'secondary';
     }
+  };
+
+  const getStatusBadgeClassName = (status: string) => {
+    if (status === 'approved') {
+      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+    }
+    return '';
   };
 
   const formatDate = (dateString: string) => {
@@ -56,6 +70,39 @@ export const AdminChangeRequestsTableDialog = ({
     });
   };
 
+  const handleSaveInternalNotes = async () => {
+    if (!selectedRequest || !adminNotes.trim()) return;
+
+    try {
+      setSavingNotes(true);
+      await updateChangeRequestStatus(
+        selectedRequest.id, 
+        selectedRequest.status as 'approved' | 'rejected', 
+        adminNotes
+      );
+      
+      toast({
+        title: "Notes Saved",
+        description: "Internal admin notes have been updated successfully.",
+      });
+      
+      // Update the selected request with new notes
+      selectedRequest.admin_notes = adminNotes;
+      setAdminNotes("");
+    } catch (error) {
+      console.error('Error saving internal notes:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save notes. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingNotes(false);
+    }
+  };
+
+  const isProcessed = selectedRequest.status !== 'pending';
+
   return (
     <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -63,8 +110,11 @@ export const AdminChangeRequestsTableDialog = ({
           <DialogTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5" />
             <span>Change Request Details</span>
-            <Badge className={getStatusColor(selectedRequest.status)}>
-              {selectedRequest.status}
+            <Badge 
+              variant={getStatusBadgeVariant(selectedRequest.status)}
+              className={getStatusBadgeClassName(selectedRequest.status)}
+            >
+              {selectedRequest.status.charAt(0).toUpperCase() + selectedRequest.status.slice(1)}
             </Badge>
           </DialogTitle>
         </DialogHeader>
@@ -164,34 +214,64 @@ export const AdminChangeRequestsTableDialog = ({
                   rows={3}
                 />
                 {selectedRequest.admin_notes && (
-                  <div className="mt-2 p-3 bg-gray-50 rounded-md">
-                    <strong>Current Internal Notes:</strong>
-                    <p className="whitespace-pre-wrap">{selectedRequest.admin_notes}</p>
+                  <div className="mt-2">
+                    <Label className="text-sm font-medium">Current Internal Notes:</Label>
+                    <div className="mt-1 p-3 bg-muted rounded-md border">
+                      <p className="whitespace-pre-wrap text-sm">{selectedRequest.admin_notes}</p>
+                    </div>
                   </div>
+                )}
+                
+                {/* Save button for internal notes (available even after processing) */}
+                {adminNotes.trim() && (
+                  <Button
+                    onClick={handleSaveInternalNotes}
+                    disabled={savingNotes}
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {savingNotes ? "Saving..." : "Save Internal Notes"}
+                  </Button>
                 )}
               </div>
 
-              {/* User-Facing Admin Notes */}
-              <div>
-                <Label htmlFor="admin-notes-for-user">Notes for User (Will be included in email notifications)</Label>
-                <Textarea
-                  id="admin-notes-for-user"
-                  value={adminNotesForUser}
-                  onChange={(e) => setAdminNotesForUser(e.target.value)}
-                  placeholder="Add notes that will be shared with the user..."
-                  rows={3}
-                />
-                {selectedRequest.admin_notes_for_user && (
-                  <div className="mt-2 p-3 bg-blue-50 rounded-md">
-                    <strong>Current User Notes:</strong>
-                    <p className="whitespace-pre-wrap">{selectedRequest.admin_notes_for_user}</p>
+              {/* User-Facing Admin Notes - Only show for pending requests */}
+              {!isProcessed && (
+                <div>
+                  <Label htmlFor="admin-notes-for-user">Notes for User (Will be included in email notifications)</Label>
+                  <Textarea
+                    id="admin-notes-for-user"
+                    value={adminNotesForUser}
+                    onChange={(e) => setAdminNotesForUser(e.target.value)}
+                    placeholder="Add notes that will be shared with the user..."
+                    rows={3}
+                  />
+                  {selectedRequest.admin_notes_for_user && (
+                    <div className="mt-2">
+                      <Label className="text-sm font-medium">Current User Notes:</Label>
+                      <div className="mt-1 p-3 bg-blue-50 rounded-md border border-blue-200">
+                        <p className="whitespace-pre-wrap text-sm">{selectedRequest.admin_notes_for_user}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Show existing user notes for processed requests */}
+              {isProcessed && selectedRequest.admin_notes_for_user && (
+                <div>
+                  <Label className="text-sm font-medium">Notes Sent to User:</Label>
+                  <div className="mt-1 p-3 bg-blue-50 rounded-md border border-blue-200">
+                    <p className="whitespace-pre-wrap text-sm">{selectedRequest.admin_notes_for_user}</p>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* Actions */}
+          {/* Actions - Only show for pending requests */}
           {selectedRequest.status === 'pending' && (
             <div className="flex justify-end space-x-4 pt-4 border-t">
               <Button
