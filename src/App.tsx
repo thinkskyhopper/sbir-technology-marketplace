@@ -14,6 +14,7 @@ import AdminListings from "./pages/AdminListings";
 import AdminCategoryImages from "./pages/AdminCategoryImages";
 import ExpertValue from "./pages/ExpertValue";
 import ListingDetail from "./pages/ListingDetail";
+import Profile from "./pages/Profile";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LegalDisclaimer from "./pages/LegalDisclaimer";
 import Team from "./pages/Team";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/admin/category-images" element={<AdminCategoryImages />} />
             <Route path="/expert-value" element={<ExpertValue />} />
             <Route path="/listing/:id" element={<ListingDetail />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/legal-disclaimer" element={<LegalDisclaimer />} />
             <Route path="/team" element={<Team />} />

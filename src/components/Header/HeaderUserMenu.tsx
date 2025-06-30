@@ -18,6 +18,10 @@ const HeaderUserMenu = () => {
     navigate('/admin');
   };
 
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
   if (!user) return null;
 
   return (
@@ -38,6 +42,10 @@ const HeaderUserMenu = () => {
           )}
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleProfileClick}>
+          <User className="w-4 h-4 mr-2" />
+          View Profile
+        </DropdownMenuItem>
         {isAdmin && (
           <DropdownMenuItem onClick={handleAdminClick}>
             <Settings className="w-4 h-4 mr-2" />
