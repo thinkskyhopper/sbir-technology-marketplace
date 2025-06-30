@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import AdminChangeRequests from "./pages/AdminChangeRequests";
 import AdminListings from "./pages/AdminListings";
 import AdminCategoryImages from "./pages/AdminCategoryImages";
+import AdminUsers from "./pages/AdminUsers";
 import ExpertValue from "./pages/ExpertValue";
 import ListingDetail from "./pages/ListingDetail";
 import Profile from "./pages/Profile";
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/admin/change-requests" element={<AdminChangeRequests />} />
             <Route path="/admin/listings" element={<AdminListings />} />
             <Route path="/admin/category-images" element={<AdminCategoryImages />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/expert-value" element={<ExpertValue />} />
             <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="/profile" element={<Profile />} />

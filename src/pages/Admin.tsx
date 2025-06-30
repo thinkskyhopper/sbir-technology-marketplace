@@ -29,6 +29,12 @@ const Admin = () => {
       pendingLabel: "pending"
     },
     {
+      title: "User Management",
+      description: "View and manage user accounts, monitor user activity, and review user statistics and listing counts.",
+      icon: Users,
+      route: "/admin/users"
+    },
+    {
       title: "Category Images",
       description: "Upload and manage category images that are displayed throughout the platform to enhance visual appeal.",
       icon: Images,
