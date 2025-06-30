@@ -2,7 +2,8 @@
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Control } from "react-hook-form";
-import { SBIR_CATEGORIES, ProfileFormData } from "./profileFormSchema";
+import { CATEGORIES } from "@/utils/categoryConstants";
+import { ProfileFormData } from "./profileFormSchema";
 
 interface NotificationCategoriesFieldProps {
   control: Control<ProfileFormData>;
@@ -20,7 +21,7 @@ const NotificationCategoriesField = ({ control }: NotificationCategoriesFieldPro
             Select categories to receive email notifications for new SBIR listings
           </FormDescription>
           <div className="grid grid-cols-2 gap-3 mt-3">
-            {SBIR_CATEGORIES.map((category) => (
+            {CATEGORIES.map((category) => (
               <FormField
                 key={category}
                 control={control}

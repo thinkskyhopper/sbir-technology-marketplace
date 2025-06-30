@@ -1,16 +1,6 @@
 
 import { z } from "zod";
-
-export const SBIR_CATEGORIES = [
-  "Aerospace",
-  "Biotechnology",
-  "Defense", 
-  "Energy",
-  "Healthcare",
-  "Information Technology",
-  "Manufacturing",
-  "Transportation"
-];
+import { CATEGORIES } from "@/utils/categoryConstants";
 
 export const profileSchema = z.object({
   full_name: z.string().min(1, "Name is required"),
