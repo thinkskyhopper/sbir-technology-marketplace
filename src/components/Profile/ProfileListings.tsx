@@ -19,7 +19,7 @@ interface ProfileListingsProps {
 }
 
 const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const targetUserId = userId || user?.id;
 
@@ -29,64 +29,22 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   const [requestChangeDialogOpen, setRequestChangeDialogOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
 
-  console.log('📋 ProfileListings props:', {
-    userId,
-    isOwnProfile,
-    targetUserId,
-    userEmail: user?.email,
-    isAdmin
-  });
-
-  const { data: listings, isLoading, error } = useQuery({
+  const { data: listings, isLoading } = useQuery({
     queryKey: ['profile-listings', targetUserId],
     queryFn: async () => {
-      if (!targetUserId) {
-        console.log('❌ No target user ID, returning empty array');
-        return [];
-      }
+      if (!targetUserId) return [];
       
-      console.log('🔍 Fetching listings for user:', targetUserId, {
-        isOwnProfile, 
-        isAdmin,
-        userEmail: user?.email
-      });
-      
-      try {
-        let query = supabase
-          .from('sbir_listings')
-          .select('*')
-          .eq('user_id', targetUserId)
-          .order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('sbir_listings')
+        .select('*')
+        .eq('user_id', targetUserId)
+        .in('status', ['Active', 'Sold'])
+        .order('created_at', { ascending: false });
 
-        // Show all statuses for own profile or admin, only active for others
-        if (!isOwnProfile && !isAdmin) {
-          console.log('🔒 Filtering to Active listings only (not own profile or admin)');
-          query = query.eq('status', 'Active');
-        } else {
-          console.log('👁️ Showing all listings (own profile or admin)');
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error('❌ Error fetching profile listings:', error);
-          throw error;
-        }
-
-        console.log('✅ Profile listings fetched successfully:', {
-          count: data?.length || 0,
-          listings: data?.map(l => ({ id: l.id, title: l.title, status: l.status })) || []
-        });
-        
-        return data || [];
-      } catch (error) {
-        console.error('💥 Query failed:', error);
-        throw error;
-      }
+      if (error) throw error;
+      return data;
     },
-    enabled: !!targetUserId,
-    retry: 1,
-    staleTime: 30000 // 30 seconds
+    enabled: !!targetUserId
   });
 
   const handleEditListing = (listing: SBIRListing) => {
@@ -100,28 +58,8 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   };
 
   if (isLoading) {
-    console.log('⏳ ProfileListings showing loading state');
     return <ProfileListingsLoading />;
   }
-
-  if (error) {
-    console.error('💥 ProfileListings error:', error);
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-center text-red-600">
-            Error loading listings: {error instanceof Error ? error.message : 'Unknown error'}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  console.log('🎨 Rendering ProfileListings:', {
-    listingsCount: listings?.length || 0,
-    isOwnProfile,
-    targetUserId
-  });
 
   return (
     <>
@@ -133,11 +71,11 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           onCreateDialogOpenChange={setCreateDialogOpen}
         />
         <CardContent>
-          {!listings || listings.length === 0 ? (
+          {listings?.length === 0 ? (
             <ProfileListingsEmpty isViewingOwnProfile={isOwnProfile} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {listings.map((listing) => (
+              {listings?.map((listing) => (
                 <ProfileListingCard
                   key={listing.id}
                   listing={listing}

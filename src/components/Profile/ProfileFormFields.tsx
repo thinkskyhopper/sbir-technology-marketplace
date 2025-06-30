@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Control } from "react-hook-form";
 import { ProfileFormData } from "./profileFormSchema";
+import NotificationCategoriesField from "./NotificationCategoriesField";
 
 interface ProfileFormFieldsProps {
   control: Control<ProfileFormData>;
@@ -78,6 +79,8 @@ const ProfileFormFields = ({ control }: ProfileFormFieldsProps) => {
           </FormItem>
         )}
       />
+
+      <NotificationCategoriesField control={control} />
     </div>
   );
 };

@@ -15,7 +15,6 @@ const HeaderUserMenu = () => {
   };
 
   const handleAdminClick = () => {
-    console.log('Admin button clicked, navigating to /admin');
     navigate('/admin');
   };
 
@@ -24,8 +23,6 @@ const HeaderUserMenu = () => {
   };
 
   if (!user) return null;
-
-  console.log('HeaderUserMenu render:', { user: user.email, isAdmin });
 
   return (
     <DropdownMenu>
