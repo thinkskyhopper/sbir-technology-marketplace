@@ -1,22 +1,28 @@
 
-import { Mail, Calendar, FileText } from "lucide-react";
+import { Mail, Calendar, FileText, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { UserWithStats } from "./types";
 
 interface AdminUsersTableRowProps {
   user: UserWithStats;
   onUserClick: (userId: string) => void;
   onPermissionChange: (userId: string, canSubmit: boolean) => void;
+  onRoleChange: (userId: string, role: string) => void;
   isUpdating: boolean;
+  isUpdatingRole: boolean;
 }
 
 export const AdminUsersTableRow = ({ 
   user, 
   onUserClick, 
   onPermissionChange, 
-  isUpdating 
+  onRoleChange,
+  isUpdating,
+  isUpdatingRole
 }: AdminUsersTableRowProps) => {
   console.log(`User ${user.email} can_submit_listings:`, user.can_submit_listings);
   
@@ -24,6 +30,11 @@ export const AdminUsersTableRow = ({
     const canSubmit = value === 'enabled';
     console.log(`Changing permission for ${user.email} to:`, canSubmit);
     onPermissionChange(user.id, canSubmit);
+  };
+
+  const handleRoleChange = (newRole: string) => {
+    console.log(`Changing role for ${user.email} to:`, newRole);
+    onRoleChange(user.id, newRole);
   };
   
   const isAdmin = user.role === 'admin';
@@ -54,18 +65,55 @@ export const AdminUsersTableRow = ({
         </div>
       </TableCell>
       <TableCell>
-        <Badge 
-          variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
-          className={
-            user.role === 'admin' 
-              ? 'bg-amber-500 hover:bg-amber-600' 
-              : user.role === 'consultant'
-              ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
-              : ''
-          }
-        >
-          {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
-        </Badge>
+        <div className="flex items-center space-x-2">
+          <Badge 
+            variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
+            className={
+              user.role === 'admin' 
+                ? 'bg-amber-500 hover:bg-amber-600' 
+                : user.role === 'consultant'
+                ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
+                : ''
+            }
+          >
+            {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
+          </Badge>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 w-6 p-0"
+                disabled={isUpdatingRole}
+              >
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-32">
+              <DropdownMenuItem 
+                onClick={() => handleRoleChange('user')}
+                disabled={user.role === 'user'}
+              >
+                User
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleRoleChange('consultant')}
+                disabled={user.role === 'consultant'}
+              >
+                Consultant
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleRoleChange('admin')}
+                disabled={user.role === 'admin'}
+              >
+                Administrator
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {isUpdatingRole && (
+            <div className="text-xs text-muted-foreground">Updating...</div>
+          )}
+        </div>
       </TableCell>
       <TableCell>
         <div className="flex items-center space-x-1">

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useSorting } from "@/hooks/useSorting";
 import { AdminUsersTableProps } from "./types";
 import { usePermissionChange } from "./usePermissionChange";
+import { useRoleChange } from "./useRoleChange";
 import { SortableTableHead } from "./SortableTableHead";
 import { AdminUsersTableRow } from "./AdminUsersTableRow";
 
@@ -18,6 +19,7 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   });
 
   const { updatingUsers, handleSubmissionPermissionChange } = usePermissionChange(users);
+  const { updatingRoles, handleRoleChange } = useRoleChange(users);
 
   const handleUserClick = (userId: string) => {
     navigate(`/profile?userId=${userId}`);
@@ -57,7 +59,9 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
                 user={user}
                 onUserClick={handleUserClick}
                 onPermissionChange={handleSubmissionPermissionChange}
+                onRoleChange={handleRoleChange}
                 isUpdating={updatingUsers.has(user.id)}
+                isUpdatingRole={updatingRoles.has(user.id)}
               />
             ))}
           </TableBody>
