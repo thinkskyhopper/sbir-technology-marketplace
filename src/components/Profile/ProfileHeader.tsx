@@ -1,9 +1,12 @@
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { User, Mail, Building, Calendar, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import EditProfileDialog from "./EditProfileDialog";
 
 interface Profile {
   id: string;
@@ -25,10 +28,41 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: ProfileHeaderProps) => {
-  const { profile: authProfile } = useAuth();
+  const { user } = useAuth();
+  const targetUserId = userId || user?.id;
 
-  // Use the passed profile or fall back to auth profile for own profile
-  const displayProfile = propProfile || (isOwnProfile ? authProfile : null);
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ['profile', targetUserId],
+    queryFn: async () => {
+      if (!targetUserId) return null;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', targetUserId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!targetUserId && !propProfile
+  });
+
+  const displayProfile = propProfile || profile;
+
+  if (isLoading) {
+    return (
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!displayProfile) {
     return (
@@ -55,12 +89,10 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
                 {displayProfile.full_name || 'No name provided'}
               </CardTitle>
               <div className="flex items-center space-x-4 mt-2">
-                {displayProfile.display_email && (
-                  <div className="flex items-center text-muted-foreground">
-                    <Mail className="w-4 h-4 mr-1" />
-                    <span className="text-sm">{displayProfile.display_email}</span>
-                  </div>
-                )}
+                <div className="flex items-center text-muted-foreground">
+                  <Mail className="w-4 h-4 mr-1" />
+                  <span className="text-sm">{displayProfile.display_email || displayProfile.email}</span>
+                </div>
                 <Badge 
                   variant={displayProfile.role === 'admin' ? 'default' : displayProfile.role === 'consultant' ? 'secondary' : 'outline'}
                   className={

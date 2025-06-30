@@ -19,7 +19,7 @@ interface ProfileListingsProps {
 }
 
 const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const targetUserId = userId || user?.id;
 
@@ -29,36 +29,20 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   const [requestChangeDialogOpen, setRequestChangeDialogOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
 
-  const { data: listings, isLoading, error } = useQuery({
+  const { data: listings, isLoading } = useQuery({
     queryKey: ['profile-listings', targetUserId],
     queryFn: async () => {
       if (!targetUserId) return [];
       
-      console.log('Fetching listings for user:', targetUserId, 'isOwnProfile:', isOwnProfile, 'isAdmin:', isAdmin);
-      
-      let query = supabase
+      const { data, error } = await supabase
         .from('sbir_listings')
         .select('*')
         .eq('user_id', targetUserId)
+        .in('status', ['Active', 'Sold'])
         .order('created_at', { ascending: false });
 
-      // If viewing own profile or admin, show more statuses
-      if (isOwnProfile || isAdmin) {
-        query = query.in('status', ['Active', 'Pending', 'Sold']);
-      } else {
-        // For other users' profiles, only show active listings
-        query = query.eq('status', 'Active');
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error fetching profile listings:', error);
-        throw error;
-      }
-
-      console.log('Profile listings fetched:', data?.length || 0);
-      return data || [];
+      if (error) throw error;
+      return data;
     },
     enabled: !!targetUserId
   });
@@ -77,18 +61,6 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
     return <ProfileListingsLoading />;
   }
 
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-center text-red-600">
-            Error loading listings: {error instanceof Error ? error.message : 'Unknown error'}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <>
       <Card>
@@ -99,11 +71,11 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           onCreateDialogOpenChange={setCreateDialogOpen}
         />
         <CardContent>
-          {!listings || listings.length === 0 ? (
+          {listings?.length === 0 ? (
             <ProfileListingsEmpty isViewingOwnProfile={isOwnProfile} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {listings.map((listing) => (
+              {listings?.map((listing) => (
                 <ProfileListingCard
                   key={listing.id}
                   listing={listing}
