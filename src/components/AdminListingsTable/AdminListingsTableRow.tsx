@@ -106,7 +106,7 @@ const AdminListingsTableRow = ({
         <p className="text-sm truncate">{listing.agency}</p>
       </TableCell>
       <TableCell>
-        <Badge variant="default" className="text-xs">{listing.phase}</Badge>
+        <Badge variant="phase" className="text-xs">{listing.phase}</Badge>
       </TableCell>
       <TableCell className="text-right">
         <span className="text-sm font-medium">{formatCurrency(listing.value)}</span>

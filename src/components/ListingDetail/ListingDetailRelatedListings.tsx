@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, Calendar } from "lucide-react";
@@ -98,7 +97,7 @@ const ListingDetailRelatedListings = ({
               </div>
               
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="phase" className="text-xs">
                   {listing.phase}
                 </Badge>
                 <span className="text-xs text-muted-foreground truncate max-w-[100px]">

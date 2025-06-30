@@ -31,7 +31,7 @@ const ListingItem = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center space-x-2 mb-1">
           <h4 className="font-medium truncate">{listing.title}</h4>
-          <Badge variant="outline" className="text-xs">
+          <Badge variant="phase" className="text-xs">
             {listing.phase}
           </Badge>
         </div>
