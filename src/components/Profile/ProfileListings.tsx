@@ -47,10 +47,6 @@ const ProfileListings = ({ userId }: ProfileListingsProps) => {
     enabled: !!targetUserId
   });
 
-  const handleViewListing = (listingId: string) => {
-    navigate(`/listing/${listingId}`);
-  };
-
   const handleEditListing = (listing: SBIRListing) => {
     setSelectedListing(listing);
     setEditDialogOpen(true);
@@ -78,13 +74,12 @@ const ProfileListings = ({ userId }: ProfileListingsProps) => {
           {listings?.length === 0 ? (
             <ProfileListingsEmpty isViewingOwnProfile={isViewingOwnProfile} />
           ) : (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {listings?.map((listing) => (
                 <ProfileListingCard
                   key={listing.id}
                   listing={listing}
                   isViewingOwnProfile={isViewingOwnProfile}
-                  onViewListing={handleViewListing}
                   onEditListing={handleEditListing}
                   onRequestChange={handleRequestChange}
                 />
