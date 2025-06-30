@@ -9,18 +9,14 @@ interface AdminUsersTableRowProps {
   user: UserWithStats;
   onUserClick: (userId: string) => void;
   onPermissionChange: (userId: string, canSubmit: boolean) => void;
-  onRoleChange: (userId: string, role: string) => void;
   isUpdating: boolean;
-  isUpdatingRole: boolean;
 }
 
 export const AdminUsersTableRow = ({ 
   user, 
   onUserClick, 
   onPermissionChange, 
-  onRoleChange,
-  isUpdating,
-  isUpdatingRole
+  isUpdating 
 }: AdminUsersTableRowProps) => {
   console.log(`User ${user.email} can_submit_listings:`, user.can_submit_listings);
   
@@ -28,11 +24,6 @@ export const AdminUsersTableRow = ({
     const canSubmit = value === 'enabled';
     console.log(`Changing permission for ${user.email} to:`, canSubmit);
     onPermissionChange(user.id, canSubmit);
-  };
-
-  const handleRoleChange = (value: string) => {
-    console.log(`Changing role for ${user.email} to:`, value);
-    onRoleChange(user.id, value);
   };
   
   const isAdmin = user.role === 'admin';
@@ -63,38 +54,18 @@ export const AdminUsersTableRow = ({
         </div>
       </TableCell>
       <TableCell>
-        <div className="space-y-2">
-          <Badge 
-            variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
-            className={
-              user.role === 'admin' 
-                ? 'bg-amber-500 hover:bg-amber-600' 
-                : user.role === 'consultant'
-                ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
-                : ''
-            }
-          >
-            {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
-          </Badge>
-          <Select
-            key={`role-${user.id}-${user.role}`}
-            value={user.role}
-            onValueChange={handleRoleChange}
-            disabled={isUpdatingRole}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="user">User</SelectItem>
-              <SelectItem value="consultant">Consultant</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-            </SelectContent>
-          </Select>
-          {isUpdatingRole && (
-            <div className="text-xs text-muted-foreground">Updating role...</div>
-          )}
-        </div>
+        <Badge 
+          variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
+          className={
+            user.role === 'admin' 
+              ? 'bg-amber-500 hover:bg-amber-600' 
+              : user.role === 'consultant'
+              ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
+              : ''
+          }
+        >
+          {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
+        </Badge>
       </TableCell>
       <TableCell>
         <div className="flex items-center space-x-1">
