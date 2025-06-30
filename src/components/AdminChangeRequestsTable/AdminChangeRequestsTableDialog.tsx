@@ -35,8 +35,6 @@ export const AdminChangeRequestsTableDialog = ({
   getAdminInfo
 }: AdminChangeRequestsTableDialogProps) => {
   const { 
-    savingNotes, 
-    handleSaveInternalNotes, 
     isProcessed 
   } = useAdminChangeRequestsDialogLogic({
     selectedRequest,
@@ -63,8 +61,8 @@ export const AdminChangeRequestsTableDialog = ({
             setAdminNotes={setAdminNotes}
             adminNotesForUser={adminNotesForUser}
             setAdminNotesForUser={setAdminNotesForUser}
-            savingNotes={savingNotes}
-            onSaveInternalNotes={handleSaveInternalNotes}
+            savingNotes={false}
+            onSaveInternalNotes={async () => {}}
             isProcessed={isProcessed}
           />
 
