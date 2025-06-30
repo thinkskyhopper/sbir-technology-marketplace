@@ -32,33 +32,38 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   const { data: listings, isLoading, error } = useQuery({
     queryKey: ['profile-listings', targetUserId],
     queryFn: async () => {
-      if (!targetUserId) return [];
+      if (!targetUserId) {
+        console.log('No target user ID, returning empty array');
+        return [];
+      }
       
       console.log('Fetching listings for user:', targetUserId, 'isOwnProfile:', isOwnProfile, 'isAdmin:', isAdmin);
       
-      let query = supabase
-        .from('sbir_listings')
-        .select('*')
-        .eq('user_id', targetUserId)
-        .order('created_at', { ascending: false });
+      try {
+        let query = supabase
+          .from('sbir_listings')
+          .select('*')
+          .eq('user_id', targetUserId)
+          .order('created_at', { ascending: false });
 
-      // If viewing own profile or admin, show more statuses
-      if (isOwnProfile || isAdmin) {
-        query = query.in('status', ['Active', 'Pending', 'Sold']);
-      } else {
-        // For other users' profiles, only show active listings
-        query = query.eq('status', 'Active');
-      }
+        // Show all statuses for own profile or admin, only active for others
+        if (!isOwnProfile && !isAdmin) {
+          query = query.eq('status', 'Active');
+        }
 
-      const { data, error } = await query;
+        const { data, error } = await query;
 
-      if (error) {
-        console.error('Error fetching profile listings:', error);
+        if (error) {
+          console.error('Error fetching profile listings:', error);
+          throw error;
+        }
+
+        console.log('Profile listings fetched successfully:', data?.length || 0);
+        return data || [];
+      } catch (error) {
+        console.error('Query failed:', error);
         throw error;
       }
-
-      console.log('Profile listings fetched:', data?.length || 0);
-      return data || [];
     },
     enabled: !!targetUserId
   });
@@ -78,6 +83,7 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   }
 
   if (error) {
+    console.error('ProfileListings error:', error);
     return (
       <Card>
         <CardContent className="p-6">

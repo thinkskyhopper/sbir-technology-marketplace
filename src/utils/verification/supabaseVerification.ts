@@ -1,13 +1,18 @@
 
 export const verifySupabaseForPublishing = async () => {
   try {
+    console.log('🔍 Starting Supabase verification...');
+    
     // Import Supabase client
     const { supabase } = await import('@/integrations/supabase/client');
     
+    console.log('📡 Testing Supabase connection...');
+    
     // Test basic connectivity with minimal query
-    const { error } = await supabase.from('sbir_listings').select('id').limit(1);
+    const { data, error } = await supabase.from('sbir_listings').select('id').limit(1);
     
     if (error) {
+      console.error('❌ Supabase connectivity error:', error);
       return {
         passed: false,
         critical: true,
@@ -15,8 +20,12 @@ export const verifySupabaseForPublishing = async () => {
       };
     }
     
+    console.log('✅ Supabase basic query successful');
+    
     // Test auth configuration
     const { data: { session } } = await supabase.auth.getSession();
+    
+    console.log('🔐 Auth session check:', session ? 'authenticated' : 'public access');
     
     return {
       passed: true,
@@ -24,6 +33,7 @@ export const verifySupabaseForPublishing = async () => {
       message: `Supabase connection verified${session ? ' (authenticated)' : ' (public access)'}`
     };
   } catch (err) {
+    console.error('💥 Supabase verification failed:', err);
     return {
       passed: false,
       critical: true,

@@ -39,10 +39,15 @@ const Profile = () => {
   const userId = searchParams.get('userId');
 
   useEffect(() => {
+    console.log('Profile page useEffect:', { userId, userIdFromAuth: user?.id, profile });
+    
     if (userId && userId !== user?.id) {
-      // Fetch other user's profile
+      // Viewing another user's profile
+      console.log('Fetching other user profile for:', userId);
       fetchOtherUserProfile(userId);
     } else {
+      // Viewing own profile
+      console.log('Setting own profile:', profile);
       setDisplayProfile(profile);
       setIsOtherUserProfile(false);
       setLoading(false);
@@ -143,7 +148,7 @@ const Profile = () => {
           
           <TabsContent value="listings">
             <ProfileListings 
-              userId={isOtherUserProfile ? userId : undefined}
+              userId={isOtherUserProfile ? userId : user?.id}
               isOwnProfile={!isOtherUserProfile}
             />
           </TabsContent>
