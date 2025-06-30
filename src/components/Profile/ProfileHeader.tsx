@@ -31,6 +31,9 @@ const ProfileHeader = () => {
 
   const displayEmail = profile?.display_email || user.email;
   const fullName = profile?.full_name || 'User Profile';
+  const notificationCategories = Array.isArray(profile?.notification_categories) 
+    ? profile.notification_categories as string[]
+    : [];
 
   return (
     <Card className="mb-8">
@@ -87,13 +90,13 @@ const ProfileHeader = () => {
             </div>
           )}
 
-          {profile?.notification_categories && profile.notification_categories.length > 0 && (
+          {notificationCategories.length > 0 && (
             <div className="flex items-start space-x-3 pt-2">
               <Mail className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
               <div>
                 <p className="text-sm text-muted-foreground font-medium mb-2">Email Notifications</p>
                 <div className="flex flex-wrap gap-1">
-                  {profile.notification_categories.map((category: string) => (
+                  {notificationCategories.map((category: string) => (
                     <Badge key={category} variant="secondary" className="text-xs">
                       {category}
                     </Badge>

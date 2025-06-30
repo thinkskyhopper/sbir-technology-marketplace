@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -69,13 +68,15 @@ const EditProfileDialog = () => {
   });
 
   // Update form when profile data loads
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       form.reset({
         full_name: profile.full_name || "",
         display_email: profile.display_email || "",
         bio: profile.bio || "",
-        notification_categories: profile.notification_categories || []
+        notification_categories: Array.isArray(profile.notification_categories) 
+          ? profile.notification_categories as string[]
+          : []
       });
     }
   }, [profile, form]);
