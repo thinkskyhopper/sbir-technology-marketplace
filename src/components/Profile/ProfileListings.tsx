@@ -6,12 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
+import { usePagination } from "@/hooks/usePagination";
 import ProfileListingsHeader from "./ProfileListings/ProfileListingsHeader";
 import ProfileListingCard from "./ProfileListings/ProfileListingCard";
 import ProfileListingsEmpty from "./ProfileListings/ProfileListingsEmpty";
 import ProfileListingsLoading from "./ProfileListings/ProfileListingsLoading";
 import EditListingDialog from "../EditListingDialog";
 import RequestChangeDialog from "../RequestChangeDialog";
+import MarketplacePagination from "../MarketplacePagination";
 
 interface ProfileListingsProps {
   userId?: string | null;
@@ -82,6 +84,20 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
     staleTime: 30000 // 30 seconds
   });
 
+  // Initialize pagination with 15 items per page
+  const {
+    currentPage,
+    totalPages,
+    paginatedData: paginatedListings,
+    goToPage,
+    hasNextPage,
+    hasPreviousPage,
+    totalItems
+  } = usePagination({
+    data: listings || [],
+    itemsPerPage: 15
+  });
+
   const handleEditListing = (listing: SBIRListing) => {
     setSelectedListing(listing);
     setEditDialogOpen(true);
@@ -112,6 +128,9 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
 
   console.log('🎨 Rendering ProfileListings:', {
     listingsCount: listings?.length || 0,
+    paginatedCount: paginatedListings?.length || 0,
+    currentPage,
+    totalPages,
     isOwnProfile,
     targetUserId
   });
@@ -120,7 +139,7 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
     <>
       <Card>
         <ProfileListingsHeader
-          listingCount={listings?.length || 0}
+          listingCount={totalItems}
           isViewingOwnProfile={isOwnProfile}
           createDialogOpen={createDialogOpen}
           onCreateDialogOpenChange={setCreateDialogOpen}
@@ -129,17 +148,29 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           {!listings || listings.length === 0 ? (
             <ProfileListingsEmpty isViewingOwnProfile={isOwnProfile} />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {listings.map((listing) => (
-                <ProfileListingCard
-                  key={listing.id}
-                  listing={listing}
-                  isViewingOwnProfile={isOwnProfile}
-                  onEditListing={handleEditListing}
-                  onRequestChange={handleRequestChange}
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedListings.map((listing) => (
+                  <ProfileListingCard
+                    key={listing.id}
+                    listing={listing}
+                    isViewingOwnProfile={isOwnProfile}
+                    onEditListing={handleEditListing}
+                    onRequestChange={handleRequestChange}
+                  />
+                ))}
+              </div>
+              
+              {totalPages > 1 && (
+                <MarketplacePagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  hasNextPage={hasNextPage}
+                  hasPreviousPage={hasPreviousPage}
                 />
-              ))}
-            </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
