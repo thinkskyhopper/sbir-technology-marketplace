@@ -5,12 +5,14 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserWithStats } from "./types";
 
+type UserRole = "admin" | "user" | "consultant";
+
 export const useRoleChange = (users?: UserWithStats[]) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [updatingRoles, setUpdatingRoles] = useState<Set<string>>(new Set());
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
+  const handleRoleChange = async (userId: string, newRole: UserRole) => {
     console.log('Starting role update for user:', userId, 'to:', newRole);
     
     // Add user to updating set to show loading state

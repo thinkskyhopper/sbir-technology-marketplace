@@ -7,11 +7,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button";
 import { UserWithStats } from "./types";
 
+type UserRole = "admin" | "user" | "consultant";
+
 interface AdminUsersTableRowProps {
   user: UserWithStats;
   onUserClick: (userId: string) => void;
   onPermissionChange: (userId: string, canSubmit: boolean) => void;
-  onRoleChange: (userId: string, role: string) => void;
+  onRoleChange: (userId: string, role: UserRole) => void;
   isUpdating: boolean;
   isUpdatingRole: boolean;
 }
@@ -32,7 +34,7 @@ export const AdminUsersTableRow = ({
     onPermissionChange(user.id, canSubmit);
   };
 
-  const handleRoleChange = (newRole: string) => {
+  const handleRoleChange = (newRole: UserRole) => {
     console.log(`Changing role for ${user.email} to:`, newRole);
     onRoleChange(user.id, newRole);
   };
