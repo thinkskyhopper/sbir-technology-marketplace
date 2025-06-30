@@ -47,13 +47,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchProfile = async (userId: string) => {
     try {
-      console.log('🔍 Fetching profile for user:', userId);
+      console.log('🔍 fetchProfile starting for user:', userId);
       
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
+
+      console.log('📊 Profile query result:', { data, error });
 
       if (error) {
         console.error('❌ Error fetching profile:', error);
@@ -62,19 +64,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (error.code === 'PGRST116') {
           console.log('📝 Profile not found, creating new profile...');
           const { data: userData } = await supabase.auth.getUser();
+          console.log('👤 Current user data:', userData);
           
           if (userData.user) {
+            const newProfileData = {
+              id: userId,
+              email: userData.user.email || '',
+              full_name: userData.user.user_metadata?.full_name || null,
+              display_email: userData.user.email || '',
+              role: 'user'
+            };
+            
+            console.log('📝 Creating profile with data:', newProfileData);
+            
             const { data: newProfile, error: createError } = await supabase
               .from('profiles')
-              .insert({
-                id: userId,
-                email: userData.user.email || '',
-                full_name: userData.user.user_metadata?.full_name || null,
-                display_email: userData.user.email || '',
-                role: 'user'
-              })
+              .insert(newProfileData)
               .select()
               .single();
+
+            console.log('📝 Profile creation result:', { newProfile, createError });
 
             if (createError) {
               console.error('❌ Error creating profile:', createError);
@@ -91,6 +100,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               setIsAdmin(newProfile.role === 'admin');
               return;
             }
+          } else {
+            console.error('❌ No user data available for profile creation');
+            throw new Error('No user data available');
           }
         }
         
@@ -119,9 +131,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('🚀 Setting up auth state listener...');
     
     // Check for existing session first
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
       if (error) {
         console.error('❌ Error getting session:', error);
+        setLoading(false);
+        return;
       }
       
       console.log('🔍 Initial session check:', session?.user?.email || 'No session');
@@ -129,12 +143,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchProfile(session.user.id);
+        await fetchProfile(session.user.id);
       } else {
         setProfile(null);
         setIsAdmin(false);
-        setLoading(false);
       }
+      
+      setLoading(false);
     });
     
     // Set up auth state listener
