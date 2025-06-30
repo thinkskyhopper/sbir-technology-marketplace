@@ -10,6 +10,7 @@ import { useSorting } from "@/hooks/useSorting";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface UserWithStats {
   id: string;
@@ -29,6 +30,7 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set());
   
   const { sortedData, sortState, handleSort } = useSorting(users || [], {
     column: 'created_at',
@@ -40,6 +42,11 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   };
 
   const handleSubmissionPermissionChange = async (userId: string, canSubmit: boolean) => {
+    console.log('Starting permission update for user:', userId, 'to:', canSubmit);
+    
+    // Add user to updating set to show loading state
+    setUpdatingUsers(prev => new Set(prev).add(userId));
+    
     try {
       console.log('Updating submission permissions for user:', userId, 'to:', canSubmit);
       
@@ -55,10 +62,10 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
 
       console.log('Successfully updated submission permissions');
 
+      // Show success toast
       toast({
         title: "Success",
         description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
-        duration: 5000, // Auto-dismiss after 5 seconds
       });
 
       // Invalidate and refetch the users query to refresh the UI
@@ -71,7 +78,13 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
         title: "Error",
         description: "Failed to update user permissions",
         variant: "destructive",
-        duration: 5000, // Auto-dismiss after 5 seconds
+      });
+    } finally {
+      // Remove user from updating set
+      setUpdatingUsers(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
       });
     }
   };
@@ -172,6 +185,7 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
                   <Select
                     value={user.can_submit_listings ? 'enabled' : 'disabled'}
                     onValueChange={(value) => handleSubmissionPermissionChange(user.id, value === 'enabled')}
+                    disabled={updatingUsers.has(user.id)}
                   >
                     <SelectTrigger className="w-28">
                       <SelectValue />
@@ -181,6 +195,9 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
                       <SelectItem value="disabled">Disabled</SelectItem>
                     </SelectContent>
                   </Select>
+                  {updatingUsers.has(user.id) && (
+                    <div className="text-xs text-muted-foreground mt-1">Updating...</div>
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center text-sm text-muted-foreground">

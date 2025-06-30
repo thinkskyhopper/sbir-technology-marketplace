@@ -25,6 +25,8 @@ const AdminUsers = () => {
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
+      console.log('Fetching admin users data...');
+      
       // Get all users with their listing counts and submission permissions
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
@@ -38,7 +40,12 @@ const AdminUsers = () => {
         `)
         .order('created_at', { ascending: false });
 
-      if (profilesError) throw profilesError;
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        throw profilesError;
+      }
+
+      console.log('Fetched profiles:', profiles?.length);
 
       // Get listing counts for each user
       const usersWithStats: UserWithStats[] = await Promise.all(
@@ -55,8 +62,11 @@ const AdminUsers = () => {
         })
       );
 
+      console.log('Users with stats:', usersWithStats.length);
       return usersWithStats;
-    }
+    },
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always refetch when invalidated
   });
 
   const totalUsers = users?.length || 0;
