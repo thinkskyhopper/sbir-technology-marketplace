@@ -76,7 +76,7 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
                       user.role === 'admin' 
                         ? 'bg-amber-500 hover:bg-amber-600' 
                         : user.role === 'consultant'
-                        ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                        ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
                         : ''
                     }
                   >

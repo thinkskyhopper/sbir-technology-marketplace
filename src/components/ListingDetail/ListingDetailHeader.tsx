@@ -73,7 +73,10 @@ const ListingDetailHeader = ({
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <Badge variant={listing.phase === "Phase I" ? "default" : "secondary"}>
+                <Badge 
+                  variant={listing.phase === "Phase I" ? "default" : "secondary"}
+                  className={listing.phase === "Phase II" ? "bg-blue-500 hover:bg-blue-600 text-white" : ""}
+                >
                   {listing.phase}
                 </Badge>
                 <Badge 
