@@ -58,7 +58,8 @@ export const useProfileForm = (profile?: Profile | null) => {
       first_name: "",
       last_name: "",
       display_email: "",
-      bio: ""
+      bio: "",
+      notification_categories: []
     }
   });
 
@@ -74,7 +75,8 @@ export const useProfileForm = (profile?: Profile | null) => {
         first_name: firstName,
         last_name: lastName,
         display_email: displayProfile.display_email || "",
-        bio: displayProfile.bio || ""
+        bio: displayProfile.bio || "",
+        notification_categories: displayProfile.notification_categories || []
       });
     }
   }, [displayProfile, form]);
@@ -91,7 +93,8 @@ export const useProfileForm = (profile?: Profile | null) => {
         .update({
           full_name: fullName,
           display_email: data.display_email || null,
-          bio: data.bio || null
+          bio: data.bio || null,
+          notification_categories: data.notification_categories || []
         })
         .eq('id', user.id);
 

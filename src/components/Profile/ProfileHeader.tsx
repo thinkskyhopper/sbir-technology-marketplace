@@ -2,10 +2,9 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, Building, Calendar, Edit } from "lucide-react";
+import { User, Mail, Building, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import EditProfileDialog from "./EditProfileDialog";
 
 interface Profile {
@@ -109,10 +108,9 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
             </div>
           </div>
           {isOwnProfile && (
-            <Button variant="outline" size="sm" onClick={onEdit}>
-              <Edit className="w-4 h-4 mr-2" />
+            <button onClick={onEdit} className="text-sm text-muted-foreground hover:text-foreground">
               Edit Profile
-            </Button>
+            </button>
           )}
         </div>
       </CardHeader>
