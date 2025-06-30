@@ -27,7 +27,8 @@ const AdminUsers = () => {
           full_name,
           role,
           created_at,
-          can_submit_listings
+          can_submit_listings,
+          notification_categories
         `)
         .order('created_at', { ascending: false });
 

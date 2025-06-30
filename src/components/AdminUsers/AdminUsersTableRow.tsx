@@ -1,11 +1,13 @@
 
-import { Mail, Calendar, FileText, ChevronDown } from "lucide-react";
+import { Mail, Calendar, FileText, ChevronDown, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { UserWithStats } from "./types";
+import { useState } from "react";
+import { NotificationCategoriesDialog } from "./NotificationCategoriesDialog";
 
 type UserRole = "admin" | "user" | "consultant";
 
@@ -26,6 +28,8 @@ export const AdminUsersTableRow = ({
   isUpdating,
   isUpdatingRole
 }: AdminUsersTableRowProps) => {
+  const [showNotificationDialog, setShowNotificationDialog] = useState(false);
+  
   console.log(`User ${user.email} can_submit_listings:`, user.can_submit_listings);
   
   const handlePermissionChange = (value: string) => {
@@ -41,124 +45,158 @@ export const AdminUsersTableRow = ({
   
   const isAdmin = user.role === 'admin';
   
+  // Check if user has notification categories
+  const hasNotifications = user.notification_categories && 
+    Array.isArray(user.notification_categories) && 
+    user.notification_categories.length > 0;
+  
+  const notificationCategories = hasNotifications 
+    ? user.notification_categories.filter((cat): cat is string => typeof cat === 'string')
+    : [];
+  
   return (
-    <TableRow key={user.id}>
-      <TableCell>
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-sm font-medium text-primary">
-                {(user.full_name || user.email)?.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <div>
-              <button
-                onClick={() => onUserClick(user.id)}
-                className="font-medium text-primary hover:underline cursor-pointer"
-              >
-                {user.full_name || 'No name provided'}
-              </button>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Mail className="w-3 h-3 mr-1" />
-                {user.email}
+    <>
+      <TableRow key={user.id}>
+        <TableCell>
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-sm font-medium text-primary">
+                  {(user.full_name || user.email)?.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div>
+                <button
+                  onClick={() => onUserClick(user.id)}
+                  className="font-medium text-primary hover:underline cursor-pointer"
+                >
+                  {user.full_name || 'No name provided'}
+                </button>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Mail className="w-3 h-3 mr-1" />
+                  {user.email}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center space-x-2">
-          <Badge 
-            variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
-            className={
-              user.role === 'admin' 
-                ? 'bg-amber-500 hover:bg-amber-600' 
-                : user.role === 'consultant'
-                ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
-                : ''
-            }
-          >
-            {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
-          </Badge>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-6 w-6 p-0"
-                disabled={isUpdatingRole}
-              >
-                <ChevronDown className="h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-32">
-              <DropdownMenuItem 
-                onClick={() => handleRoleChange('user')}
-                disabled={user.role === 'user'}
-              >
-                User
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRoleChange('consultant')}
-                disabled={user.role === 'consultant'}
-              >
-                Consultant
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRoleChange('admin')}
-                disabled={user.role === 'admin'}
-              >
-                Administrator
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {isUpdatingRole && (
-            <div className="text-xs text-muted-foreground">Updating...</div>
-          )}
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center space-x-1">
-          <FileText className="w-3 h-3 text-muted-foreground" />
-          <span className="font-medium">{user.listing_count}</span>
-          <span className="text-muted-foreground text-sm">
-            listing{user.listing_count !== 1 ? 's' : ''}
-          </span>
-        </div>
-      </TableCell>
-      <TableCell>
-        {isAdmin ? (
-          <div className="text-sm text-muted-foreground">
-            Admin privileges
-          </div>
-        ) : (
-          <>
-            <Select
-              key={`permission-${user.id}-${user.can_submit_listings}`}
-              value={user.can_submit_listings ? 'enabled' : 'disabled'}
-              onValueChange={handlePermissionChange}
-              disabled={isUpdating}
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center space-x-2">
+            <Badge 
+              variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
+              className={
+                user.role === 'admin' 
+                  ? 'bg-amber-500 hover:bg-amber-600' 
+                  : user.role === 'consultant'
+                  ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
+                  : ''
+              }
             >
-              <SelectTrigger className="w-28">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="enabled">Enabled</SelectItem>
-                <SelectItem value="disabled">Disabled</SelectItem>
-              </SelectContent>
-            </Select>
-            {isUpdating && (
-              <div className="text-xs text-muted-foreground mt-1">Updating...</div>
+              {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
+            </Badge>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-6 w-6 p-0"
+                  disabled={isUpdatingRole}
+                >
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-32">
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('user')}
+                  disabled={user.role === 'user'}
+                >
+                  User
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('consultant')}
+                  disabled={user.role === 'consultant'}
+                >
+                  Consultant
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('admin')}
+                  disabled={user.role === 'admin'}
+                >
+                  Administrator
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {isUpdatingRole && (
+              <div className="text-xs text-muted-foreground">Updating...</div>
             )}
-          </>
-        )}
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center text-sm text-muted-foreground">
-          <Calendar className="w-3 h-3 mr-1" />
-          {new Date(user.created_at).toLocaleDateString()}
-        </div>
-      </TableCell>
-    </TableRow>
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center space-x-1">
+            <FileText className="w-3 h-3 text-muted-foreground" />
+            <span className="font-medium">{user.listing_count}</span>
+            <span className="text-muted-foreground text-sm">
+              listing{user.listing_count !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </TableCell>
+        <TableCell>
+          {isAdmin ? (
+            <div className="text-sm text-muted-foreground">
+              Admin privileges
+            </div>
+          ) : (
+            <>
+              <Select
+                key={`permission-${user.id}-${user.can_submit_listings}`}
+                value={user.can_submit_listings ? 'enabled' : 'disabled'}
+                onValueChange={handlePermissionChange}
+                disabled={isUpdating}
+              >
+                <SelectTrigger className="w-28">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="enabled">Enabled</SelectItem>
+                  <SelectItem value="disabled">Disabled</SelectItem>
+                </SelectContent>
+              </Select>
+              {isUpdating && (
+                <div className="text-xs text-muted-foreground mt-1">Updating...</div>
+              )}
+            </>
+          )}
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center space-x-2">
+            <Bell className="w-3 h-3 text-muted-foreground" />
+            {hasNotifications ? (
+              <button
+                onClick={() => setShowNotificationDialog(true)}
+                className="text-sm text-primary hover:underline font-medium"
+              >
+                Yes ({notificationCategories.length})
+              </button>
+            ) : (
+              <span className="text-sm text-muted-foreground">No</span>
+            )}
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Calendar className="w-3 h-3 mr-1" />
+            {new Date(user.created_at).toLocaleDateString()}
+          </div>
+        </TableCell>
+      </TableRow>
+
+      <NotificationCategoriesDialog
+        open={showNotificationDialog}
+        onOpenChange={setShowNotificationDialog}
+        userEmail={user.email}
+        userName={user.full_name}
+        categories={notificationCategories}
+      />
+    </>
   );
 };

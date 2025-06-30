@@ -7,6 +7,7 @@ export interface UserWithStats {
   created_at: string;
   listing_count: number;
   can_submit_listings: boolean;
+  notification_categories: string[] | null;
 }
 
 export interface AdminUsersTableProps {

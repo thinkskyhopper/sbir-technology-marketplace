@@ -9,6 +9,7 @@ import { usePermissionChange } from "./usePermissionChange";
 import { useRoleChange } from "./useRoleChange";
 import { SortableTableHead } from "./SortableTableHead";
 import { AdminUsersTableRow } from "./AdminUsersTableRow";
+import { NotificationStats } from "./NotificationStats";
 
 const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const navigate = useNavigate();
@@ -26,54 +27,59 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Users className="w-5 h-5" />
-          <span>All Users</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <SortableTableHead column="full_name" sortState={sortState} onSort={handleSort}>
-                User
-              </SortableTableHead>
-              <SortableTableHead column="role" sortState={sortState} onSort={handleSort}>
-                Role
-              </SortableTableHead>
-              <SortableTableHead column="listing_count" sortState={sortState} onSort={handleSort}>
-                Listings
-              </SortableTableHead>
-              <TableHead>Can Submit</TableHead>
-              <SortableTableHead column="created_at" sortState={sortState} onSort={handleSort}>
-                Joined
-              </SortableTableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedData?.map((user) => (
-              <AdminUsersTableRow
-                key={user.id}
-                user={user}
-                onUserClick={handleUserClick}
-                onPermissionChange={handleSubmissionPermissionChange}
-                onRoleChange={handleRoleChange}
-                isUpdating={updatingUsers.has(user.id)}
-                isUpdatingRole={updatingRoles.has(user.id)}
-              />
-            ))}
-          </TableBody>
-        </Table>
-        
-        {users?.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            No users found.
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <>
+      <NotificationStats users={users} />
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Users className="w-5 h-5" />
+            <span>All Users</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <SortableTableHead column="full_name" sortState={sortState} onSort={handleSort}>
+                  User
+                </SortableTableHead>
+                <SortableTableHead column="role" sortState={sortState} onSort={handleSort}>
+                  Role
+                </SortableTableHead>
+                <SortableTableHead column="listing_count" sortState={sortState} onSort={handleSort}>
+                  Listings
+                </SortableTableHead>
+                <TableHead>Can Submit</TableHead>
+                <TableHead>Email Notifications</TableHead>
+                <SortableTableHead column="created_at" sortState={sortState} onSort={handleSort}>
+                  Joined
+                </SortableTableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedData?.map((user) => (
+                <AdminUsersTableRow
+                  key={user.id}
+                  user={user}
+                  onUserClick={handleUserClick}
+                  onPermissionChange={handleSubmissionPermissionChange}
+                  onRoleChange={handleRoleChange}
+                  isUpdating={updatingUsers.has(user.id)}
+                  isUpdatingRole={updatingRoles.has(user.id)}
+                />
+              ))}
+            </TableBody>
+          </Table>
+          
+          {users?.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              No users found.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
