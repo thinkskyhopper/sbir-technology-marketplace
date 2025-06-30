@@ -65,10 +65,11 @@ export const useRoleChange = (users?: UserWithStats[]) => {
         throw new Error('Database update did not persist correctly');
       }
 
-      // Show success toast
+      // Show success toast with 5 second auto-dismiss
       toast({
         title: "Success",
         description: `User role updated to ${newRole} successfully`,
+        duration: 5000,
       });
 
       // Invalidate and refetch the admin users query
@@ -94,10 +95,12 @@ export const useRoleChange = (users?: UserWithStats[]) => {
         }
       }
       
+      // Show error toast with 5 second auto-dismiss
       toast({
         title: "Error",
         description: errorMessage,
         variant: "destructive",
+        duration: 5000,
       });
     } finally {
       // Remove user from updating set
