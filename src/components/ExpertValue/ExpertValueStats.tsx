@@ -20,8 +20,8 @@ const ExpertValueStats = () => {
         <div className="text-muted-foreground">Contracts Facilitated</div>
       </div>
       <div className="text-center">
-        <div className="text-3xl font-bold text-primary mb-2">30 Days</div>
-        <div className="text-muted-foreground">Average Transaction Time</div>
+        <div className="text-3xl font-bold text-primary mb-2">&lt;30 Days</div>
+        <div className="text-muted-foreground">Transaction Time</div>
       </div>
     </section>
   );
