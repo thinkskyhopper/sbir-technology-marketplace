@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { ParsedListing } from "./types";
+import type { ListingStatus } from "@/types/listings";
 
 interface UploadResult {
   successCount: number;
@@ -39,7 +40,7 @@ export const useCSVUpload = () => {
           deadline: listing.deadline,
           category: listing.category,
           photo_url: listing.photo_url || null,
-          status: 'Pending',
+          status: 'Pending' as ListingStatus,
           user_id: user.id
         }));
 
