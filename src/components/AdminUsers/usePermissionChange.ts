@@ -19,11 +19,27 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
     try {
       console.log('Updating submission permissions for user:', userId, 'to:', canSubmit);
       
+      // First, let's verify the user exists and get their current state
+      const { data: currentUser, error: fetchError } = await supabase
+        .from('profiles')
+        .select('id, can_submit_listings')
+        .eq('id', userId)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching current user:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('Current user state:', currentUser);
+
+      // Now update the user's permission
       const { data, error } = await supabase
         .from('profiles')
         .update({ can_submit_listings: canSubmit })
         .eq('id', userId)
-        .select('id, can_submit_listings');
+        .select('id, can_submit_listings')
+        .single();
 
       if (error) {
         console.error('Database error:', error);
@@ -32,8 +48,14 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
 
       console.log('Database update result:', data);
       
-      if (data && data.length > 0) {
-        console.log('Permission updated successfully. New value:', data[0].can_submit_listings);
+      if (data) {
+        console.log('Permission updated successfully. New value:', data.can_submit_listings);
+        
+        // Verify the update actually worked
+        if (data.can_submit_listings !== canSubmit) {
+          console.error('Database update failed - expected:', canSubmit, 'got:', data.can_submit_listings);
+          throw new Error('Database update did not persist correctly');
+        }
       }
 
       // Show success toast
@@ -42,18 +64,7 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
         description: `User submission permissions ${canSubmit ? 'enabled' : 'disabled'} successfully`,
       });
 
-      // Update the local query cache immediately
-      queryClient.setQueryData(['admin-users'], (oldData: UserWithStats[] | undefined) => {
-        if (!oldData) return oldData;
-        
-        return oldData.map(user => 
-          user.id === userId 
-            ? { ...user, can_submit_listings: canSubmit }
-            : user
-        );
-      });
-      
-      // Also invalidate and refetch to ensure consistency
+      // Invalidate and refetch the admin users query
       await queryClient.invalidateQueries({ 
         queryKey: ['admin-users'],
         exact: true

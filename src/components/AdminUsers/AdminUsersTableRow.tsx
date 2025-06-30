@@ -79,11 +79,12 @@ export const AdminUsersTableRow = ({
       <TableCell>
         {isAdmin ? (
           <div className="text-sm text-muted-foreground">
-            {/* Admin users don't show any permission controls */}
+            Admin privileges
           </div>
         ) : (
           <>
             <Select
+              key={`permission-${user.id}-${user.can_submit_listings}`}
               value={user.can_submit_listings ? 'enabled' : 'disabled'}
               onValueChange={handlePermissionChange}
               disabled={isUpdating}
