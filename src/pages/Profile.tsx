@@ -88,6 +88,7 @@ const Profile = () => {
         profile={displayProfile}
         isOwnProfile={!isOtherUserProfile}
         onEdit={() => setIsEditDialogOpen(true)}
+        userId={isOtherUserProfile ? userId : undefined}
       />
       
       <Tabs defaultValue="listings" className="w-full">
@@ -100,7 +101,7 @@ const Profile = () => {
         
         <TabsContent value="listings">
           <ProfileListings 
-            userId={isOtherUserProfile ? userId! : user.id}
+            userId={isOtherUserProfile ? userId : undefined}
             isOwnProfile={!isOtherUserProfile}
           />
         </TabsContent>
@@ -115,7 +116,7 @@ const Profile = () => {
       <EditProfileDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
-        profile={profile}
+        profile={displayProfile}
       />
     </div>
   );

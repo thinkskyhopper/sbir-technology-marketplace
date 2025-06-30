@@ -15,12 +15,12 @@ import RequestChangeDialog from "../RequestChangeDialog";
 
 interface ProfileListingsProps {
   userId?: string | null;
+  isOwnProfile: boolean;
 }
 
-const ProfileListings = ({ userId }: ProfileListingsProps) => {
+const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const isViewingOwnProfile = !userId || userId === user?.id;
   const targetUserId = userId || user?.id;
 
   // Dialog states
@@ -66,20 +66,20 @@ const ProfileListings = ({ userId }: ProfileListingsProps) => {
       <Card>
         <ProfileListingsHeader
           listingCount={listings?.length || 0}
-          isViewingOwnProfile={isViewingOwnProfile}
+          isViewingOwnProfile={isOwnProfile}
           createDialogOpen={createDialogOpen}
           onCreateDialogOpenChange={setCreateDialogOpen}
         />
         <CardContent>
           {listings?.length === 0 ? (
-            <ProfileListingsEmpty isViewingOwnProfile={isViewingOwnProfile} />
+            <ProfileListingsEmpty isViewingOwnProfile={isOwnProfile} />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {listings?.map((listing) => (
                 <ProfileListingCard
                   key={listing.id}
                   listing={listing}
-                  isViewingOwnProfile={isViewingOwnProfile}
+                  isViewingOwnProfile={isOwnProfile}
                   onEditListing={handleEditListing}
                   onRequestChange={handleRequestChange}
                 />

@@ -44,7 +44,13 @@ const NotificationPreferences = () => {
 
       if (error) throw error;
 
-      setSelectedCategories(data?.notification_categories || []);
+      // Handle the Json type from Supabase - ensure it's an array of strings
+      const categories = data?.notification_categories;
+      if (Array.isArray(categories)) {
+        setSelectedCategories(categories.filter((cat): cat is string => typeof cat === 'string'));
+      } else {
+        setSelectedCategories([]);
+      }
     } catch (error) {
       console.error('Error fetching notification preferences:', error);
       toast({

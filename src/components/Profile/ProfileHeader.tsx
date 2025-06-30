@@ -7,13 +7,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import EditProfileDialog from "./EditProfileDialog";
 
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  display_email: string | null;
+  company_name: string | null;
+  bio: string | null;
+  role: string;
+  created_at: string;
+}
+
 interface ProfileHeaderProps {
+  profile?: Profile | null;
+  isOwnProfile: boolean;
+  onEdit: () => void;
   userId?: string | null;
 }
 
-const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
+const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: ProfileHeaderProps) => {
   const { user } = useAuth();
-  const isViewingOwnProfile = !userId || userId === user?.id;
   const targetUserId = userId || user?.id;
 
   const { data: profile, isLoading } = useQuery({
@@ -30,8 +43,10 @@ const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
       if (error) throw error;
       return data;
     },
-    enabled: !!targetUserId
+    enabled: !!targetUserId && !propProfile
   });
+
+  const displayProfile = propProfile || profile;
 
   if (isLoading) {
     return (
@@ -47,7 +62,7 @@ const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
     );
   }
 
-  if (!profile) {
+  if (!displayProfile) {
     return (
       <Card className="mb-8">
         <CardContent className="p-6">
@@ -69,50 +84,54 @@ const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
             </div>
             <div>
               <CardTitle className="text-2xl">
-                {profile.full_name || 'No name provided'}
+                {displayProfile.full_name || 'No name provided'}
               </CardTitle>
               <div className="flex items-center space-x-4 mt-2">
                 <div className="flex items-center text-muted-foreground">
                   <Mail className="w-4 h-4 mr-1" />
-                  <span className="text-sm">{profile.display_email || profile.email}</span>
+                  <span className="text-sm">{displayProfile.display_email || displayProfile.email}</span>
                 </div>
                 <Badge 
-                  variant={profile.role === 'admin' ? 'default' : profile.role === 'consultant' ? 'secondary' : 'outline'}
+                  variant={displayProfile.role === 'admin' ? 'default' : displayProfile.role === 'consultant' ? 'secondary' : 'outline'}
                   className={
-                    profile.role === 'admin' 
+                    displayProfile.role === 'admin' 
                       ? 'bg-amber-500 hover:bg-amber-600' 
-                      : profile.role === 'consultant'
+                      : displayProfile.role === 'consultant'
                       ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
                       : ''
                   }
                 >
-                  {profile.role === 'admin' ? 'Administrator' : profile.role === 'consultant' ? 'Consultant' : 'User'}
+                  {displayProfile.role === 'admin' ? 'Administrator' : displayProfile.role === 'consultant' ? 'Consultant' : 'User'}
                 </Badge>
               </div>
             </div>
           </div>
-          {isViewingOwnProfile && <EditProfileDialog />}
+          {isOwnProfile && (
+            <button onClick={onEdit} className="text-sm text-muted-foreground hover:text-foreground">
+              Edit Profile
+            </button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {profile.company_name && (
+          {displayProfile.company_name && (
             <div className="flex items-center space-x-2">
               <Building className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">{profile.company_name}</span>
+              <span className="text-sm">{displayProfile.company_name}</span>
             </div>
           )}
           <div className="flex items-center space-x-2">
             <Calendar className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm">
-              Joined {new Date(profile.created_at).toLocaleDateString()}
+              Joined {new Date(displayProfile.created_at).toLocaleDateString()}
             </span>
           </div>
         </div>
-        {profile.bio && (
+        {displayProfile.bio && (
           <div className="mt-4">
             <h4 className="font-medium mb-2">About</h4>
-            <p className="text-sm text-muted-foreground">{profile.bio}</p>
+            <p className="text-sm text-muted-foreground">{displayProfile.bio}</p>
           </div>
         )}
       </CardContent>

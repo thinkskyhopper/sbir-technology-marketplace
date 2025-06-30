@@ -1,55 +1,75 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
-import { Edit2 } from "lucide-react";
-import { useProfileForm } from "./useProfileForm";
+import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import ProfileFormFields from "./ProfileFormFields";
+import { useProfileForm } from "./useProfileForm";
 
-const EditProfileDialog = () => {
-  const [open, setOpen] = useState(false);
-  const { form, isLoading, onSubmit } = useProfileForm(open, () => setOpen(false));
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  display_email: string | null;
+  company_name: string | null;
+  bio: string | null;
+  role: string;
+  notification_categories: string[] | null;
+}
+
+interface EditProfileDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  profile?: Profile | null;
+}
+
+const EditProfileDialog = ({ open, onOpenChange, profile: propProfile }: EditProfileDialogProps) => {
+  const { user } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id && !propProfile
+  });
+
+  const displayProfile = propProfile || profile;
+  const dialogOpen = open !== undefined ? open : isOpen;
+  const setDialogOpen = onOpenChange || setIsOpen;
+
+  const form = useProfileForm(displayProfile);
+
+  if (!displayProfile) return null;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Edit2 className="w-4 h-4 mr-2" />
-          Edit Profile
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      {open === undefined && (
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm">
+            <Edit className="w-4 h-4 mr-2" />
+            Edit Profile
+          </Button>
+        </DialogTrigger>
+      )}
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
-
-        {isLoading ? (
-          <div className="space-y-4">
-            <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-20 bg-gray-200 rounded animate-pulse"></div>
-          </div>
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <ProfileFormFields control={form.control} />
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  Save Changes
-                </Button>
-              </div>
-            </form>
-          </Form>
-        )}
+        <ProfileFormFields form={form} onClose={() => setDialogOpen(false)} />
       </DialogContent>
     </Dialog>
   );
