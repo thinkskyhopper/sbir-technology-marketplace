@@ -36,7 +36,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (session?.user) {
           console.log('👤 User authenticated, fetching profile...');
-          await fetchProfile(session.user.id, setProfile, setIsAdmin);
+          // Use setTimeout to avoid blocking the auth state change
+          setTimeout(() => {
+            fetchProfile(session.user.id, setProfile, setIsAdmin);
+          }, 0);
         } else {
           console.log('🚪 No user session, clearing profile...');
           setProfile(null);
@@ -62,7 +65,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (session?.user) {
         console.log('👤 Initial user found, fetching profile...');
-        await fetchProfile(session.user.id, setProfile, setIsAdmin);
+        // Use setTimeout to avoid blocking
+        setTimeout(() => {
+          fetchProfile(session.user.id, setProfile, setIsAdmin);
+        }, 0);
       } else {
         console.log('🚪 No initial session found');
         setProfile(null);

@@ -33,7 +33,10 @@ export const fetchProfile = async (
             email: userData.user.email || '',
             full_name: userData.user.user_metadata?.full_name || null,
             display_email: userData.user.email || '',
-            role: 'user' as const
+            role: 'user' as const,
+            bio: null,
+            company_name: null,
+            notification_categories: []
           };
           
           console.log('📝 Creating profile with data:', newProfileData);
@@ -48,7 +51,6 @@ export const fetchProfile = async (
 
           if (createError) {
             console.error('❌ Error creating profile:', createError);
-            // Don't throw here - set profile to null and continue
             setProfile(null);
             setIsAdmin(false);
             return;
