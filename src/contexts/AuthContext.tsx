@@ -87,7 +87,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             if (createError) {
               console.error('❌ Error creating profile:', createError);
-              throw createError;
+              // Don't throw here - set profile to null and continue
+              setProfile(null);
+              setIsAdmin(false);
+              return;
             } else {
               console.log('✅ Profile created successfully:', newProfile);
               const transformedProfile: Profile = {
@@ -102,11 +105,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
           } else {
             console.error('❌ No user data available for profile creation');
-            throw new Error('No user data available');
+            setProfile(null);
+            setIsAdmin(false);
+            return;
           }
         }
         
-        throw error;
+        // For other errors, just set profile to null and continue
+        console.error('❌ Profile fetch failed with error:', error);
+        setProfile(null);
+        setIsAdmin(false);
+        return;
       }
       
       // Transform the data to match our Profile interface
@@ -130,7 +139,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log('🚀 Setting up auth state listener...');
     
-    // Check for existing session first
+    // Set up auth state listener first
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('🔄 Auth state changed:', event, session?.user?.email || 'No session');
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          console.log('👤 User authenticated, fetching profile...');
+          await fetchProfile(session.user.id);
+        } else {
+          console.log('🚪 No user session, clearing profile...');
+          setProfile(null);
+          setIsAdmin(false);
+        }
+        
+        // Always set loading to false after processing auth change
+        setLoading(false);
+      }
+    );
+
+    // Check for existing session
     supabase.auth.getSession().then(async ({ data: { session }, error }) => {
       if (error) {
         console.error('❌ Error getting session:', error);
@@ -143,33 +174,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
+        console.log('👤 Initial user found, fetching profile...');
         await fetchProfile(session.user.id);
       } else {
+        console.log('🚪 No initial session found');
         setProfile(null);
         setIsAdmin(false);
       }
       
       setLoading(false);
     });
-    
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('🔄 Auth state changed:', event, session?.user?.email || 'No session');
-        
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-          setIsAdmin(false);
-        }
-        
-        setLoading(false);
-      }
-    );
 
     return () => {
       console.log('🧹 Cleaning up auth subscription');
