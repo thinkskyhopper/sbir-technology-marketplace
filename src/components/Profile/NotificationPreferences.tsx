@@ -7,19 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
-
-const AVAILABLE_CATEGORIES = [
-  'Aerospace and Defense',
-  'Agriculture and Food',
-  'Biotechnology and Healthcare',
-  'Chemistry and Materials',
-  'Electronics and Semiconductors',
-  'Energy and Environment',
-  'Information Technology',
-  'Manufacturing and Industrial',
-  'Transportation',
-  'Other'
-];
+import { CATEGORIES } from '@/utils/categoryConstants';
 
 const NotificationPreferences = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -118,16 +106,12 @@ const NotificationPreferences = () => {
     <Card>
       <CardHeader>
         <CardTitle>Email Notifications</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Receive daily email notifications for new SBIR listings in your selected categories. 
-          Emails are sent at 8 PM EST when there are new listings from the past 24 hours.
-        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
           <h4 className="text-sm font-medium mb-4">Select categories you're interested in:</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {AVAILABLE_CATEGORIES.map((category) => (
+            {CATEGORIES.map((category) => (
               <div key={category} className="flex items-center space-x-2">
                 <Checkbox
                   id={category}
