@@ -9,9 +9,10 @@ interface SortableTableHeadProps {
   children: React.ReactNode;
   sortState: SortState;
   onSort: (column: string) => void;
+  className?: string;
 }
 
-export const SortableTableHead = ({ column, children, sortState, onSort }: SortableTableHeadProps) => {
+export const SortableTableHead = ({ column, children, sortState, onSort, className }: SortableTableHeadProps) => {
   const getSortIcon = (column: string) => {
     if (sortState.column !== column) {
       return <ArrowUpDown className="w-4 h-4" />;
@@ -22,7 +23,7 @@ export const SortableTableHead = ({ column, children, sortState, onSort }: Sorta
   };
 
   return (
-    <TableHead>
+    <TableHead className={className}>
       <Button
         variant="ghost"
         onClick={() => onSort(column)}
