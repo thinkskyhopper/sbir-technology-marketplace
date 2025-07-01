@@ -50,11 +50,16 @@ export const useMarketplaceData = ({
       filtered = filtered.filter(listing => listing.category === categoryFilter);
     }
 
-    // Apply status filter
+    // Apply status filter - modified to only show Active and Sold for "all"
     if (statusFilter === "active") {
       filtered = filtered.filter(listing => listing.status === "Active");
-    } else if (statusFilter !== "all") {
-      filtered = filtered.filter(listing => listing.status === statusFilter);
+    } else if (statusFilter === "Sold") {
+      filtered = filtered.filter(listing => listing.status === "Sold");
+    } else if (statusFilter === "all") {
+      // Only show Active and Sold listings, exclude Pending, Rejected, and Hidden
+      filtered = filtered.filter(listing => 
+        listing.status === "Active" || listing.status === "Sold"
+      );
     }
 
     // Apply sorting
