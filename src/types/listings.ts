@@ -10,6 +10,7 @@ export interface SBIRListing {
   category: string;
   status: 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
   submitted_at: string;
+  approved_at?: string | null;
   user_id: string;
   photo_url?: string;
   date_sold?: string | null;
