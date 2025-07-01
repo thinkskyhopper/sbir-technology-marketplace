@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -186,7 +185,6 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
         open={requestChangeDialogOpen}
         onOpenChange={setRequestChangeDialogOpen}
         listing={selectedListing}
-        requestType="change"
       />
     </>
   );

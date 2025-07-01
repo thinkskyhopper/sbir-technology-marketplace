@@ -55,14 +55,12 @@ const ListingDetailDialogs = ({
         open={showRequestChangeDialog}
         onOpenChange={setShowRequestChangeDialog}
         listing={listing}
-        requestType="change"
       />
 
       <RequestChangeDialog
         open={showRequestDeletionDialog}
         onOpenChange={setShowRequestDeletionDialog}
         listing={listing}
-        requestType="deletion"
       />
     </>
   );

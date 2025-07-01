@@ -23,4 +23,6 @@ export type CreateChangeRequestData = {
   request_type: 'change' | 'deletion';
   requested_changes?: any;
   reason?: string;
+  listing_title?: string;
+  listing_agency?: string;
 };

@@ -24,7 +24,6 @@ const ProfileListingsDialogs = ({ selectedListing }: ProfileListingsDialogsProps
         open={requestChangeDialogOpen}
         onOpenChange={setRequestChangeDialogOpen}
         listing={selectedListing}
-        requestType="change"
       />
     </>
   );
