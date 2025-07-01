@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ListingChangeRequest } from "@/types/changeRequests";
 import type { AdminProfile } from "./types";
 import { AdminChangeRequestsTableRow } from "./AdminChangeRequestsTableRow";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AdminChangeRequestsTableContentProps {
   changeRequests: ListingChangeRequest[];
@@ -32,59 +31,39 @@ export const AdminChangeRequestsTableContent = ({
   onReject,
   getAdminInfo
 }: AdminChangeRequestsTableContentProps) => {
-  const isMobile = useIsMobile();
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Listing Change & Deletion Requests</CardTitle>
       </CardHeader>
       <CardContent>
-        {isMobile ? (
-          // Mobile card layout
-          <div className="space-y-4 max-h-[400px] overflow-y-auto">
-            {changeRequests.map((request) => (
-              <AdminChangeRequestsTableRow
-                key={request.id}
-                request={request}
-                processingId={processingId}
-                onViewDetails={onViewDetails}
-                onApprove={onApprove}
-                onReject={onReject}
-                getAdminInfo={getAdminInfo}
-              />
-            ))}
-          </div>
-        ) : (
-          // Desktop table layout
-          <ScrollArea className="h-[400px] w-full">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Listing</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Requested</TableHead>
-                  <TableHead>Processed By</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {changeRequests.map((request) => (
-                  <AdminChangeRequestsTableRow
-                    key={request.id}
-                    request={request}
-                    processingId={processingId}
-                    onViewDetails={onViewDetails}
-                    onApprove={onApprove}
-                    onReject={onReject}
-                    getAdminInfo={getAdminInfo}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        )}
+        <ScrollArea className="h-[400px] w-full">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Listing</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Requested</TableHead>
+                <TableHead>Processed By</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {changeRequests.map((request) => (
+                <AdminChangeRequestsTableRow
+                  key={request.id}
+                  request={request}
+                  processingId={processingId}
+                  onViewDetails={onViewDetails}
+                  onApprove={onApprove}
+                  onReject={onReject}
+                  getAdminInfo={getAdminInfo}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </ScrollArea>
         
         {changeRequests.length === 0 && (
           <div className="text-center py-8">
