@@ -1,7 +1,7 @@
 
 import { format } from "date-fns";
 import type { UserWithStats } from "./types";
-import { AdminUsersRoleSelect } from "./AdminUsersRoleSelect";
+import { RoleBadgeSelect } from "./RoleBadgeSelect";
 import { AdminUsersPermissionSwitch } from "./AdminUsersPermissionSwitch";
 import { AdminUsersNotificationButton } from "./AdminUsersNotificationButton";
 
@@ -52,11 +52,10 @@ export const AdminUsersTableRowMobile = ({
         <div>
           <span className="text-muted-foreground">Role:</span>
           <div className="mt-1">
-            <AdminUsersRoleSelect
+            <RoleBadgeSelect
               role={user.role}
               isUpdating={isUpdatingRole}
               onRoleChange={(value) => onRoleChange(user.id, value)}
-              className="h-7 text-xs"
             />
           </div>
         </div>

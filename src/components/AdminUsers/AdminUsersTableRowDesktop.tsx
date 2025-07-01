@@ -3,7 +3,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import type { UserWithStats } from "./types";
-import { AdminUsersRoleSelect } from "./AdminUsersRoleSelect";
+import { RoleBadgeSelect } from "./RoleBadgeSelect";
 import { AdminUsersPermissionSwitch } from "./AdminUsersPermissionSwitch";
 import { AdminUsersNotificationButton } from "./AdminUsersNotificationButton";
 
@@ -52,11 +52,10 @@ export const AdminUsersTableRowDesktop = ({
         </div>
       </TableCell>
       <TableCell>
-        <AdminUsersRoleSelect
+        <RoleBadgeSelect
           role={user.role}
           isUpdating={isUpdatingRole}
           onRoleChange={(value) => onRoleChange(user.id, value)}
-          className="w-32"
         />
       </TableCell>
       <TableCell>
