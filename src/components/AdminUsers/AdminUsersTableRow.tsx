@@ -1,4 +1,3 @@
-
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -137,10 +136,9 @@ export const AdminUsersTableRow = ({
         <NotificationCategoriesDialog
           open={showNotificationDialog}
           onOpenChange={setShowNotificationDialog}
-          userId={user.id}
           userEmail={user.email}
           userName={user.full_name || 'Unknown User'}
-          currentCategories={user.notification_categories || []}
+          categories={user.notification_categories || []}
         />
       </>
     );
@@ -229,10 +227,9 @@ export const AdminUsersTableRow = ({
       <NotificationCategoriesDialog
         open={showNotificationDialog}
         onOpenChange={setShowNotificationDialog}
-        userId={user.id}
         userEmail={user.email}
         userName={user.full_name || 'Unknown User'}
-        currentCategories={user.notification_categories || []}
+        categories={user.notification_categories || []}
       />
     </>
   );
