@@ -42,7 +42,8 @@ const ListingDetailContent = ({
       />
 
       <div className="container mx-auto px-6 py-8 flex-1">
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* Desktop layout: sidebar on the right */}
+        <div className="hidden lg:grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <ListingDetailHeroImage listing={listing} />
             <ListingDetailDescription description={listing.description} />
@@ -54,6 +55,20 @@ const ListingDetailContent = ({
             allListings={allListings}
             isCurrentUserAdmin={isAdmin}
           />
+        </div>
+
+        {/* Mobile layout: Key Information above description */}
+        <div className="block lg:hidden space-y-6">
+          <ListingDetailHeroImage listing={listing} />
+          
+          <ListingDetailSidebar
+            listing={listing}
+            onContactAdmin={onContactAdmin}
+            allListings={allListings}
+            isCurrentUserAdmin={isAdmin}
+          />
+          
+          <ListingDetailDescription description={listing.description} />
         </div>
       </div>
     </>

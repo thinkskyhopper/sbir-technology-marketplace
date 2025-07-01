@@ -70,8 +70,8 @@ const ListingDetailHeader = ({
             Back to Marketplace
           </Button>
           
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-6 lg:space-y-0">
+            <div className="flex-1 lg:pr-6">
               <div className="flex items-center gap-3 mb-2">
                 <Badge 
                   variant={listing.phase === "Phase I" ? "default" : "secondary"}
@@ -87,22 +87,22 @@ const ListingDetailHeader = ({
                 </Badge>
               </div>
               
-              <h1 className="text-3xl font-bold mb-2">{listing.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2">{listing.title}</h1>
               
               <div className="flex items-center text-muted-foreground mb-4">
                 <Building className="w-4 h-4 mr-2" />
                 {listing.agency}
               </div>
               
-              <div className="flex items-center text-2xl font-bold text-green-600">
-                <DollarSign className="w-6 h-6 mr-1" />
+              <div className="flex items-center text-xl sm:text-2xl font-bold text-green-600">
+                <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 mr-1" />
                 {formatCurrency(listing.value)}
               </div>
             </div>
             
-            <div className="ml-6 flex flex-col items-end space-y-2">
+            <div className="flex flex-col items-stretch lg:items-end space-y-3 w-full lg:w-auto lg:min-w-[300px]">
               {/* Main action buttons */}
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center lg:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-2">
                 <ShareButton 
                   listingId={listing.id}
                   listingTitle={listing.title}
@@ -110,6 +110,7 @@ const ListingDetailHeader = ({
                 <Button 
                   size="lg"
                   onClick={onContactAdmin}
+                  className="flex-1 sm:flex-none"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   Contact
@@ -118,10 +119,11 @@ const ListingDetailHeader = ({
               
               {/* Admin-only buttons */}
               {isAdmin && (
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center lg:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-2">
                   <Button 
                     variant="outline"
                     onClick={onEditListing}
+                    className="flex-1 sm:flex-none"
                   >
                     <Edit className="w-4 h-4 mr-2" />
                     Edit Listing
@@ -129,7 +131,7 @@ const ListingDetailHeader = ({
                   <Button 
                     variant="outline"
                     onClick={() => setShowDeleteDialog(true)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-1 sm:flex-none"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
@@ -139,10 +141,11 @@ const ListingDetailHeader = ({
               
               {/* Owner-only buttons (non-admin users who own the listing) */}
               {canRequestChanges && (
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center lg:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-2">
                   <Button 
                     variant="outline"
                     onClick={onRequestChange}
+                    className="flex-1 sm:flex-none"
                   >
                     <FileEdit className="w-4 h-4 mr-2" />
                     Request Changes
@@ -150,7 +153,7 @@ const ListingDetailHeader = ({
                   <Button 
                     variant="outline"
                     onClick={onRequestDeletion}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-1 sm:flex-none"
                   >
                     <UserX className="w-4 h-4 mr-2" />
                     Request Deletion
