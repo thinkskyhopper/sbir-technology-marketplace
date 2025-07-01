@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Download, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CATEGORIES } from "@/utils/categoryConstants";
+import { format } from "date-fns";
 import type { SBIRListing } from "@/types/listings";
 
 interface ExportListingsDialogProps {
@@ -43,6 +43,7 @@ interface ExportFields {
   submittedAt: boolean;
   userInfo: boolean;
   photoUrl: boolean;
+  dateSold: boolean;
 }
 
 export const ExportListingsDialog = ({ 
@@ -76,7 +77,8 @@ export const ExportListingsDialog = ({
     status: true,
     submittedAt: true,
     userInfo: false,
-    photoUrl: false
+    photoUrl: false,
+    dateSold: false
   });
 
   const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
@@ -132,6 +134,9 @@ export const ExportListingsDialog = ({
         data.user_email = listing.profiles.email;
       }
       if (exportFields.photoUrl) data.photo_url = listing.photo_url;
+      if (exportFields.dateSold) {
+        data.date_sold = listing.date_sold ? format(new Date(listing.date_sold), 'MMM d, yyyy') : '';
+      }
 
       return data;
     });
@@ -467,6 +472,15 @@ export const ExportListingsDialog = ({
                     onCheckedChange={(checked) => setExportFields(prev => ({ ...prev, photoUrl: !!checked }))}
                   />
                   <Label htmlFor="photoUrl">Photo URL</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="dateSold"
+                    checked={exportFields.dateSold}
+                    onCheckedChange={(checked) => setExportFields(prev => ({ ...prev, dateSold: !!checked }))}
+                  />
+                  <Label htmlFor="dateSold">Date Sold</Label>
                 </div>
               </div>
 
