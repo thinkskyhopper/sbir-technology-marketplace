@@ -59,49 +59,51 @@ export const AdminChangeRequestsTableRow = ({
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell className="min-w-[200px]">
         <div>
           <div className="flex items-center space-x-2">
-            <p className="font-medium">{listingTitle}</p>
+            <p className="font-medium text-sm leading-tight">{listingTitle}</p>
             {isListingDeleted && (
-              <Badge variant="outline" className="text-xs text-muted-foreground">
+              <Badge variant="outline" className="text-xs text-muted-foreground flex-shrink-0">
                 Deleted
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">{listingAgency}</p>
+          <p className="text-sm text-muted-foreground mt-1">{listingAgency}</p>
         </div>
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-[100px]">
         <Badge 
           variant={request.request_type === 'change' ? 'default' : 'destructive'}
-          className={getRequestTypeBadgeClassName(request.request_type)}
+          className={`text-xs ${getRequestTypeBadgeClassName(request.request_type)}`}
         >
           {request.request_type === 'change' ? 'Change' : 'Deletion'}
         </Badge>
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-[100px]">
         <Badge 
           variant={getStatusBadgeVariant(request.status)}
-          className={getStatusBadgeClassName(request.status)}
+          className={`text-xs ${getStatusBadgeClassName(request.status)}`}
         >
           {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
         </Badge>
       </TableCell>
-      <TableCell>
-        {format(new Date(request.created_at), 'MMM d, yyyy')}
+      <TableCell className="min-w-[120px]">
+        <span className="text-sm whitespace-nowrap">
+          {format(new Date(request.created_at), 'MMM d, yyyy')}
+        </span>
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-[150px]">
         {request.processed_by ? (
           <div className="flex items-center space-x-1">
-            <User className="w-3 h-3" />
-            <span className="text-sm">{getAdminInfo(request.processed_by)}</span>
+            <User className="w-3 h-3 flex-shrink-0" />
+            <span className="text-sm truncate">{getAdminInfo(request.processed_by)}</span>
           </div>
         ) : (
           <span className="text-muted-foreground text-sm">Not processed</span>
         )}
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-[120px]">
         <AdminChangeRequestsTableActions
           request={request}
           processingId={processingId}

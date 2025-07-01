@@ -37,40 +37,42 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
             <span>All Users</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <SortableTableHead column="full_name" sortState={sortState} onSort={handleSort}>
-                  User
-                </SortableTableHead>
-                <SortableTableHead column="role" sortState={sortState} onSort={handleSort}>
-                  Role
-                </SortableTableHead>
-                <SortableTableHead column="listing_count" sortState={sortState} onSort={handleSort}>
-                  Listings
-                </SortableTableHead>
-                <TableHead>Can Submit</TableHead>
-                <TableHead>Email Notifications</TableHead>
-                <SortableTableHead column="created_at" sortState={sortState} onSort={handleSort}>
-                  Joined
-                </SortableTableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedData?.map((user) => (
-                <AdminUsersTableRow
-                  key={user.id}
-                  user={user}
-                  onUserClick={handleUserClick}
-                  onPermissionChange={handleSubmissionPermissionChange}
-                  onRoleChange={handleRoleChange}
-                  isUpdating={updatingUsers.has(user.id)}
-                  isUpdatingRole={updatingRoles.has(user.id)}
-                />
-              ))}
-            </TableBody>
-          </Table>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto">
+            <Table className="min-w-[800px]">
+              <TableHeader>
+                <TableRow>
+                  <SortableTableHead column="full_name" sortState={sortState} onSort={handleSort} className="min-w-[200px]">
+                    User
+                  </SortableTableHead>
+                  <SortableTableHead column="role" sortState={sortState} onSort={handleSort} className="min-w-[150px]">
+                    Role
+                  </SortableTableHead>
+                  <SortableTableHead column="listing_count" sortState={sortState} onSort={handleSort} className="min-w-[100px]">
+                    Listings
+                  </SortableTableHead>
+                  <TableHead className="min-w-[120px]">Can Submit</TableHead>
+                  <TableHead className="min-w-[150px]">Email Notifications</TableHead>
+                  <SortableTableHead column="created_at" sortState={sortState} onSort={handleSort} className="min-w-[120px]">
+                    Joined
+                  </SortableTableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedData?.map((user) => (
+                  <AdminUsersTableRow
+                    key={user.id}
+                    user={user}
+                    onUserClick={handleUserClick}
+                    onPermissionChange={handleSubmissionPermissionChange}
+                    onRoleChange={handleRoleChange}
+                    isUpdating={updatingUsers.has(user.id)}
+                    isUpdatingRole={updatingRoles.has(user.id)}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
           
           {users?.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">

@@ -31,8 +31,8 @@ const AdminListingsTableContent = ({
 }: AdminListingsTableContentProps) => {
   return (
     <TooltipProvider>
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="min-w-[1200px]">
           <TableHeader>
             <TableRow>
               <SortableTableHead
@@ -40,7 +40,7 @@ const AdminListingsTableContent = ({
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
                 onSort={onSort}
-                className="w-[250px]"
+                className="min-w-[250px]"
               >
                 Title
               </SortableTableHead>
@@ -49,7 +49,7 @@ const AdminListingsTableContent = ({
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
                 onSort={onSort}
-                className="w-[120px]"
+                className="min-w-[120px]"
               >
                 Agency
               </SortableTableHead>
@@ -58,6 +58,7 @@ const AdminListingsTableContent = ({
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
                 onSort={onSort}
+                className="min-w-[80px]"
               >
                 Phase
               </SortableTableHead>
@@ -66,7 +67,7 @@ const AdminListingsTableContent = ({
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
                 onSort={onSort}
-                className="text-right"
+                className="text-right min-w-[100px]"
               >
                 Value
               </SortableTableHead>
@@ -75,6 +76,7 @@ const AdminListingsTableContent = ({
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
                 onSort={onSort}
+                className="min-w-[100px]"
               >
                 Deadline
               </SortableTableHead>
@@ -83,6 +85,7 @@ const AdminListingsTableContent = ({
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
                 onSort={onSort}
+                className="min-w-[100px]"
               >
                 Status
               </SortableTableHead>
@@ -92,10 +95,11 @@ const AdminListingsTableContent = ({
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
                 onSort={onSort}
+                className="min-w-[120px]"
               >
                 Submitted
               </SortableTableHead>
-              <TableHead className="w-16">Actions</TableHead>
+              <TableHead className="min-w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

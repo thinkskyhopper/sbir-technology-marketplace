@@ -79,7 +79,7 @@ const AdminUsers = () => {
       <ProtectedRoute requireAdmin={true}>
         <div className="min-h-screen bg-background flex flex-col">
           <Header />
-          <div className="container mx-auto px-6 py-8 flex-1">
+          <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 flex-1">
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
@@ -95,8 +95,8 @@ const AdminUsers = () => {
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         
-        <div className="container mx-auto px-6 py-8 flex-1">
-          <div className="mb-8">
+        <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 flex-1">
+          <div className="mb-6 sm:mb-8">
             <AdminUsersHeader />
             <AdminUsersStats
               totalUsers={totalUsers}

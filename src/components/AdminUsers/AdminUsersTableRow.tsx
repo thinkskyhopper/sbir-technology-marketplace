@@ -57,39 +57,39 @@ export const AdminUsersTableRow = ({
   return (
     <>
       <TableRow key={user.id}>
-        <TableCell>
+        <TableCell className="min-w-[200px]">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <span className="text-sm font-medium text-primary">
                   {(user.full_name || user.email)?.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <button
                   onClick={() => onUserClick(user.id)}
-                  className="font-medium text-primary hover:underline cursor-pointer"
+                  className="font-medium text-primary hover:underline cursor-pointer text-sm block truncate"
                 >
                   {user.full_name || 'No name provided'}
                 </button>
                 <div className="flex items-center text-sm text-muted-foreground">
-                  <Mail className="w-3 h-3 mr-1" />
-                  {user.email}
+                  <Mail className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span className="truncate">{user.email}</span>
                 </div>
               </div>
             </div>
           </div>
         </TableCell>
-        <TableCell>
+        <TableCell className="min-w-[150px]">
           <div className="flex items-center space-x-2">
             <Badge 
               variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
               className={
                 user.role === 'admin' 
-                  ? 'bg-amber-500 hover:bg-amber-600' 
+                  ? 'bg-amber-500 hover:bg-amber-600 text-xs' 
                   : user.role === 'consultant'
-                  ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
-                  : ''
+                  ? 'bg-white hover:bg-gray-50 text-black border-gray-300 text-xs'
+                  : 'text-xs'
               }
             >
               {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
@@ -99,7 +99,7 @@ export const AdminUsersTableRow = ({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-6 w-6 p-0"
+                  className="h-6 w-6 p-0 flex-shrink-0"
                   disabled={isUpdatingRole}
                 >
                   <ChevronDown className="h-3 w-3" />
@@ -131,16 +131,16 @@ export const AdminUsersTableRow = ({
             )}
           </div>
         </TableCell>
-        <TableCell>
+        <TableCell className="min-w-[100px]">
           <div className="flex items-center space-x-1">
-            <FileText className="w-3 h-3 text-muted-foreground" />
-            <span className="font-medium">{user.listing_count}</span>
+            <FileText className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+            <span className="font-medium text-sm">{user.listing_count}</span>
             <span className="text-muted-foreground text-sm">
               listing{user.listing_count !== 1 ? 's' : ''}
             </span>
           </div>
         </TableCell>
-        <TableCell>
+        <TableCell className="min-w-[120px]">
           {isAdmin ? (
             <div className="text-sm text-muted-foreground">
               Admin privileges
@@ -153,7 +153,7 @@ export const AdminUsersTableRow = ({
                 onValueChange={handlePermissionChange}
                 disabled={isUpdating}
               >
-                <SelectTrigger className="w-28">
+                <SelectTrigger className="w-24 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -167,9 +167,9 @@ export const AdminUsersTableRow = ({
             </>
           )}
         </TableCell>
-        <TableCell>
+        <TableCell className="min-w-[150px]">
           <div className="flex items-center space-x-2">
-            <Bell className="w-3 h-3 text-muted-foreground" />
+            <Bell className="w-3 h-3 text-muted-foreground flex-shrink-0" />
             {hasNotifications ? (
               <button
                 onClick={() => setShowNotificationDialog(true)}
@@ -182,10 +182,12 @@ export const AdminUsersTableRow = ({
             )}
           </div>
         </TableCell>
-        <TableCell>
+        <TableCell className="min-w-[120px]">
           <div className="flex items-center text-sm text-muted-foreground">
-            <Calendar className="w-3 h-3 mr-1" />
-            {new Date(user.created_at).toLocaleDateString()}
+            <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span className="whitespace-nowrap">
+              {new Date(user.created_at).toLocaleDateString()}
+            </span>
           </div>
         </TableCell>
       </TableRow>
