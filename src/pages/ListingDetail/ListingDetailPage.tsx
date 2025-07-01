@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useListings } from "@/hooks/useListings";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,6 +29,11 @@ const ListingDetailPage = () => {
   const [showRequestDeletionDialog, setShowRequestDeletionDialog] = useState(false);
 
   const listing = listings.find(l => l.id === id);
+
+  // Scroll to top when the page loads or listing changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   // Custom hooks for handlers and meta tags
   const {

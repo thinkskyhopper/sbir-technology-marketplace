@@ -101,8 +101,8 @@ const ListingDetailHeader = ({
             </div>
             
             <div className="flex flex-col items-stretch lg:items-end space-y-3 w-full lg:w-auto lg:min-w-[300px]">
-              {/* Main action buttons */}
-              <div className="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center lg:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-2">
+              {/* Main action buttons - side by side on mobile, maintain desktop layout */}
+              <div className="flex flex-row lg:flex-row items-center space-x-2 lg:space-x-2">
                 <ShareButton 
                   listingId={listing.id}
                   listingTitle={listing.title}
@@ -110,7 +110,7 @@ const ListingDetailHeader = ({
                 <Button 
                   size="lg"
                   onClick={onContactAdmin}
-                  className="flex-1 sm:flex-none lg:min-w-0"
+                  className="flex-1 lg:flex-none"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   Contact
