@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -86,8 +85,8 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
             </Badge>
             {listing.technology_summary && (
               <div className="text-center">
-                <p className="text-sm font-medium text-gray-800 mb-1">Technology:</p>
-                <p className="text-lg font-bold text-gray-900">{listing.technology_summary}</p>
+                <p className="text-sm font-medium text-white mb-1">Technology:</p>
+                <p className="text-lg font-bold text-white">{listing.technology_summary}</p>
               </div>
             )}
           </div>
