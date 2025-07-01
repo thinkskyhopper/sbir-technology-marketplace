@@ -29,15 +29,6 @@ export const AdminUsersTableRowDesktop = ({
   const hasNotifications = user.notification_categories && user.notification_categories.length > 0;
   const notificationCount = user.notification_categories?.length || 0;
 
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case 'admin': return 'default';
-      case 'consultant': return 'secondary';
-      case 'user': return 'outline';
-      default: return 'outline';
-    }
-  };
-
   return (
     <TableRow className="hover:bg-muted/50">
       <TableCell>
@@ -59,7 +50,7 @@ export const AdminUsersTableRowDesktop = ({
         />
       </TableCell>
       <TableCell>
-        <Badge variant={getRoleBadgeVariant(user.role)} className="text-xs">
+        <Badge variant="outline" className="text-xs">
           {user.listing_count}
         </Badge>
       </TableCell>

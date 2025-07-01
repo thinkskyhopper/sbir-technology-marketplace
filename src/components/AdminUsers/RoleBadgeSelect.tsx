@@ -24,21 +24,28 @@ export const RoleBadgeSelect = ({
 }: RoleBadgeSelectProps) => {
   const [open, setOpen] = useState(false);
 
-  const getRoleBadgeVariant = (role: string) => {
+  const getRoleBadgeProps = (role: string) => {
     switch (role) {
-      case 'admin': return 'default';
-      case 'consultant': return 'secondary';
-      case 'user': return 'outline';
-      default: return 'outline';
-    }
-  };
-
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case 'admin': return 'Admin';
-      case 'consultant': return 'Consultant';
-      case 'user': return 'User';
-      default: return role;
+      case 'admin': 
+        return { 
+          className: 'bg-amber-500 hover:bg-amber-600 text-white border-amber-500',
+          children: 'Administrator'
+        };
+      case 'consultant': 
+        return { 
+          className: 'bg-white hover:bg-gray-50 text-black border-gray-300',
+          children: 'Consultant'
+        };
+      case 'user': 
+        return { 
+          variant: 'outline' as const,
+          children: 'User'
+        };
+      default: 
+        return { 
+          variant: 'outline' as const,
+          children: role 
+        };
     }
   };
 
@@ -51,19 +58,19 @@ export const RoleBadgeSelect = ({
     );
   }
 
+  const currentBadgeProps = getRoleBadgeProps(role);
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button
           className={`inline-flex items-center space-x-1 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full min-h-[44px] px-1 ${className}`}
         >
-          <Badge variant={getRoleBadgeVariant(role)} className="text-xs cursor-pointer">
-            {getRoleLabel(role)}
-          </Badge>
+          <Badge {...currentBadgeProps} className={`text-xs cursor-pointer ${currentBadgeProps.className || ''}`} />
           <ChevronDown className="w-3 h-3 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-32">
+      <DropdownMenuContent align="start" className="w-40">
         <DropdownMenuItem
           onClick={() => {
             onRoleChange('user');
@@ -82,7 +89,7 @@ export const RoleBadgeSelect = ({
           }}
           className="cursor-pointer"
         >
-          <Badge variant="secondary" className="text-xs">
+          <Badge className="text-xs bg-white hover:bg-gray-50 text-black border-gray-300">
             Consultant
           </Badge>
         </DropdownMenuItem>
@@ -93,8 +100,8 @@ export const RoleBadgeSelect = ({
           }}
           className="cursor-pointer"
         >
-          <Badge variant="default" className="text-xs">
-            Admin
+          <Badge className="text-xs bg-amber-500 hover:bg-amber-600 text-white border-amber-500">
+            Administrator
           </Badge>
         </DropdownMenuItem>
       </DropdownMenuContent>
