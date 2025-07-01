@@ -60,26 +60,26 @@ const AdminListingsTableContent = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableTableHead column="title" sortState={sortState} onSort={onSort}>
+            <SortableTableHead sortColumn="title" sortState={sortState} onSort={onSort}>
               Title
             </SortableTableHead>
-            <SortableTableHead column="agency" sortState={sortState} onSort={onSort}>
+            <SortableTableHead sortColumn="agency" sortState={sortState} onSort={onSort}>
               Agency
             </SortableTableHead>
-            <SortableTableHead column="phase" sortState={sortState} onSort={onSort}>
+            <SortableTableHead sortColumn="phase" sortState={sortState} onSort={onSort}>
               Phase
             </SortableTableHead>
-            <SortableTableHead column="value" sortState={sortState} onSort={onSort}>
+            <SortableTableHead sortColumn="value" sortState={sortState} onSort={onSort}>
               Value
             </SortableTableHead>
-            <SortableTableHead column="deadline" sortState={sortState} onSort={onSort}>
+            <SortableTableHead sortColumn="deadline" sortState={sortState} onSort={onSort}>
               Deadline
             </SortableTableHead>
-            <SortableTableHead column="status" sortState={sortState} onSort={onSort}>
+            <SortableTableHead sortColumn="status" sortState={sortState} onSort={onSort}>
               Status
             </SortableTableHead>
             <TableHead>User</TableHead>
-            <SortableTableHead column="submitted_at" sortState={sortState} onSort={onSort}>
+            <SortableTableHead sortColumn="submitted_at" sortState={sortState} onSort={onSort}>
               Submitted
             </SortableTableHead>
             <TableHead>Actions</TableHead>

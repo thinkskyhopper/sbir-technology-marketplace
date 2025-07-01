@@ -123,7 +123,6 @@ export const AdminUsersTableRow = ({
                   <Switch
                     checked={user.can_submit_listings}
                     onCheckedChange={(checked) => onPermissionChange(user.id, checked)}
-                    size="sm"
                   />
                 )}
               </div>
@@ -138,7 +137,10 @@ export const AdminUsersTableRow = ({
         <NotificationCategoriesDialog
           open={showNotificationDialog}
           onOpenChange={setShowNotificationDialog}
-          user={user}
+          userId={user.id}
+          userEmail={user.email}
+          userName={user.full_name || 'Unknown User'}
+          currentCategories={user.notification_categories || []}
         />
       </>
     );
@@ -227,7 +229,10 @@ export const AdminUsersTableRow = ({
       <NotificationCategoriesDialog
         open={showNotificationDialog}
         onOpenChange={setShowNotificationDialog}
-        user={user}
+        userId={user.id}
+        userEmail={user.email}
+        userName={user.full_name || 'Unknown User'}
+        currentCategories={user.notification_categories || []}
       />
     </>
   );
