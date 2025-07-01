@@ -2,7 +2,7 @@
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AdminListingsTableRow from "./AdminListingsTableRow";
-import { SortableTableHead } from "./SortableTableHead";
+import SortableTableHead from "./SortableTableHead";
 import type { SBIRListing } from "@/types/listings";
 import type { SortState } from "@/hooks/useSorting";
 
@@ -36,54 +36,61 @@ const AdminListingsTableContent = ({
           <TableHeader>
             <TableRow>
               <SortableTableHead
-                column="title"
-                sortState={sortState}
+                sortKey="title"
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
                 onSort={onSort}
                 className="w-[250px]"
               >
                 Title
               </SortableTableHead>
               <SortableTableHead
-                column="agency"
-                sortState={sortState}
+                sortKey="agency"
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
                 onSort={onSort}
                 className="w-[120px]"
               >
                 Agency
               </SortableTableHead>
               <SortableTableHead
-                column="phase"
-                sortState={sortState}
+                sortKey="phase"
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
                 onSort={onSort}
               >
                 Phase
               </SortableTableHead>
               <SortableTableHead
-                column="value"
-                sortState={sortState}
+                sortKey="value"
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
                 onSort={onSort}
                 className="text-right"
               >
                 Value
               </SortableTableHead>
               <SortableTableHead
-                column="deadline"
-                sortState={sortState}
+                sortKey="deadline"
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
                 onSort={onSort}
               >
                 Deadline
               </SortableTableHead>
               <SortableTableHead
-                column="status"
-                sortState={sortState}
+                sortKey="status"
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
                 onSort={onSort}
               >
                 Status
               </SortableTableHead>
               <TableHead className="min-w-[180px]">Submitter</TableHead>
               <SortableTableHead
-                column="submitted_at"
-                sortState={sortState}
+                sortKey="submitted_at"
+                currentSortColumn={sortState.column}
+                currentSortDirection={sortState.direction}
                 onSort={onSort}
               >
                 Submitted

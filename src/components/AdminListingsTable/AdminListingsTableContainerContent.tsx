@@ -50,7 +50,7 @@ const AdminListingsTableContainerContent = ({
   return (
     <>
       <AdminListingsTableContent
-        paginatedData={paginatedData}
+        listings={paginatedData}
         processingId={processingId}
         sortState={sortState}
         onSort={onSort}
