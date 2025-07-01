@@ -4,6 +4,8 @@ import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader"
 import ListingDetailHeroImage from "@/components/ListingDetail/ListingDetailHeroImage";
 import ListingDetailDescription from "@/components/ListingDetail/ListingDetailDescription";
 import ListingDetailSidebar from "@/components/ListingDetail/ListingDetailSidebar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, DollarSign, Building, Clock, Tag, Settings } from "lucide-react";
 
 interface ListingDetailContentProps {
   listing: SBIRListing;
@@ -28,6 +30,34 @@ const ListingDetailContent = ({
   onRequestDeletion,
   allListings = []
 }: ListingDetailContentProps) => {
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    // Parse the date string as a local date to avoid timezone issues
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const formatDateTime = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
     <>
       <ListingDetailHeader
@@ -57,18 +87,78 @@ const ListingDetailContent = ({
           />
         </div>
 
-        {/* Mobile layout: Key Information above description */}
+        {/* Mobile layout: Key Information above description, rest below */}
         <div className="block lg:hidden space-y-6">
           <ListingDetailHeroImage listing={listing} />
           
+          {/* Key Information only */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Key Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center text-sm">
+                <Clock className="w-4 h-4 mr-2 text-blue-500" />
+                <div>
+                  <p className="font-semibold">Date Listed</p>
+                  <p className="text-muted-foreground">
+                    {listing.approved_at ? formatDateTime(listing.approved_at) : formatDateTime(listing.submitted_at)}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center text-sm">
+                <Calendar className="w-4 h-4 mr-2 text-red-500" />
+                <div>
+                  <p className="font-semibold">Deadline</p>
+                  <p className="text-muted-foreground">{formatDate(listing.deadline)}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center text-sm">
+                <DollarSign className="w-4 h-4 mr-2 text-green-500" />
+                <div>
+                  <p className="font-semibold">Sale Price</p>
+                  <p className="text-muted-foreground">{formatCurrency(listing.value)}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center text-sm">
+                <Building className="w-4 h-4 mr-2 text-blue-500" />
+                <div>
+                  <p className="font-semibold">Agency</p>
+                  <p className="text-muted-foreground">{listing.agency}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center text-sm">
+                <Settings className="w-4 h-4 mr-2 text-purple-500" />
+                <div>
+                  <p className="font-semibold">Phase</p>
+                  <p className="text-muted-foreground">{listing.phase}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center text-sm">
+                <Tag className="w-4 h-4 mr-2 text-orange-500" />
+                <div>
+                  <p className="font-semibold">Category</p>
+                  <p className="text-muted-foreground">{listing.category}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <ListingDetailDescription description={listing.description} />
+          
+          {/* Contact and Related Listings sections below description */}
           <ListingDetailSidebar
             listing={listing}
             onContactAdmin={onContactAdmin}
             allListings={allListings}
             isCurrentUserAdmin={isAdmin}
+            showOnlyContactAndRelated={true}
           />
-          
-          <ListingDetailDescription description={listing.description} />
         </div>
       </div>
     </>

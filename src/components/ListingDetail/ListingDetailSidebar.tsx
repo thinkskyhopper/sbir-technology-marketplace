@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, Mail, Clock, Tag, Settings } from "lucide-react";
@@ -17,13 +18,15 @@ interface ListingDetailSidebarProps {
   onContactAdmin: () => void;
   allListings?: SBIRListing[];
   isCurrentUserAdmin?: boolean;
+  showOnlyContactAndRelated?: boolean;
 }
 
 const ListingDetailSidebar = ({ 
   listing, 
   onContactAdmin, 
   allListings = [], 
-  isCurrentUserAdmin = false 
+  isCurrentUserAdmin = false,
+  showOnlyContactAndRelated = false
 }: ListingDetailSidebarProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -58,63 +61,65 @@ const ListingDetailSidebar = ({
 
   return (
     <div className="space-y-6">
-      {/* Key Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Key Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center text-sm">
-            <Clock className="w-4 h-4 mr-2 text-blue-500" />
-            <div>
-              <p className="font-semibold">Date Listed</p>
-              <p className="text-muted-foreground">
-                {listing.approved_at ? formatDateTime(listing.approved_at) : formatDateTime(listing.submitted_at)}
-              </p>
+      {/* Key Information - only show on desktop or when not in mobile-only mode */}
+      {!showOnlyContactAndRelated && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Key Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center text-sm">
+              <Clock className="w-4 h-4 mr-2 text-blue-500" />
+              <div>
+                <p className="font-semibold">Date Listed</p>
+                <p className="text-muted-foreground">
+                  {listing.approved_at ? formatDateTime(listing.approved_at) : formatDateTime(listing.submitted_at)}
+                </p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <Calendar className="w-4 h-4 mr-2 text-red-500" />
-            <div>
-              <p className="font-semibold">Deadline</p>
-              <p className="text-muted-foreground">{formatDate(listing.deadline)}</p>
+            
+            <div className="flex items-center text-sm">
+              <Calendar className="w-4 h-4 mr-2 text-red-500" />
+              <div>
+                <p className="font-semibold">Deadline</p>
+                <p className="text-muted-foreground">{formatDate(listing.deadline)}</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <DollarSign className="w-4 h-4 mr-2 text-green-500" />
-            <div>
-              <p className="font-semibold">Sale Price</p>
-              <p className="text-muted-foreground">{formatCurrency(listing.value)}</p>
+            
+            <div className="flex items-center text-sm">
+              <DollarSign className="w-4 h-4 mr-2 text-green-500" />
+              <div>
+                <p className="font-semibold">Sale Price</p>
+                <p className="text-muted-foreground">{formatCurrency(listing.value)}</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <Building className="w-4 h-4 mr-2 text-blue-500" />
-            <div>
-              <p className="font-semibold">Agency</p>
-              <p className="text-muted-foreground">{listing.agency}</p>
+            
+            <div className="flex items-center text-sm">
+              <Building className="w-4 h-4 mr-2 text-blue-500" />
+              <div>
+                <p className="font-semibold">Agency</p>
+                <p className="text-muted-foreground">{listing.agency}</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <Settings className="w-4 h-4 mr-2 text-purple-500" />
-            <div>
-              <p className="font-semibold">Phase</p>
-              <p className="text-muted-foreground">{listing.phase}</p>
+            
+            <div className="flex items-center text-sm">
+              <Settings className="w-4 h-4 mr-2 text-purple-500" />
+              <div>
+                <p className="font-semibold">Phase</p>
+                <p className="text-muted-foreground">{listing.phase}</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <Tag className="w-4 h-4 mr-2 text-orange-500" />
-            <div>
-              <p className="font-semibold">Category</p>
-              <p className="text-muted-foreground">{listing.category}</p>
+            
+            <div className="flex items-center text-sm">
+              <Tag className="w-4 h-4 mr-2 text-orange-500" />
+              <div>
+                <p className="font-semibold">Category</p>
+                <p className="text-muted-foreground">{listing.category}</p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Contact */}
       <Card>

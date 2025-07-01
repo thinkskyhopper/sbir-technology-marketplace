@@ -110,7 +110,7 @@ const ListingDetailHeader = ({
                 <Button 
                   size="lg"
                   onClick={onContactAdmin}
-                  className="flex-1 sm:flex-none"
+                  className="flex-1 sm:flex-none lg:min-w-0"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   Contact
