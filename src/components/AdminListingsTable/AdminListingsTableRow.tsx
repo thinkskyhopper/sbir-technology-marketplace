@@ -67,15 +67,6 @@ const AdminListingsTableRow = ({
   };
 
   const renderStatusBadge = () => {
-    const badge = (
-      <Badge 
-        variant={getStatusBadgeVariant(listing.status)} 
-        className={`text-xs ${getStatusBadgeClassName(listing.status)}`}
-      >
-        {listing.status}
-      </Badge>
-    );
-
     // If status is "Sold" and we have a date_sold, wrap with tooltip
     if (listing.status === 'Sold' && listing.date_sold) {
       console.log('AdminListingsTableRow - Rendering tooltip for sold listing:', {
@@ -87,18 +78,30 @@ const AdminListingsTableRow = ({
       return (
         <Tooltip>
           <TooltipTrigger asChild>
-            {badge}
+            <div className="cursor-help">
+              <Badge 
+                variant={getStatusBadgeVariant(listing.status)} 
+                className={`text-xs ${getStatusBadgeClassName(listing.status)}`}
+              >
+                {listing.status}
+              </Badge>
+            </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-sm">
-              Sold on {format(new Date(listing.date_sold), 'MMM d, yyyy')}
-            </p>
+            <p>Sold on {format(new Date(listing.date_sold), 'MMM d, yyyy')}</p>
           </TooltipContent>
         </Tooltip>
       );
     }
 
-    return badge;
+    return (
+      <Badge 
+        variant={getStatusBadgeVariant(listing.status)} 
+        className={`text-xs ${getStatusBadgeClassName(listing.status)}`}
+      >
+        {listing.status}
+      </Badge>
+    );
   };
 
   return (
