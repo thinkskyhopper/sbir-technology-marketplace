@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -71,7 +72,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
       <Card className={cardClassName}>
         {/* Blur overlay for sold listings */}
         {isSold && (
-          <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-lg z-10" />
+          <div className="absolute inset-0 bg-white/30 backdrop-blur-md rounded-lg z-10" />
         )}
         
         {/* Sold overlay content */}
@@ -85,7 +86,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
             </Badge>
             {listing.technology_summary && (
               <div className="text-center">
-                <p className="text-sm font-medium text-white mb-1">Technology:</p>
+                <p className="text-sm font-medium text-blue-400 mb-1">Technology:</p>
                 <p className="text-lg font-bold text-white">{listing.technology_summary}</p>
               </div>
             )}
