@@ -1,7 +1,7 @@
 
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import AdminListingsTableActions from "./AdminListingsTableActions";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
@@ -30,6 +30,14 @@ const AdminListingsTableRow = ({
 }: AdminListingsTableRowProps) => {
   const { getListingRequestSummary } = useListingChangeRequests();
   const requestSummary = getListingRequestSummary(listing.id);
+
+  // Add debugging for date_sold field
+  console.log('AdminListingsTableRow - Listing:', {
+    id: listing.id,
+    status: listing.status,
+    date_sold: listing.date_sold,
+    date_sold_type: typeof listing.date_sold
+  });
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -70,19 +78,23 @@ const AdminListingsTableRow = ({
 
     // If status is "Sold" and we have a date_sold, wrap with tooltip
     if (listing.status === 'Sold' && listing.date_sold) {
+      console.log('AdminListingsTableRow - Rendering tooltip for sold listing:', {
+        id: listing.id,
+        date_sold: listing.date_sold,
+        formatted_date: format(new Date(listing.date_sold), 'MMM d, yyyy')
+      });
+
       return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              {badge}
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">
-                Sold on {format(new Date(listing.date_sold), 'MMM d, yyyy')}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {badge}
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-sm">
+              Sold on {format(new Date(listing.date_sold), 'MMM d, yyyy')}
+            </p>
+          </TooltipContent>
+        </Tooltip>
       );
     }
 
@@ -94,44 +106,40 @@ const AdminListingsTableRow = ({
       <TableCell className="max-w-[250px]">
         <div className="flex items-start space-x-2">
           <div className="flex-1 min-w-0">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link 
-                    to={`/listing/${listing.id}`}
-                    className="font-medium line-clamp-2 text-sm cursor-pointer hover:text-primary transition-colors"
-                  >
-                    {listing.title}
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-xs">
-                  <p className="text-sm">{listing.title}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link 
+                  to={`/listing/${listing.id}`}
+                  className="font-medium line-clamp-2 text-sm cursor-pointer hover:text-primary transition-colors"
+                >
+                  {listing.title}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs">
+                <p className="text-sm">{listing.title}</p>
+              </TooltipContent>
+            </Tooltip>
             <p className="text-xs text-muted-foreground truncate">{listing.category}</p>
           </div>
           {requestSummary && requestSummary.total_pending > 0 && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center">
-                    <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div className="text-sm">
-                    <p className="font-medium">Pending Requests:</p>
-                    {requestSummary.pending_changes > 0 && (
-                      <p>{requestSummary.pending_changes} change request(s)</p>
-                    )}
-                    {requestSummary.pending_deletions > 0 && (
-                      <p>{requestSummary.pending_deletions} deletion request(s)</p>
-                    )}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center">
+                  <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-sm">
+                  <p className="font-medium">Pending Requests:</p>
+                  {requestSummary.pending_changes > 0 && (
+                    <p>{requestSummary.pending_changes} change request(s)</p>
+                  )}
+                  {requestSummary.pending_deletions > 0 && (
+                    <p>{requestSummary.pending_deletions} deletion request(s)</p>
+                  )}
+                </div>
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
       </TableCell>

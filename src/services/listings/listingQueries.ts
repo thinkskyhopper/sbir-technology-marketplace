@@ -11,6 +11,8 @@ export const listingQueries = {
         .from('sbir_listings')
         .select(`
           *,
+          date_sold,
+          technology_summary,
           profiles!fk_sbir_listings_user_id(
             full_name,
             email
@@ -36,15 +38,24 @@ export const listingQueries = {
       }
 
       // Convert value from cents to dollars and format dates
-      const formattedListings = data?.map(listing => ({
-        ...listing,
-        value: listing.value / 100, // Convert cents to dollars
-        deadline: new Date(listing.deadline).toISOString().split('T')[0],
-        // Ensure profiles is properly typed
-        profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
-          ? listing.profiles 
-          : null
-      })) || [];
+      const formattedListings = data?.map(listing => {
+        console.log('📊 Processing listing:', {
+          id: listing.id,
+          status: listing.status,
+          date_sold: listing.date_sold,
+          date_sold_raw: listing.date_sold
+        });
+
+        return {
+          ...listing,
+          value: listing.value / 100, // Convert cents to dollars
+          deadline: new Date(listing.deadline).toISOString().split('T')[0],
+          // Ensure profiles is properly typed
+          profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
+            ? listing.profiles 
+            : null
+        };
+      }) || [];
 
       console.log('✅ Listings formatted:', formattedListings.length);
       return formattedListings;
@@ -60,7 +71,7 @@ export const listingQueries = {
     try {
       const fallbackQuery = supabase
         .from('sbir_listings')
-        .select('*')
+        .select('*, date_sold, technology_summary')
         .order('created_at', { ascending: false });
 
       if (!isAdmin) {
