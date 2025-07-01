@@ -2,9 +2,9 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { User } from "lucide-react";
-import type { ListingChangeRequest } from "@/types/changeRequests";
 import { AdminChangeRequestsTableActions } from "./AdminChangeRequestsTableActions";
+import type { ListingChangeRequest } from "@/types/changeRequests";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AdminChangeRequestsTableRowProps {
   request: ListingChangeRequest;
@@ -23,6 +23,8 @@ export const AdminChangeRequestsTableRow = ({
   onReject,
   getAdminInfo
 }: AdminChangeRequestsTableRowProps) => {
+  const isMobile = useIsMobile();
+
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'pending': return 'secondary';
@@ -32,74 +34,105 @@ export const AdminChangeRequestsTableRow = ({
     }
   };
 
-  const getStatusBadgeClassName = (status: string) => {
-    if (status === 'approved') {
-      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+  const getTypeBadgeVariant = (type: string) => {
+    switch (type) {
+      case 'change': return 'outline';
+      case 'deletion': return 'destructive';
+      default: return 'secondary';
     }
-    return '';
   };
 
-  const getRequestTypeBadgeClassName = (requestType: string) => {
-    if (requestType === 'change') {
-      return 'bg-yellow-500 hover:bg-yellow-600 text-white border-transparent';
-    }
-    return '';
-  };
+  // Mobile card layout
+  if (isMobile) {
+    return (
+      <div className="border rounded-lg p-4 space-y-3 bg-card">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <h4 className="font-medium text-sm truncate">
+              {request.sbir_listings?.title || 'Unknown Listing'}
+            </h4>
+            <p className="text-xs text-muted-foreground mt-1">
+              {request.sbir_listings?.agency || 'Unknown Agency'}
+            </p>
+          </div>
+          <AdminChangeRequestsTableActions
+            request={request}
+            processingId={processingId}
+            onViewDetails={onViewDetails}
+            onApprove={onApprove}
+            onReject={onReject}
+          />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <span className="text-muted-foreground">Type:</span>
+            <div className="mt-1">
+              <Badge variant={getTypeBadgeVariant(request.request_type)} className="text-xs">
+                {request.request_type === 'change' ? 'Change' : 'Deletion'}
+              </Badge>
+            </div>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Status:</span>
+            <div className="mt-1">
+              <Badge variant={getStatusBadgeVariant(request.status)} className="text-xs">
+                {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+              </Badge>
+            </div>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Requested:</span>
+            <p className="font-medium">{format(new Date(request.created_at), 'MMM d, yyyy')}</p>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Processed By:</span>
+            <p className="text-sm">
+              {request.processed_by_admin_id ? getAdminInfo(request.processed_by_admin_id) : 'N/A'}
+            </p>
+          </div>
+        </div>
+        
+        {request.user_reason && (
+          <div className="pt-2 border-t">
+            <span className="text-muted-foreground text-sm">Reason:</span>
+            <p className="text-sm mt-1 line-clamp-2">{request.user_reason}</p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
-  // Use preserved listing information if available, otherwise fall back to joined data
-  const listingTitle = request.listing_title || 
-                      (request as any).sbir_listings?.title || 
-                      'Deleted Listing';
-  
-  const listingAgency = request.listing_agency || 
-                       (request as any).sbir_listings?.agency || 
-                       'Unknown Agency';
-
-  const isListingDeleted = !request.listing_id;
-
+  // Desktop table row layout
   return (
-    <TableRow>
+    <TableRow className="hover:bg-muted/50">
       <TableCell>
         <div>
-          <div className="flex items-center space-x-2">
-            <p className="font-medium">{listingTitle}</p>
-            {isListingDeleted && (
-              <Badge variant="outline" className="text-xs text-muted-foreground">
-                Deleted
-              </Badge>
-            )}
-          </div>
-          <p className="text-sm text-muted-foreground">{listingAgency}</p>
+          <p className="font-medium text-sm truncate">
+            {request.sbir_listings?.title || 'Unknown Listing'}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {request.sbir_listings?.agency || 'Unknown Agency'}
+          </p>
         </div>
       </TableCell>
       <TableCell>
-        <Badge 
-          variant={request.request_type === 'change' ? 'default' : 'destructive'}
-          className={getRequestTypeBadgeClassName(request.request_type)}
-        >
+        <Badge variant={getTypeBadgeVariant(request.request_type)} className="text-xs">
           {request.request_type === 'change' ? 'Change' : 'Deletion'}
         </Badge>
       </TableCell>
       <TableCell>
-        <Badge 
-          variant={getStatusBadgeVariant(request.status)}
-          className={getStatusBadgeClassName(request.status)}
-        >
+        <Badge variant={getStatusBadgeVariant(request.status)} className="text-xs">
           {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
         </Badge>
       </TableCell>
       <TableCell>
-        {format(new Date(request.created_at), 'MMM d, yyyy')}
+        <span className="text-sm">{format(new Date(request.created_at), 'MMM d, yyyy')}</span>
       </TableCell>
       <TableCell>
-        {request.processed_by ? (
-          <div className="flex items-center space-x-1">
-            <User className="w-3 h-3" />
-            <span className="text-sm">{getAdminInfo(request.processed_by)}</span>
-          </div>
-        ) : (
-          <span className="text-muted-foreground text-sm">Not processed</span>
-        )}
+        <span className="text-sm">
+          {request.processed_by_admin_id ? getAdminInfo(request.processed_by_admin_id) : 'N/A'}
+        </span>
       </TableCell>
       <TableCell>
         <AdminChangeRequestsTableActions
