@@ -65,7 +65,7 @@ const ProfileListingCard = ({
       case 'Rejected':
         return 'bg-red-500';
       case 'Sold':
-        return 'bg-blue-600';
+        return 'bg-amber-500';
       default:
         return 'bg-gray-500';
     }
@@ -151,6 +151,16 @@ const ProfileListingCard = ({
                 onClick={() => onRequestChange(listing)}
               >
                 Request Changes
+              </Button>
+            )}
+            {listing.status === 'Sold' && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => onRequestChange(listing)}
+              >
+                Request Deletion
               </Button>
             )}
             {(listing.status === 'Pending' || listing.status === 'Rejected') && (

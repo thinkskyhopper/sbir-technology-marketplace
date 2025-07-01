@@ -11,6 +11,7 @@ export const listingSchema = z.object({
   value: z.number().min(1, "Value must be greater than 0"),
   deadline: z.string().min(1, "Deadline is required"),
   category: z.string().min(1, "Category is required").max(50, "Category too long"),
+  technology_summary: z.string().max(50, "Technology summary too long").optional(),
 });
 
 export type ListingFormData = z.infer<typeof listingSchema>;

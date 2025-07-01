@@ -20,9 +20,11 @@ const editListingSchema = listingSchema.extend({
 
 type EditListingFormData = z.infer<typeof editListingSchema>;
 
-// Extend the form data to include photo_url and status
+// Extend the form data to include photo_url, status, date_sold, and technology_summary
 interface ExtendedEditListingFormData extends EditListingFormData {
   photo_url?: string;
+  date_sold?: string | null;
+  technology_summary?: string | null;
 }
 
 interface EditListingFormProps {
@@ -47,6 +49,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       deadline: listing.deadline,
       category: listing.category,
       status: listing.status,
+      technology_summary: listing.technology_summary || "",
     },
   });
 
@@ -54,10 +57,12 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
     try {
       setIsSubmitting(true);
       
-      // Include photo_url in the update data
+      // Include photo_url, date_sold, and technology_summary in the update data
       const updateData = {
         ...data,
         photo_url: photoUrl,
+        date_sold: listing.date_sold,
+        technology_summary: data.technology_summary || null,
       } as Required<ExtendedEditListingFormData>;
 
       console.log('🔄 Updating listing with data:', { listingId: listing.id, updateData });

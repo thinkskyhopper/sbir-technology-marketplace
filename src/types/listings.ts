@@ -12,6 +12,8 @@ export interface SBIRListing {
   submitted_at: string;
   user_id: string;
   photo_url?: string;
+  date_sold?: string | null;
+  technology_summary?: string | null;
   profiles?: {
     full_name: string | null;
     email: string;

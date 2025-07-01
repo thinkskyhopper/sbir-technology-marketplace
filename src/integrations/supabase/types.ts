@@ -256,6 +256,7 @@ export type Database = {
           approved_by: string | null
           category: string
           created_at: string
+          date_sold: string | null
           deadline: string
           description: string
           id: string
@@ -263,6 +264,7 @@ export type Database = {
           photo_url: string | null
           status: Database["public"]["Enums"]["listing_status"]
           submitted_at: string
+          technology_summary: string | null
           title: string
           updated_at: string
           user_id: string
@@ -274,6 +276,7 @@ export type Database = {
           approved_by?: string | null
           category: string
           created_at?: string
+          date_sold?: string | null
           deadline: string
           description: string
           id?: string
@@ -281,6 +284,7 @@ export type Database = {
           photo_url?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
+          technology_summary?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -292,6 +296,7 @@ export type Database = {
           approved_by?: string | null
           category?: string
           created_at?: string
+          date_sold?: string | null
           deadline?: string
           description?: string
           id?: string
@@ -299,6 +304,7 @@ export type Database = {
           photo_url?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
+          technology_summary?: string | null
           title?: string
           updated_at?: string
           user_id?: string
