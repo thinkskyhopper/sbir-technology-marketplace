@@ -9,9 +9,15 @@ import AdminUsersTable from "@/components/AdminUsers/AdminUsersTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserWithStats } from "@/components/AdminUsers/types";
+import { useEffect } from "react";
 
 const AdminUsers = () => {
   const { user } = useAuth();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users'],

@@ -36,7 +36,7 @@ export const AdminChangeRequestsTableContent = ({
       <CardHeader>
         <CardTitle>Listing Change & Deletion Requests</CardTitle>
       </CardHeader>
-      <CardContent className="p-0 sm:p-6">
+      <CardContent className="p-0">
         <div className="overflow-x-auto">
           <ScrollArea className="h-[400px] w-full">
             <Table className="min-w-[800px]">
