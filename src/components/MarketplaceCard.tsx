@@ -64,12 +64,35 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
   };
 
   const cardClassName = isSold 
-    ? "card-hover bg-card border-border opacity-60 grayscale-[50%]" 
+    ? "card-hover bg-card border-border relative" 
     : "card-hover bg-card border-border";
 
   return (
     <>
       <Card className={cardClassName}>
+        {/* Blur overlay for sold listings */}
+        {isSold && (
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-lg z-10" />
+        )}
+        
+        {/* Sold overlay content */}
+        {isSold && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4">
+            <Badge 
+              variant="outline" 
+              className="bg-amber-100 text-amber-800 border-amber-300 font-bold text-lg px-6 py-3 mb-4"
+            >
+              SOLD
+            </Badge>
+            {listing.technology_summary && (
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-800 mb-1">Technology:</p>
+                <p className="text-lg font-bold text-gray-900">{listing.technology_summary}</p>
+              </div>
+            )}
+          </div>
+        )}
+
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start mb-2">
             <Badge variant="default" className="text-xs">
@@ -112,16 +135,9 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
         </CardHeader>
 
         <CardContent className="pb-3">
-          {isSold && listing.technology_summary ? (
-            <div className="mb-4">
-              <p className="text-sm font-medium text-foreground mb-1">Technology Summary:</p>
-              <p className="text-sm text-muted-foreground">{listing.technology_summary}</p>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-              {listing.description}
-            </p>
-          )}
+          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+            {listing.description}
+          </p>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -143,14 +159,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
 
         <CardFooter className="pt-3 space-x-2">
           {isSold ? (
-            <div className="flex-1 flex justify-center">
-              <Badge 
-                variant="outline" 
-                className="bg-amber-100 text-amber-800 border-amber-300 font-semibold px-4 py-2"
-              >
-                SOLD
-              </Badge>
-            </div>
+            <div className="flex-1" />
           ) : (
             <>
               <Button 
