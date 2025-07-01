@@ -1,3 +1,4 @@
+
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -55,6 +56,37 @@ const AdminListingsTableRow = ({
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const renderStatusBadge = () => {
+    const badge = (
+      <Badge 
+        variant={getStatusBadgeVariant(listing.status)} 
+        className={`text-xs ${getStatusBadgeClassName(listing.status)}`}
+      >
+        {listing.status}
+      </Badge>
+    );
+
+    // If status is "Sold" and we have a date_sold, wrap with tooltip
+    if (listing.status === 'Sold' && listing.date_sold) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              {badge}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-sm">
+                Sold on {format(new Date(listing.date_sold), 'MMM d, yyyy')}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+
+    return badge;
   };
 
   return (
@@ -116,12 +148,7 @@ const AdminListingsTableRow = ({
         <span className="text-sm">{format(new Date(listing.deadline), 'MMM d, yyyy')}</span>
       </TableCell>
       <TableCell>
-        <Badge 
-          variant={getStatusBadgeVariant(listing.status)} 
-          className={`text-xs ${getStatusBadgeClassName(listing.status)}`}
-        >
-          {listing.status}
-        </Badge>
+        {renderStatusBadge()}
       </TableCell>
       <TableCell className="min-w-[180px]">
         {listing.profiles ? (
