@@ -1,4 +1,3 @@
-
 import { Building, Calendar, DollarSign, FileText, Edit } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -56,19 +55,26 @@ const ProfileListingCard = ({
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'Active':
-        return 'bg-green-600';
+        return 'default';
       case 'Pending':
-        return 'bg-yellow-500';
+        return 'secondary';
       case 'Rejected':
-        return 'bg-red-500';
+        return 'destructive';
       case 'Sold':
-        return 'bg-amber-500';
+        return 'sold';
       default:
-        return 'bg-gray-500';
+        return 'outline';
     }
+  };
+
+  const getStatusBadgeClassName = (status: string) => {
+    if (status === 'Active') {
+      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+    }
+    return '';
   };
 
   return (
@@ -90,8 +96,8 @@ const ProfileListingCard = ({
               </Button>
             )}
             <Badge 
-              variant="outline"
-              className={`text-white ${getStatusColor(listing.status)}`}
+              variant={getStatusBadgeVariant(listing.status)}
+              className={getStatusBadgeClassName(listing.status)}
             >
               {listing.status}
             </Badge>

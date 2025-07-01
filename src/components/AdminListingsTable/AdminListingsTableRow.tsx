@@ -36,6 +36,7 @@ const AdminListingsTableRow = ({
       case 'Pending': return 'secondary';
       case 'Rejected': return 'destructive';
       case 'Hidden': return 'outline';
+      case 'Sold': return 'sold';
       default: return 'secondary';
     }
   };

@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -79,8 +78,8 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
         {isSold && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4">
             <Badge 
-              variant="outline" 
-              className="bg-amber-100 text-amber-800 border-amber-300 font-bold text-lg px-6 py-3 mb-4"
+              variant="sold" 
+              className="font-bold text-lg px-6 py-3 mb-4"
             >
               SOLD
             </Badge>
@@ -110,12 +109,10 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
                 </Button>
               )}
               <Badge 
-                variant={listing.status === "Active" ? "default" : "outline"}
+                variant={listing.status === "Active" ? "default" : listing.status === "Sold" ? "sold" : "outline"}
                 className={
                   listing.status === "Active" 
                     ? "bg-green-600" 
-                    : listing.status === "Sold"
-                    ? "bg-amber-500 text-white border-transparent"
                     : ""
                 }
               >

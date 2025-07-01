@@ -18,6 +18,8 @@ const badgeVariants = cva(
         outline: "text-foreground",
         phase:
           "border-transparent bg-blue-600 text-white hover:bg-blue-700",
+        sold:
+          "border-transparent bg-amber-500 text-white hover:bg-amber-600",
       },
     },
     defaultVariants: {
