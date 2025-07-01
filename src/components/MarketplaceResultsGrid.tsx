@@ -34,12 +34,15 @@ const MarketplaceResultsGrid = ({
 
   return (
     <div className="space-y-6">
-      {/* Top section with listing count (left), pagination (center), and page info (right) */}
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-muted-foreground flex-1">
+      {/* Top section - responsive layout */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        {/* Listing count - full width on mobile, left on desktop */}
+        <div className="text-sm text-muted-foreground md:flex-1">
           Showing {startItem}-{endItem} of {totalItems} listings
         </div>
-        <div className="flex-1 flex justify-center">
+        
+        {/* Pagination - centered on mobile and desktop */}
+        <div className="flex justify-center md:flex-1">
           <MarketplacePagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -48,7 +51,9 @@ const MarketplaceResultsGrid = ({
             hasPreviousPage={hasPreviousPage}
           />
         </div>
-        <div className="text-sm text-muted-foreground flex-1 text-right">
+        
+        {/* Page info - hidden on mobile, right aligned on desktop */}
+        <div className="hidden md:block text-sm text-muted-foreground md:flex-1 md:text-right">
           Page {currentPage} of {totalPages}
         </div>
       </div>
