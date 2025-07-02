@@ -103,21 +103,22 @@ const ListingDetailHeader = ({
             
             <div className="flex flex-col items-stretch lg:items-end space-y-3 w-full lg:w-auto lg:min-w-[300px]">
               {/* Main action buttons - optimized for mobile */}
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center gap-1 sm:gap-2 w-full">
                 <BookmarkButton 
                   listingId={listing.id}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 w-16 sm:w-auto px-2 sm:px-4"
                   size="lg"
+                  showText={false}
                 />
                 <ShareButton 
                   listingId={listing.id}
                   listingTitle={listing.title}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 w-16 sm:w-auto px-2 sm:px-4"
                 />
                 <Button 
                   size="lg"
                   onClick={onContactAdmin}
-                  className="flex-1 min-w-0 text-sm sm:text-base px-3 sm:px-4"
+                  className="flex-1 min-w-0 text-xs sm:text-base px-2 sm:px-4"
                 >
                   <Mail className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
                   <span className="truncate">Contact</span>

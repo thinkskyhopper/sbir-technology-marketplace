@@ -44,8 +44,8 @@ const ShareButton = ({ listingId, listingTitle, className }: ShareButtonProps) =
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="lg" className={`flex-1 lg:flex-none ${className || ''}`}>
-          <Share className="w-4 h-4 mr-2" />
-          Share
+          <Share className="w-4 h-4 mr-0 sm:mr-2" />
+          <span className="hidden sm:inline">Share</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="end">
