@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Building, DollarSign, ArrowLeft, Mail, Edit, Trash2, FileEdit, UserX } from "lucide-react";
 import ShareButton from "@/components/ShareButton";
+import BookmarkButton from "@/components/BookmarkButton";
 import ConfirmActionDialog from "@/components/ConfirmActionDialog";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -103,6 +104,11 @@ const ListingDetailHeader = ({
             <div className="flex flex-col items-stretch lg:items-end space-y-3 w-full lg:w-auto lg:min-w-[300px]">
               {/* Main action buttons - side by side on mobile, maintain desktop layout */}
               <div className="flex flex-row lg:flex-row items-center space-x-2 lg:space-x-2">
+                <BookmarkButton 
+                  listingId={listing.id}
+                  className="flex-1 lg:flex-none"
+                  size="lg"
+                />
                 <ShareButton 
                   listingId={listing.id}
                   listingTitle={listing.title}

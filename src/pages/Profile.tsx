@@ -9,9 +9,13 @@ import ProfileHeader from "@/components/Profile/ProfileHeader";
 import ProfileListings from "@/components/Profile/ProfileListings";
 import EditProfileDialog from "@/components/Profile/EditProfileDialog";
 import NotificationPreferences from "@/components/Profile/NotificationPreferences";
+import MarketplaceCard from "@/components/MarketplaceCard";
+import { useBookmarks } from "@/hooks/useBookmarks";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "react-router-dom";
+import { Bookmark } from "lucide-react";
+import type { SBIRListing } from "@/types/listings";
 
 interface Profile {
   id: string;
@@ -34,6 +38,10 @@ const Profile = () => {
   const [displayProfile, setDisplayProfile] = useState<Profile | null>(null);
   const [isOtherUserProfile, setIsOtherUserProfile] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [bookmarkedListings, setBookmarkedListings] = useState<SBIRListing[]>([]);
+  const [bookmarksLoading, setBookmarksLoading] = useState(false);
+  
+  const { fetchBookmarkedListings } = useBookmarks();
 
   // Check if viewing another user's profile
   const userId = searchParams.get('userId');
@@ -64,6 +72,13 @@ const Profile = () => {
     }
   }, [userId, user?.id, authProfile, authLoading]);
 
+  // Load bookmarked listings when viewing own profile
+  useEffect(() => {
+    if (!isOtherUserProfile && user) {
+      loadBookmarkedListings();
+    }
+  }, [isOtherUserProfile, user]);
+
   const fetchOtherUserProfile = async (targetUserId: string) => {
     setLoading(true);
     try {
@@ -77,6 +92,7 @@ const Profile = () => {
       if (error) {
         console.error('❌ Error fetching user profile:', error);
         throw error;
+
       }
 
       // Transform the data to match our Profile interface
@@ -101,6 +117,18 @@ const Profile = () => {
       setIsOtherUserProfile(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadBookmarkedListings = async () => {
+    setBookmarksLoading(true);
+    try {
+      const listings = await fetchBookmarkedListings();
+      setBookmarkedListings(listings);
+    } catch (error) {
+      console.error('Error loading bookmarked listings:', error);
+    } finally {
+      setBookmarksLoading(false);
     }
   };
 
@@ -158,6 +186,9 @@ const Profile = () => {
           <TabsList className="mb-6">
             <TabsTrigger value="listings">Listings</TabsTrigger>
             {!isOtherUserProfile && (
+              <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
+            )}
+            {!isOtherUserProfile && (
               <TabsTrigger value="notifications">Notifications</TabsTrigger>
             )}
           </TabsList>
@@ -168,6 +199,43 @@ const Profile = () => {
               isOwnProfile={!isOtherUserProfile}
             />
           </TabsContent>
+          
+          {!isOtherUserProfile && (
+            <TabsContent value="bookmarked">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bookmark className="w-5 h-5" />
+                    Bookmarked Listings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {bookmarksLoading ? (
+                    <div className="text-center py-8">
+                      <p>Loading bookmarked listings...</p>
+                    </div>
+                  ) : bookmarkedListings.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Bookmark className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">No bookmarked listings</h3>
+                      <p className="text-muted-foreground">
+                        Browse the marketplace and bookmark listings you're interested in.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {bookmarkedListings.map((listing) => (
+                        <MarketplaceCard
+                          key={listing.id}
+                          listing={listing}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
           
           {!isOtherUserProfile && (
             <TabsContent value="notifications">

@@ -6,6 +6,7 @@ import CreateListingDialog from "@/components/CreateListingDialog";
 import EditListingDialog from "@/components/EditListingDialog";
 import HomePage from "./Index/HomePage";
 import MarketplacePage from "./Index/MarketplacePage";
+import BookmarkedListings from "@/components/BookmarkedListings";
 import { useIndexState } from "@/hooks/useIndexState";
 import { useIndexNavigation } from "@/hooks/useIndexNavigation";
 import type { SBIRListing } from "@/types/listings";
@@ -13,6 +14,7 @@ import type { SBIRListing } from "@/types/listings";
 const Index = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
+  const [showBookmarkedListings, setShowBookmarkedListings] = useState(false);
 
   const {
     searchQuery,
@@ -42,14 +44,28 @@ const Index = () => {
     setShowEditDialog(true);
   };
 
+  const handleShowBookmarkedListings = () => {
+    setShowBookmarkedListings(true);
+  };
+
+  const handleBackFromBookmarks = () => {
+    setShowBookmarkedListings(false);
+  };
+
   console.log("Current view rendering:", currentView);
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header onSearch={handleSearch} onPostListingClick={onPostListingClick} />
+      <Header 
+        onSearch={handleSearch} 
+        onPostListingClick={onPostListingClick}
+        onShowBookmarkedListings={handleShowBookmarkedListings}
+      />
 
       <div className="flex-1">
-        {currentView === "home" ? (
+        {showBookmarkedListings ? (
+          <BookmarkedListings onBack={handleBackFromBookmarks} />
+        ) : currentView === "home" ? (
           <HomePage 
             onExploreClick={handleExploreMarketplace}
             onContactAdmin={handleContactAdmin}

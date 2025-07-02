@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -7,6 +8,7 @@ import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import ContactAdminDialog from "./ContactAdminDialog";
+import BookmarkButton from "./BookmarkButton";
 import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
 
 interface MarketplaceCardProps {
@@ -159,18 +161,27 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
             <div className="flex-1" />
           ) : (
             <>
+              <div className="flex items-center space-x-2 flex-1">
+                <BookmarkButton 
+                  listingId={listing.id}
+                  variant="ghost"
+                  size="sm"
+                  showText={false}
+                  className="h-8 w-8 p-0"
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={handleViewDetails}
+                >
+                  <FileText className="w-4 h-4 mr-1" />
+                  View Details
+                </Button>
+              </div>
               <Button 
-                variant="outline" 
                 size="sm" 
-                className="flex-1"
-                onClick={handleViewDetails}
-              >
-                <FileText className="w-4 h-4 mr-1" />
-                View Details
-              </Button>
-              <Button 
-                size="sm" 
-                className="flex-1 bg-primary hover:bg-primary/90"
+                className="bg-primary hover:bg-primary/90"
                 onClick={handleContactAdmin}
               >
                 Contact
