@@ -30,7 +30,7 @@ const Hero = ({ onExploreClick }: HeroProps) => {
             <img 
               src="/lovable-uploads/7afd0c6e-c779-4f57-ae36-08540adc4f01.png" 
               alt="The SBIR Tech Marketplace"
-              className="max-w-full h-auto w-full max-w-2xl"
+              className="h-auto max-w-2xl w-auto"
             />
           </div>
           
