@@ -9,9 +9,10 @@ import { toast } from "sonner";
 interface ShareButtonProps {
   listingId: string;
   listingTitle: string;
+  className?: string;
 }
 
-const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
+const ShareButton = ({ listingId, listingTitle, className }: ShareButtonProps) => {
   const [copied, setCopied] = useState(false);
   
   const shareUrl = `${window.location.origin}/listing/${listingId}`;
@@ -42,7 +43,7 @@ const ShareButton = ({ listingId, listingTitle }: ShareButtonProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="lg" className="flex-1 lg:flex-none">
+        <Button variant="outline" size="lg" className={`flex-1 lg:flex-none ${className || ''}`}>
           <Share className="w-4 h-4 mr-2" />
           Share
         </Button>
