@@ -7,7 +7,12 @@ import type { ListingChangeRequest } from "@/types/changeRequests";
 import { AdminChangeRequestsTableActions } from "./AdminChangeRequestsTableActions";
 
 interface AdminChangeRequestsTableRowProps {
-  request: ListingChangeRequest;
+  request: ListingChangeRequest & {
+    profiles?: {
+      full_name?: string;
+      email: string;
+    };
+  };
   processingId: string | null;
   onViewDetails: (request: ListingChangeRequest) => void;
   onApprove: (requestId: string) => Promise<void>;
@@ -92,6 +97,20 @@ export const AdminChangeRequestsTableRow = ({
         <span className="text-sm whitespace-nowrap">
           {format(new Date(request.created_at), 'MMM d, yyyy')}
         </span>
+      </TableCell>
+      <TableCell className="min-w-[150px]">
+        {request.profiles ? (
+          <div>
+            <p className="text-sm font-medium truncate">
+              {request.profiles.full_name || 'Unknown User'}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {request.profiles.email}
+            </p>
+          </div>
+        ) : (
+          <span className="text-muted-foreground text-sm">Unknown User</span>
+        )}
       </TableCell>
       <TableCell className="min-w-[150px]">
         {request.processed_by ? (

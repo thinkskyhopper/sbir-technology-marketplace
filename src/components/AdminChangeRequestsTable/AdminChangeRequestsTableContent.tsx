@@ -40,13 +40,14 @@ export const AdminChangeRequestsTableContent = ({
         {/* Mobile: Use native scrolling */}
         <div className="block sm:hidden">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
-            <Table className="min-w-[800px]">
+            <Table className="min-w-[1000px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="min-w-[200px]">Listing</TableHead>
                   <TableHead className="min-w-[100px]">Type</TableHead>
                   <TableHead className="min-w-[100px]">Status</TableHead>
                   <TableHead className="min-w-[120px]">Requested</TableHead>
+                  <TableHead className="min-w-[150px]">Submitted By</TableHead>
                   <TableHead className="min-w-[150px]">Processed By</TableHead>
                   <TableHead className="min-w-[120px]">Actions</TableHead>
                 </TableRow>
@@ -71,13 +72,14 @@ export const AdminChangeRequestsTableContent = ({
         {/* Desktop: Use ScrollArea */}
         <div className="hidden sm:block overflow-x-auto">
           <ScrollArea className="h-[400px] w-full">
-            <Table className="min-w-[800px]">
+            <Table className="min-w-[1000px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="min-w-[200px]">Listing</TableHead>
                   <TableHead className="min-w-[100px]">Type</TableHead>
                   <TableHead className="min-w-[100px]">Status</TableHead>
                   <TableHead className="min-w-[120px]">Requested</TableHead>
+                  <TableHead className="min-w-[150px]">Submitted By</TableHead>
                   <TableHead className="min-w-[150px]">Processed By</TableHead>
                   <TableHead className="min-w-[120px]">Actions</TableHead>
                 </TableRow>

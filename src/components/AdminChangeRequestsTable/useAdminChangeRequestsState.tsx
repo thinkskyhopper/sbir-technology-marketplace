@@ -26,7 +26,28 @@ export const useAdminChangeRequestsState = () => {
     try {
       setLoading(true);
       setError(null);
-      const requests = await fetchChangeRequests(true); // Fetch as admin
+      
+      // Fetch change requests with user profile information
+      const { data: requests, error: requestsError } = await supabase
+        .from('listing_change_requests')
+        .select(`
+          *,
+          profiles!listing_change_requests_user_id_fkey (
+            full_name,
+            email
+          ),
+          sbir_listings (
+            title,
+            agency
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (requestsError) {
+        console.error('Error fetching change requests:', requestsError);
+        throw requestsError;
+      }
+
       setChangeRequests(requests || []);
       
       // Get unique admin IDs who have processed requests
