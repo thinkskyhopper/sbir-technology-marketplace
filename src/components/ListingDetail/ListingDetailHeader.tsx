@@ -102,67 +102,72 @@ const ListingDetailHeader = ({
             </div>
             
             <div className="flex flex-col items-stretch lg:items-end space-y-3 w-full lg:w-auto lg:min-w-[300px]">
-              {/* Main action buttons - side by side on mobile, maintain desktop layout */}
-              <div className="flex flex-row lg:flex-row items-center space-x-2 lg:space-x-2">
+              {/* Main action buttons - optimized for mobile */}
+              <div className="flex items-center gap-2 w-full">
                 <BookmarkButton 
                   listingId={listing.id}
-                  className="flex-1 lg:flex-none"
+                  className="flex-shrink-0"
                   size="lg"
                 />
                 <ShareButton 
                   listingId={listing.id}
                   listingTitle={listing.title}
+                  className="flex-shrink-0"
                 />
                 <Button 
                   size="lg"
                   onClick={onContactAdmin}
-                  className="flex-1 lg:flex-none"
+                  className="flex-1 min-w-0 text-sm sm:text-base px-3 sm:px-4"
                 >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Contact
+                  <Mail className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                  <span className="truncate">Contact</span>
                 </Button>
               </div>
               
               {/* Admin-only buttons */}
               {isAdmin && (
-                <div className="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center lg:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-2">
+                <div className="flex items-center gap-2 w-full">
                   <Button 
                     variant="outline"
                     onClick={onEditListing}
-                    className="flex-1 sm:flex-none"
+                    className="flex-1 min-w-0 text-sm px-2 sm:px-3"
+                    size="sm"
                   >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Listing
+                    <Edit className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Edit</span>
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={() => setShowDeleteDialog(true)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-1 sm:flex-none"
+                    className="flex-1 min-w-0 text-red-600 hover:text-red-700 hover:bg-red-50 text-sm px-2 sm:px-3"
+                    size="sm"
                   >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
+                    <Trash2 className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Delete</span>
                   </Button>
                 </div>
               )}
               
               {/* Owner-only buttons (non-admin users who own the listing) */}
               {canRequestChanges && (
-                <div className="flex flex-col sm:flex-row lg:flex-row items-stretch sm:items-center lg:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-2">
+                <div className="flex items-center gap-2 w-full">
                   <Button 
                     variant="outline"
                     onClick={onRequestChange}
-                    className="flex-1 sm:flex-none"
+                    className="flex-1 min-w-0 text-sm px-2 sm:px-3"
+                    size="sm"
                   >
-                    <FileEdit className="w-4 h-4 mr-2" />
-                    Request Changes
+                    <FileEdit className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Request Changes</span>
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={onRequestDeletion}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-1 sm:flex-none"
+                    className="flex-1 min-w-0 text-red-600 hover:text-red-700 hover:bg-red-50 text-sm px-2 sm:px-3"
+                    size="sm"
                   >
-                    <UserX className="w-4 h-4 mr-2" />
-                    Request Deletion
+                    <UserX className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Request Deletion</span>
                   </Button>
                 </div>
               )}
