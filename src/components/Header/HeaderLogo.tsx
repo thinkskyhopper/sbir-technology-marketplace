@@ -35,14 +35,14 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
       className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity shrink-0" 
       onClick={handleLogoClick}
     >
-      <img 
-        src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
-        alt="SBIR Logo"
-        className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
-      />
-      <span className="text-sm sm:text-xl font-bold hidden xs:block sm:block">
-        <span className="text-gradient">The SBIR Tech </span>
-        <span className="text-white">Marketplace</span>
+      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary rounded-sm flex items-center justify-center">
+        <span className="text-primary-foreground font-bold text-xs sm:text-sm">S</span>
+      </div>
+      <span className="text-sm sm:text-xl font-bold text-gradient hidden xs:block sm:block">
+        The SBIR Tech Marketplace
+      </span>
+      <span className="text-sm font-bold text-gradient block xs:hidden sm:hidden">
+        TSTM
       </span>
     </div>
   );
