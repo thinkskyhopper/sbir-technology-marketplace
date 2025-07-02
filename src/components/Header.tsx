@@ -131,7 +131,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
                 className="hidden sm:flex border-primary/20 hover:border-primary/40"
               >
                 <Bookmark className="w-4 h-4 mr-2" />
-                Bookmarked Listings
+                Bookmarks
               </Button>
             )}
 
@@ -154,7 +154,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
               className="hidden sm:flex bg-primary hover:bg-primary/90"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Post Listing
+              New Listing
             </Button>
 
             {/* Mobile Post Listing Button */}
