@@ -143,6 +143,13 @@ export type Database = {
             referencedRelation: "sbir_listings"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "listing_change_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       notification_batches: {
