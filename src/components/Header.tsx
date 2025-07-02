@@ -83,7 +83,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
   const showSearch = location.pathname === '/';
 
   return (
-    <header className="bg-card border-b border-border sticky top-0 z-50">
+    <header className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
