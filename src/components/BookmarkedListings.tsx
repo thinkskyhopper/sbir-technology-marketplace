@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bookmark, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import MarketplaceCard from "./MarketplaceCard";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import type { SBIRListing } from "@/types/listings";
@@ -15,6 +16,7 @@ const BookmarkedListings = ({ onBack }: BookmarkedListingsProps) => {
   const { fetchBookmarkedListings, loading } = useBookmarks();
   const [bookmarkedListings, setBookmarkedListings] = useState<SBIRListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadBookmarkedListings = async () => {
@@ -27,12 +29,16 @@ const BookmarkedListings = ({ onBack }: BookmarkedListingsProps) => {
     loadBookmarkedListings();
   }, [fetchBookmarkedListings]);
 
+  const handleBackToMarketplace = () => {
+    navigate("/?view=marketplace");
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-6 py-8">
         <Button 
           variant="ghost" 
-          onClick={onBack}
+          onClick={handleBackToMarketplace}
           className="mb-6"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -50,7 +56,7 @@ const BookmarkedListings = ({ onBack }: BookmarkedListingsProps) => {
     <div className="container mx-auto px-6 py-8">
       <Button 
         variant="ghost" 
-        onClick={onBack}
+        onClick={handleBackToMarketplace}
         className="mb-6"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
@@ -78,7 +84,7 @@ const BookmarkedListings = ({ onBack }: BookmarkedListingsProps) => {
             <p className="text-muted-foreground mb-6">
               Start browsing listings and bookmark the ones you're interested in to see them here.
             </p>
-            <Button onClick={onBack}>
+            <Button onClick={handleBackToMarketplace}>
               Browse Listings
             </Button>
           </CardContent>

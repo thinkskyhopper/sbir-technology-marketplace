@@ -63,20 +63,10 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
     console.log("Current location:", location.pathname);
     console.log("Current search params:", location.search);
     
-    // Check if we're on the actual homepage (no view parameter or view=home)
-    const searchParams = new URLSearchParams(location.search);
-    const currentView = searchParams.get('view');
-    const isOnHomepage = location.pathname === '/' && (!currentView || currentView === 'home');
-    
-    if (isOnHomepage) {
-      // If already on homepage, just scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      // Navigate to homepage (clear all parameters) and scroll to top
-      navigate('/');
-      // Ensure scroll to top after navigation
-      setTimeout(() => window.scrollTo(0, 0), 0);
-    }
+    // Always navigate to homepage and clear all parameters
+    navigate('/');
+    // Ensure scroll to top after navigation
+    setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
   // Only show search on home page
@@ -122,7 +112,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
 
           {/* Actions */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Bookmarked Listings Button - only show if user is signed in */}
+            {/* Bookmarked Listings Button - show if user is signed in */}
             {user && (
               <Button 
                 variant="outline" 
