@@ -59,22 +59,47 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
   };
 
   const handleLogoClick = () => {
-    navigate('/');
+    console.log("Logo clicked - navigating to homepage");
+    console.log("Current location:", location.pathname);
+    console.log("Current search params:", location.search);
+    
+    // Check if we're on the actual homepage (no view parameter or view=home)
+    const searchParams = new URLSearchParams(location.search);
+    const currentView = searchParams.get('view');
+    const isOnHomepage = location.pathname === '/' && (!currentView || currentView === 'home');
+    
+    if (isOnHomepage) {
+      // If already on homepage, just scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Navigate to homepage (clear all parameters) and scroll to top
+      navigate('/');
+      // Ensure scroll to top after navigation
+      setTimeout(() => window.scrollTo(0, 0), 0);
+    }
   };
 
   // Only show search on home page
   const showSearch = location.pathname === '/';
 
   return (
-    <header className="bg-white border-b border-border sticky top-0 z-50">
+    <header className="bg-card border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div 
-            className="text-xl sm:text-2xl font-bold text-primary cursor-pointer" 
+            className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity shrink-0" 
             onClick={handleLogoClick}
           >
-            SBIR Marketplace
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary rounded-sm flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-xs sm:text-sm">S</span>
+            </div>
+            <span className="text-sm sm:text-xl font-bold text-gradient hidden xs:block sm:block">
+              The SBIR Tech Marketplace
+            </span>
+            <span className="text-sm font-bold text-gradient block xs:hidden sm:hidden">
+              TSTM
+            </span>
           </div>
 
           {/* Search - only on home page */}
@@ -103,7 +128,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
                 variant="outline" 
                 size="sm"
                 onClick={handleBookmarkedListings}
-                className="hidden sm:flex"
+                className="hidden sm:flex border-primary/20 hover:border-primary/40"
               >
                 <Bookmark className="w-4 h-4 mr-2" />
                 Bookmarked Listings
@@ -116,7 +141,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
                 variant="outline" 
                 size="icon"
                 onClick={handleBookmarkedListings}
-                className="sm:hidden h-8 w-8"
+                className="sm:hidden h-8 w-8 border-primary/20 hover:border-primary/40"
               >
                 <Bookmark className="w-4 h-4" />
               </Button>
@@ -126,7 +151,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
             <Button 
               onClick={handlePostListing}
               size="sm"
-              className="hidden sm:flex"
+              className="hidden sm:flex bg-primary hover:bg-primary/90"
             >
               <Plus className="w-4 h-4 mr-2" />
               Post Listing
@@ -136,7 +161,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
             <Button 
               onClick={handlePostListing}
               size="icon"
-              className="sm:hidden h-8 w-8"
+              className="sm:hidden h-8 w-8 bg-primary hover:bg-primary/90"
             >
               <Plus className="w-4 h-4" />
             </Button>
