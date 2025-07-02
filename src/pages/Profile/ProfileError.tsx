@@ -5,15 +5,13 @@ import Footer from "@/components/Footer";
 
 interface ProfileErrorProps {
   message: string;
-  onShowBookmarkedListings: () => void;
   onPostListingClick: () => void;
 }
 
-const ProfileError = ({ message, onShowBookmarkedListings, onPostListingClick }: ProfileErrorProps) => {
+const ProfileError = ({ message, onPostListingClick }: ProfileErrorProps) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header 
-        onShowBookmarkedListings={onShowBookmarkedListings}
         onPostListingClick={onPostListingClick}
       />
       <div className="flex-1 container mx-auto px-4 py-8">

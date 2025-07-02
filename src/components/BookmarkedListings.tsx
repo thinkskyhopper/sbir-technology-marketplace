@@ -8,11 +8,7 @@ import MarketplaceCard from "./MarketplaceCard";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import type { SBIRListing } from "@/types/listings";
 
-interface BookmarkedListingsProps {
-  onBack: () => void;
-}
-
-const BookmarkedListings = ({ onBack }: BookmarkedListingsProps) => {
+const BookmarkedListings = () => {
   const { fetchBookmarkedListings, loading } = useBookmarks();
   const [bookmarkedListings, setBookmarkedListings] = useState<SBIRListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);

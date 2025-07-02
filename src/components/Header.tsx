@@ -53,9 +53,8 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
       return;
     }
     
-    if (onShowBookmarkedListings) {
-      onShowBookmarkedListings();
-    }
+    // Navigate to dedicated bookmarks page
+    navigate('/bookmarks');
   };
 
   const handleLogoClick = () => {

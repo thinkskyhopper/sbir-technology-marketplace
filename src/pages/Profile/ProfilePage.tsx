@@ -4,14 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useBookmarks } from "@/hooks/useBookmarks";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import BookmarkedListings from "@/components/BookmarkedListings";
 import ProfileContent from "./ProfileContent";
 import ProfileLoading from "./ProfileLoading";
 import ProfileError from "./ProfileError";
-import type { SBIRListing } from "@/types/listings";
 
 interface Profile {
   id: string;
@@ -34,11 +31,7 @@ const ProfilePage = () => {
   const [displayProfile, setDisplayProfile] = useState<Profile | null>(null);
   const [isOtherUserProfile, setIsOtherUserProfile] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [bookmarkedListings, setBookmarkedListings] = useState<SBIRListing[]>([]);
-  const [bookmarksLoading, setBookmarksLoading] = useState(false);
-  const [showBookmarkedListings, setShowBookmarkedListings] = useState(false);
   
-  const { fetchBookmarkedListings } = useBookmarks();
   const userId = searchParams.get('userId');
 
   useEffect(() => {
@@ -64,12 +57,6 @@ const ProfilePage = () => {
       setLoading(false);
     }
   }, [userId, user?.id, authProfile, authLoading]);
-
-  useEffect(() => {
-    if (!isOtherUserProfile && user) {
-      loadBookmarkedListings();
-    }
-  }, [isOtherUserProfile, user]);
 
   const fetchOtherUserProfile = async (targetUserId: string) => {
     setLoading(true);
@@ -110,36 +97,16 @@ const ProfilePage = () => {
     }
   };
 
-  const loadBookmarkedListings = async () => {
-    setBookmarksLoading(true);
-    try {
-      const listings = await fetchBookmarkedListings();
-      setBookmarkedListings(listings);
-    } catch (error) {
-      console.error('Error loading bookmarked listings:', error);
-    } finally {
-      setBookmarksLoading(false);
-    }
-  };
-
-  const handleShowBookmarkedListings = () => {
-    setShowBookmarkedListings(true);
-  };
-
-  const handleBackFromBookmarks = () => {
-    setShowBookmarkedListings(false);
-  };
-
   const handlePostListingClick = () => {
     // Navigate to home - this will be handled by the header
   };
 
   if (authLoading || loading) {
-    return <ProfileLoading onShowBookmarkedListings={handleShowBookmarkedListings} onPostListingClick={handlePostListingClick} />;
+    return <ProfileLoading onPostListingClick={handlePostListingClick} />;
   }
 
   if (!user) {
-    return <ProfileError message="Please sign in to view profiles." onShowBookmarkedListings={handleShowBookmarkedListings} onPostListingClick={handlePostListingClick} />;
+    return <ProfileError message="Please sign in to view profiles." onPostListingClick={handlePostListingClick} />;
   }
 
   console.log('🎨 Rendering profile page:', {
@@ -151,24 +118,17 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header 
-        onShowBookmarkedListings={handleShowBookmarkedListings}
         onPostListingClick={handlePostListingClick}
       />
       <div className="flex-1">
-        {showBookmarkedListings ? (
-          <BookmarkedListings onBack={handleBackFromBookmarks} />
-        ) : (
-          <ProfileContent
-            displayProfile={displayProfile}
-            isOtherUserProfile={isOtherUserProfile}
-            userId={userId}
-            user={user}
-            bookmarkedListings={bookmarkedListings}
-            bookmarksLoading={bookmarksLoading}
-            isEditDialogOpen={isEditDialogOpen}
-            onEditDialogOpenChange={setIsEditDialogOpen}
-          />
-        )}
+        <ProfileContent
+          displayProfile={displayProfile}
+          isOtherUserProfile={isOtherUserProfile}
+          userId={userId}
+          user={user}
+          isEditDialogOpen={isEditDialogOpen}
+          onEditDialogOpenChange={setIsEditDialogOpen}
+        />
       </div>
       <Footer />
     </div>
