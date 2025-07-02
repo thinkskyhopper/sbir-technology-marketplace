@@ -70,8 +70,8 @@ export const useMetaTags = (metaData: MetaTagData) => {
       updateMetaTag('description', 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.');
       updateMetaTag('og:description', 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.');
       updateMetaTag('twitter:description', 'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.');
-      updateMetaTag('og:image', '/lovable-uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png');
-      updateMetaTag('twitter:image', '/lovable-uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png');
+      updateMetaTag('og:image', '/lovable-uploads/9b10dc8b-2b29-49bd-b597-47744626af0d.png');
+      updateMetaTag('twitter:image', '/lovable-uploads/9b10dc8b-2b29-49bd-b597-47744626af0d.png');
       updateMetaTag('og:type', 'website');
       document.title = 'The SBIR Tech Marketplace';
     };

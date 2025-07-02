@@ -4,7 +4,7 @@ import type { SBIRListing } from "@/types/listings";
 
 export const useListingDetailMetaTags = (listing: SBIRListing | undefined) => {
   const getListingImage = () => {
-    if (!listing) return '/lovable-uploads/f964523f-f4e2-493f-94a1-a80c35e6a6f4.png';
+    if (!listing) return '/lovable-uploads/9b10dc8b-2b29-49bd-b597-47744626af0d.png';
     
     const categoryLower = listing.category.toLowerCase();
     
