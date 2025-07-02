@@ -1,5 +1,5 @@
 
-import { Search, Plus, Bookmark } from "lucide-react";
+import { Search, Plus, Bookmark, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -18,7 +18,7 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, profile } = useAuth();
   const { toast } = useToast();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -68,6 +68,13 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
     setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
+  const handleAuthClick = () => {
+    navigate('/auth');
+  };
+
+  // Check if user can submit listings (admins always can, others based on profile setting)
+  const canSubmitListings = isAdmin || (profile?.can_submit_listings ?? false);
+
   // Only show search on home page
   const showSearch = location.pathname === '/';
 
@@ -111,51 +118,86 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
 
           {/* Actions */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Bookmarked Listings Button - show if user is signed in */}
-            {user && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleBookmarkedListings}
-                className="hidden sm:flex border-primary/20 hover:border-primary/40"
-              >
-                <Bookmark className="w-4 h-4 mr-2" />
-                Bookmarks
-              </Button>
+            {user ? (
+              <>
+                {/* Bookmarked Listings Button - show if user is signed in */}
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleBookmarkedListings}
+                  className="hidden sm:flex border-primary/20 hover:border-primary/40"
+                >
+                  <Bookmark className="w-4 h-4 mr-2" />
+                  Bookmarks
+                </Button>
+
+                {/* Mobile Bookmarked Listings Button */}
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={handleBookmarkedListings}
+                  className="sm:hidden h-8 w-8 border-primary/20 hover:border-primary/40"
+                >
+                  <Bookmark className="w-4 h-4" />
+                </Button>
+                
+                {/* Post Listing Button - only show if user can submit listings */}
+                {canSubmitListings && (
+                  <>
+                    <Button 
+                      onClick={handlePostListing}
+                      size="sm"
+                      className="hidden sm:flex bg-primary hover:bg-primary/90"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      New Listing
+                    </Button>
+
+                    {/* Mobile Post Listing Button */}
+                    <Button 
+                      onClick={handlePostListing}
+                      size="icon"
+                      className="sm:hidden h-8 w-8 bg-primary hover:bg-primary/90"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </>
+                )}
+
+                <HeaderUserMenu />
+              </>
+            ) : (
+              <>
+                {/* Post Listing Button for non-authenticated users */}
+                <Button 
+                  onClick={handlePostListing}
+                  size="sm"
+                  className="hidden sm:flex bg-primary hover:bg-primary/90"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Listing
+                </Button>
+
+                {/* Mobile Post Listing Button for non-authenticated users */}
+                <Button 
+                  onClick={handlePostListing}
+                  size="icon"
+                  className="sm:hidden h-8 w-8 bg-primary hover:bg-primary/90"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+
+                {/* Login Button */}
+                <Button 
+                  onClick={handleAuthClick} 
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <LogIn className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </Button>
+              </>
             )}
-
-            {/* Mobile Bookmarked Listings Button */}
-            {user && (
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={handleBookmarkedListings}
-                className="sm:hidden h-8 w-8 border-primary/20 hover:border-primary/40"
-              >
-                <Bookmark className="w-4 h-4" />
-              </Button>
-            )}
-            
-            {/* Post Listing Button */}
-            <Button 
-              onClick={handlePostListing}
-              size="sm"
-              className="hidden sm:flex bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Listing
-            </Button>
-
-            {/* Mobile Post Listing Button */}
-            <Button 
-              onClick={handlePostListing}
-              size="icon"
-              className="sm:hidden h-8 w-8 bg-primary hover:bg-primary/90"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-
-            <HeaderUserMenu />
           </div>
         </div>
 
