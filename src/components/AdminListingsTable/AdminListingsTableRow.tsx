@@ -147,7 +147,7 @@ const AdminListingsTableRow = ({
         </div>
       </TableCell>
       <TableCell className="max-w-[120px]">
-        <p className="text-sm truncate">{listing.agency}</p>
+        <p className="text-sm break-words">{listing.agency}</p>
       </TableCell>
       <TableCell>
         <Badge variant="phase" className="text-xs">{listing.phase}</Badge>
@@ -156,7 +156,7 @@ const AdminListingsTableRow = ({
         <span className="text-sm font-medium">{formatCurrency(listing.value)}</span>
       </TableCell>
       <TableCell>
-        <span className="text-sm">{format(new Date(listing.deadline), 'MMM d, yyyy')}</span>
+        <span className="text-sm">{format(new Date(listing.deadline), 'MMM d,yyy')}</span>
       </TableCell>
       <TableCell>
         {renderStatusBadge()}
