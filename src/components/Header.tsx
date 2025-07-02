@@ -168,25 +168,6 @@ const Header = ({ onSearch, onPostListingClick, onShowBookmarkedListings }: Head
               </>
             ) : (
               <>
-                {/* Post Listing Button for non-authenticated users */}
-                <Button 
-                  onClick={handlePostListing}
-                  size="sm"
-                  className="hidden sm:flex bg-primary hover:bg-primary/90"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Listing
-                </Button>
-
-                {/* Mobile Post Listing Button for non-authenticated users */}
-                <Button 
-                  onClick={handlePostListing}
-                  size="icon"
-                  className="sm:hidden h-8 w-8 bg-primary hover:bg-primary/90"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-
                 {/* Login Button */}
                 <Button 
                   onClick={handleAuthClick} 
