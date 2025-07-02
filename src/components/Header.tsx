@@ -39,8 +39,6 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
             )}
           </div>
         </div>
-
-        {/* Mobile Search is now handled within HeaderSearch component */}
       </div>
     </header>
   );
