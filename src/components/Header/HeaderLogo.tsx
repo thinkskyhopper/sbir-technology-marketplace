@@ -38,12 +38,11 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
       <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary rounded-sm flex items-center justify-center">
         <span className="text-primary-foreground font-bold text-xs sm:text-sm">S</span>
       </div>
-      <span className="text-sm sm:text-xl font-bold text-gradient hidden xs:block sm:block">
-        The SBIR Tech Marketplace
-      </span>
-      <span className="text-sm font-bold text-gradient block xs:hidden sm:hidden">
-        TSTM
-      </span>
+      <img 
+        src="/lovable-uploads/355833e5-de70-40de-940a-7325588d3163.png" 
+        alt="The SBIR Tech Marketplace"
+        className="h-6 sm:h-8 w-auto max-w-[200px] sm:max-w-[250px] object-contain"
+      />
     </div>
   );
 };
