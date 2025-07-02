@@ -3,10 +3,10 @@ import { useToast } from "@/hooks/use-toast";
 import type { SBIRListing } from "@/types/listings";
 
 interface UseAdminListingsTableHandlersProps {
-  approveListing: (id: string) => Promise<void>;
-  rejectListing: (id: string) => Promise<void>;
-  hideListing: (id: string) => Promise<void>;
-  deleteListing: (id: string) => Promise<void>;
+  approveListing: (id: string, userNotes?: string, internalNotes?: string) => Promise<void>;
+  rejectListing: (id: string, userNotes?: string, internalNotes?: string) => Promise<void>;
+  hideListing: (id: string, userNotes?: string, internalNotes?: string) => Promise<void>;
+  deleteListing: (id: string, userNotes?: string, internalNotes?: string) => Promise<void>;
   setProcessingId: (id: string | null) => void;
   setEditingListing: (listing: SBIRListing | null) => void;
   setShowEditDialog: (show: boolean) => void;
@@ -94,24 +94,24 @@ export const useAdminListingsTableHandlers = ({
     }
   };
 
-  const handleConfirmAction = async () => {
+  const handleConfirmAction = async (userNotes?: string, internalNotes?: string) => {
     try {
       setProcessingId(confirmAction.listingId);
       
       if (confirmAction.type === 'approve') {
-        await approveListing(confirmAction.listingId);
+        await approveListing(confirmAction.listingId, userNotes, internalNotes);
         toast({
           title: "Listing Approved",
           description: "The listing has been successfully approved and is now active.",
         });
       } else if (confirmAction.type === 'reject') {
-        await rejectListing(confirmAction.listingId);
+        await rejectListing(confirmAction.listingId, userNotes, internalNotes);
         toast({
           title: "Listing Rejected",
           description: "The listing has been rejected.",
         });
       } else if (confirmAction.type === 'hide') {
-        await hideListing(confirmAction.listingId);
+        await hideListing(confirmAction.listingId, userNotes, internalNotes);
         toast({
           title: "Listing Hidden",
           description: "The listing has been hidden from the marketplace.",

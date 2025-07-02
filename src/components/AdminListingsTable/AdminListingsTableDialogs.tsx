@@ -1,6 +1,6 @@
 
 import EditListingDialog from "@/components/EditListingDialog";
-import ConfirmActionDialog from "@/components/ConfirmActionDialog";
+import { AdminActionDialog } from "./AdminActionDialog";
 import type { SBIRListing } from "@/types/listings";
 
 interface AdminListingsTableDialogsProps {
@@ -19,7 +19,7 @@ interface AdminListingsTableDialogsProps {
     listingId: string;
     listingTitle: string;
   }) => void;
-  onConfirmAction: () => void;
+  onConfirmAction: (userNotes?: string, internalNotes?: string) => void;
 }
 
 const AdminListingsTableDialogs = ({
@@ -30,6 +30,41 @@ const AdminListingsTableDialogs = ({
   setConfirmAction,
   onConfirmAction,
 }: AdminListingsTableDialogsProps) => {
+  const getDialogProps = () => {
+    switch (confirmAction.type) {
+      case 'approve':
+        return {
+          title: 'Approve Listing',
+          description: `Are you sure you want to approve "${confirmAction.listingTitle}"? This will make it visible to all users.`,
+          confirmText: 'Approve',
+          variant: 'default' as const,
+        };
+      case 'reject':
+        return {
+          title: 'Reject Listing',
+          description: `Are you sure you want to reject "${confirmAction.listingTitle}"? This action will prevent the listing from being published.`,
+          confirmText: 'Reject',
+          variant: 'destructive' as const,
+        };
+      case 'hide':
+        return {
+          title: 'Hide Listing',
+          description: `Are you sure you want to hide "${confirmAction.listingTitle}"? This will remove it from the marketplace but keep it in the database.`,
+          confirmText: 'Hide',
+          variant: 'default' as const,
+        };
+      default:
+        return {
+          title: '',
+          description: '',
+          confirmText: '',
+          variant: 'default' as const,
+        };
+    }
+  };
+
+  const dialogProps = getDialogProps();
+
   return (
     <>
       <EditListingDialog
@@ -38,26 +73,15 @@ const AdminListingsTableDialogs = ({
         listing={editingListing}
       />
 
-      <ConfirmActionDialog
+      <AdminActionDialog
         open={confirmAction.show}
         onOpenChange={(open) => setConfirmAction({ ...confirmAction, show: open })}
         onConfirm={onConfirmAction}
-        title={
-          confirmAction.type === 'approve' ? 'Approve Listing' :
-          confirmAction.type === 'reject' ? 'Reject Listing' : 'Hide Listing'
-        }
-        description={
-          confirmAction.type === 'approve'
-            ? `Are you sure you want to approve "${confirmAction.listingTitle}"? This will make it visible to all users.`
-            : confirmAction.type === 'reject'
-            ? `Are you sure you want to reject "${confirmAction.listingTitle}"? This action cannot be undone.`
-            : `Are you sure you want to hide "${confirmAction.listingTitle}"? This will remove it from the marketplace but keep it in the database.`
-        }
-        confirmText={
-          confirmAction.type === 'approve' ? 'Approve' :
-          confirmAction.type === 'reject' ? 'Reject' : 'Hide'
-        }
-        variant={confirmAction.type === 'reject' ? 'destructive' : 'default'}
+        title={dialogProps.title}
+        description={dialogProps.description}
+        confirmText={dialogProps.confirmText}
+        variant={dialogProps.variant}
+        showNotesForm={confirmAction.type === 'approve' || confirmAction.type === 'reject'}
       />
     </>
   );

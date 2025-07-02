@@ -7,7 +7,7 @@ export const useAdminListingOperations = (onSuccess?: () => void) => {
   const [loading, setLoading] = useState(false);
   const { user, isAdmin } = useAuth();
 
-  const approveListing = async (listingId: string) => {
+  const approveListing = async (listingId: string, userNotes?: string, internalNotes?: string) => {
     if (!isAdmin || !user) {
       throw new Error('Only admins can approve listings');
     }
@@ -16,7 +16,7 @@ export const useAdminListingOperations = (onSuccess?: () => void) => {
       setLoading(true);
       console.log('🔄 Approving listing operation...', { listingId, adminId: user.id });
       
-      await listingsService.approveListing(listingId, user.id);
+      await listingsService.approveListing(listingId, user.id, userNotes, internalNotes);
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('❌ Error approving listing:', err);
@@ -26,16 +26,16 @@ export const useAdminListingOperations = (onSuccess?: () => void) => {
     }
   };
 
-  const rejectListing = async (listingId: string) => {
-    if (!isAdmin) {
+  const rejectListing = async (listingId: string, userNotes?: string, internalNotes?: string) => {
+    if (!isAdmin || !user) {
       throw new Error('Only admins can reject listings');
     }
 
     try {
       setLoading(true);
-      console.log('🔄 Rejecting listing operation...', { listingId });
+      console.log('🔄 Rejecting listing operation...', { listingId, adminId: user.id });
       
-      await listingsService.rejectListing(listingId);
+      await listingsService.rejectListing(listingId, user.id, userNotes, internalNotes);
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('❌ Error rejecting listing:', err);
@@ -45,7 +45,7 @@ export const useAdminListingOperations = (onSuccess?: () => void) => {
     }
   };
 
-  const hideListing = async (listingId: string) => {
+  const hideListing = async (listingId: string, userNotes?: string, internalNotes?: string) => {
     if (!isAdmin) {
       throw new Error('Only admins can hide listings');
     }
@@ -54,7 +54,7 @@ export const useAdminListingOperations = (onSuccess?: () => void) => {
       setLoading(true);
       console.log('🔄 Hiding listing operation...', { listingId });
       
-      await listingsService.hideListing(listingId);
+      await listingsService.hideListing(listingId, user?.id || '', userNotes, internalNotes);
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('❌ Error hiding listing:', err);
@@ -64,7 +64,7 @@ export const useAdminListingOperations = (onSuccess?: () => void) => {
     }
   };
 
-  const deleteListing = async (listingId: string) => {
+  const deleteListing = async (listingId: string, userNotes?: string, internalNotes?: string) => {
     if (!isAdmin) {
       throw new Error('Only admins can delete listings');
     }
@@ -73,7 +73,7 @@ export const useAdminListingOperations = (onSuccess?: () => void) => {
       setLoading(true);
       console.log('🔄 Deleting listing operation...', { listingId });
       
-      await listingsService.deleteListing(listingId);
+      await listingsService.deleteListing(listingId, user?.id || '', userNotes, internalNotes);
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('❌ Error deleting listing:', err);

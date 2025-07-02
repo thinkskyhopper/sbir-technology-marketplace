@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_audit_logs: {
+        Row: {
+          action_type: Database["public"]["Enums"]["admin_action_type"]
+          admin_id: string
+          changes_made: Json | null
+          created_at: string
+          id: string
+          internal_notes: string | null
+          listing_agency: string
+          listing_id: string | null
+          listing_title: string
+          user_notes: string | null
+          user_notified: boolean
+        }
+        Insert: {
+          action_type: Database["public"]["Enums"]["admin_action_type"]
+          admin_id: string
+          changes_made?: Json | null
+          created_at?: string
+          id?: string
+          internal_notes?: string | null
+          listing_agency: string
+          listing_id?: string | null
+          listing_title: string
+          user_notes?: string | null
+          user_notified?: boolean
+        }
+        Update: {
+          action_type?: Database["public"]["Enums"]["admin_action_type"]
+          admin_id?: string
+          changes_made?: Json | null
+          created_at?: string
+          id?: string
+          internal_notes?: string | null
+          listing_agency?: string
+          listing_id?: string | null
+          listing_title?: string
+          user_notes?: string | null
+          user_notified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_audit_logs_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "sbir_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_inquiries: {
         Row: {
           created_at: string
@@ -413,6 +470,7 @@ export type Database = {
       }
     }
     Enums: {
+      admin_action_type: "approval" | "denial" | "edit" | "deletion"
       change_request_status: "pending" | "approved" | "rejected"
       change_request_type: "change" | "deletion"
       listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
@@ -533,6 +591,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      admin_action_type: ["approval", "denial", "edit", "deletion"],
       change_request_status: ["pending", "approved", "rejected"],
       change_request_type: ["change", "deletion"],
       listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
