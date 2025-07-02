@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,10 +9,11 @@ import ProfileListings from "@/components/Profile/ProfileListings";
 import EditProfileDialog from "@/components/Profile/EditProfileDialog";
 import NotificationPreferences from "@/components/Profile/NotificationPreferences";
 import MarketplaceCard from "@/components/MarketplaceCard";
+import BookmarkedListings from "@/components/BookmarkedListings";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Bookmark } from "lucide-react";
 import type { SBIRListing } from "@/types/listings";
 
@@ -34,12 +34,14 @@ const Profile = () => {
   const { user, profile: authProfile, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [displayProfile, setDisplayProfile] = useState<Profile | null>(null);
   const [isOtherUserProfile, setIsOtherUserProfile] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bookmarkedListings, setBookmarkedListings] = useState<SBIRListing[]>([]);
   const [bookmarksLoading, setBookmarksLoading] = useState(false);
+  const [showBookmarkedListings, setShowBookmarkedListings] = useState(false);
   
   const { fetchBookmarkedListings } = useBookmarks();
 
@@ -132,11 +134,26 @@ const Profile = () => {
     }
   };
 
+  const handleShowBookmarkedListings = () => {
+    setShowBookmarkedListings(true);
+  };
+
+  const handleBackFromBookmarks = () => {
+    setShowBookmarkedListings(false);
+  };
+
+  const handlePostListingClick = () => {
+    navigate('/');
+  };
+
   // Show loading while auth is loading or we're fetching profile
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <Header 
+          onShowBookmarkedListings={handleShowBookmarkedListings}
+          onPostListingClick={handlePostListingClick}
+        />
         <div className="flex-1 container mx-auto px-4 py-8">
           <Card>
             <CardContent className="text-center py-8">
@@ -152,7 +169,10 @@ const Profile = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <Header 
+          onShowBookmarkedListings={handleShowBookmarkedListings}
+          onPostListingClick={handlePostListingClick}
+        />
         <div className="flex-1 container mx-auto px-4 py-8">
           <Card>
             <CardContent className="text-center py-8">
@@ -173,82 +193,91 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      <div className="flex-1 container mx-auto px-4 py-8 space-y-6">
-        <ProfileHeader 
-          profile={displayProfile}
-          isOwnProfile={!isOtherUserProfile}
-          onEdit={() => setIsEditDialogOpen(true)}
-          userId={isOtherUserProfile ? userId : undefined}
-        />
-        
-        <Tabs defaultValue="listings" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="listings">Listings</TabsTrigger>
-            {!isOtherUserProfile && (
-              <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
-            )}
-            {!isOtherUserProfile && (
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            )}
-          </TabsList>
-          
-          <TabsContent value="listings">
-            <ProfileListings 
-              userId={isOtherUserProfile ? userId : user?.id}
+      <Header 
+        onShowBookmarkedListings={handleShowBookmarkedListings}
+        onPostListingClick={handlePostListingClick}
+      />
+      <div className="flex-1">
+        {showBookmarkedListings ? (
+          <BookmarkedListings onBack={handleBackFromBookmarks} />
+        ) : (
+          <div className="container mx-auto px-4 py-8 space-y-6">
+            <ProfileHeader 
+              profile={displayProfile}
               isOwnProfile={!isOtherUserProfile}
+              onEdit={() => setIsEditDialogOpen(true)}
+              userId={isOtherUserProfile ? userId : undefined}
             />
-          </TabsContent>
-          
-          {!isOtherUserProfile && (
-            <TabsContent value="bookmarked">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bookmark className="w-5 h-5" />
-                    Bookmarked Listings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {bookmarksLoading ? (
-                    <div className="text-center py-8">
-                      <p>Loading bookmarked listings...</p>
-                    </div>
-                  ) : bookmarkedListings.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Bookmark className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">No bookmarked listings</h3>
-                      <p className="text-muted-foreground">
-                        Browse the marketplace and bookmark listings you're interested in.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {bookmarkedListings.map((listing) => (
-                        <MarketplaceCard
-                          key={listing.id}
-                          listing={listing}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
-          
-          {!isOtherUserProfile && (
-            <TabsContent value="notifications">
-              <NotificationPreferences />
-            </TabsContent>
-          )}
-        </Tabs>
+            
+            <Tabs defaultValue="listings" className="w-full">
+              <TabsList className="mb-6">
+                <TabsTrigger value="listings">Listings</TabsTrigger>
+                {!isOtherUserProfile && (
+                  <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
+                )}
+                {!isOtherUserProfile && (
+                  <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                )}
+              </TabsList>
+              
+              <TabsContent value="listings">
+                <ProfileListings 
+                  userId={isOtherUserProfile ? userId : user?.id}
+                  isOwnProfile={!isOtherUserProfile}
+                />
+              </TabsContent>
+              
+              {!isOtherUserProfile && (
+                <TabsContent value="bookmarked">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Bookmark className="w-5 h-5" />
+                        Bookmarked Listings
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {bookmarksLoading ? (
+                        <div className="text-center py-8">
+                          <p>Loading bookmarked listings...</p>
+                        </div>
+                      ) : bookmarkedListings.length === 0 ? (
+                        <div className="text-center py-8">
+                          <Bookmark className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                          <h3 className="text-lg font-semibold mb-2">No bookmarked listings</h3>
+                          <p className="text-muted-foreground">
+                            Browse the marketplace and bookmark listings you're interested in.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {bookmarkedListings.map((listing) => (
+                            <MarketplaceCard
+                              key={listing.id}
+                              listing={listing}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
+              
+              {!isOtherUserProfile && (
+                <TabsContent value="notifications">
+                  <NotificationPreferences />
+                </TabsContent>
+              )}
+            </Tabs>
 
-        <EditProfileDialog
-          open={isEditDialogOpen}
-          onOpenChange={setIsEditDialogOpen}
-          profile={displayProfile}
-        />
+            <EditProfileDialog
+              open={isEditDialogOpen}
+              onOpenChange={setIsEditDialogOpen}
+              profile={displayProfile}
+            />
+          </div>
+        )}
       </div>
       <Footer />
     </div>
