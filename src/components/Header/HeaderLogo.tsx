@@ -38,7 +38,7 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
       <img 
         src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
         alt="SBIR Logo"
-        className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+        className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
       />
       <span className="text-sm sm:text-xl font-bold hidden xs:block sm:block">
         <span className="text-gradient">The SBIR Tech </span>
