@@ -3,6 +3,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { User } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { ListingChangeRequest } from "@/types/changeRequests";
 import { AdminChangeRequestsTableActions } from "./AdminChangeRequestsTableActions";
 
@@ -101,9 +102,12 @@ export const AdminChangeRequestsTableRow = ({
       <TableCell className="min-w-[150px]">
         {request.profiles ? (
           <div>
-            <p className="text-sm font-medium truncate">
+            <Link 
+              to={`/profile/${request.user_id}`}
+              className="text-sm font-medium truncate text-primary hover:underline block"
+            >
               {request.profiles.full_name || 'Unknown User'}
-            </p>
+            </Link>
             <p className="text-xs text-muted-foreground truncate">
               {request.profiles.email}
             </p>
@@ -116,7 +120,12 @@ export const AdminChangeRequestsTableRow = ({
         {request.processed_by ? (
           <div className="flex items-center space-x-1">
             <User className="w-3 h-3 flex-shrink-0" />
-            <span className="text-sm truncate">{getAdminInfo(request.processed_by)}</span>
+            <Link 
+              to={`/profile/${request.processed_by}`}
+              className="text-sm truncate text-primary hover:underline"
+            >
+              {getAdminInfo(request.processed_by)}
+            </Link>
           </div>
         ) : (
           <span className="text-muted-foreground text-sm">Not processed</span>
