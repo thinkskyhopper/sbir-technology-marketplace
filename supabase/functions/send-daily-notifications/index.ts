@@ -240,13 +240,15 @@ Deno.serve(async (req) => {
 function createEmailHtml(user: DatabaseProfile, listings: DatabaseListing[]): string {
   const userName = user.full_name || user.email.split('@')[0]
   
-  const formatCurrency = (cents: number) => {
+  const formatCurrency = (amountInCents: number) => {
+    // Convert cents to dollars before formatting
+    const amountInDollars = amountInCents / 100;
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(cents / 100)
+    }).format(amountInDollars);
   }
   
   const formatDate = (dateString: string) => {

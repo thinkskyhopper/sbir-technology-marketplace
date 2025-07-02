@@ -1,13 +1,15 @@
 
 import type { AdminNotificationRequest } from './types.ts';
 
-const formatCurrency = (amount: number): string => {
+const formatCurrency = (amountInCents: number): string => {
+  // Convert cents to dollars before formatting
+  const amountInDollars = amountInCents / 100;
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(amountInDollars);
 };
 
 export const generateEmailSubject = (data: AdminNotificationRequest): string => {
