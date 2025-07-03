@@ -20,12 +20,18 @@ export const listingQueries = {
         `)
         .order('created_at', { ascending: false });
 
-      // If not admin, only show active listings and user's own listings
-      if (!isAdmin) {
+      // If admin, show all listings
+      if (isAdmin) {
+        // Admin sees everything - no additional filtering needed
+      } else {
+        // For non-admin users (including non-authenticated), show Active and Sold listings
+        // Also show user's own listings if they are authenticated
         if (userId) {
-          query = query.or(`status.eq.Active,user_id.eq.${userId}`);
+          // Authenticated non-admin user: show Active, Sold, and their own listings
+          query = query.or(`status.in.(Active,Sold),user_id.eq.${userId}`);
         } else {
-          query = query.eq('status', 'Active');
+          // Non-authenticated user: show only Active and Sold listings
+          query = query.in('status', ['Active', 'Sold']);
         }
       }
 
@@ -74,11 +80,16 @@ export const listingQueries = {
         .select('*, date_sold, technology_summary')
         .order('created_at', { ascending: false });
 
-      if (!isAdmin) {
+      // Apply the same filtering logic as the main query
+      if (isAdmin) {
+        // Admin sees everything - no additional filtering needed
+      } else {
         if (userId) {
-          fallbackQuery.or(`status.eq.Active,user_id.eq.${userId}`);
+          // Authenticated non-admin user: show Active, Sold, and their own listings
+          fallbackQuery.or(`status.in.(Active,Sold),user_id.eq.${userId}`);
         } else {
-          fallbackQuery.eq('status', 'Active');
+          // Non-authenticated user: show only Active and Sold listings
+          fallbackQuery.in('status', ['Active', 'Sold']);
         }
       }
 
