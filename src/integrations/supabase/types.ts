@@ -322,6 +322,7 @@ export type Database = {
           id: string
           last_name: string | null
           listing_email_notifications_enabled: boolean
+          marketing_emails_enabled: boolean
           notification_categories: Json | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
@@ -340,6 +341,7 @@ export type Database = {
           id: string
           last_name?: string | null
           listing_email_notifications_enabled?: boolean
+          marketing_emails_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
@@ -358,6 +360,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           listing_email_notifications_enabled?: boolean
+          marketing_emails_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string

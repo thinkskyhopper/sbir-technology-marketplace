@@ -32,6 +32,7 @@ export const fetchProfile = async (
           const fullName = userData.user.user_metadata?.full_name || '';
           const firstName = fullName.split(' ')[0] || '';
           const lastName = fullName.split(' ').slice(1).join(' ') || '';
+          const marketingOptIn = userData.user.user_metadata?.marketing_emails_enabled || false;
           
           const newProfileData = {
             id: userId,
@@ -43,7 +44,8 @@ export const fetchProfile = async (
             role: 'user' as const,
             bio: null,
             company_name: null,
-            notification_categories: []
+            notification_categories: [],
+            marketing_emails_enabled: marketingOptIn
           };
           
           console.log('📝 Creating profile with data:', newProfileData);

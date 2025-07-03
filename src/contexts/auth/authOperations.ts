@@ -1,7 +1,8 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUrl, getRedirectUrl } from './urlUtils';
 
-export const signUp = async (email: string, password: string, fullName: string) => {
+export const signUp = async (email: string, password: string, fullName: string, marketingOptIn: boolean = false) => {
   const redirectUrl = `${getCurrentUrl()}/`;
   
   console.log('Sign up attempt for:', email, 'with redirect:', redirectUrl);
@@ -12,7 +13,8 @@ export const signUp = async (email: string, password: string, fullName: string) 
     options: {
       emailRedirectTo: redirectUrl,
       data: {
-        full_name: fullName
+        full_name: fullName,
+        marketing_emails_enabled: marketingOptIn
       }
     }
   });

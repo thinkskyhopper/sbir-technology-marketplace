@@ -13,6 +13,7 @@ export interface Profile {
   role: string;
   notification_categories: string[] | null;
   can_submit_listings: boolean;
+  marketing_emails_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -22,7 +23,7 @@ export interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, marketingOptIn?: boolean) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;

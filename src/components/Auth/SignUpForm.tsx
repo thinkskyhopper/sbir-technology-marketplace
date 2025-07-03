@@ -2,20 +2,23 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import SignUpFormFields from './SignUpFormFields';
 
 interface SignUpFormProps {
   onSwitchToSignIn: () => void;
 }
 
 const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -29,13 +32,35 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
     setSuccess(null);
 
     try {
-      if (!fullName.trim()) {
-        setError('Full name is required');
+      // Validate required fields
+      if (!firstName.trim()) {
+        setError('First name is required');
+        setLoading(false);
+        return;
+      }
+
+      if (!lastName.trim()) {
+        setError('Last name is required');
+        setLoading(false);
+        return;
+      }
+
+      if (!privacyAccepted) {
+        setError('You must agree to the Privacy Policy');
+        setLoading(false);
+        return;
+      }
+
+      if (!legalAccepted) {
+        setError('You must agree to the Legal Disclaimer');
         setLoading(false);
         return;
       }
       
-      const { error } = await signUp(email, password, fullName);
+      // Create full name from first and last name
+      const fullName = `${firstName.trim()} ${lastName.trim()}`;
+      
+      const { error } = await signUp(email, password, fullName, marketingOptIn);
       
       if (error) {
         setError(error.message);
@@ -52,42 +77,22 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="fullName">Full Name</Label>
-          <Input
-            id="fullName"
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            placeholder="John Doe"
-          />
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="you@company.com"
-          />
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="••••••••"
-            minLength={6}
-          />
-        </div>
+        <SignUpFormFields
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          privacyAccepted={privacyAccepted}
+          setPrivacyAccepted={setPrivacyAccepted}
+          legalAccepted={legalAccepted}
+          setLegalAccepted={setLegalAccepted}
+          marketingOptIn={marketingOptIn}
+          setMarketingOptIn={setMarketingOptIn}
+        />
 
         {error && (
           <Alert variant="destructive">
@@ -103,19 +108,9 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
         )}
 
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Loading...' : 'Create Account'}
+          {loading ? 'Creating Account...' : 'Create Account'}
         </Button>
       </form>
-
-      <div className="mt-4 text-center text-sm text-muted-foreground">
-        By creating an account, you agree to our{' '}
-        <Link 
-          to="/privacy-policy" 
-          className="text-primary hover:underline font-medium"
-        >
-          Privacy Policy
-        </Link>
-      </div>
 
       <div className="mt-4 text-center">
         <Button
