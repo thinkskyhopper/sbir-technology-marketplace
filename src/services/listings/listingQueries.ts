@@ -24,15 +24,9 @@ export const listingQueries = {
       if (isAdmin) {
         // Admin sees everything - no additional filtering needed
       } else {
-        // For non-admin users (including non-authenticated), show Active and Sold listings
-        // Also show user's own listings if they are authenticated
-        if (userId) {
-          // Authenticated non-admin user: show Active, Sold, and their own listings
-          query = query.or(`status.in.(Active,Sold),user_id.eq.${userId}`);
-        } else {
-          // Non-authenticated user: show only Active and Sold listings
-          query = query.in('status', ['Active', 'Sold']);
-        }
+        // For non-admin users (including non-authenticated), show only Active and Sold listings
+        // This applies to both their own listings and others' listings
+        query = query.in('status', ['Active', 'Sold']);
       }
 
       const { data, error } = await query;
@@ -84,13 +78,8 @@ export const listingQueries = {
       if (isAdmin) {
         // Admin sees everything - no additional filtering needed
       } else {
-        if (userId) {
-          // Authenticated non-admin user: show Active, Sold, and their own listings
-          fallbackQuery.or(`status.in.(Active,Sold),user_id.eq.${userId}`);
-        } else {
-          // Non-authenticated user: show only Active and Sold listings
-          fallbackQuery.in('status', ['Active', 'Sold']);
-        }
+        // For non-admin users, show only Active and Sold listings
+        fallbackQuery.in('status', ['Active', 'Sold']);
       }
 
       const { data: fallbackData, error: fallbackError } = await fallbackQuery;
