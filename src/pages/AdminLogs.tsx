@@ -18,25 +18,24 @@ const AdminLogs = () => {
         <Header />
         
         <div className="container mx-auto px-6 py-8 flex-1">
-          <div className="mb-6">
-            <Button
-              onClick={() => navigate('/admin')}
-              variant="outline"
-              className="flex items-center gap-2 mb-6"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Dashboard
-            </Button>
-          </div>
-
           <div className="mb-8">
-            <div className="flex items-center space-x-3">
-              <FileText className="w-8 h-8 text-primary" />
-              <div>
-                <h1 className="text-3xl font-bold">Admin Audit Logs</h1>
-                <p className="text-muted-foreground">
-                  Review all administrative actions and changes made to listings.
-                </p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Button
+                  onClick={() => navigate('/admin')}
+                  variant="outline"
+                  className="flex items-center gap-2 mr-4"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Dashboard
+                </Button>
+                <FileText className="w-8 h-8 text-primary" />
+                <div>
+                  <h1 className="text-3xl font-bold">Admin Audit Logs</h1>
+                  <p className="text-muted-foreground">
+                    Review all administrative actions and changes made to listings.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
