@@ -72,7 +72,7 @@ const TeamMemberCard = ({ member, isReversed, onUpdate }: TeamMemberCardProps) =
 
   return (
     <>
-      <div className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
+      <div className={`flex flex-col lg:flex-row items-start gap-8 lg:gap-16 ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
         <TeamMemberPhoto
           member={member}
           onEdit={() => setShowEditDialog(true)}
