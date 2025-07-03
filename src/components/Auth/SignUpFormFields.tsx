@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Link } from 'react-router-dom';
+import PolicyDialog from './PolicyDialog';
 
 interface SignUpFormFieldsProps {
   firstName: string;
@@ -38,6 +38,9 @@ const SignUpFormFields = ({
   marketingOptIn,
   setMarketingOptIn,
 }: SignUpFormFieldsProps) => {
+  const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
+  const [legalDialogOpen, setLegalDialogOpen] = useState(false);
+
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
@@ -101,14 +104,13 @@ const SignUpFormFields = ({
           />
           <Label htmlFor="privacy" className="text-sm leading-relaxed">
             I agree to the{' '}
-            <Link 
-              to="/privacy-policy" 
-              className="text-primary hover:underline font-medium"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => setPrivacyDialogOpen(true)}
+              className="text-primary hover:underline font-medium cursor-pointer"
             >
               Privacy Policy
-            </Link>
+            </button>
             {' '}*
           </Label>
         </div>
@@ -122,14 +124,13 @@ const SignUpFormFields = ({
           />
           <Label htmlFor="legal" className="text-sm leading-relaxed">
             I agree to the{' '}
-            <Link 
-              to="/legal-disclaimer" 
-              className="text-primary hover:underline font-medium"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => setLegalDialogOpen(true)}
+              className="text-primary hover:underline font-medium cursor-pointer"
             >
               Legal Disclaimer
-            </Link>
+            </button>
             {' '}*
           </Label>
         </div>
@@ -146,6 +147,20 @@ const SignUpFormFields = ({
           </Label>
         </div>
       </div>
+
+      <PolicyDialog
+        open={privacyDialogOpen}
+        onOpenChange={setPrivacyDialogOpen}
+        title="Privacy Policy"
+        type="privacy"
+      />
+
+      <PolicyDialog
+        open={legalDialogOpen}
+        onOpenChange={setLegalDialogOpen}
+        title="Legal Disclaimer"
+        type="legal"
+      />
     </>
   );
 };
