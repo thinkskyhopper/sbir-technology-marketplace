@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmailNotificationSettings from "@/components/UserSettings/EmailNotificationSettings";
 import CategoryNotificationSettings from "@/components/UserSettings/CategoryNotificationSettings";
+import MarketingEmailSettings from "@/components/UserSettings/MarketingEmailSettings";
 import AccountDeletionSettings from "@/components/UserSettings/AccountDeletionSettings";
 
 const UserSettingsContent = () => {
@@ -24,6 +25,7 @@ const UserSettingsContent = () => {
         <TabsContent value="notifications" className="space-y-6">
           <EmailNotificationSettings />
           <CategoryNotificationSettings />
+          <MarketingEmailSettings />
         </TabsContent>
         
         <TabsContent value="account">
