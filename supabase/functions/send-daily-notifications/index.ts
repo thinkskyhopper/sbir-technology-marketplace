@@ -117,23 +117,22 @@ Deno.serve(async (req) => {
       )
     }
     
-    // Get all users who have notification categories set AND have email notifications enabled
+    // Get all users who have notification categories set
     const { data: users, error: usersError } = await supabase
       .from('profiles')
       .select('id, email, full_name, notification_categories, email_notifications_enabled, category_email_notifications_enabled')
       .not('notification_categories', 'is', null)
       .neq('notification_categories', '[]')
-      .eq('email_notifications_enabled', true)
-      .eq('category_email_notifications_enabled', true)
     
     if (usersError) {
       console.error('Failed to fetch users:', usersError)
       throw usersError
     }
     
-    console.log(`Found ${users?.length || 0} users with notification preferences and email notifications enabled`)
+    console.log(`Found ${users?.length || 0} users with notification preferences`)
     
     let emailsSent = 0
+    let inAppNotificationsSent = 0
     const errors: any[] = []
     
     if (users && users.length > 0) {
@@ -166,24 +165,49 @@ Deno.serve(async (req) => {
             continue
           }
           
-          // Create email content
-          const emailHtml = createEmailHtml(user, newRelevantListings as DatabaseListing[])
-          
-          // Send email
-          const { error: emailError } = await resend.emails.send({
-            from: 'SBIR Listings <notifications@yourdomain.com>',
-            to: [user.email],
-            subject: `New SBIR Listings - ${newRelevantListings.length} listing${newRelevantListings.length > 1 ? 's' : ''} in your categories`,
-            html: emailHtml,
-          })
-          
-          if (emailError) {
-            console.error(`Failed to send email to ${user.email}:`, emailError)
-            errors.push({ user_email: user.email, error: emailError })
-            continue
+          // Send email notifications only if user has email notifications enabled
+          if (user.email_notifications_enabled && user.category_email_notifications_enabled) {
+            // Create email content
+            const emailHtml = createEmailHtml(user, newRelevantListings as DatabaseListing[])
+            
+            // Send email
+            const { error: emailError } = await resend.emails.send({
+              from: 'SBIR Listings <notifications@yourdomain.com>',
+              to: [user.email],
+              subject: `New SBIR Listings - ${newRelevantListings.length} listing${newRelevantListings.length > 1 ? 's' : ''} in your categories`,
+              html: emailHtml,
+            })
+            
+            if (emailError) {
+              console.error(`Failed to send email to ${user.email}:`, emailError)
+              errors.push({ user_email: user.email, error: emailError })
+            } else {
+              emailsSent++
+              console.log(`Successfully sent email to ${user.email} for ${newRelevantListings.length} listings`)
+            }
           }
           
-          // Record notification batches
+          // Always create in-app notifications for users with category preferences
+          for (const listing of newRelevantListings) {
+            const { error: notificationError } = await supabase
+              .from('notifications')
+              .insert({
+                user_id: user.id,
+                title: 'New SBIR Listing in Your Category',
+                message: `A new ${listing.category} listing "${listing.title}" has been posted by ${listing.agency}. Value: ${formatCurrency(listing.value)}`,
+                type: 'new_listing',
+                related_id: listing.id
+              })
+            
+            if (notificationError) {
+              console.error(`Failed to create in-app notification for ${user.email}:`, notificationError)
+              errors.push({ user_email: user.email, error: notificationError })
+            } else {
+              inAppNotificationsSent++
+            }
+          }
+          
+          // Record notification batches for all listings (both email and in-app)
           const batchInserts = newRelevantListings.map(listing => ({
             user_id: user.id,
             listing_id: listing.id,
@@ -198,8 +222,7 @@ Deno.serve(async (req) => {
             console.error(`Failed to record notification batches for ${user.email}:`, batchError)
             errors.push({ user_email: user.email, error: batchError })
           } else {
-            emailsSent++
-            console.log(`Successfully sent notification to ${user.email} for ${newRelevantListings.length} listings`)
+            console.log(`Successfully processed notifications for ${user.email}`)
           }
           
         } catch (error) {
@@ -220,13 +243,14 @@ Deno.serve(async (req) => {
       })
       .eq('id', jobRun.id)
     
-    console.log(`Job completed. Processed ${users?.length || 0} users, sent ${emailsSent} emails`)
+    console.log(`Job completed. Processed ${users?.length || 0} users, sent ${emailsSent} emails and ${inAppNotificationsSent} in-app notifications`)
     
     return new Response(
       JSON.stringify({
         message: 'Daily notifications job completed',
         users_processed: users?.length || 0,
         emails_sent: emailsSent,
+        in_app_notifications_sent: inAppNotificationsSent,
         errors_count: errors.length
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -305,4 +329,15 @@ function createEmailHtml(user: DatabaseProfile, listings: DatabaseListing[]): st
     </body>
     </html>
   `
+}
+
+function formatCurrency(amountInCents: number) {
+  // Convert cents to dollars before formatting
+  const amountInDollars = amountInCents / 100;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amountInDollars);
 }
