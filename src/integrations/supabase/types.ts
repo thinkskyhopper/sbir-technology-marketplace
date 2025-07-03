@@ -317,8 +317,10 @@ export type Database = {
           display_email: string | null
           email: string
           email_notifications_enabled: boolean
+          first_name: string | null
           full_name: string | null
           id: string
+          last_name: string | null
           listing_email_notifications_enabled: boolean
           notification_categories: Json | null
           role: Database["public"]["Enums"]["user_role"]
@@ -333,8 +335,10 @@ export type Database = {
           display_email?: string | null
           email: string
           email_notifications_enabled?: boolean
+          first_name?: string | null
           full_name?: string | null
           id: string
+          last_name?: string | null
           listing_email_notifications_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
@@ -349,8 +353,10 @@ export type Database = {
           display_email?: string | null
           email?: string
           email_notifications_enabled?: boolean
+          first_name?: string | null
           full_name?: string | null
           id?: string
+          last_name?: string | null
           listing_email_notifications_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]

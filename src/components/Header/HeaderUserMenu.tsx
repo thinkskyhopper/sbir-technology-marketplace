@@ -30,9 +30,9 @@ const HeaderUserMenu = () => {
 
   if (!user) return null;
 
-  // Get the user's display name - prioritize full_name, fallback to email
-  const displayName = profile?.full_name || user.email;
-  const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : user.email.split('@')[0];
+  // Get the user's display name - prioritize first_name, then full_name, fallback to email
+  const displayName = profile?.first_name || profile?.full_name || user.email;
+  const firstName = profile?.first_name || (profile?.full_name ? profile.full_name.split(' ')[0] : user.email.split('@')[0]);
   
   // Get the initial for the avatar
   const initial = displayName ? displayName.charAt(0).toUpperCase() : 'U';

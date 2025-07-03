@@ -28,10 +28,17 @@ export const fetchProfile = async (
         console.log('👤 Current user data:', userData);
         
         if (userData.user) {
+          // Extract first and last name from full_name metadata
+          const fullName = userData.user.user_metadata?.full_name || '';
+          const firstName = fullName.split(' ')[0] || '';
+          const lastName = fullName.split(' ').slice(1).join(' ') || '';
+          
           const newProfileData = {
             id: userId,
             email: userData.user.email || '',
-            full_name: userData.user.user_metadata?.full_name || null,
+            full_name: fullName || null,
+            first_name: firstName || null,
+            last_name: lastName || null,
             display_email: userData.user.email || '',
             role: 'user' as const,
             bio: null,

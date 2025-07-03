@@ -40,9 +40,10 @@ Deno.serve(async (req) => {
     
     console.log('Sending welcome email to:', email);
     
-    const userName = full_name || email.split('@')[0]
+    // Extract first name from full_name or use email prefix as fallback
+    const firstName = full_name ? full_name.split(' ')[0] : email.split('@')[0]
     
-    const emailHtml = createWelcomeEmailHtml(userName, email)
+    const emailHtml = createWelcomeEmailHtml(firstName, email)
     
     const { error: emailError } = await resend.emails.send({
       from: 'SBIR Listings <notifications@yourdomain.com>',
@@ -72,7 +73,7 @@ Deno.serve(async (req) => {
   }
 })
 
-function createWelcomeEmailHtml(userName: string, email: string): string {
+function createWelcomeEmailHtml(firstName: string, email: string): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -87,7 +88,7 @@ function createWelcomeEmailHtml(userName: string, email: string): string {
         
         <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; margin: 30px 0; border: 1px solid #e5e7eb; text-align: left;">
           <p style="font-size: 16px; margin-bottom: 20px; color: #4b5563; line-height: 1.7;">
-            Hello ${userName},
+            Hello ${firstName},
           </p>
           
           <p style="font-size: 16px; margin-bottom: 20px; color: #4b5563; line-height: 1.7;">
