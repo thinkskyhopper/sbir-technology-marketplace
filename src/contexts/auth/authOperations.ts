@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUrl, getRedirectUrl } from './urlUtils';
 
@@ -20,9 +19,32 @@ export const signUp = async (email: string, password: string, fullName: string) 
   
   if (error) {
     console.error('Sign up error:', error);
+    return { error };
+  }
+
+  // Send welcome email after successful signup
+  try {
+    console.log('Sending welcome email to:', email);
+    
+    const { error: emailError } = await supabase.functions.invoke('send-welcome-email', {
+      body: {
+        email: email,
+        full_name: fullName
+      }
+    });
+    
+    if (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Don't fail the signup if email sending fails
+    } else {
+      console.log('Welcome email sent successfully');
+    }
+  } catch (emailError) {
+    console.error('Error sending welcome email:', emailError);
+    // Don't fail the signup if email sending fails
   }
   
-  return { error };
+  return { error: null };
 };
 
 export const signIn = async (email: string, password: string) => {
