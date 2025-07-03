@@ -12,6 +12,8 @@ interface DatabaseProfile {
   email: string
   full_name: string | null
   notification_categories: string[] | null
+  email_notifications_enabled: boolean
+  category_email_notifications_enabled: boolean
 }
 
 interface DatabaseListing {
@@ -115,19 +117,21 @@ Deno.serve(async (req) => {
       )
     }
     
-    // Get all users who have notification categories set
+    // Get all users who have notification categories set AND have email notifications enabled
     const { data: users, error: usersError } = await supabase
       .from('profiles')
-      .select('id, email, full_name, notification_categories')
+      .select('id, email, full_name, notification_categories, email_notifications_enabled, category_email_notifications_enabled')
       .not('notification_categories', 'is', null)
       .neq('notification_categories', '[]')
+      .eq('email_notifications_enabled', true)
+      .eq('category_email_notifications_enabled', true)
     
     if (usersError) {
       console.error('Failed to fetch users:', usersError)
       throw usersError
     }
     
-    console.log(`Found ${users?.length || 0} users with notification preferences`)
+    console.log(`Found ${users?.length || 0} users with notification preferences and email notifications enabled`)
     
     let emailsSent = 0
     const errors: any[] = []
@@ -294,7 +298,7 @@ function createEmailHtml(user: DatabaseProfile, listings: DatabaseListing[]): st
         
         <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; font-size: 14px; color: #6b7280;">
           <p>You're receiving this email because you've subscribed to notifications for specific SBIR categories.</p>
-          <p>To update your notification preferences, <a href="https://yourdomain.com/profile" style="color: #3b82f6;">visit your profile</a>.</p>
+          <p>To update your notification preferences, <a href="https://yourdomain.com/settings" style="color: #3b82f6;">visit your settings</a>.</p>
           <p style="margin-top: 20px;">Best regards,<br>The SBIR Listings Team</p>
         </div>
       </div>

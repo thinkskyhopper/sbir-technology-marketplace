@@ -311,6 +311,7 @@ export type Database = {
         Row: {
           bio: string | null
           can_submit_listings: boolean
+          category_email_notifications_enabled: boolean
           company_name: string | null
           created_at: string
           display_email: string | null
@@ -318,6 +319,7 @@ export type Database = {
           email_notifications_enabled: boolean
           full_name: string | null
           id: string
+          listing_email_notifications_enabled: boolean
           notification_categories: Json | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
@@ -325,6 +327,7 @@ export type Database = {
         Insert: {
           bio?: string | null
           can_submit_listings?: boolean
+          category_email_notifications_enabled?: boolean
           company_name?: string | null
           created_at?: string
           display_email?: string | null
@@ -332,6 +335,7 @@ export type Database = {
           email_notifications_enabled?: boolean
           full_name?: string | null
           id: string
+          listing_email_notifications_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
@@ -339,6 +343,7 @@ export type Database = {
         Update: {
           bio?: string | null
           can_submit_listings?: boolean
+          category_email_notifications_enabled?: boolean
           company_name?: string | null
           created_at?: string
           display_email?: string | null
@@ -346,6 +351,7 @@ export type Database = {
           email_notifications_enabled?: boolean
           full_name?: string | null
           id?: string
+          listing_email_notifications_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
