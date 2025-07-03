@@ -5,17 +5,14 @@ import { Link } from 'react-router-dom';
 const AuthHeader = () => {
   return (
     <div className="text-center mb-8">
-      <div className="flex items-center justify-center mb-4">
+      <Link to="/" className="block hover:opacity-80 transition-opacity">
         <img 
-          src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
-          alt="SBIR Logo"
-          className="w-16 h-16 object-contain"
+          src="/lovable-uploads/7afd0c6e-c779-4f57-ae36-08540adc4f01.png" 
+          alt="The SBIR Tech Marketplace"
+          className="w-full max-w-sm mx-auto h-auto object-contain"
         />
-      </div>
-      <Link to="/" className="text-2xl font-bold hover:opacity-80 transition-opacity">
-        The SBIR Tech Marketplace
       </Link>
-      <p className="text-muted-foreground">Secure marketplace for SBIR technology</p>
+      <p className="text-muted-foreground mt-4">Secure marketplace for SBIR technology</p>
     </div>
   );
 };
