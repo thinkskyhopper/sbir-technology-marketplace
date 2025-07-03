@@ -1,4 +1,3 @@
-
 import { Bell, Check, CheckCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -75,7 +74,7 @@ const NotificationDropdown = () => {
           ) : notifications.length === 0 ? (
             <div className="p-4 text-center text-muted-foreground">
               <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              No notifications yet
+              You're all caught up!
             </div>
           ) : (
             <div className="divide-y">
