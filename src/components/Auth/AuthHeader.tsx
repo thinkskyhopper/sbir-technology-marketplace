@@ -1,15 +1,16 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield } from 'lucide-react';
 
 const AuthHeader = () => {
   return (
     <div className="text-center mb-8">
       <div className="flex items-center justify-center mb-4">
-        <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-          <Shield className="w-6 h-6 text-primary-foreground" />
-        </div>
+        <img 
+          src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
+          alt="SBIR Logo"
+          className="w-16 h-16 object-contain"
+        />
       </div>
       <Link to="/" className="text-2xl font-bold hover:opacity-80 transition-opacity">
         The SBIR Tech Marketplace
