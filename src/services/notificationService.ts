@@ -46,5 +46,28 @@ export const notificationService = {
 
     if (error) throw error;
     return data;
+  },
+
+  async createNotification(
+    userId: string,
+    title: string,
+    message: string,
+    type: string,
+    relatedId?: string
+  ) {
+    const { data, error } = await supabase
+      .from('notifications')
+      .insert({
+        user_id: userId,
+        title,
+        message,
+        type,
+        related_id: relatedId
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 };

@@ -6,6 +6,7 @@ import HeaderBookmarks from "./Header/HeaderBookmarks";
 import HeaderPostListing from "./Header/HeaderPostListing";
 import HeaderAuthButtons from "./Header/HeaderAuthButtons";
 import HeaderUserMenu from "./Header/HeaderUserMenu";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface HeaderProps {
   onSearch?: (query: string) => void;
@@ -32,6 +33,7 @@ const Header = ({ onSearch, onPostListingClick }: HeaderProps) => {
               <>
                 <HeaderBookmarks />
                 <HeaderPostListing onPostListingClick={onPostListingClick} />
+                <NotificationDropdown />
                 <HeaderUserMenu />
               </>
             ) : (
