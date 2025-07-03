@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
+import UserSettings from "@/pages/UserSettings";
 import Bookmarks from "@/pages/Bookmarks";
 import Admin from "@/pages/Admin";
 import AdminUsers from "@/pages/AdminUsers";
@@ -33,6 +34,7 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<UserSettings />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/expert-value" element={<ExpertValue />} />
             <Route path="/team" element={<Team />} />

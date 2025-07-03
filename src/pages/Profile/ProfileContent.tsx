@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
 import ProfileListings from "@/components/Profile/ProfileListings";
 import EditProfileDialog from "@/components/Profile/EditProfileDialog";
-import NotificationPreferences from "@/components/Profile/NotificationPreferences";
 
 interface Profile {
   id: string;
@@ -45,27 +44,10 @@ const ProfileContent = ({
         userId={isOtherUserProfile ? userId : undefined}
       />
       
-      <Tabs defaultValue="listings" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="listings">Listings</TabsTrigger>
-          {!isOtherUserProfile && (
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          )}
-        </TabsList>
-        
-        <TabsContent value="listings">
-          <ProfileListings 
-            userId={isOtherUserProfile ? userId : user?.id}
-            isOwnProfile={!isOtherUserProfile}
-          />
-        </TabsContent>
-        
-        {!isOtherUserProfile && (
-          <TabsContent value="notifications">
-            <NotificationPreferences />
-          </TabsContent>
-        )}
-      </Tabs>
+      <ProfileListings 
+        userId={isOtherUserProfile ? userId : user?.id}
+        isOwnProfile={!isOtherUserProfile}
+      />
 
       <EditProfileDialog
         open={isEditDialogOpen}

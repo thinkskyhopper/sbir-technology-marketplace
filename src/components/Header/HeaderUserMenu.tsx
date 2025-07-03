@@ -24,6 +24,10 @@ const HeaderUserMenu = () => {
     navigate('/profile');
   };
 
+  const handleSettingsClick = () => {
+    navigate('/settings');
+  };
+
   if (!user) return null;
 
   // Get the user's display name - prioritize full_name, fallback to email
@@ -71,6 +75,10 @@ const HeaderUserMenu = () => {
         <DropdownMenuItem onClick={handleProfileClick}>
           <User className="w-4 h-4 mr-2" />
           View Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSettingsClick}>
+          <Settings className="w-4 h-4 mr-2" />
+          Settings
         </DropdownMenuItem>
         {isAdmin && (
           <DropdownMenuItem onClick={handleAdminClick}>

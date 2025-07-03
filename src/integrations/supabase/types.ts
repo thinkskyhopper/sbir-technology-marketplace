@@ -315,6 +315,7 @@ export type Database = {
           created_at: string
           display_email: string | null
           email: string
+          email_notifications_enabled: boolean
           full_name: string | null
           id: string
           notification_categories: Json | null
@@ -328,6 +329,7 @@ export type Database = {
           created_at?: string
           display_email?: string | null
           email: string
+          email_notifications_enabled?: boolean
           full_name?: string | null
           id: string
           notification_categories?: Json | null
@@ -341,6 +343,7 @@ export type Database = {
           created_at?: string
           display_email?: string | null
           email?: string
+          email_notifications_enabled?: boolean
           full_name?: string | null
           id?: string
           notification_categories?: Json | null
