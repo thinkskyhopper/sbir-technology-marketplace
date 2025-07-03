@@ -309,6 +309,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_deleted: boolean
+          account_deleted_at: string | null
           bio: string | null
           can_submit_listings: boolean
           category_email_notifications_enabled: boolean
@@ -328,6 +330,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_deleted?: boolean
+          account_deleted_at?: string | null
           bio?: string | null
           can_submit_listings?: boolean
           category_email_notifications_enabled?: boolean
@@ -347,6 +351,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_deleted?: boolean
+          account_deleted_at?: string | null
           bio?: string | null
           can_submit_listings?: boolean
           category_email_notifications_enabled?: boolean
@@ -520,6 +526,14 @@ export type Database = {
       }
       is_admin: {
         Args: Record<PropertyKey, never> | { user_id: string }
+        Returns: boolean
+      }
+      restore_user_account: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
+      soft_delete_user_account: {
+        Args: { user_id_param: string }
         Returns: boolean
       }
     }

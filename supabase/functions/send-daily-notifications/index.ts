@@ -14,6 +14,7 @@ interface DatabaseProfile {
   notification_categories: string[] | null
   email_notifications_enabled: boolean
   category_email_notifications_enabled: boolean
+  account_deleted: boolean
 }
 
 interface DatabaseListing {
@@ -117,19 +118,20 @@ Deno.serve(async (req) => {
       )
     }
     
-    // Get all users who have notification categories set
+    // Get all users who have notification categories set AND are not soft-deleted
     const { data: users, error: usersError } = await supabase
       .from('profiles')
-      .select('id, email, full_name, notification_categories, email_notifications_enabled, category_email_notifications_enabled')
+      .select('id, email, full_name, notification_categories, email_notifications_enabled, category_email_notifications_enabled, account_deleted')
       .not('notification_categories', 'is', null)
       .neq('notification_categories', '[]')
+      .eq('account_deleted', false) // Exclude soft-deleted users
     
     if (usersError) {
       console.error('Failed to fetch users:', usersError)
       throw usersError
     }
     
-    console.log(`Found ${users?.length || 0} users with notification preferences`)
+    console.log(`Found ${users?.length || 0} active users with notification preferences`)
     
     let emailsSent = 0
     let inAppNotificationsSent = 0
@@ -138,6 +140,12 @@ Deno.serve(async (req) => {
     if (users && users.length > 0) {
       for (const user of users as DatabaseProfile[]) {
         try {
+          // Skip soft-deleted users (extra safety check)
+          if (user.account_deleted) {
+            console.log(`Skipping soft-deleted user ${user.email}`)
+            continue
+          }
+          
           const userCategories = user.notification_categories || []
           
           // Filter listings that match user's categories

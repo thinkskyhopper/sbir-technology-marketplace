@@ -33,21 +33,54 @@ const AccountDeletionSettings = () => {
     
     setIsDeleting(true);
     try {
-      // Note: This will need to be implemented with proper cascade deletion
-      // For now, we'll just sign out the user and show a message
-      toast({
-        title: "Account Deletion Requested",
-        description: "Your account deletion request has been submitted. Please contact support for assistance.",
-        variant: "destructive",
-      });
+      console.log('Starting account deletion process for user:', user.id);
       
-      await signOut();
-      navigate('/');
+      // Call the soft delete function
+      const { data, error } = await supabase.rpc('soft_delete_user_account', {
+        user_id_param: user.id
+      });
+
+      console.log('Soft delete result:', { data, error });
+
+      if (error) {
+        console.error('Error during soft deletion:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete account. Please contact support if this problem persists.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!data) {
+        console.error('Soft delete returned false - account may not exist or already deleted');
+        toast({
+          title: "Error", 
+          description: "Account could not be deleted. It may already be deleted or not exist.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Account successfully soft deleted');
+      
+      toast({
+        title: "Account Deleted",
+        description: "Your account has been successfully deleted. You will be signed out now.",
+        variant: "default",
+      });
+
+      // Sign out the user after successful deletion
+      setTimeout(async () => {
+        await signOut();
+        navigate('/');
+      }, 2000);
+
     } catch (error) {
-      console.error('Error deleting account:', error);
+      console.error('Unexpected error during account deletion:', error);
       toast({
         title: "Error",
-        description: "Failed to delete account. Please contact support.",
+        description: "An unexpected error occurred. Please contact support.",
         variant: "destructive",
       });
     } finally {
@@ -72,15 +105,17 @@ const AccountDeletionSettings = () => {
             <div>
               <p className="text-sm font-medium text-destructive">Warning: This action cannot be undone</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Deleting your account will permanently remove:
+                Deleting your account will:
               </p>
               <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
-                <li>Your profile and personal information</li>
-                <li>All your submitted listings</li>
-                <li>Your notification preferences</li>
-                <li>Your bookmarks and saved items</li>
-                <li>Any pending change requests</li>
+                <li>Permanently hide your profile and personal information</li>
+                <li>Remove your access to the platform</li>
+                <li>Disable your notification preferences</li>
+                <li>Clear your bookmarks and saved items</li>
               </ul>
+              <p className="text-sm text-muted-foreground mt-3 font-medium">
+                Note: Your submitted listings and change requests will be preserved for historical records, but you will no longer be able to access or modify them.
+              </p>
             </div>
           </div>
         </div>
@@ -97,6 +132,7 @@ const AccountDeletionSettings = () => {
               onChange={(e) => setConfirmationText(e.target.value)}
               placeholder="DELETE MY ACCOUNT"
               className="mt-2"
+              disabled={isDeleting}
             />
           </div>
 
@@ -108,7 +144,7 @@ const AccountDeletionSettings = () => {
                 className="w-full"
               >
                 {isDeleting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Delete My Account
+                {isDeleting ? 'Deleting Account...' : 'Delete My Account'}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -116,15 +152,18 @@ const AccountDeletionSettings = () => {
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete your account
-                  and remove all associated data from our servers.
+                  and remove your access to the platform. Your listings and change requests
+                  will be preserved for historical records.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDeleteAccount}
+                  disabled={isDeleting}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
+                  {isDeleting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   Yes, delete my account
                 </AlertDialogAction>
               </AlertDialogFooter>
