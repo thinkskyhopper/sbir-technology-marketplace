@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminDashboardCard from "@/components/AdminDashboardCard";
 import { useAdminDashboardStats } from "@/hooks/useAdminDashboardStats";
-import { FileText, Building2, Images, Users } from "lucide-react";
+import { FileText, Building2, Images, Users, History } from "lucide-react";
 
 const Admin = () => {
   const { user } = useAuth();
@@ -39,6 +39,12 @@ const Admin = () => {
       description: "Upload and manage category images that are displayed throughout the platform to enhance visual appeal.",
       icon: Images,
       route: "/admin/category-images"
+    },
+    {
+      title: "Admin Logs",
+      description: "Review all administrative actions and changes made to listings. Track approval, rejection, modification, and deletion activities.",
+      icon: History,
+      route: "/admin/logs"
     }
   ];
 

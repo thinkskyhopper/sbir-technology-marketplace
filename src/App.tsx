@@ -13,6 +13,7 @@ import AdminUsers from "@/pages/AdminUsers";
 import AdminListings from "@/pages/AdminListings";
 import AdminChangeRequests from "@/pages/AdminChangeRequests";
 import AdminCategoryImages from "@/pages/AdminCategoryImages";
+import AdminLogs from "@/pages/AdminLogs";
 import ListingDetail from "@/pages/ListingDetail";
 import ExpertValue from "@/pages/ExpertValue";
 import Team from "@/pages/Team";
@@ -75,6 +76,14 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin>
                   <AdminCategoryImages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/logs"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminLogs />
                 </ProtectedRoute>
               }
             />
