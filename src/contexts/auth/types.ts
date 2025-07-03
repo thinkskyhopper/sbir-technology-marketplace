@@ -10,7 +10,7 @@ export interface Profile {
   display_email: string | null;
   company_name: string | null;
   bio: string | null;
-  role: 'admin' | 'user';
+  role: 'admin' | 'user' | 'consultant';
   notification_categories: string[];
   marketing_emails_enabled: boolean;
   email_notifications_enabled: boolean;
