@@ -45,7 +45,8 @@ export const fetchProfile = async (
             bio: null,
             company_name: null,
             notification_categories: [],
-            marketing_emails_enabled: marketingOptIn
+            marketing_emails_enabled: marketingOptIn,
+            account_deleted: false
           };
           
           console.log('📝 Creating profile with data:', newProfileData);
@@ -85,6 +86,14 @@ export const fetchProfile = async (
       
       // For other errors, just set profile to null and continue
       console.error('❌ Profile fetch failed with error:', error);
+      setProfile(null);
+      setIsAdmin(false);
+      return;
+    }
+    
+    // Check if account is soft-deleted
+    if (data?.account_deleted) {
+      console.log('❌ Account is soft-deleted, setting profile to null');
       setProfile(null);
       setIsAdmin(false);
       return;

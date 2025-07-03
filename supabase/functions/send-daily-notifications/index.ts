@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0'
 import { Resend } from 'npm:resend@4.0.0'
 
@@ -124,7 +123,7 @@ Deno.serve(async (req) => {
       .select('id, email, full_name, notification_categories, email_notifications_enabled, category_email_notifications_enabled, account_deleted')
       .not('notification_categories', 'is', null)
       .neq('notification_categories', '[]')
-      .eq('account_deleted', false) // Exclude soft-deleted users
+      .eq('account_deleted', false) // Explicitly exclude soft-deleted users
     
     if (usersError) {
       console.error('Failed to fetch users:', usersError)
