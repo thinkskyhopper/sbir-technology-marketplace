@@ -12,6 +12,7 @@ const Hero = ({ onExploreClick }: HeroProps) => {
 
   const handleLearnMoreClick = () => {
     navigate('/expert-value');
+    window.scrollTo(0, 0);
   };
 
   return (
