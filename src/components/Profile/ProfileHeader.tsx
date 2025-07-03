@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/contexts/AuthContext";
 import { Mail, Building, Calendar, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -83,9 +82,15 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
             </div>
           </div>
           {isOwnProfile && (
-            <Button variant="outline" size="sm" onClick={onEdit}>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Profile
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={onEdit}
+              className="h-8 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
+            >
+              <Edit className="w-3 h-3 mr-1 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden xs:inline">Edit Profile</span>
+              <span className="xs:hidden">Edit</span>
             </Button>
           )}
         </div>
