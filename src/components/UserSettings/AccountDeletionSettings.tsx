@@ -105,16 +105,16 @@ const AccountDeletionSettings = () => {
             <div>
               <p className="text-sm font-medium text-destructive">Warning: This action cannot be undone</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Deleting your account will:
+                Deleting your account will remove your:
               </p>
               <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
-                <li>Permanently hide your profile and personal information</li>
-                <li>Remove your access to the platform</li>
-                <li>Disable your notification preferences</li>
-                <li>Clear your bookmarks and saved items</li>
+                <li>Profile and personal information</li>
+                <li>Access to the platform</li>
+                <li>Notification preferences</li>
+                <li>Bookmarks</li>
               </ul>
               <p className="text-sm text-muted-foreground mt-3 font-medium">
-                Note: Your submitted listings and change requests will be preserved for historical records, but you will no longer be able to access or modify them.
+                Note: Your submitted listings will be hidden, and change requests will be preserved for historical records, but you will no longer be able to modify them.
               </p>
             </div>
           </div>
