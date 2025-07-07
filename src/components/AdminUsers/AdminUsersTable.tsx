@@ -10,6 +10,7 @@ import { useRoleChange } from "./useRoleChange";
 import { SortableTableHead } from "./SortableTableHead";
 import { AdminUsersTableRow } from "./AdminUsersTableRow";
 import { NotificationStats } from "./NotificationStats";
+import { MarketingSubscribersDialog } from "./MarketingSubscribersDialog";
 
 const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const navigate = useNavigate();
@@ -26,15 +27,23 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
     navigate(`/profile?userId=${userId}`);
   };
 
+  const marketingSubscribers = users?.filter(user => user.marketing_emails_enabled) || [];
+
   return (
     <>
       <NotificationStats users={users} />
       
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Users className="w-5 h-5" />
-            <span>All Users</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Users className="w-5 h-5" />
+              <span>All Users</span>
+            </div>
+            <MarketingSubscribersDialog 
+              users={users}
+              marketingSubscribers={marketingSubscribers}
+            />
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 sm:p-6">

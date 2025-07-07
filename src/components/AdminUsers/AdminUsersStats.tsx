@@ -6,11 +6,18 @@ interface AdminUsersStatsProps {
   adminUsers: number;
   consultantUsers: number;
   regularUsers: number;
+  marketingSubscribers: number;
 }
 
-const AdminUsersStats = ({ totalUsers, adminUsers, consultantUsers, regularUsers }: AdminUsersStatsProps) => {
+const AdminUsersStats = ({ 
+  totalUsers, 
+  adminUsers, 
+  consultantUsers, 
+  regularUsers,
+  marketingSubscribers 
+}: AdminUsersStatsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
@@ -44,6 +51,15 @@ const AdminUsersStats = ({ totalUsers, adminUsers, consultantUsers, regularUsers
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{regularUsers}</div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">Marketing Subscribers</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-green-600">{marketingSubscribers}</div>
         </CardContent>
       </Card>
     </div>

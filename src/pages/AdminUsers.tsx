@@ -34,7 +34,8 @@ const AdminUsers = () => {
           role,
           created_at,
           can_submit_listings,
-          notification_categories
+          notification_categories,
+          marketing_emails_enabled
         `)
         .order('created_at', { ascending: false });
 
@@ -79,6 +80,7 @@ const AdminUsers = () => {
   const adminUsers = users?.filter(user => user.role === 'admin').length || 0;
   const consultantUsers = users?.filter(user => user.role === 'consultant').length || 0;
   const regularUsers = users?.filter(user => user.role === 'user').length || 0;
+  const marketingSubscribers = users?.filter(user => user.marketing_emails_enabled).length || 0;
 
   if (isLoading) {
     return (
@@ -109,6 +111,7 @@ const AdminUsers = () => {
               adminUsers={adminUsers}
               consultantUsers={consultantUsers}
               regularUsers={regularUsers}
+              marketingSubscribers={marketingSubscribers}
             />
           </div>
 
