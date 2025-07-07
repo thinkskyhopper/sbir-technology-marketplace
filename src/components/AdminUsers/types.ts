@@ -8,6 +8,7 @@ export interface UserWithStats {
   listing_count: number;
   can_submit_listings: boolean;
   notification_categories: string[] | null;
+  marketing_emails_enabled: boolean;
 }
 
 export interface AdminUsersTableProps {
