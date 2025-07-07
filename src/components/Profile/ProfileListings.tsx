@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -67,12 +68,25 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           throw error;
         }
 
+        // Convert value from cents to dollars and format dates - same logic as main listings service
+        const formattedListings = data?.map(listing => ({
+          ...listing,
+          value: listing.value / 100, // Convert cents to dollars
+          deadline: new Date(listing.deadline).toISOString().split('T')[0],
+          profiles: null // Profile listings don't include profile data
+        })) || [];
+
         console.log('✅ Profile listings fetched successfully:', {
-          count: data?.length || 0,
-          listings: data?.map(l => ({ id: l.id, title: l.title, status: l.status })) || []
+          count: formattedListings?.length || 0,
+          listings: formattedListings?.map(l => ({ 
+            id: l.id, 
+            title: l.title, 
+            status: l.status,
+            value: l.value // This should now be in dollars
+          })) || []
         });
         
-        return data || [];
+        return formattedListings;
       } catch (error) {
         console.error('💥 Query failed:', error);
         throw error;
