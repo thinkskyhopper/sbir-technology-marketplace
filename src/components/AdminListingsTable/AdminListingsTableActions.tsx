@@ -1,8 +1,15 @@
 
 import { Button } from "@/components/ui/button";
-import { Edit, Check, X, EyeOff, Trash2, History } from "lucide-react";
+import { Edit, Check, X, EyeOff, Trash2, History, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface AdminListingsTableActionsProps {
   listing: SBIRListing;
@@ -30,78 +37,77 @@ const AdminListingsTableActions = ({
   };
 
   return (
-    <div className="flex items-center space-x-1">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => onEdit(listing)}
-        disabled={isProcessing}
-        className="h-8 w-8 p-0"
-        title="Edit listing"
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleViewHistory}
-        className="h-8 w-8 p-0"
-        title="View history"
-      >
-        <History className="h-4 w-4" />
-      </Button>
-
-      {listing.status === 'Pending' && (
-        <>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onApprove(listing)}
-            disabled={isProcessing}
-            className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
-            title="Approve listing"
-          >
-            <Check className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onReject(listing)}
-            disabled={isProcessing}
-            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-            title="Reject listing"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </>
-      )}
-
-      {(listing.status === 'Active' || listing.status === 'Sold') && (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onHide(listing)}
           disabled={isProcessing}
-          className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-          title="Hide listing"
+          className="h-8 w-8 p-0"
         >
-          <EyeOff className="h-4 w-4" />
+          <MoreHorizontal className="h-4 w-4" />
+          <span className="sr-only">Open menu</span>
         </Button>
-      )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem onClick={() => onEdit(listing)} disabled={isProcessing}>
+          <Edit className="mr-2 h-4 w-4" />
+          Edit listing
+        </DropdownMenuItem>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => onDelete(listing)}
-        disabled={isProcessing}
-        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-        title="Delete listing"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
-    </div>
+        <DropdownMenuItem onClick={handleViewHistory}>
+          <History className="mr-2 h-4 w-4" />
+          View history
+        </DropdownMenuItem>
+
+        {listing.status === 'Pending' && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={() => onApprove(listing)} 
+              disabled={isProcessing}
+              className="text-green-600 focus:text-green-700"
+            >
+              <Check className="mr-2 h-4 w-4" />
+              Approve listing
+            </DropdownMenuItem>
+
+            <DropdownMenuItem 
+              onClick={() => onReject(listing)} 
+              disabled={isProcessing}
+              className="text-red-600 focus:text-red-700"
+            >
+              <X className="mr-2 h-4 w-4" />
+              Reject listing
+            </DropdownMenuItem>
+          </>
+        )}
+
+        {(listing.status === 'Active' || listing.status === 'Sold') && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={() => onHide(listing)} 
+              disabled={isProcessing}
+              className="text-orange-600 focus:text-orange-700"
+            >
+              <EyeOff className="mr-2 h-4 w-4" />
+              Hide listing
+            </DropdownMenuItem>
+          </>
+        )}
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem 
+          onClick={() => onDelete(listing)} 
+          disabled={isProcessing}
+          className="text-red-600 focus:text-red-700"
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete listing
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
