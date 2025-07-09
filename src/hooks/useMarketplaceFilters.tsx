@@ -25,7 +25,7 @@ export const useMarketplaceFilters = ({
   const [localSearchQuery, setLocalSearchQuery] = useState(preservedFilters?.localSearchQuery || "");
   const [phaseFilter, setPhaseFilter] = useState<string>(preservedFilters?.phaseFilter || "all");
   const [categoryFilter, setCategoryFilter] = useState<string>(preservedFilters?.categoryFilter || "all");
-  const [statusFilter, setStatusFilter] = useState<string>(preservedFilters?.statusFilter || "active");
+  const [statusFilter, setStatusFilter] = useState<string>(preservedFilters?.statusFilter || "all"); // Changed from "active" to "all"
   const [sortFilter, setSortFilter] = useState<string>(preservedFilters?.sortFilter || "newest");
   const isInitialMount = useRef(true);
   const lastNotifiedFilters = useRef<string>("");
@@ -113,7 +113,7 @@ export const useMarketplaceFilters = ({
     setLocalSearchQuery("");
     setPhaseFilter("all");
     setCategoryFilter("all");
-    setStatusFilter("active");
+    setStatusFilter("all"); // Changed from "active" to "all"
     setSortFilter("newest");
   };
 

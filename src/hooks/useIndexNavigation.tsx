@@ -48,7 +48,7 @@ export const useIndexNavigation = () => {
     if (filters.localSearchQuery) params.set("search", filters.localSearchQuery);
     if (filters.phaseFilter !== "all") params.set("phase", filters.phaseFilter);
     if (filters.categoryFilter !== "all") params.set("category", filters.categoryFilter);
-    if (filters.statusFilter !== "active") params.set("status", filters.statusFilter);
+    if (filters.statusFilter !== "all") params.set("status", filters.statusFilter); // Changed from "active" to "all"
     if (filters.sortFilter !== "newest") params.set("sort", filters.sortFilter);
 
     // Use replace to avoid creating history entries for filter changes

@@ -18,7 +18,7 @@ export const useIndexState = () => {
     localSearchQuery: searchParams.get("search") || "",
     phaseFilter: searchParams.get("phase") || "all",
     categoryFilter: searchParams.get("category") || "all",
-    statusFilter: searchParams.get("status") || "active",
+    statusFilter: searchParams.get("status") || "all", // Changed from "active" to "all"
     sortFilter: searchParams.get("sort") || "newest"
   });
   const [marketplaceFilters, setMarketplaceFilters] = useState(getFiltersFromURL());
