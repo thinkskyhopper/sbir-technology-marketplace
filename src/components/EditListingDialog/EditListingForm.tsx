@@ -49,7 +49,7 @@ interface EditListingFormProps {
 const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>((listing as any).photo_url || null);
-  const { updateListing } = useListings();
+  const { updateListing, fetchListings } = useListings();
   const { toast } = useToast();
 
   const form = useForm<EditListingFormData>({
@@ -110,14 +110,17 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       console.log('🔄 Updating listing with data:', { listingId: listing.id, updateData });
       await updateListing(listing.id, updateData);
 
-      console.log('✅ Listing updated successfully');
+      console.log('✅ Listing updated successfully, forcing data refresh...');
+
+      // Force refresh the listings data
+      await fetchListings();
 
       toast({
         title: "Listing Updated",
         description: "The listing has been successfully updated.",
       });
 
-      // Close the dialog - the parent component will handle data refresh
+      // Close the dialog after successful update and refresh
       onClose();
 
     } catch (error) {
