@@ -110,21 +110,15 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       console.log('🔄 Updating listing with data:', { listingId: listing.id, updateData });
       await updateListing(listing.id, updateData);
 
-      console.log('✅ Listing updated successfully, refreshing data...');
+      console.log('✅ Listing updated successfully');
 
       toast({
         title: "Listing Updated",
         description: "The listing has been successfully updated.",
       });
 
-      // Close the dialog and let the parent component handle the refresh
+      // Close the dialog - the parent component will handle data refresh
       onClose();
-      
-      // Force a page reload to ensure all components reflect the changes
-      // This is a reliable way to ensure the entire page reflects the updates
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
 
     } catch (error) {
       console.error('❌ Error updating listing:', error);
