@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +23,10 @@ import MyListings from "./pages/MyListings";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Team from "./pages/Team";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import LegalDisclaimer from "./pages/LegalDisclaimer";
+import ExpertValue from "./pages/ExpertValue";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +57,10 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/team" element={<Team />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/legal-disclaimer" element={<LegalDisclaimer />} />
+              <Route path="/expert-value" element={<ExpertValue />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
