@@ -12,10 +12,12 @@ import Profile from "./pages/Profile";
 import Browse from "./pages/Browse";
 import ListingDetail from "./pages/ListingDetail";
 import ListingHistory from "./pages/ListingHistory";
-import AdminDashboard from "./pages/AdminDashboard";
+import Admin from "./pages/Admin";
 import AdminListings from "./pages/AdminListings";
 import AdminUsers from "./pages/AdminUsers";
 import AdminChangeRequests from "./pages/AdminChangeRequests";
+import AdminLogs from "./pages/AdminLogs";
+import AdminCategoryImages from "./pages/AdminCategoryImages";
 import BookmarkedListings from "./pages/BookmarkedListings";
 import MyListings from "./pages/MyListings";
 import About from "./pages/About";
@@ -42,10 +44,12 @@ function App() {
               <Route path="/listing/:id/history" element={<ListingHistory />} />
               <Route path="/bookmarks" element={<BookmarkedListings />} />
               <Route path="/my-listings" element={<MyListings />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/admin/listings" element={<AdminListings />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/change-requests" element={<AdminChangeRequests />} />
+              <Route path="/admin/logs" element={<AdminLogs />} />
+              <Route path="/admin/category-images" element={<AdminCategoryImages />} />
               <Route path="/about" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
