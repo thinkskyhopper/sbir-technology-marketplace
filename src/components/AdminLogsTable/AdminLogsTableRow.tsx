@@ -27,6 +27,13 @@ export const AdminLogsTableRow = ({ log, onViewDetails }: AdminLogsTableRowProps
     }
   };
 
+  const getActionBadgeClassName = (actionType: string) => {
+    if (actionType === 'approval') {
+      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+    }
+    return '';
+  };
+
   const getActionLabel = (actionType: string) => {
     switch (actionType) {
       case 'approval':
@@ -65,7 +72,10 @@ export const AdminLogsTableRow = ({ log, onViewDetails }: AdminLogsTableRowProps
         </div>
       </TableCell>
       <TableCell>
-        <Badge variant={getActionBadgeVariant(log.action_type)}>
+        <Badge 
+          variant={getActionBadgeVariant(log.action_type)}
+          className={getActionBadgeClassName(log.action_type)}
+        >
           {getActionLabel(log.action_type)}
         </Badge>
       </TableCell>

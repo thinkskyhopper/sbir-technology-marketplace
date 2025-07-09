@@ -35,6 +35,28 @@ export const AuditLogsSection = ({ auditLogs }: AuditLogsSectionProps) => {
     }
   };
 
+  const getActionBadgeVariant = (actionType: string) => {
+    switch (actionType) {
+      case 'approval':
+        return 'default';
+      case 'denial':
+        return 'destructive';
+      case 'edit':
+        return 'secondary';
+      case 'deletion':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
+  };
+
+  const getActionBadgeClassName = (actionType: string) => {
+    if (actionType === 'approval') {
+      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+    }
+    return '';
+  };
+
   return (
     <div>
       <Card>
@@ -48,7 +70,10 @@ export const AuditLogsSection = ({ auditLogs }: AuditLogsSectionProps) => {
                 <div key={log.id} className="border-l-2 border-muted pl-4 pb-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <Badge variant="outline" className="mb-1">
+                      <Badge 
+                        variant={getActionBadgeVariant(log.action_type)}
+                        className={`mb-1 ${getActionBadgeClassName(log.action_type)}`}
+                      >
                         {getActionTypeLabel(log.action_type)}
                       </Badge>
                       <p className="text-sm text-muted-foreground">
