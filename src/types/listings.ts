@@ -15,6 +15,20 @@ export interface SBIRListing {
   photo_url?: string;
   date_sold?: string | null;
   technology_summary?: string | null;
+  // New admin-only fields
+  agency_tracking_number?: string | null;
+  contract?: string | null;
+  proposal_award_date?: string | null;
+  contract_end_date?: string | null;
+  topic_code?: string | null;
+  company?: string | null;
+  address?: string | null;
+  primary_investigator_name?: string | null;
+  pi_phone?: string | null;
+  pi_email?: string | null;
+  business_contact_name?: string | null;
+  bc_phone?: string | null;
+  bc_email?: string | null;
   profiles?: {
     full_name: string | null;
     email: string;

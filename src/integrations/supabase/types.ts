@@ -380,10 +380,18 @@ export type Database = {
       }
       sbir_listings: {
         Row: {
+          address: string | null
           agency: string
+          agency_tracking_number: string | null
           approved_at: string | null
           approved_by: string | null
+          bc_email: string | null
+          bc_phone: string | null
+          business_contact_name: string | null
           category: string
+          company: string | null
+          contract: string | null
+          contract_end_date: string | null
           created_at: string
           date_sold: string | null
           deadline: string
@@ -391,19 +399,32 @@ export type Database = {
           id: string
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string | null
+          pi_email: string | null
+          pi_phone: string | null
+          primary_investigator_name: string | null
+          proposal_award_date: string | null
           status: Database["public"]["Enums"]["listing_status"]
           submitted_at: string
           technology_summary: string | null
           title: string
+          topic_code: string | null
           updated_at: string
           user_id: string
           value: number
         }
         Insert: {
+          address?: string | null
           agency: string
+          agency_tracking_number?: string | null
           approved_at?: string | null
           approved_by?: string | null
+          bc_email?: string | null
+          bc_phone?: string | null
+          business_contact_name?: string | null
           category: string
+          company?: string | null
+          contract?: string | null
+          contract_end_date?: string | null
           created_at?: string
           date_sold?: string | null
           deadline: string
@@ -411,19 +432,32 @@ export type Database = {
           id?: string
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url?: string | null
+          pi_email?: string | null
+          pi_phone?: string | null
+          primary_investigator_name?: string | null
+          proposal_award_date?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
           technology_summary?: string | null
           title: string
+          topic_code?: string | null
           updated_at?: string
           user_id: string
           value: number
         }
         Update: {
+          address?: string | null
           agency?: string
+          agency_tracking_number?: string | null
           approved_at?: string | null
           approved_by?: string | null
+          bc_email?: string | null
+          bc_phone?: string | null
+          business_contact_name?: string | null
           category?: string
+          company?: string | null
+          contract?: string | null
+          contract_end_date?: string | null
           created_at?: string
           date_sold?: string | null
           deadline?: string
@@ -431,10 +465,15 @@ export type Database = {
           id?: string
           phase?: Database["public"]["Enums"]["sbir_phase"]
           photo_url?: string | null
+          pi_email?: string | null
+          pi_phone?: string | null
+          primary_investigator_name?: string | null
+          proposal_award_date?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
           technology_summary?: string | null
           title?: string
+          topic_code?: string | null
           updated_at?: string
           user_id?: string
           value?: number

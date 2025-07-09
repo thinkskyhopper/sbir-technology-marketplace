@@ -1,15 +1,12 @@
 
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Check, X, Eye, Edit, MoreHorizontal, Trash2 } from "lucide-react";
-import { useState } from "react";
-import ConfirmActionDialog from "@/components/ConfirmActionDialog";
+import { Edit, Check, X, EyeOff, Trash2, History } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 
 interface AdminListingsTableActionsProps {
   listing: SBIRListing;
-  processingId: string | null;
+  isProcessing: boolean;
   onEdit: (listing: SBIRListing) => void;
   onApprove: (listing: SBIRListing) => void;
   onReject: (listing: SBIRListing) => void;
@@ -19,123 +16,92 @@ interface AdminListingsTableActionsProps {
 
 const AdminListingsTableActions = ({
   listing,
-  processingId,
+  isProcessing,
   onEdit,
   onApprove,
   onReject,
   onHide,
   onDelete,
 }: AdminListingsTableActionsProps) => {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleDelete = () => {
-    onDelete(listing);
-    setShowDeleteDialog(false);
-    setIsOpen(false);
+  const handleViewHistory = () => {
+    navigate(`/listing/${listing.id}/history`);
   };
-
-  const handleHide = () => {
-    onHide(listing);
-    setIsOpen(false);
-  };
-
-  const handleEdit = () => {
-    onEdit(listing);
-    setIsOpen(false);
-  };
-
-  const isProcessing = processingId === listing.id;
 
   return (
-    <TooltipProvider>
-      <div className="flex items-center space-x-2">
-        {listing.status === 'Pending' && (
-          <>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onApprove(listing)}
-                  disabled={isProcessing}
-                  className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                >
-                  <Check className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Approve listing</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onReject(listing)}
-                  disabled={isProcessing}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Reject listing</p>
-              </TooltipContent>
-            </Tooltip>
-          </>
-        )}
-        
-        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={isProcessing}
-                  className="text-gray-600 hover:text-gray-700"
-                >
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>More actions</p>
-            </TooltipContent>
-          </Tooltip>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleEdit}>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit listing
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleHide}>
-              <Eye className="w-4 h-4 mr-2" />
-              {listing.status === 'Hidden' ? 'Already hidden' : 'Hide listing'}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onClick={() => setShowDeleteDialog(true)}
-              className="text-red-600 focus:text-red-600"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete listing
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+    <div className="flex items-center space-x-1">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onEdit(listing)}
+        disabled={isProcessing}
+        className="h-8 w-8 p-0"
+        title="Edit listing"
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
 
-      <ConfirmActionDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-        onConfirm={handleDelete}
-        title="Delete Listing"
-        description="Are you sure you want to delete this listing? This action cannot be undone."
-        confirmText="Delete"
-        variant="destructive"
-      />
-    </TooltipProvider>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleViewHistory}
+        className="h-8 w-8 p-0"
+        title="View history"
+      >
+        <History className="h-4 w-4" />
+      </Button>
+
+      {listing.status === 'Pending' && (
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onApprove(listing)}
+            disabled={isProcessing}
+            className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+            title="Approve listing"
+          >
+            <Check className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onReject(listing)}
+            disabled={isProcessing}
+            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+            title="Reject listing"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </>
+      )}
+
+      {(listing.status === 'Active' || listing.status === 'Sold') && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onHide(listing)}
+          disabled={isProcessing}
+          className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+          title="Hide listing"
+        >
+          <EyeOff className="h-4 w-4" />
+        </Button>
+      )}
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onDelete(listing)}
+        disabled={isProcessing}
+        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+        title="Delete listing"
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
   );
 };
 
