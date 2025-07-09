@@ -1,14 +1,16 @@
 
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import EditListingDialog from "@/components/EditListingDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, DollarSign, Building, User, Phone, Mail } from "lucide-react";
+import { ArrowLeft, Calendar, DollarSign, Building, User, Phone, Mail, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import type { SBIRListing } from "@/types/listings";
@@ -30,8 +32,9 @@ const ListingHistory = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
-  const { data: listing, isLoading: listingLoading } = useQuery({
+  const { data: listing, isLoading: listingLoading, refetch: refetchListing } = useQuery({
     queryKey: ['listing-history', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -97,15 +100,33 @@ const ListingHistory = () => {
     return format(new Date(dateString), 'MMM dd, yyyy HH:mm');
   };
 
+  const formatCurrency = (amount: number): string => {
+    // Convert from cents to dollars by dividing by 100
+    const dollarAmount = amount / 100;
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(dollarAmount);
+  };
+
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'Active': return 'default';
       case 'Pending': return 'secondary';
-      case 'Sold': return 'outline';
+      case 'Sold': return 'sold';
       case 'Rejected': return 'destructive';
-      case 'Hidden': return 'secondary';
-      default: return 'default';
+      case 'Hidden': return 'outline';
+      default: return 'secondary';
     }
+  };
+
+  const getStatusBadgeClassName = (status: string) => {
+    if (status === 'Active') {
+      return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
+    }
+    return '';
   };
 
   const getActionTypeLabel = (actionType: string) => {
@@ -116,6 +137,11 @@ const ListingHistory = () => {
       case 'deletion': return 'Deleted';
       default: return actionType;
     }
+  };
+
+  const handleEditSuccess = () => {
+    setShowEditDialog(false);
+    refetchListing();
   };
 
   return (
@@ -139,6 +165,13 @@ const ListingHistory = () => {
                 <p className="text-muted-foreground">Complete history and details</p>
               </div>
             </div>
+            <Button
+              onClick={() => setShowEditDialog(true)}
+              className="flex items-center space-x-2"
+            >
+              <Edit className="w-4 h-4" />
+              <span>Edit Listing</span>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -148,7 +181,10 @@ const ListingHistory = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     Basic Information
-                    <Badge variant={getStatusBadgeVariant(listing.status)}>
+                    <Badge 
+                      variant={getStatusBadgeVariant(listing.status)}
+                      className={`text-xs ${getStatusBadgeClassName(listing.status)}`}
+                    >
                       {listing.status}
                     </Badge>
                   </CardTitle>
@@ -172,7 +208,7 @@ const ListingHistory = () => {
                       <DollarSign className="w-4 h-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm text-muted-foreground">Value</p>
-                        <p className="font-medium">${listing.value.toLocaleString()}</p>
+                        <p className="font-medium">{formatCurrency(listing.value)}</p>
                       </div>
                     </div>
                     
@@ -385,6 +421,18 @@ const ListingHistory = () => {
         </div>
 
         <Footer />
+
+        {/* Edit Listing Dialog */}
+        <EditListingDialog
+          open={showEditDialog}
+          onOpenChange={(open) => {
+            setShowEditDialog(open);
+            if (!open) {
+              handleEditSuccess();
+            }
+          }}
+          listing={listing}
+        />
       </div>
     </ProtectedRoute>
   );
