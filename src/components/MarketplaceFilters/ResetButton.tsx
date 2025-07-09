@@ -32,14 +32,14 @@ const ResetButton = ({
     localSearchQuery !== "" || 
     phaseFilter !== "all" || 
     categoryFilter !== "all" || 
-    statusFilter !== "active" || 
+    statusFilter !== "all" || // Changed from "active" to "all"
     sortFilter !== "newest";
 
   const handleResetFilters = () => {
     onSearchQueryChange("");
     onPhaseFilterChange("all");
     onCategoryFilterChange("all");
-    onStatusFilterChange("active");
+    onStatusFilterChange("all"); // Changed from "active" to "all"
     onSortFilterChange("newest");
   };
 
