@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Browse from "./pages/Browse";
 import ListingDetail from "./pages/ListingDetail";
-import ListingHistory from "./pages/ListingHistory";
+import ListingHistory from "@/pages/ListingHistory";
 import Admin from "./pages/Admin";
 import AdminListings from "./pages/AdminListings";
 import AdminUsers from "./pages/AdminUsers";
