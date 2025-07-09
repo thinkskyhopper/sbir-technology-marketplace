@@ -52,6 +52,16 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const { updateListing, fetchListings } = useListings();
   const { toast } = useToast();
 
+  // Convert cents to dollars for display
+  const convertCentsToDollars = (cents: number): number => {
+    return cents / 100;
+  };
+
+  // Convert dollars to cents for storage
+  const convertDollarsToCents = (dollars: number): number => {
+    return Math.round(dollars * 100);
+  };
+
   const form = useForm<EditListingFormData>({
     resolver: zodResolver(editListingSchema),
     defaultValues: {
@@ -59,7 +69,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       description: listing.description,
       phase: listing.phase,
       agency: listing.agency,
-      value: listing.value,
+      value: convertCentsToDollars(listing.value), // Convert to dollars for display
       deadline: listing.deadline,
       category: listing.category,
       status: listing.status,
@@ -88,6 +98,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       // Include photo_url, date_sold, and technology_summary in the update data
       const updateData = {
         ...data,
+        value: convertDollarsToCents(data.value), // Convert back to cents for storage
         photo_url: photoUrl,
         date_sold: listing.date_sold,
         technology_summary: data.technology_summary || null,
