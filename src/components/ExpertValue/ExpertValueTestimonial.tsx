@@ -7,12 +7,10 @@ const ExpertValueTestimonial = () => {
       <Card className="max-w-4xl mx-auto">
         <CardContent className="p-8 text-center">
           <blockquote className="text-xl italic mb-4">
-            "Working with the SBIR Exchange expert team transformed what could have been a 6-month nightmare 
-            into a seamless 3-week process. Their knowledge of defense contracting regulations saved us both 
-            time and money, while ensuring full compliance."
+            "Ted Dennis and his team at SBIR Connect and The SBIR Tech Marketplace have been phenomenal partners for AT Corp. Over the past four months, Ted has successfully brokered seven SBIRs for us with two more in the pipeline. Thus showcasing his expertise, dedication, and unparalleled market knowledge. His ability to connect our innovative technologies with the right buyers has been a game-changer for our business. If you're looking to navigate the SBIR landscape with confidence, Ted and his platform are the absolute best in the business!"
           </blockquote>
           <div className="text-muted-foreground">
-            <strong>Sarah Johnson</strong>, CEO of Defense Innovations Inc.
+            <strong>Ken Thurber</strong>, Owner, Architecture Technology Corporation
           </div>
         </CardContent>
       </Card>
