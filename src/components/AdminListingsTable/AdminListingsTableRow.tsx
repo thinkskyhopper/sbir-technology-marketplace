@@ -104,6 +104,8 @@ const AdminListingsTableRow = ({
     );
   };
 
+  const isProcessing = processingId === listing.id;
+
   return (
     <TableRow className="hover:bg-muted/50">
       <TableCell className="max-w-[250px]">
@@ -184,7 +186,7 @@ const AdminListingsTableRow = ({
       <TableCell className="w-16">
         <AdminListingsTableActions
           listing={listing}
-          processingId={processingId}
+          isProcessing={isProcessing}
           onEdit={onEdit}
           onApprove={onApprove}
           onReject={onReject}
