@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -59,7 +58,7 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           .select('*')
           .eq('user_id', targetUserId)
           .in('status', ['Active', 'Sold'])
-          .order('created_at', { ascending: false });
+          .order('submitted_at', { ascending: false }); // Sort by date listed (newest first)
 
         const { data, error } = await query;
 
@@ -76,17 +75,25 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           profiles: null // Profile listings don't include profile data
         })) || [];
 
-        console.log('✅ Profile listings fetched successfully:', {
-          count: formattedListings?.length || 0,
-          listings: formattedListings?.map(l => ({ 
+        // Additional client-side sort to ensure consistent ordering by submitted_at
+        const sortedListings = formattedListings.sort((a, b) => {
+          const dateA = new Date(a.submitted_at).getTime();
+          const dateB = new Date(b.submitted_at).getTime();
+          return dateB - dateA; // Newest first
+        });
+
+        console.log('✅ Profile listings fetched and sorted successfully:', {
+          count: sortedListings?.length || 0,
+          listings: sortedListings?.map(l => ({ 
             id: l.id, 
             title: l.title, 
             status: l.status,
-            value: l.value // This should now be in dollars
+            value: l.value, // This should now be in dollars
+            submitted_at: l.submitted_at
           })) || []
         });
         
-        return formattedListings;
+        return sortedListings;
       } catch (error) {
         console.error('💥 Query failed:', error);
         throw error;
