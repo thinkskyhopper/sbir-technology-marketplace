@@ -11,6 +11,7 @@ import PhotoUpload from "../PhotoUpload";
 import StatusField from "./StatusField";
 import FormActions from "./FormActions";
 import AdminOnlyFields from "./AdminOnlyFields";
+import AdminNotesField from "./AdminNotesField";
 import { z } from "zod";
 import type { SBIRListing } from "@/types/listings";
 
@@ -30,6 +31,7 @@ const editListingSchema = listingSchema.extend({
   business_contact_name: z.string().optional(),
   bc_phone: z.string().optional(),
   bc_email: z.string().optional(),
+  admin_notes: z.string().optional(),
 });
 
 type EditListingFormData = z.infer<typeof editListingSchema>;
@@ -88,6 +90,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       business_contact_name: listing.business_contact_name || "",
       bc_phone: listing.bc_phone || "",
       bc_email: listing.bc_email || "",
+      admin_notes: "",
     },
   });
 
@@ -95,31 +98,36 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
     try {
       setIsSubmitting(true);
       
+      // Extract admin notes for audit purposes
+      const { admin_notes, ...listingUpdateData } = data;
+      
       // Include photo_url, date_sold, and technology_summary in the update data
       const updateData = {
-        ...data,
-        value: convertDollarsToCents(data.value), // Convert back to cents for storage
+        ...listingUpdateData,
+        value: convertDollarsToCents(listingUpdateData.value), // Convert back to cents for storage
         photo_url: photoUrl,
         date_sold: listing.date_sold,
-        technology_summary: data.technology_summary || null,
+        technology_summary: listingUpdateData.technology_summary || null,
         // Convert empty strings to null for admin-only fields
-        agency_tracking_number: data.agency_tracking_number || null,
-        contract: data.contract || null,
-        proposal_award_date: data.proposal_award_date || null,
-        contract_end_date: data.contract_end_date || null,
-        topic_code: data.topic_code || null,
-        company: data.company || null,
-        address: data.address || null,
-        primary_investigator_name: data.primary_investigator_name || null,
-        pi_phone: data.pi_phone || null,
-        pi_email: data.pi_email || null,
-        business_contact_name: data.business_contact_name || null,
-        bc_phone: data.bc_phone || null,
-        bc_email: data.bc_email || null,
+        agency_tracking_number: listingUpdateData.agency_tracking_number || null,
+        contract: listingUpdateData.contract || null,
+        proposal_award_date: listingUpdateData.proposal_award_date || null,
+        contract_end_date: listingUpdateData.contract_end_date || null,
+        topic_code: listingUpdateData.topic_code || null,
+        company: listingUpdateData.company || null,
+        address: listingUpdateData.address || null,
+        primary_investigator_name: listingUpdateData.primary_investigator_name || null,
+        pi_phone: listingUpdateData.pi_phone || null,
+        pi_email: listingUpdateData.pi_email || null,
+        business_contact_name: listingUpdateData.business_contact_name || null,
+        bc_phone: listingUpdateData.bc_phone || null,
+        bc_email: listingUpdateData.bc_email || null,
       } as Required<ExtendedEditListingFormData>;
 
-      console.log('🔄 Updating listing with data:', { listingId: listing.id, updateData });
-      await updateListing(listing.id, updateData);
+      console.log('🔄 Updating listing with data:', { listingId: listing.id, updateData, adminNotes: admin_notes });
+      
+      // Pass admin notes to the update function for audit logging
+      await updateListing(listing.id, updateData, admin_notes || undefined);
 
       console.log('✅ Listing updated successfully, forcing data refresh...');
 
@@ -128,7 +136,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
 
       toast({
         title: "Listing Updated",
-        description: "The listing has been successfully updated.",
+        description: "The listing has been successfully updated and logged for audit.",
       });
 
       // Close the dialog after successful update and refresh
@@ -160,6 +168,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
         <ListingFormFields form={form} />
         
         <AdminOnlyFields form={form} />
+        
+        <AdminNotesField form={form} />
 
         <FormActions 
           onCancel={onClose}

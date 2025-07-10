@@ -16,4 +16,5 @@ export const listingsService = {
   rejectListing: adminOperations.rejectListing,
   hideListing: adminOperations.hideListing,
   deleteListing: adminOperations.deleteListing,
+  updateListingWithAudit: adminOperations.updateListingWithAudit,
 };

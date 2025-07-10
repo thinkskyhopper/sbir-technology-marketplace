@@ -55,7 +55,7 @@ export const useListings = () => {
 
   const {
     createListing: createListingOperation,
-    updateListing,
+    updateListing: updateListingOperation,
     approveListing,
     rejectListing,
     hideListing,
@@ -64,6 +64,11 @@ export const useListings = () => {
 
   // Use the operation that includes notification logic
   const createListing = createListingOperation;
+
+  // Wrap updateListing to support admin notes
+  const updateListing = useCallback(async (listingId: string, listingData: any, adminNotes?: string) => {
+    return updateListingOperation(listingId, listingData, adminNotes);
+  }, [updateListingOperation]);
 
   // Initial fetch when auth state changes significantly
   useEffect(() => {

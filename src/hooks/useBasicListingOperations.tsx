@@ -48,16 +48,22 @@ export const useBasicListingOperations = (onSuccess?: () => void) => {
     }
   };
 
-  const updateListing = async (listingId: string, listingData: UpdateListingData) => {
+  const updateListing = async (listingId: string, listingData: UpdateListingData, adminNotes?: string) => {
     if (!isAdmin) {
       throw new Error('Only admins can update listings');
+    }
+
+    if (!user) {
+      throw new Error('Must be authenticated to update listings');
     }
 
     try {
       setLoading(true);
       console.log('🔄 Updating listing operation...', { listingId, isAdmin });
       
-      await listingsService.updateListing(listingId, listingData);
+      // Use the audit-enabled update function for admin edits
+      await listingsService.updateListingWithAudit(listingId, listingData, user.id, adminNotes);
+      
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('❌ Error updating listing:', err);
