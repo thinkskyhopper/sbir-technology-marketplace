@@ -31,9 +31,11 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
   };
 
   return (
-    <div 
-      className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity shrink-0" 
+    <button 
+      className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity shrink-0 bg-transparent border-none p-0" 
       onClick={handleLogoClick}
+      aria-label="Go to homepage"
+      type="button"
     >
       <img 
         src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
@@ -44,7 +46,7 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
         <span className="text-gradient">The SBIR Tech </span>
         <span className="text-white">Marketplace</span>
       </span>
-    </div>
+    </button>
   );
 };
 
