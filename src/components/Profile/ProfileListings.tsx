@@ -1,18 +1,13 @@
+
 import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 import { usePagination } from "@/hooks/usePagination";
+import { useProfileListings } from "@/hooks/useProfileListings";
 import ProfileListingsHeader from "./ProfileListings/ProfileListingsHeader";
-import ProfileListingCard from "./ProfileListings/ProfileListingCard";
-import ProfileListingsEmpty from "./ProfileListings/ProfileListingsEmpty";
+import ProfileListingsContent from "./ProfileListings/ProfileListingsContent";
 import ProfileListingsLoading from "./ProfileListings/ProfileListingsLoading";
-import EditListingDialog from "../EditListingDialog";
-import RequestChangeDialog from "../RequestChangeDialog";
-import MarketplacePagination from "../MarketplacePagination";
+import ProfileListingsDialogManager from "./ProfileListings/ProfileListingsDialogManager";
 
 interface ProfileListingsProps {
   userId?: string | null;
@@ -20,89 +15,14 @@ interface ProfileListingsProps {
 }
 
 const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
-  const { user, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const targetUserId = userId || user?.id;
-
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [requestChangeDialogOpen, setRequestChangeDialogOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
 
-  console.log('📋 ProfileListings props:', {
-    userId,
-    isOwnProfile,
-    targetUserId,
-    userEmail: user?.email,
-    isAdmin
-  });
-
-  const { data: listings, isLoading, error } = useQuery({
-    queryKey: ['profile-listings', targetUserId],
-    queryFn: async () => {
-      if (!targetUserId) {
-        console.log('❌ No target user ID, returning empty array');
-        return [];
-      }
-      
-      console.log('🔍 Fetching listings for user:', targetUserId, {
-        isOwnProfile, 
-        isAdmin,
-        userEmail: user?.email
-      });
-      
-      try {
-        let query = supabase
-          .from('sbir_listings')
-          .select('*')
-          .eq('user_id', targetUserId)
-          .in('status', ['Active', 'Sold'])
-          .order('submitted_at', { ascending: false }); // Sort by date listed (newest first)
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error('❌ Error fetching profile listings:', error);
-          throw error;
-        }
-
-        // Convert value from cents to dollars and format dates - same logic as main listings service
-        const formattedListings = data?.map(listing => ({
-          ...listing,
-          value: listing.value / 100, // Convert cents to dollars
-          deadline: new Date(listing.deadline).toISOString().split('T')[0],
-          profiles: null // Profile listings don't include profile data
-        })) || [];
-
-        // Additional client-side sort to ensure consistent ordering by submitted_at
-        const sortedListings = formattedListings.sort((a, b) => {
-          const dateA = new Date(a.submitted_at).getTime();
-          const dateB = new Date(b.submitted_at).getTime();
-          return dateB - dateA; // Newest first
-        });
-
-        console.log('✅ Profile listings fetched and sorted successfully:', {
-          count: sortedListings?.length || 0,
-          listings: sortedListings?.map(l => ({ 
-            id: l.id, 
-            title: l.title, 
-            status: l.status,
-            value: l.value, // This should now be in dollars
-            submitted_at: l.submitted_at
-          })) || []
-        });
-        
-        return sortedListings;
-      } catch (error) {
-        console.error('💥 Query failed:', error);
-        throw error;
-      }
-    },
-    enabled: !!targetUserId,
-    retry: 1,
-    staleTime: 30000 // 30 seconds
-  });
+  // Fetch listings data
+  const { data: listings, isLoading, error } = useProfileListings({ userId, isOwnProfile });
 
   // Initialize pagination with 15 items per page
   const {
@@ -152,7 +72,7 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
     currentPage,
     totalPages,
     isOwnProfile,
-    targetUserId
+    userId
   });
 
   return (
@@ -165,47 +85,27 @@ const ProfileListings = ({ userId, isOwnProfile }: ProfileListingsProps) => {
           onCreateDialogOpenChange={setCreateDialogOpen}
         />
         <CardContent>
-          {!listings || listings.length === 0 ? (
-            <ProfileListingsEmpty isViewingOwnProfile={isOwnProfile} />
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedListings.map((listing) => (
-                  <ProfileListingCard
-                    key={listing.id}
-                    listing={listing}
-                    isViewingOwnProfile={isOwnProfile}
-                    onEditListing={handleEditListing}
-                    onRequestChange={handleRequestChange}
-                  />
-                ))}
-              </div>
-              
-              {totalPages > 1 && (
-                <MarketplacePagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={goToPage}
-                  hasNextPage={hasNextPage}
-                  hasPreviousPage={hasPreviousPage}
-                />
-              )}
-            </>
-          )}
+          <ProfileListingsContent
+            listings={listings}
+            paginatedListings={paginatedListings}
+            isViewingOwnProfile={isOwnProfile}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            hasNextPage={hasNextPage}
+            hasPreviousPage={hasPreviousPage}
+            onEditListing={handleEditListing}
+            onRequestChange={handleRequestChange}
+            onPageChange={goToPage}
+          />
         </CardContent>
       </Card>
 
-      {/* Dialogs */}
-      <EditListingDialog
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        listing={selectedListing}
-      />
-      
-      <RequestChangeDialog
-        open={requestChangeDialogOpen}
-        onOpenChange={setRequestChangeDialogOpen}
-        listing={selectedListing}
+      <ProfileListingsDialogManager
+        selectedListing={selectedListing}
+        editDialogOpen={editDialogOpen}
+        requestChangeDialogOpen={requestChangeDialogOpen}
+        onEditDialogOpenChange={setEditDialogOpen}
+        onRequestChangeDialogOpenChange={setRequestChangeDialogOpen}
       />
     </>
   );
