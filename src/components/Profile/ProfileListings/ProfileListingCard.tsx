@@ -1,3 +1,4 @@
+
 import { Building, Calendar, DollarSign, FileText, Edit } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,8 @@ const ProfileListingCard = ({
   // Check if listing has a custom image
   const hasCustomImage = listing.photo_url && listing.photo_url.trim() !== '';
   const imageUrl = hasCustomImage ? listing.photo_url : getDefaultCategoryImage(listing.category);
+
+  const isSold = listing.status === 'Sold';
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -77,8 +80,35 @@ const ProfileListingCard = ({
     return '';
   };
 
+  const cardClassName = isSold 
+    ? "card-hover bg-card border-border relative" 
+    : "card-hover bg-card border-border";
+
   return (
-    <Card className="card-hover bg-card border-border">
+    <Card className={cardClassName}>
+      {/* Blur overlay for sold listings */}
+      {isSold && (
+        <div className="absolute inset-0 bg-white/30 backdrop-blur-md rounded-lg z-10" />
+      )}
+      
+      {/* Sold overlay content */}
+      {isSold && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4">
+          <Badge 
+            variant="sold" 
+            className="font-bold text-lg px-6 py-3 mb-4"
+          >
+            SOLD
+          </Badge>
+          {listing.technology_summary && (
+            <div className="text-center">
+              <p className="text-sm font-medium text-blue-400 mb-1">Technology:</p>
+              <p className="text-lg font-bold text-white">{listing.technology_summary}</p>
+            </div>
+          )}
+        </div>
+      )}
+
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
           <Badge variant="default" className="text-xs">
@@ -138,46 +168,52 @@ const ProfileListingCard = ({
       </CardContent>
 
       <CardFooter className="pt-3 space-x-2">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="flex-1"
-          onClick={handleViewDetails}
-        >
-          <FileText className="w-4 h-4 mr-1" />
-          View Details
-        </Button>
-        {isViewingOwnProfile && (
+        {isSold ? (
+          <div className="flex-1" />
+        ) : (
           <>
-            {listing.status === 'Active' && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={() => onRequestChange(listing)}
-              >
-                Request Changes
-              </Button>
-            )}
-            {listing.status === 'Sold' && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={() => onRequestChange(listing)}
-              >
-                Request Deletion
-              </Button>
-            )}
-            {(listing.status === 'Pending' || listing.status === 'Rejected') && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={() => onEditListing(listing)}
-              >
-                Edit
-              </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex-1"
+              onClick={handleViewDetails}
+            >
+              <FileText className="w-4 h-4 mr-1" />
+              View Details
+            </Button>
+            {isViewingOwnProfile && (
+              <>
+                {listing.status === 'Active' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => onRequestChange(listing)}
+                  >
+                    Request Changes
+                  </Button>
+                )}
+                {listing.status === 'Sold' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => onRequestChange(listing)}
+                  >
+                    Request Deletion
+                  </Button>
+                )}
+                {(listing.status === 'Pending' || listing.status === 'Rejected') && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => onEditListing(listing)}
+                  >
+                    Edit
+                  </Button>
+                )}
+              </>
             )}
           </>
         )}
