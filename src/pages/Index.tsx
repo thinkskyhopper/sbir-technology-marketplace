@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CreateListingDialog from "@/components/CreateListingDialog";
@@ -8,11 +8,13 @@ import HomePage from "./Index/HomePage";
 import MarketplacePage from "./Index/MarketplacePage";
 import { useIndexState } from "@/hooks/useIndexState";
 import { useIndexNavigation } from "@/hooks/useIndexNavigation";
+import { useAccessibility } from "@/contexts/AccessibilityContext";
 import type { SBIRListing } from "@/types/listings";
 
 const Index = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedListing, setSelectedListing] = useState<SBIRListing | null>(null);
+  const { announce } = useAccessibility();
 
   const {
     searchQuery,
@@ -30,6 +32,12 @@ const Index = () => {
     handleContactAdmin,
     handleFiltersChange
   } = useIndexNavigation();
+
+  // Announce page changes to screen readers
+  useEffect(() => {
+    const pageTitle = currentView === "home" ? "Homepage" : "Marketplace";
+    announce(`Navigated to ${pageTitle}`, 'polite');
+  }, [currentView, announce]);
 
   const onPostListingClick = () => handlePostListingClick(setShowCreateDialog);
   const onFiltersChange = (filters: any) => {
@@ -51,7 +59,7 @@ const Index = () => {
         onPostListingClick={onPostListingClick}
       />
 
-      <div className="flex-1">
+      <main id="main-content" className="flex-1" role="main">
         {currentView === "home" ? (
           <HomePage 
             onExploreClick={handleExploreMarketplace}
@@ -66,7 +74,7 @@ const Index = () => {
             onFiltersChange={onFiltersChange}
           />
         )}
-      </div>
+      </main>
 
       <Footer />
       

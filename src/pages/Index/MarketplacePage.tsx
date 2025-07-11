@@ -2,6 +2,7 @@
 import React from 'react';
 import MarketplaceGrid from "@/components/MarketplaceGrid";
 import type { SBIRListing } from "@/types/listings";
+import { useMetaTags } from "@/hooks/useMetaTags";
 
 interface MarketplacePageProps {
   searchQuery: string;
@@ -22,13 +23,18 @@ const MarketplacePage = ({
   marketplaceFilters, 
   onFiltersChange 
 }: MarketplacePageProps) => {
+  useMetaTags({
+    title: 'SBIR Technology Marketplace - Browse Available Technologies',
+    description: 'Browse and discover Phase I & II SBIR technology from verified sellers in our comprehensive marketplace.',
+  });
+
   return (
-    <section className="py-8">
+    <section className="py-8" aria-labelledby="marketplace-heading">
       <div className="container mx-auto px-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">SBIR Technology Marketplace</h1>
+        <header className="mb-8">
+          <h1 id="marketplace-heading" className="text-3xl font-bold mb-2">SBIR Technology Marketplace</h1>
           <p className="text-muted-foreground">Browse and discover Phase I & II SBIR technology from verified sellers</p>
-        </div>
+        </header>
         
         <MarketplaceGrid 
           searchQuery={searchQuery} 

@@ -21,7 +21,7 @@
     --secondary-foreground: 220 13% 91%;
 
     --muted: 220 13% 14%;
-    --muted-foreground: 220 13% 63%;
+    --muted-foreground: 220 13% 70%; /* Increased contrast from 63% to 70% */
 
     --accent: 220 13% 14%;
     --accent-foreground: 220 13% 91%;
@@ -45,6 +45,64 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .sr-only:focus,
+  .sr-only:active {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Enhanced focus indicators */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Ensure buttons and interactive elements have proper focus styles */
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    :root {
+      --muted-foreground: 220 13% 85%;
+      --border: 220 13% 25%;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 /* Custom gradients and effects */
@@ -64,6 +122,13 @@
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 10px 10px -5px rgb(0 0 0 / 0.2);
 }
 
+/* Disable hover animations for reduced motion users */
+@media (prefers-reduced-motion: reduce) {
+  .card-hover:hover {
+    transform: none;
+  }
+}
+
 .military-border {
   border-image: linear-gradient(90deg, hsl(var(--primary)), transparent) 1;
 }
@@ -73,4 +138,14 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Ensure text remains readable in high contrast mode */
+@media (prefers-contrast: high) {
+  .text-gradient {
+    background: hsl(var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
