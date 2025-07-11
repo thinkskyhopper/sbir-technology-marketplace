@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import type { AdminAuditLog } from "./types";
 
 interface AdminLogsTableRowProps {
@@ -12,6 +13,8 @@ interface AdminLogsTableRowProps {
 }
 
 export const AdminLogsTableRow = ({ log, onViewDetails }: AdminLogsTableRowProps) => {
+  const navigate = useNavigate();
+
   const getActionBadgeVariant = (actionType: string) => {
     switch (actionType) {
       case 'approval':
@@ -31,6 +34,9 @@ export const AdminLogsTableRow = ({ log, onViewDetails }: AdminLogsTableRowProps
     if (actionType === 'approval') {
       return 'bg-green-600 hover:bg-green-700 text-white border-transparent';
     }
+    if (actionType === 'edit') {
+      return 'bg-amber-500 hover:bg-amber-600 text-white border-transparent';
+    }
     return '';
   };
 
@@ -49,6 +55,12 @@ export const AdminLogsTableRow = ({ log, onViewDetails }: AdminLogsTableRowProps
     }
   };
 
+  const handleListingClick = () => {
+    if (log.listing_id) {
+      navigate(`/listing/${log.listing_id}`);
+    }
+  };
+
   const isListingDeleted = !log.listing || (log.listing && log.action_type === 'deletion');
   const adminName = log.admin?.full_name || log.admin?.email || 'Unknown Admin';
 
@@ -57,9 +69,19 @@ export const AdminLogsTableRow = ({ log, onViewDetails }: AdminLogsTableRowProps
       <TableCell className="font-medium">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="truncate max-w-[200px]" title={log.listing_title}>
-              {log.listing_title}
-            </span>
+            {log.listing_id && !isListingDeleted ? (
+              <button
+                onClick={handleListingClick}
+                className="truncate max-w-[200px] text-left text-primary hover:underline focus:underline focus:outline-none"
+                title={log.listing_title}
+              >
+                {log.listing_title}
+              </button>
+            ) : (
+              <span className="truncate max-w-[200px]" title={log.listing_title}>
+                {log.listing_title}
+              </span>
+            )}
             {isListingDeleted && (
               <Badge variant="outline" className="text-xs text-muted-foreground">
                 Deleted
