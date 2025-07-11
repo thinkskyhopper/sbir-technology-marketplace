@@ -76,6 +76,7 @@ const AdminListingsTableFilters = ({
           <SelectItem value="all">All Phases</SelectItem>
           <SelectItem value="Phase I">Phase I</SelectItem>
           <SelectItem value="Phase II">Phase II</SelectItem>
+          <SelectItem value="Phase III">Phase III</SelectItem>
         </SelectContent>
       </Select>
       <Select value={agencyFilter} onValueChange={setAgencyFilter}>
