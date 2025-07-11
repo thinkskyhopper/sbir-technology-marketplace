@@ -71,6 +71,33 @@ export type Database = {
           },
         ]
       }
+      admin_settings: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          setting_key: string
+          setting_value: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          setting_key: string
+          setting_value: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_inquiries: {
         Row: {
           created_at: string
@@ -594,7 +621,7 @@ export type Database = {
       change_request_status: "pending" | "approved" | "rejected"
       change_request_type: "change" | "deletion"
       listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
-      sbir_phase: "Phase I" | "Phase II"
+      sbir_phase: "Phase I" | "Phase II" | "Phase III"
       user_role: "admin" | "user" | "consultant"
     }
     CompositeTypes: {
@@ -727,7 +754,7 @@ export const Constants = {
       change_request_status: ["pending", "approved", "rejected"],
       change_request_type: ["change", "deletion"],
       listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
-      sbir_phase: ["Phase I", "Phase II"],
+      sbir_phase: ["Phase I", "Phase II", "Phase III"],
       user_role: ["admin", "user", "consultant"],
     },
   },

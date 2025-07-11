@@ -3,7 +3,7 @@ export interface SBIRListing {
   id: string;
   title: string;
   description: string;
-  phase: 'Phase I' | 'Phase II';
+  phase: 'Phase I' | 'Phase II' | 'Phase III';
   agency: string;
   value: number;
   deadline: string;
@@ -36,7 +36,7 @@ export interface SBIRListing {
 }
 
 export type ListingStatus = 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
-export type SBIRPhase = 'Phase I' | 'Phase II';
+export type SBIRPhase = 'Phase I' | 'Phase II' | 'Phase III';
 
 export type CreateListingData = Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id'>;
 export type UpdateListingData = Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id'>;

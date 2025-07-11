@@ -39,6 +39,7 @@ const PhaseAgencyFields = ({ form }: PhaseAgencyFieldsProps) => {
               <SelectContent>
                 <SelectItem value="Phase I">Phase I</SelectItem>
                 <SelectItem value="Phase II">Phase II</SelectItem>
+                <SelectItem value="Phase III">Phase III</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

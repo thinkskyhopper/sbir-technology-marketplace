@@ -4,7 +4,7 @@ import * as z from "zod";
 export const listingSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
   description: z.string().min(1, "Description is required").max(5000, "Description too long"),
-  phase: z.enum(["Phase I", "Phase II"], {
+  phase: z.enum(["Phase I", "Phase II", "Phase III"], {
     required_error: "Please select a phase",
   }),
   agency: z.string().min(1, "Agency is required").max(100, "Agency name too long"),
