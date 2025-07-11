@@ -71,12 +71,11 @@ const ListingDetailHeroImage = ({ listing }: ListingDetailHeroImageProps) => {
           {/* Phase III Badge */}
           {listing.phase === 'Phase III' && (
             <div className={`absolute ${getBadgePositionClasses(badgeCorner)} z-10`}>
-              <Badge 
-                variant="phase" 
-                className="bg-purple-600 text-white border-2 border-white shadow-lg font-bold px-3 py-1 text-sm"
-              >
-                Phase III
-              </Badge>
+              <img 
+                src="/lovable-uploads/d8f6cb9b-dc2b-453f-adfc-eb500ec36142.png"
+                alt="SBIR Phase III - Sole-Source Eligible Badge"
+                className="w-20 h-20 object-contain drop-shadow-lg"
+              />
             </div>
           )}
           
