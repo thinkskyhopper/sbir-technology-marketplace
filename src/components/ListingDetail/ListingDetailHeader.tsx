@@ -85,7 +85,7 @@ const ListingDetailHeader = ({
                   {listing.phase}
                 </Badge>
                 <Badge 
-                  variant={listing.status === "Active" ? "default" : "outline"}
+                  variant={listing.status === "Active" ? "default" : listing.status === "Sold" ? "sold" : "outline"}
                   className={listing.status === "Active" ? "bg-green-600" : ""}
                 >
                   {listing.status}
