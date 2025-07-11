@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,14 +53,28 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const { updateListing, fetchListings } = useListings();
   const { toast } = useToast();
 
-  // Convert cents to dollars for display
-  const convertCentsToDollars = (cents: number): number => {
-    return cents / 100;
+  // Helper function to normalize value - check if it's already in dollars or cents
+  const normalizeValueForDisplay = (value: number): number => {
+    // If the value is very large (likely in cents), convert to dollars
+    // If it's reasonable (likely already in dollars), use as-is
+    if (value > 10000) {
+      console.log('🔄 Converting value from cents to dollars:', value, '->', value / 100);
+      return value / 100;
+    }
+    console.log('💰 Using value as dollars:', value);
+    return value;
   };
 
-  // Convert dollars to cents for storage
-  const convertDollarsToCents = (dollars: number): number => {
-    return Math.round(dollars * 100);
+  // Helper function to ensure value is stored as cents
+  const normalizeValueForStorage = (value: number): number => {
+    // If the value seems to already be in cents (very large), use as-is
+    // Otherwise, convert dollars to cents
+    if (value > 10000) {
+      console.log('💾 Using value as cents:', value);
+      return Math.round(value);
+    }
+    console.log('💾 Converting value from dollars to cents:', value, '->', Math.round(value * 100));
+    return Math.round(value * 100);
   };
 
   const form = useForm<EditListingFormData>({
@@ -71,7 +84,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       description: listing.description,
       phase: listing.phase,
       agency: listing.agency,
-      value: convertCentsToDollars(listing.value), // Convert to dollars for display
+      value: normalizeValueForDisplay(listing.value), // Use normalized value for display
       deadline: listing.deadline,
       category: listing.category,
       status: listing.status,
@@ -104,7 +117,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       // Include photo_url, date_sold, and technology_summary in the update data
       const updateData = {
         ...listingUpdateData,
-        value: convertDollarsToCents(listingUpdateData.value), // Convert back to cents for storage
+        value: normalizeValueForStorage(listingUpdateData.value), // Use normalized value for storage
         photo_url: photoUrl,
         date_sold: listing.date_sold,
         technology_summary: listingUpdateData.technology_summary || null,
