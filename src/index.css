@@ -5,32 +5,32 @@
 
 @layer base {
   :root {
-    --background: 220 13% 9%;
-    --foreground: 220 13% 91%;
+    --background: 210 20% 98%;
+    --foreground: 210 20% 12%;
 
-    --card: 220 13% 11%;
-    --card-foreground: 220 13% 91%;
+    --card: 210 20% 96%;
+    --card-foreground: 210 20% 15%;
 
-    --popover: 220 13% 11%;
-    --popover-foreground: 220 13% 91%;
+    --popover: 210 20% 96%;
+    --popover-foreground: 210 20% 15%;
 
     --primary: 217 91% 60%;
-    --primary-foreground: 220 13% 9%;
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 220 13% 14%;
-    --secondary-foreground: 220 13% 91%;
+    --secondary: 210 20% 90%;
+    --secondary-foreground: 210 20% 20%;
 
-    --muted: 220 13% 14%;
-    --muted-foreground: 220 13% 70%; /* Increased contrast from 63% to 70% */
+    --muted: 210 20% 92%;
+    --muted-foreground: 210 20% 35%;
 
-    --accent: 220 13% 14%;
-    --accent-foreground: 220 13% 91%;
+    --accent: 210 20% 88%;
+    --accent-foreground: 210 20% 20%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 220 13% 91%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 220 13% 18%;
-    --input: 220 13% 18%;
+    --border: 210 20% 85%;
+    --input: 210 20% 88%;
     --ring: 217 91% 60%;
 
     --radius: 0.375rem;
@@ -87,11 +87,20 @@
     outline-offset: 2px;
   }
 
-  /* High contrast mode support */
+  /* High contrast mode support - updated for brighter theme */
   @media (prefers-contrast: high) {
     :root {
-      --muted-foreground: 220 13% 85%;
-      --border: 220 13% 25%;
+      --background: 0 0% 100%;
+      --foreground: 0 0% 0%;
+      --card: 0 0% 98%;
+      --card-foreground: 0 0% 5%;
+      --muted-foreground: 0 0% 20%;
+      --border: 0 0% 60%;
+      --input: 0 0% 85%;
+      --secondary: 0 0% 85%;
+      --secondary-foreground: 0 0% 10%;
+      --accent: 0 0% 80%;
+      --accent-foreground: 0 0% 10%;
     }
   }
 
@@ -105,12 +114,12 @@
   }
 }
 
-/* Custom gradients and effects */
+/* Custom gradients and effects - updated for brighter theme */
 .hero-gradient {
   background: linear-gradient(135deg, 
-    hsl(220 13% 12%) 0%, 
-    hsl(220 13% 16%) 50%, 
-    hsl(220 13% 12%) 100%);
+    hsl(210 20% 95%) 0%, 
+    hsl(210 20% 97%) 50%, 
+    hsl(210 20% 95%) 100%);
 }
 
 .card-hover {
@@ -119,7 +128,7 @@
 
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 10px 10px -5px rgb(0 0 0 / 0.2);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.05);
 }
 
 /* Disable hover animations for reduced motion users */
