@@ -247,5 +247,23 @@ export const componentColors = [
     hex: '#bfdbfe',
     usage: 'Active bookmark button border (border-blue-200)',
     category: 'Interactive Colors'
+  },
+  {
+    name: 'Hero Gradient Start',
+    hex: '#1e293b',
+    usage: 'Hero section gradient start color (hsl(220 20% 16%))',
+    category: 'Hero Gradient'
+  },
+  {
+    name: 'Hero Gradient Middle',
+    hex: '#334155',
+    usage: 'Hero section gradient middle color (hsl(220 20% 22%))',
+    category: 'Hero Gradient'
+  },
+  {
+    name: 'Hero Gradient End',
+    hex: '#262e3d',
+    usage: 'Hero section gradient end color (hsl(220 20% 18%))',
+    category: 'Hero Gradient'
   }
 ];
