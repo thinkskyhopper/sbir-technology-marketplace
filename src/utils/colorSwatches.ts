@@ -249,6 +249,18 @@ export const componentColors = [
     category: 'Interactive Colors'
   },
   {
+    name: 'Text Gradient Start',
+    hex: '#5b9bd5',
+    usage: 'Text gradient start color - used in "Expert Guidance", "expert team" etc (hsl(var(--primary)))',
+    category: 'Text Gradient'
+  },
+  {
+    name: 'Text Gradient End',
+    hex: '#87ceeb',
+    usage: 'Text gradient end color - lighter blue for gradient text (hsl(217 91% 80%))',
+    category: 'Text Gradient'
+  },
+  {
     name: 'Hero Gradient Start',
     hex: '#1e293b',
     usage: 'Hero section gradient start color (hsl(220 20% 16%))',
