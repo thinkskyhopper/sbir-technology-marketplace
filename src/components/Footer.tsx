@@ -48,9 +48,20 @@ const Footer = () => {
         <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <div className="flex flex-col items-center gap-4 sm:gap-6">
             {/* Copyright */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-2">
               <p className="text-xs sm:text-sm text-muted-foreground text-center">
                 © 2025 The SBIR Tech Marketplace. All rights reserved.
+              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground text-center">
+                Powered by{" "}
+                <a 
+                  href="https://www.sbirconnect.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary/80 transition-colors underline"
+                >
+                  SBIR Connect
+                </a>
               </p>
             </div>
 
