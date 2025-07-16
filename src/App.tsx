@@ -29,6 +29,7 @@ import Team from "./pages/Team";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LegalDisclaimer from "./pages/LegalDisclaimer";
 import ExpertValue from "./pages/ExpertValue";
+import ColorSwatches from "./pages/ColorSwatches";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/legal-disclaimer" element={<LegalDisclaimer />} />
                 <Route path="/expert-value" element={<ExpertValue />} />
+                <Route path="/color-swatches" element={<ColorSwatches />} />
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
