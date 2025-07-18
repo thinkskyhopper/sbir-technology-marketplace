@@ -6,78 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SBIR Tech Marketplace Widget</title>
     <style>
-        /* Embedded styles matching the main site */
-        .sbir-widget {
-            --background: 220 20% 14%;
-            --foreground: 220 20% 94%;
-            --card: 220 20% 16%;
-            --card-foreground: 220 20% 94%;
-            --primary: 217 91% 65%;
-            --primary-foreground: 220 20% 10%;
-            --secondary: 220 20% 20%;
-            --secondary-foreground: 220 20% 94%;
-            --muted: 220 20% 22%;
-            --muted-foreground: 220 20% 75%;
-            --accent: 220 20% 24%;
-            --accent-foreground: 220 20% 94%;
-            --border: 220 20% 26%;
-            --input: 220 20% 26%;
-            --ring: 217 91% 65%;
-            --radius: 0.375rem;
-            
-            max-width: 24rem;
-            margin: 0 auto;
-            background-color: hsl(var(--background));
-            border: 1px solid hsl(var(--border));
-            border-radius: 0.5rem;
-            padding: 1rem;
+        body {
+            margin: 0;
+            padding: 16px;
             font-family: system-ui, -apple-system, sans-serif;
-            color: hsl(var(--foreground));
+            background-color: #1a1b23;
+            color: #f1f5f9;
         }
         
-        .sbir-widget .logo-section {
+        .widget {
+            max-width: 368px;
+            margin: 0 auto;
+            background-color: #1e1f29;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        .logo-section {
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 16px;
         }
         
-        .sbir-widget .logo {
-            width: 3rem;
-            height: 3rem;
-            margin: 0 auto 0.5rem;
-            background-color: hsl(var(--primary));
-            border-radius: 0.5rem;
+        .logo {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 8px;
+            background-color: #3b82f6;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 1.5rem;
+            font-size: 24px;
         }
         
-        .sbir-widget .title {
-            font-size: 1.125rem;
+        .title {
+            font-size: 18px;
             font-weight: bold;
             margin: 0;
         }
         
-        .sbir-widget .text-gradient {
-            background: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 80%));
+        .text-gradient {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
-        .sbir-widget .buttons {
+        .buttons {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 8px;
+            margin-bottom: 16px;
         }
         
-        .sbir-widget .btn {
+        .btn {
             flex: 1;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 500;
             text-decoration: none;
             text-align: center;
@@ -86,370 +74,272 @@
             border: none;
         }
         
-        .sbir-widget .btn-primary {
-            background-color: hsl(var(--primary));
-            color: hsl(var(--primary-foreground));
-        }
-        
-        .sbir-widget .btn-primary:hover {
-            background-color: hsl(var(--primary) / 0.9);
-        }
-        
-        .sbir-widget .btn-outline {
-            background-color: transparent;
-            color: hsl(var(--foreground));
-            border: 1px solid hsl(var(--border));
-        }
-        
-        .sbir-widget .btn-outline:hover {
-            background-color: hsl(var(--accent));
-            color: hsl(var(--accent-foreground));
-        }
-        
-        .sbir-widget .listings {
-            margin-bottom: 1rem;
-        }
-        
-        .sbir-widget .listing-card {
-            background-color: hsl(var(--card));
-            border: 1px solid hsl(var(--border));
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-        
-        .sbir-widget .listing-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-        }
-        
-        .sbir-widget .badge {
-            font-size: 0.75rem;
-            padding: 0.125rem 0.5rem;
-            border-radius: 0.25rem;
-            font-weight: 500;
-        }
-        
-        .sbir-widget .badge-primary {
-            background-color: hsl(var(--primary));
-            color: hsl(var(--primary-foreground));
-        }
-        
-        .sbir-widget .badge-active {
-            background-color: hsl(120 60% 50%);
+        .btn-primary {
+            background-color: #3b82f6;
             color: white;
         }
         
-        .sbir-widget .listing-title {
-            font-size: 0.875rem;
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: #f1f5f9;
+            border: 1px solid #374151;
+        }
+        
+        .btn-outline:hover {
+            background-color: #374151;
+        }
+        
+        .listings {
+            margin-bottom: 16px;
+        }
+        
+        .listing-card {
+            background-color: #1e1f29;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .listing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .badge-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .badge-active {
+            background-color: #22c55e;
+            color: white;
+        }
+        
+        .listing-title {
+            font-size: 14px;
             font-weight: 600;
-            margin: 0.25rem 0;
-            color: hsl(var(--card-foreground));
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
+            margin: 4px 0;
+            color: #f1f5f9;
         }
         
-        .sbir-widget .listing-agency {
-            font-size: 0.75rem;
-            color: hsl(var(--muted-foreground));
-            margin-bottom: 0.5rem;
+        .listing-agency {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 8px;
         }
         
-        .sbir-widget .listing-description {
-            font-size: 0.75rem;
-            color: hsl(var(--muted-foreground));
-            margin-bottom: 0.5rem;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+        .listing-description {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
         
-        .sbir-widget .listing-meta {
+        .listing-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.75rem;
+            font-size: 12px;
+            margin-bottom: 8px;
         }
         
-        .sbir-widget .listing-value {
+        .listing-value {
             font-weight: 600;
-            color: hsl(120 60% 50%);
+            color: #22c55e;
         }
         
-        .sbir-widget .view-all {
-            text-align: center;
+        .listing-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .sbir-widget .view-all-link {
-            color: hsl(var(--primary));
-            text-decoration: underline;
-            font-size: 0.875rem;
+        .listing-date {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            background-color: transparent;
+            color: #f1f5f9;
+            border: 1px solid #374151;
             cursor: pointer;
-            transition: color 0.3s ease;
         }
         
-        .sbir-widget .view-all-link:hover {
-            color: hsl(var(--primary) / 0.8);
+        .btn-small:hover {
+            background-color: #374151;
         }
         
-        .sbir-widget .loading {
+        .view-all {
             text-align: center;
-            padding: 2rem 0;
-            color: hsl(var(--muted-foreground));
-            font-size: 0.875rem;
         }
         
-        .sbir-widget .error {
+        .view-all-link {
+            color: #3b82f6;
+            text-decoration: underline;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .view-all-link:hover {
+            color: #60a5fa;
+        }
+        
+        .loading, .error {
             text-align: center;
-            padding: 2rem 0;
-            color: hsl(0 60% 60%);
-            font-size: 0.875rem;
+            padding: 32px 0;
+            color: #9ca3af;
+            font-size: 14px;
         }
         
-        .sbir-widget .debug {
-            background-color: hsl(var(--muted));
-            padding: 0.5rem;
-            margin: 0.5rem 0;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
+        .error {
+            color: #ef4444;
+        }
+        
+        .debug {
+            background-color: #374151;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 12px;
             font-family: monospace;
-            color: hsl(var(--muted-foreground));
+            color: #d1d5db;
             white-space: pre-wrap;
-        }
-        
-        /* Mobile optimizations */
-        @media (max-width: 768px) {
-            .sbir-widget {
-                max-width: 100%;
-                padding: 0.75rem;
-            }
-            
-            .sbir-widget .title {
-                font-size: 1rem;
-            }
-            
-            .sbir-widget .btn {
-                padding: 0.375rem 0.75rem;
-                font-size: 0.8125rem;
-            }
-        }
-        
-        /* High contrast mode support */
-        @media (prefers-contrast: high) {
-            .sbir-widget {
-                --background: 220 25% 8%;
-                --foreground: 220 25% 98%;
-                --card: 220 25% 10%;
-                --card-foreground: 220 25% 98%;
-                --muted: 220 25% 15%;
-                --muted-foreground: 220 25% 90%;
-                --border: 220 25% 35%;
-                --primary: 217 91% 70%;
-            }
-        }
-        
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-            .sbir-widget * {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.01ms !important;
-            }
+            max-height: 150px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-    <div id="sbir-widget-root">
-        <div class="sbir-widget">
+    <div id="widget-container">
+        <div class="widget">
             <div class="loading">Initializing widget...</div>
-            <div class="debug">Widget starting up...</div>
+            <div class="debug" id="debug-output">Starting up...</div>
         </div>
     </div>
     
     <script>
-        // Immediate debug output
-        console.log('🚀 SBIR Widget HTML loaded successfully');
-        console.log('📍 Current URL:', window.location.href);
-        console.log('🌐 User Agent:', navigator.userAgent);
+        console.log('🚀 Widget script starting');
         
-        // Add visual debug output
-        function addDebugMessage(message) {
-            const debugElement = document.querySelector('.debug');
-            if (debugElement) {
-                debugElement.textContent += '\n' + message;
-            }
+        // Debug function
+        function debug(message) {
             console.log(message);
+            const debugEl = document.getElementById('debug-output');
+            if (debugEl) {
+                debugEl.textContent += '\n' + message;
+            }
         }
         
-        addDebugMessage('Script execution started');
+        debug('✅ Debug function initialized');
         
-        // Check if we can access the container
-        const container = document.getElementById('sbir-widget-root');
-        if (container) {
-            addDebugMessage('✅ Container found');
-        } else {
-            addDebugMessage('❌ Container not found');
-        }
-        
-        // Load Supabase dynamically with error handling
-        function loadSupabase() {
-            return new Promise((resolve, reject) => {
-                addDebugMessage('Loading Supabase library...');
-                
-                const script = document.createElement('script');
-                script.src = 'https://unpkg.com/@supabase/supabase-js@2';
-                script.onload = () => {
-                    addDebugMessage('✅ Supabase library loaded');
-                    if (window.supabase) {
-                        resolve(window.supabase);
-                    } else {
-                        reject(new Error('Supabase not available after loading'));
-                    }
-                };
-                script.onerror = () => {
-                    addDebugMessage('❌ Failed to load Supabase library');
-                    reject(new Error('Failed to load Supabase'));
-                };
-                document.head.appendChild(script);
-            });
-        }
-        
-        // SBIR Widget implementation
-        class SBIRWidget {
-            constructor(containerId) {
-                addDebugMessage('🏗️ Constructing SBIRWidget');
-                this.container = document.getElementById(containerId);
-                
-                if (!this.container) {
-                    addDebugMessage('❌ Container element not found: ' + containerId);
-                    return;
-                }
-                
+        // Simple widget implementation
+        class Widget {
+            constructor() {
+                debug('🏗️ Widget constructor called');
+                this.container = document.getElementById('widget-container');
                 this.listings = [];
                 this.loading = true;
                 this.error = null;
-                this.debugMessages = ['Widget initialized'];
                 
+                if (!this.container) {
+                    debug('❌ Container not found');
+                    return;
+                }
+                
+                debug('✅ Container found');
                 this.init();
             }
             
             async init() {
+                debug('🔄 Initializing widget');
                 try {
-                    addDebugMessage('🔄 Initializing widget...');
-                    this.render();
-                    
-                    // Load Supabase
-                    const supabase = await loadSupabase();
-                    this.supabase = supabase.createClient(
-                        'https://amhznlnhrrugxatbeayo.supabase.co',
-                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
-                    );
-                    addDebugMessage('✅ Supabase client created');
-                    
+                    await this.loadSupabase();
                     await this.fetchListings();
                     this.render();
                 } catch (error) {
-                    addDebugMessage('❌ Widget initialization failed: ' + error.message);
-                    this.error = 'Widget initialization failed: ' + error.message;
+                    debug('❌ Init error: ' + error.message);
+                    this.error = error.message;
                     this.loading = false;
                     this.render();
                 }
             }
             
-            async fetchListings() {
-                try {
-                    addDebugMessage('🔄 Fetching listings...');
+            loadSupabase() {
+                return new Promise((resolve, reject) => {
+                    debug('📦 Loading Supabase...');
                     
-                    // Get featured listings first
-                    const { data: featuredData, error: featuredError } = await this.supabase
-                        .from('featured_listings')
-                        .select(`
-                            *,
-                            sbir_listings!inner(
-                                *,
-                                profiles!fk_sbir_listings_user_id(
-                                    full_name,
-                                    email
-                                )
-                            )
-                        `)
-                        .eq('sbir_listings.status', 'Active')
-                        .order('display_order', { ascending: true })
+                    if (window.supabase) {
+                        debug('✅ Supabase already loaded');
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = 'https://unpkg.com/@supabase/supabase-js@2.45.4/dist/main.js';
+                    script.onload = () => {
+                        debug('✅ Supabase script loaded');
+                        if (window.supabase) {
+                            resolve();
+                        } else {
+                            reject(new Error('Supabase not available'));
+                        }
+                    };
+                    script.onerror = () => {
+                        debug('❌ Failed to load Supabase');
+                        reject(new Error('Failed to load Supabase'));
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+            
+            async fetchListings() {
+                debug('🔄 Fetching listings...');
+                
+                try {
+                    const supabaseClient = window.supabase.createClient(
+                        'https://amhznlnhrrugxatbeayo.supabase.co',
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+                    );
+                    
+                    debug('✅ Supabase client created');
+                    
+                    const { data, error } = await supabaseClient
+                        .from('sbir_listings')
+                        .select('*')
+                        .eq('status', 'Active')
+                        .order('submitted_at', { ascending: false })
                         .limit(3);
-
-                    if (featuredError) {
-                        addDebugMessage('⚠️ Featured listings error: ' + featuredError.message);
-                        throw featuredError;
+                    
+                    if (error) {
+                        debug('❌ Supabase error: ' + error.message);
+                        throw error;
                     }
-
-                    addDebugMessage('📊 Featured listings received: ' + (featuredData?.length || 0));
-
-                    let listings = [];
-
-                    // Extract the listing data and format it
-                    if (featuredData && featuredData.length > 0) {
-                        listings = featuredData.map(item => ({
-                            ...item.sbir_listings,
-                            value: item.sbir_listings.value / 100,
-                            deadline: new Date(item.sbir_listings.deadline).toISOString().split('T')[0],
-                        }));
-                        addDebugMessage('✅ Featured listings processed: ' + listings.length);
-                    }
-
-                    // If we need more listings, fetch newest
-                    if (listings.length < 3) {
-                        const neededCount = 3 - listings.length;
-                        const featuredIds = listings.map(listing => listing.id);
-                        
-                        addDebugMessage('🔄 Fetching newest listings: ' + neededCount);
-
-                        let query = this.supabase
-                            .from('sbir_listings')
-                            .select(`
-                                *,
-                                profiles!fk_sbir_listings_user_id(
-                                    full_name,
-                                    email
-                                )
-                            `)
-                            .eq('status', 'Active')
-                            .order('submitted_at', { ascending: false })
-                            .limit(neededCount);
-
-                        if (featuredIds.length > 0) {
-                            query = query.not('id', 'in', `(${featuredIds.join(',')})`);
-                        }
-
-                        const { data: newestData, error: newestError } = await query;
-
-                        if (newestError) {
-                            addDebugMessage('⚠️ Newest listings error: ' + newestError.message);
-                            throw newestError;
-                        }
-
-                        addDebugMessage('📊 Newest listings received: ' + (newestData?.length || 0));
-
-                        const newestListings = newestData?.map(listing => ({
-                            ...listing,
-                            value: listing.value / 100,
-                            deadline: new Date(listing.deadline).toISOString().split('T')[0],
-                        })) || [];
-
-                        listings = [...listings, ...newestListings];
-                    }
-
-                    this.listings = listings.slice(0, 3);
+                    
+                    debug('✅ Fetched ' + (data?.length || 0) + ' listings');
+                    
+                    this.listings = data || [];
                     this.loading = false;
-                    addDebugMessage('✅ Final listings count: ' + this.listings.length);
                     
                 } catch (error) {
-                    addDebugMessage('❌ Fetch error: ' + error.message);
-                    this.error = 'Failed to load opportunities: ' + error.message;
-                    this.loading = false;
+                    debug('❌ Fetch error: ' + error.message);
+                    throw error;
                 }
             }
             
@@ -457,60 +347,59 @@
                 return new Intl.NumberFormat('en-US', {
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
-                }).format(amount);
+                }).format(amount / 100);
             }
             
             formatDate(dateString) {
-                const date = new Date(dateString + 'T00:00:00');
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                } catch (e) {
+                    return 'Invalid date';
+                }
             }
             
             render() {
+                debug('🎨 Rendering widget');
+                
                 let listingsHTML = '';
                 
                 if (this.loading) {
                     listingsHTML = '<div class="loading">Loading opportunities...</div>';
                 } else if (this.error) {
-                    listingsHTML = `<div class="error">${this.error}</div>`;
+                    listingsHTML = `<div class="error">Error: ${this.error}</div>`;
                 } else if (this.listings.length === 0) {
                     listingsHTML = '<div class="loading">No opportunities available</div>';
                 } else {
                     listingsHTML = this.listings.map(listing => `
                         <div class="listing-card">
                             <div class="listing-header">
-                                <span class="badge badge-primary">${listing.phase}</span>
-                                <span class="badge ${listing.status === 'Active' ? 'badge-active' : ''}">${listing.status}</span>
+                                <span class="badge badge-primary">${listing.phase || 'N/A'}</span>
+                                <span class="badge badge-active">${listing.status}</span>
                             </div>
                             <h3 class="listing-title">${listing.title}</h3>
                             <div class="listing-agency">🏢 ${listing.agency}</div>
-                            <p class="listing-description">${listing.description}</p>
+                            <p class="listing-description">${(listing.description || '').substring(0, 100)}...</p>
                             <div class="listing-meta">
-                                <div>
-                                    <span class="listing-value">$${this.formatCurrency(listing.value)}</span>
-                                    <span class="badge" style="margin-left: 0.5rem; background: hsl(var(--muted)); color: hsl(var(--muted-foreground));">${listing.category}</span>
-                                </div>
+                                <span class="listing-value">$${this.formatCurrency(listing.value || 0)}</span>
+                                <span class="badge">${listing.category || 'General'}</span>
                             </div>
-                            <div style="margin-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-                                <small style="color: hsl(var(--muted-foreground));">📅 ${this.formatDate(listing.deadline)}</small>
-                                <button class="btn btn-outline" style="flex: none; padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="window.open('https://sbirtech.lovableproject.com/listing/${listing.id}', '_blank')">
-                                    📄 View Details
+                            <div class="listing-footer">
+                                <span class="listing-date">📅 ${this.formatDate(listing.deadline)}</span>
+                                <button class="btn-small" onclick="window.open('https://sbirtech.lovableproject.com/listing/${listing.id}', '_blank')">
+                                    View Details
                                 </button>
                             </div>
                         </div>
                     `).join('');
                 }
                 
-                if (!this.container) {
-                    addDebugMessage('❌ Container lost during render');
-                    return;
-                }
-                
                 this.container.innerHTML = `
-                    <div class="sbir-widget">
+                    <div class="widget">
                         <div class="logo-section">
                             <div class="logo">ST</div>
                             <h2 class="title">
@@ -538,30 +427,30 @@
                             </a>
                         </div>
                         
-                        <div class="debug">${this.debugMessages.join('\n')}</div>
+                        <div class="debug" id="debug-output">${this.error || 'Widget loaded successfully'}</div>
                     </div>
                 `;
                 
-                addDebugMessage('🎨 Widget rendered');
+                debug('✅ Widget rendered successfully');
             }
         }
         
-        // Initialize widget when DOM is ready
-        function initializeWidget() {
-            addDebugMessage('🚀 Starting widget initialization...');
+        // Initialize when DOM is ready
+        function initWidget() {
+            debug('🚀 Initializing widget...');
             try {
-                new SBIRWidget('sbir-widget-root');
+                new Widget();
             } catch (error) {
-                addDebugMessage('❌ Widget creation failed: ' + error.message);
+                debug('❌ Widget initialization failed: ' + error.message);
             }
         }
         
         if (document.readyState === 'loading') {
-            addDebugMessage('⏳ Waiting for DOM...');
-            document.addEventListener('DOMContentLoaded', initializeWidget);
+            debug('⏳ Waiting for DOM...');
+            document.addEventListener('DOMContentLoaded', initWidget);
         } else {
-            addDebugMessage('✅ DOM ready, initializing...');
-            initializeWidget();
+            debug('✅ DOM ready, starting widget');
+            initWidget();
         }
     </script>
 </body>
