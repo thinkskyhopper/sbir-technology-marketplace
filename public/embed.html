@@ -219,6 +219,7 @@
             font-size: 0.75rem;
             font-family: monospace;
             color: hsl(var(--muted-foreground));
+            white-space: pre-wrap;
         }
         
         /* Mobile optimizations */
@@ -265,72 +266,105 @@
     <div id="sbir-widget-root">
         <div class="sbir-widget">
             <div class="loading">Initializing widget...</div>
+            <div class="debug">Widget starting up...</div>
         </div>
     </div>
     
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
+        // Immediate debug output
         console.log('🚀 SBIR Widget HTML loaded successfully');
         console.log('📍 Current URL:', window.location.href);
-        console.log('🔧 Supabase library loaded:', typeof window.supabase);
+        console.log('🌐 User Agent:', navigator.userAgent);
         
-        // SBIR Widget implementation with enhanced debugging
+        // Add visual debug output
+        function addDebugMessage(message) {
+            const debugElement = document.querySelector('.debug');
+            if (debugElement) {
+                debugElement.textContent += '\n' + message;
+            }
+            console.log(message);
+        }
+        
+        addDebugMessage('Script execution started');
+        
+        // Check if we can access the container
+        const container = document.getElementById('sbir-widget-root');
+        if (container) {
+            addDebugMessage('✅ Container found');
+        } else {
+            addDebugMessage('❌ Container not found');
+        }
+        
+        // Load Supabase dynamically with error handling
+        function loadSupabase() {
+            return new Promise((resolve, reject) => {
+                addDebugMessage('Loading Supabase library...');
+                
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/@supabase/supabase-js@2';
+                script.onload = () => {
+                    addDebugMessage('✅ Supabase library loaded');
+                    if (window.supabase) {
+                        resolve(window.supabase);
+                    } else {
+                        reject(new Error('Supabase not available after loading'));
+                    }
+                };
+                script.onerror = () => {
+                    addDebugMessage('❌ Failed to load Supabase library');
+                    reject(new Error('Failed to load Supabase'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        // SBIR Widget implementation
         class SBIRWidget {
             constructor(containerId) {
-                console.log('🏗️ Constructing SBIRWidget...');
+                addDebugMessage('🏗️ Constructing SBIRWidget');
                 this.container = document.getElementById(containerId);
                 
                 if (!this.container) {
-                    console.error('❌ Container element not found:', containerId);
+                    addDebugMessage('❌ Container element not found: ' + containerId);
                     return;
                 }
-                
-                console.log('✅ Container found:', this.container);
                 
                 this.listings = [];
                 this.loading = true;
                 this.error = null;
-                this.debugInfo = [];
-                
-                // Check if Supabase is available
-                if (!window.supabase) {
-                    console.error('❌ Supabase library not loaded');
-                    this.error = 'Supabase library not loaded';
-                    this.render();
-                    return;
-                }
-                
-                // Initialize Supabase client with correct URL and key
-                try {
-                    this.supabase = window.supabase.createClient(
-                        'https://amhznlnhrrugxatbeayo.supabase.co',
-                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
-                    );
-                    console.log('✅ Supabase client initialized:', this.supabase);
-                } catch (err) {
-                    console.error('❌ Failed to initialize Supabase client:', err);
-                    this.error = 'Failed to initialize database connection';
-                    this.render();
-                    return;
-                }
+                this.debugMessages = ['Widget initialized'];
                 
                 this.init();
             }
             
             async init() {
-                console.log('🔄 Initializing SBIR Widget...');
-                this.render();
-                await this.fetchListings();
-                this.render();
+                try {
+                    addDebugMessage('🔄 Initializing widget...');
+                    this.render();
+                    
+                    // Load Supabase
+                    const supabase = await loadSupabase();
+                    this.supabase = supabase.createClient(
+                        'https://amhznlnhrrugxatbeayo.supabase.co',
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+                    );
+                    addDebugMessage('✅ Supabase client created');
+                    
+                    await this.fetchListings();
+                    this.render();
+                } catch (error) {
+                    addDebugMessage('❌ Widget initialization failed: ' + error.message);
+                    this.error = 'Widget initialization failed: ' + error.message;
+                    this.loading = false;
+                    this.render();
+                }
             }
             
             async fetchListings() {
                 try {
-                    console.log('🔄 Fetching homepage listings for widget...');
-                    this.debugInfo.push('Started fetching listings...');
+                    addDebugMessage('🔄 Fetching listings...');
                     
                     // Get featured listings first
-                    console.log('📡 Querying featured listings...');
                     const { data: featuredData, error: featuredError } = await this.supabase
                         .from('featured_listings')
                         .select(`
@@ -348,13 +382,11 @@
                         .limit(3);
 
                     if (featuredError) {
-                        console.error('❌ Error fetching featured listings:', featuredError);
-                        this.debugInfo.push('Featured listings error: ' + featuredError.message);
+                        addDebugMessage('⚠️ Featured listings error: ' + featuredError.message);
                         throw featuredError;
                     }
 
-                    console.log('📊 Featured data received:', featuredData);
-                    this.debugInfo.push('Featured listings: ' + (featuredData?.length || 0));
+                    addDebugMessage('📊 Featured listings received: ' + (featuredData?.length || 0));
 
                     let listings = [];
 
@@ -362,10 +394,10 @@
                     if (featuredData && featuredData.length > 0) {
                         listings = featuredData.map(item => ({
                             ...item.sbir_listings,
-                            value: item.sbir_listings.value / 100, // Convert cents to dollars
+                            value: item.sbir_listings.value / 100,
                             deadline: new Date(item.sbir_listings.deadline).toISOString().split('T')[0],
                         }));
-                        console.log('✅ Featured listings processed:', listings.length);
+                        addDebugMessage('✅ Featured listings processed: ' + listings.length);
                     }
 
                     // If we need more listings, fetch newest
@@ -373,8 +405,7 @@
                         const neededCount = 3 - listings.length;
                         const featuredIds = listings.map(listing => listing.id);
                         
-                        console.log('🔄 Fetching newest listings to fill quota...', neededCount);
-                        this.debugInfo.push('Fetching newest listings: ' + neededCount);
+                        addDebugMessage('🔄 Fetching newest listings: ' + neededCount);
 
                         let query = this.supabase
                             .from('sbir_listings')
@@ -396,32 +427,28 @@
                         const { data: newestData, error: newestError } = await query;
 
                         if (newestError) {
-                            console.error('❌ Error fetching newest listings:', newestError);
-                            this.debugInfo.push('Newest listings error: ' + newestError.message);
+                            addDebugMessage('⚠️ Newest listings error: ' + newestError.message);
                             throw newestError;
                         }
 
-                        console.log('📊 Newest data received:', newestData);
-                        this.debugInfo.push('Newest listings: ' + (newestData?.length || 0));
+                        addDebugMessage('📊 Newest listings received: ' + (newestData?.length || 0));
 
                         const newestListings = newestData?.map(listing => ({
                             ...listing,
-                            value: listing.value / 100, // Convert cents to dollars
+                            value: listing.value / 100,
                             deadline: new Date(listing.deadline).toISOString().split('T')[0],
                         })) || [];
 
                         listings = [...listings, ...newestListings];
                     }
 
-                    this.listings = listings.slice(0, 3); // Ensure we only have 3
+                    this.listings = listings.slice(0, 3);
                     this.loading = false;
-                    console.log('✅ Widget listings fetched:', this.listings.length);
-                    this.debugInfo.push('Final listings count: ' + this.listings.length);
+                    addDebugMessage('✅ Final listings count: ' + this.listings.length);
                     
                 } catch (error) {
-                    console.error('❌ Error fetching listings for widget:', error);
-                    this.error = 'Failed to load opportunities: ' + (error.message || error);
-                    this.debugInfo.push('Error: ' + (error.message || error));
+                    addDebugMessage('❌ Fetch error: ' + error.message);
+                    this.error = 'Failed to load opportunities: ' + error.message;
                     this.loading = false;
                 }
             }
@@ -444,12 +471,6 @@
             
             render() {
                 let listingsHTML = '';
-                let debugHTML = '';
-                
-                // Add debug information
-                if (this.debugInfo.length > 0) {
-                    debugHTML = '<div class="debug">Debug: ' + this.debugInfo.join(' | ') + '</div>';
-                }
                 
                 if (this.loading) {
                     listingsHTML = '<div class="loading">Loading opportunities...</div>';
@@ -484,7 +505,7 @@
                 }
                 
                 if (!this.container) {
-                    console.error('❌ Container lost during render');
+                    addDebugMessage('❌ Container lost during render');
                     return;
                 }
                 
@@ -507,8 +528,6 @@
                             </button>
                         </div>
                         
-                        ${debugHTML}
-                        
                         <div class="listings">
                             ${listingsHTML}
                         </div>
@@ -518,22 +537,31 @@
                                 View All Opportunities →
                             </a>
                         </div>
+                        
+                        <div class="debug">${this.debugMessages.join('\n')}</div>
                     </div>
                 `;
                 
-                console.log('🎨 Widget rendered successfully');
+                addDebugMessage('🎨 Widget rendered');
             }
         }
         
-        // Wait for DOM to be ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('🚀 DOM ready, starting SBIR Widget initialization...');
+        // Initialize widget when DOM is ready
+        function initializeWidget() {
+            addDebugMessage('🚀 Starting widget initialization...');
+            try {
                 new SBIRWidget('sbir-widget-root');
-            });
+            } catch (error) {
+                addDebugMessage('❌ Widget creation failed: ' + error.message);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            addDebugMessage('⏳ Waiting for DOM...');
+            document.addEventListener('DOMContentLoaded', initializeWidget);
         } else {
-            console.log('🚀 DOM already ready, starting SBIR Widget initialization...');
-            new SBIRWidget('sbir-widget-root');
+            addDebugMessage('✅ DOM ready, initializing...');
+            initializeWidget();
         }
     </script>
 </body>
