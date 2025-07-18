@@ -7,7 +7,7 @@ import { Copy, Check } from 'lucide-react';
 const EmbedCodeSection = () => {
   const [copied, setCopied] = useState(false);
 
-  const embedCode = `<iframe src="https://sbirtech.lovableproject.com/embed.html" width="400" height="600" frameborder="0" scrolling="no" style="border: 1px solid #ddd; border-radius: 8px;" title="SBIR Tech Marketplace Widget"></iframe>`;
+  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="400" height="600" frameborder="0" scrolling="no" style="border: 1px solid #ddd; border-radius: 8px;" title="SBIR Tech Marketplace Widget"></iframe>`;
 
   const handleCopy = async () => {
     try {
@@ -79,6 +79,7 @@ const EmbedCodeSection = () => {
             <p className="text-sm text-blue-700">
               The widget is self-contained and will automatically fetch the latest opportunities. 
               You can adjust the width and height attributes as needed for your layout.
+              The widget should now load correctly from the updated URL.
             </p>
           </div>
         </CardContent>
