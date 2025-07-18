@@ -5,9 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SBIR Tech Marketplace Widget</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/lucide-react@latest/dist/esm/icons/calendar.js" type="module"></script>
     <style>
         /* Embedded styles matching the main site */
         .sbir-widget {
@@ -199,6 +196,13 @@
             font-size: 0.875rem;
         }
         
+        .sbir-widget .error {
+            text-align: center;
+            padding: 2rem 0;
+            color: hsl(0 60% 60%);
+            font-size: 0.875rem;
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 768px) {
             .sbir-widget {
@@ -242,13 +246,22 @@
 <body>
     <div id="sbir-widget-root"></div>
     
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
-        // Simple widget implementation without React dependencies
+        // SBIR Widget implementation with real API connection
         class SBIRWidget {
             constructor(containerId) {
                 this.container = document.getElementById(containerId);
                 this.listings = [];
                 this.loading = true;
+                this.error = null;
+                
+                // Initialize Supabase client
+                this.supabase = window.supabase.createClient(
+                    'https://hlszmxgzqpjvcuakdxdi.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhsc3pteGd6cXBqdmN1YWtkeGRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg2Mzg5MjYsImV4cCI6MjAzNDIxNDkyNn0.hqPbp0f9hnrKLMq32-mUZa5JWqrUkL2bLK2XuQHKOJQ'
+                );
+                
                 this.init();
             }
             
@@ -260,47 +273,86 @@
             
             async fetchListings() {
                 try {
-                    // In a real implementation, this would fetch from your API
-                    // For now, we'll use mock data
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    this.listings = [
-                        {
-                            id: '1',
-                            title: 'Advanced AI Defense System',
-                            agency: 'Department of Defense',
-                            phase: 'Phase II',
-                            status: 'Active',
-                            value: 750000,
-                            deadline: '2025-03-15',
-                            description: 'Development of next-generation artificial intelligence systems for defense applications.',
-                            category: 'Defense Technology'
-                        },
-                        {
-                            id: '2',
-                            title: 'Renewable Energy Storage Solution',
-                            agency: 'Department of Energy',
-                            phase: 'Phase I',
-                            status: 'Active',
-                            value: 500000,
-                            deadline: '2025-04-01',
-                            description: 'Innovative battery technology for large-scale renewable energy storage.',
-                            category: 'Energy'
-                        },
-                        {
-                            id: '3',
-                            title: 'Medical Device Innovation',
-                            agency: 'NIH',
-                            phase: 'Phase III',
-                            status: 'Active',
-                            value: 1200000,
-                            deadline: '2025-02-28',
-                            description: 'Revolutionary medical device for early disease detection and treatment.',
-                            category: 'Healthcare'
+                    console.log('🔄 Fetching homepage listings for widget...');
+                    
+                    // Get featured listings first
+                    const { data: featuredData, error: featuredError } = await this.supabase
+                        .from('featured_listings')
+                        .select(`
+                            *,
+                            sbir_listings!inner(
+                                *,
+                                profiles!fk_sbir_listings_user_id(
+                                    full_name,
+                                    email
+                                )
+                            )
+                        `)
+                        .eq('sbir_listings.status', 'Active')
+                        .order('display_order', { ascending: true })
+                        .limit(3);
+
+                    if (featuredError) {
+                        console.error('❌ Error fetching featured listings:', featuredError);
+                        throw featuredError;
+                    }
+
+                    let listings = [];
+
+                    // Extract the listing data and format it
+                    if (featuredData && featuredData.length > 0) {
+                        listings = featuredData.map(item => ({
+                            ...item.sbir_listings,
+                            value: item.sbir_listings.value / 100, // Convert cents to dollars
+                            deadline: new Date(item.sbir_listings.deadline).toISOString().split('T')[0],
+                        }));
+                    }
+
+                    // If we need more listings, fetch newest
+                    if (listings.length < 3) {
+                        const neededCount = 3 - listings.length;
+                        const featuredIds = listings.map(listing => listing.id);
+                        
+                        let query = this.supabase
+                            .from('sbir_listings')
+                            .select(`
+                                *,
+                                profiles!fk_sbir_listings_user_id(
+                                    full_name,
+                                    email
+                                )
+                            `)
+                            .eq('status', 'Active')
+                            .order('submitted_at', { ascending: false })
+                            .limit(neededCount);
+
+                        if (featuredIds.length > 0) {
+                            query = query.not('id', 'in', `(${featuredIds.join(',')})`);
                         }
-                    ];
+
+                        const { data: newestData, error: newestError } = await query;
+
+                        if (newestError) {
+                            console.error('❌ Error fetching newest listings:', newestError);
+                            throw newestError;
+                        }
+
+                        const newestListings = newestData?.map(listing => ({
+                            ...listing,
+                            value: listing.value / 100, // Convert cents to dollars
+                            deadline: new Date(listing.deadline).toISOString().split('T')[0],
+                        })) || [];
+
+                        listings = [...listings, ...newestListings];
+                    }
+
+                    this.listings = listings.slice(0, 3); // Ensure we only have 3
                     this.loading = false;
+                    console.log('✅ Widget listings fetched:', this.listings.length);
+                    
                 } catch (error) {
-                    console.error('Error fetching listings:', error);
+                    console.error('❌ Error fetching listings for widget:', error);
+                    this.error = 'Failed to load opportunities';
                     this.loading = false;
                 }
             }
@@ -322,11 +374,16 @@
             }
             
             render() {
-                const listingsHTML = this.loading ? 
-                    '<div class="loading">Loading opportunities...</div>' :
-                    this.listings.length === 0 ?
-                    '<div class="loading">No opportunities available</div>' :
-                    this.listings.map(listing => `
+                let listingsHTML = '';
+                
+                if (this.loading) {
+                    listingsHTML = '<div class="loading">Loading opportunities...</div>';
+                } else if (this.error) {
+                    listingsHTML = `<div class="error">${this.error}</div>`;
+                } else if (this.listings.length === 0) {
+                    listingsHTML = '<div class="loading">No opportunities available</div>';
+                } else {
+                    listingsHTML = this.listings.map(listing => `
                         <div class="listing-card">
                             <div class="listing-header">
                                 <span class="badge badge-primary">${listing.phase}</span>
@@ -343,17 +400,18 @@
                             </div>
                             <div style="margin-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
                                 <small style="color: hsl(var(--muted-foreground));">📅 ${this.formatDate(listing.deadline)}</small>
-                                <button class="btn btn-outline" style="flex: none; padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="window.open('https://sbirtech.lovableproject.com/listing/${listing.id}', '_self')">
+                                <button class="btn btn-outline" style="flex: none; padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="window.open('https://sbirtech.lovableproject.com/listing/${listing.id}', '_blank')">
                                     📄 View Details
                                 </button>
                             </div>
                         </div>
                     `).join('');
+                }
                 
                 this.container.innerHTML = `
                     <div class="sbir-widget">
                         <div class="logo-section">
-                            <img src="https://sbirtech.lovableproject.com/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" alt="SBIR Logo" class="logo">
+                            <div class="logo" style="background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iOCIgZmlsbD0iIzI0NjNFQiIvPgo8cGF0aCBkPSJNMjQgMTJMMzIgMzZIMTZMMjQgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K') center/contain no-repeat;"></div>
                             <h2 class="title">
                                 <span class="text-gradient">The SBIR Tech </span>
                                 <span>Marketplace</span>
@@ -361,10 +419,10 @@
                         </div>
                         
                         <div class="buttons">
-                            <button class="btn btn-primary" onclick="window.open('https://sbirtech.lovableproject.com/', '_self')">
+                            <button class="btn btn-primary" onclick="window.open('https://sbirtech.lovableproject.com/', '_blank')">
                                 Explore
                             </button>
-                            <button class="btn btn-outline" onclick="window.open('https://sbirtech.lovableproject.com/', '_self')">
+                            <button class="btn btn-outline" onclick="window.open('https://sbirtech.lovableproject.com/', '_blank')">
                                 Learn More
                             </button>
                         </div>
@@ -374,7 +432,7 @@
                         </div>
                         
                         <div class="view-all">
-                            <a href="#" class="view-all-link" onclick="window.open('https://sbirtech.lovableproject.com/?view=marketplace', '_self')">
+                            <a href="#" class="view-all-link" onclick="window.open('https://sbirtech.lovableproject.com/?view=marketplace', '_blank')">
                                 View All Opportunities →
                             </a>
                         </div>
