@@ -44,6 +44,14 @@
             width: 3rem;
             height: 3rem;
             margin: 0 auto 0.5rem;
+            background-color: hsl(var(--primary));
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
         }
         
         .sbir-widget .title {
@@ -248,7 +256,7 @@
     
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
-        // SBIR Widget implementation with real API connection
+        // SBIR Widget implementation with correct API connection
         class SBIRWidget {
             constructor(containerId) {
                 this.container = document.getElementById(containerId);
@@ -256,16 +264,17 @@
                 this.loading = true;
                 this.error = null;
                 
-                // Initialize Supabase client
+                // Initialize Supabase client with correct URL and key
                 this.supabase = window.supabase.createClient(
-                    'https://hlszmxgzqpjvcuakdxdi.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhsc3pteGd6cXBqdmN1YWtkeGRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg2Mzg5MjYsImV4cCI6MjAzNDIxNDkyNn0.hqPbp0f9hnrKLMq32-mUZa5JWqrUkL2bLK2XuQHKOJQ'
+                    'https://amhznlnhrrugxatbeayo.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
                 );
                 
                 this.init();
             }
             
             async init() {
+                console.log('🔄 Initializing SBIR Widget...');
                 this.render();
                 await this.fetchListings();
                 this.render();
@@ -411,7 +420,7 @@
                 this.container.innerHTML = `
                     <div class="sbir-widget">
                         <div class="logo-section">
-                            <div class="logo" style="background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iOCIgZmlsbD0iIzI0NjNFQiIvPgo8cGF0aCBkPSJNMjQgMTJMMzIgMzZIMTZMMjQgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K') center/contain no-repeat;"></div>
+                            <div class="logo">ST</div>
                             <h2 class="title">
                                 <span class="text-gradient">The SBIR Tech </span>
                                 <span>Marketplace</span>
@@ -442,6 +451,7 @@
         }
         
         // Initialize the widget
+        console.log('🚀 Starting SBIR Widget initialization...');
         new SBIRWidget('sbir-widget-root');
     </script>
 </body>
