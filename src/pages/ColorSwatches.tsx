@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { colorSwatches, componentColors, type ColorSwatch } from '@/utils/colorSwatches';
+import EmbedCodeSection from '@/components/EmbedCodeSection';
 
 const ColorSwatchCard = ({ swatch }: { swatch: ColorSwatch }) => {
   const [hex, setHex] = useState('#000000');
@@ -196,6 +196,11 @@ const ColorSwatches = () => {
               </CardContent>
             </Card>
           </section>
+
+          {/* Embed Widget Section */}
+          <div className="mt-12">
+            <EmbedCodeSection />
+          </div>
         </div>
       </div>
     </div>

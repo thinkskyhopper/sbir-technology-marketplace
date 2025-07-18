@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBIR Tech Marketplace Widget</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/esm/icons/calendar.js" type="module"></script>
+    <style>
+        /* Embedded styles matching the main site */
+        .sbir-widget {
+            --background: 220 20% 14%;
+            --foreground: 220 20% 94%;
+            --card: 220 20% 16%;
+            --card-foreground: 220 20% 94%;
+            --primary: 217 91% 65%;
+            --primary-foreground: 220 20% 10%;
+            --secondary: 220 20% 20%;
+            --secondary-foreground: 220 20% 94%;
+            --muted: 220 20% 22%;
+            --muted-foreground: 220 20% 75%;
+            --accent: 220 20% 24%;
+            --accent-foreground: 220 20% 94%;
+            --border: 220 20% 26%;
+            --input: 220 20% 26%;
+            --ring: 217 91% 65%;
+            --radius: 0.375rem;
+            
+            max-width: 24rem;
+            margin: 0 auto;
+            background-color: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: hsl(var(--foreground));
+        }
+        
+        .sbir-widget .logo-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .sbir-widget .logo {
+            width: 3rem;
+            height: 3rem;
+            margin: 0 auto 0.5rem;
+        }
+        
+        .sbir-widget .title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .sbir-widget .text-gradient {
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 80%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .sbir-widget .buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .sbir-widget .btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .sbir-widget .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        
+        .sbir-widget .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+        
+        .sbir-widget .btn-outline {
+            background-color: transparent;
+            color: hsl(var(--foreground));
+            border: 1px solid hsl(var(--border));
+        }
+        
+        .sbir-widget .btn-outline:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+        
+        .sbir-widget .listings {
+            margin-bottom: 1rem;
+        }
+        
+        .sbir-widget .listing-card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .sbir-widget .listing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sbir-widget .badge {
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+        
+        .sbir-widget .badge-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        
+        .sbir-widget .badge-active {
+            background-color: hsl(120 60% 50%);
+            color: white;
+        }
+        
+        .sbir-widget .listing-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 0.25rem 0;
+            color: hsl(var(--card-foreground));
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+        
+        .sbir-widget .listing-agency {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.5rem;
+        }
+        
+        .sbir-widget .listing-description {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .sbir-widget .listing-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+        
+        .sbir-widget .listing-value {
+            font-weight: 600;
+            color: hsl(120 60% 50%);
+        }
+        
+        .sbir-widget .view-all {
+            text-align: center;
+        }
+        
+        .sbir-widget .view-all-link {
+            color: hsl(var(--primary));
+            text-decoration: underline;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .sbir-widget .view-all-link:hover {
+            color: hsl(var(--primary) / 0.8);
+        }
+        
+        .sbir-widget .loading {
+            text-align: center;
+            padding: 2rem 0;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .sbir-widget {
+                max-width: 100%;
+                padding: 0.75rem;
+            }
+            
+            .sbir-widget .title {
+                font-size: 1rem;
+            }
+            
+            .sbir-widget .btn {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .sbir-widget {
+                --background: 220 25% 8%;
+                --foreground: 220 25% 98%;
+                --card: 220 25% 10%;
+                --card-foreground: 220 25% 98%;
+                --muted: 220 25% 15%;
+                --muted-foreground: 220 25% 90%;
+                --border: 220 25% 35%;
+                --primary: 217 91% 70%;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .sbir-widget * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="sbir-widget-root"></div>
+    
+    <script>
+        // Simple widget implementation without React dependencies
+        class SBIRWidget {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.listings = [];
+                this.loading = true;
+                this.init();
+            }
+            
+            async init() {
+                this.render();
+                await this.fetchListings();
+                this.render();
+            }
+            
+            async fetchListings() {
+                try {
+                    // In a real implementation, this would fetch from your API
+                    // For now, we'll use mock data
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    this.listings = [
+                        {
+                            id: '1',
+                            title: 'Advanced AI Defense System',
+                            agency: 'Department of Defense',
+                            phase: 'Phase II',
+                            status: 'Active',
+                            value: 750000,
+                            deadline: '2025-03-15',
+                            description: 'Development of next-generation artificial intelligence systems for defense applications.',
+                            category: 'Defense Technology'
+                        },
+                        {
+                            id: '2',
+                            title: 'Renewable Energy Storage Solution',
+                            agency: 'Department of Energy',
+                            phase: 'Phase I',
+                            status: 'Active',
+                            value: 500000,
+                            deadline: '2025-04-01',
+                            description: 'Innovative battery technology for large-scale renewable energy storage.',
+                            category: 'Energy'
+                        },
+                        {
+                            id: '3',
+                            title: 'Medical Device Innovation',
+                            agency: 'NIH',
+                            phase: 'Phase III',
+                            status: 'Active',
+                            value: 1200000,
+                            deadline: '2025-02-28',
+                            description: 'Revolutionary medical device for early disease detection and treatment.',
+                            category: 'Healthcare'
+                        }
+                    ];
+                    this.loading = false;
+                } catch (error) {
+                    console.error('Error fetching listings:', error);
+                    this.loading = false;
+                }
+            }
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                }).format(amount);
+            }
+            
+            formatDate(dateString) {
+                const date = new Date(dateString + 'T00:00:00');
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+            
+            render() {
+                const listingsHTML = this.loading ? 
+                    '<div class="loading">Loading opportunities...</div>' :
+                    this.listings.length === 0 ?
+                    '<div class="loading">No opportunities available</div>' :
+                    this.listings.map(listing => `
+                        <div class="listing-card">
+                            <div class="listing-header">
+                                <span class="badge badge-primary">${listing.phase}</span>
+                                <span class="badge ${listing.status === 'Active' ? 'badge-active' : ''}">${listing.status}</span>
+                            </div>
+                            <h3 class="listing-title">${listing.title}</h3>
+                            <div class="listing-agency">🏢 ${listing.agency}</div>
+                            <p class="listing-description">${listing.description}</p>
+                            <div class="listing-meta">
+                                <div>
+                                    <span class="listing-value">$${this.formatCurrency(listing.value)}</span>
+                                    <span class="badge" style="margin-left: 0.5rem; background: hsl(var(--muted)); color: hsl(var(--muted-foreground));">${listing.category}</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <small style="color: hsl(var(--muted-foreground));">📅 ${this.formatDate(listing.deadline)}</small>
+                                <button class="btn btn-outline" style="flex: none; padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="window.open('https://sbirtech.lovableproject.com/listing/${listing.id}', '_self')">
+                                    📄 View Details
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                
+                this.container.innerHTML = `
+                    <div class="sbir-widget">
+                        <div class="logo-section">
+                            <img src="https://sbirtech.lovableproject.com/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" alt="SBIR Logo" class="logo">
+                            <h2 class="title">
+                                <span class="text-gradient">The SBIR Tech </span>
+                                <span>Marketplace</span>
+                            </h2>
+                        </div>
+                        
+                        <div class="buttons">
+                            <button class="btn btn-primary" onclick="window.open('https://sbirtech.lovableproject.com/', '_self')">
+                                Explore
+                            </button>
+                            <button class="btn btn-outline" onclick="window.open('https://sbirtech.lovableproject.com/', '_self')">
+                                Learn More
+                            </button>
+                        </div>
+                        
+                        <div class="listings">
+                            ${listingsHTML}
+                        </div>
+                        
+                        <div class="view-all">
+                            <a href="#" class="view-all-link" onclick="window.open('https://sbirtech.lovableproject.com/?view=marketplace', '_self')">
+                                View All Opportunities →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Initialize the widget
+        new SBIRWidget('sbir-widget-root');
+    </script>
+</body>
+</html>
