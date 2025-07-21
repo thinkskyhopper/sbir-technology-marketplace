@@ -17,6 +17,7 @@
             background-color: #0f172a;
             color: #f1f5f9;
             padding: 16px;
+            min-height: 100vh;
         }
         
         .widget {
@@ -27,16 +28,6 @@
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            min-height: 200px;
-        }
-        
-        .debug-info {
-            background-color: #dc2626;
-            color: white;
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            font-size: 12px;
         }
         
         .header {
@@ -102,11 +93,17 @@
             border: 1px solid #475569;
         }
         
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
         .status {
             padding: 10px;
             margin: 10px 0;
             border-radius: 6px;
             font-size: 14px;
+            text-align: center;
         }
         
         .status-loading {
@@ -142,7 +139,7 @@
         .listing-meta {
             font-size: 12px;
             color: #94a3b8;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         
         .view-all {
@@ -156,229 +153,119 @@
             font-size: 14px;
             font-weight: 500;
         }
+        
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="widget">
-        <div id="debug-container"></div>
-        
         <div class="header">
             <div class="logo">ST</div>
             <h2 class="title">
-                <span class="title-gradient">The SBIR Tech </span>
-                <span>Marketplace</span>
+                <span class="title-gradient">SBIR Tech</span>
+                <span> Marketplace</span>
             </h2>
         </div>
         
         <div class="buttons">
-            <a href="https://sbirtech.lovableproject.com/" target="_blank" class="btn btn-primary">
+            <a href="https://sbir-technology-marketplace.lovable.app/" target="_blank" class="btn btn-primary">
                 Explore
             </a>
-            <a href="https://sbirtech.lovableproject.com/" target="_blank" class="btn btn-outline">
+            <a href="https://sbir-technology-marketplace.lovable.app/" target="_blank" class="btn btn-outline">
                 Learn More
             </a>
         </div>
         
         <div id="status-container">
-            <div class="status status-loading">Initializing widget...</div>
+            <div class="status status-loading">Loading opportunities...</div>
         </div>
         
         <div id="listings-container"></div>
         
         <div class="view-all">
-            <a href="https://sbirtech.lovableproject.com/?view=marketplace" target="_blank" class="view-all-link">
+            <a href="https://sbir-technology-marketplace.lovable.app/?view=marketplace" target="_blank" class="view-all-link">
                 View All Opportunities →
             </a>
         </div>
     </div>
     
+    <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/main.js"></script>
     <script>
-        console.log('🚀 Widget script starting execution...');
+        console.log('Widget initializing...');
         
-        // Debug function to show messages in the widget
-        function showDebug(message) {
-            console.log('DEBUG:', message);
-            const debugContainer = document.getElementById('debug-container');
-            if (debugContainer) {
-                debugContainer.innerHTML = `<div class="debug-info">DEBUG: ${message}</div>`;
-            }
-        }
-        
-        // Status update function
         function updateStatus(message, type = 'loading') {
-            console.log('STATUS:', message);
             const statusContainer = document.getElementById('status-container');
             if (statusContainer) {
                 statusContainer.innerHTML = `<div class="status status-${type}">${message}</div>`;
             }
         }
         
-        // Test basic DOM manipulation
-        showDebug('Script loaded, DOM manipulation working');
-        updateStatus('Script loaded successfully', 'success');
+        function renderListings(listings) {
+            const container = document.getElementById('listings-container');
+            if (!container || !listings || listings.length === 0) {
+                updateStatus('No opportunities available', 'error');
+                return;
+            }
+            
+            const listingsHTML = listings.map(listing => `
+                <div class="listing">
+                    <h3 class="listing-title">${listing.title || 'Untitled Opportunity'}</h3>
+                    <div class="listing-meta">
+                        🏢 ${listing.agency || 'Unknown Agency'}
+                    </div>
+                    <div class="listing-meta">
+                        💰 $${listing.value ? Number(listing.value).toLocaleString() : 'TBD'}
+                    </div>
+                    <div class="listing-meta">
+                        📅 Due: ${listing.deadline || 'Open'}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = listingsHTML;
+            updateStatus(`${listings.length} opportunities loaded`, 'success');
+        }
         
-        // Check if Supabase is available
-        console.log('🔍 Checking Supabase availability...');
-        updateStatus('Checking Supabase...', 'loading');
-        
-        // Load Supabase
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@supabase/supabase-js@2.45.4/dist/main.js';
-        script.onload = function() {
-            console.log('✅ Supabase script loaded');
-            showDebug('Supabase script loaded');
-            initializeWidget();
-        };
-        script.onerror = function() {
-            console.error('❌ Failed to load Supabase script');
-            showDebug('Failed to load Supabase script');
-            updateStatus('Failed to load Supabase library', 'error');
-        };
-        document.head.appendChild(script);
-        
-        function initializeWidget() {
+        async function loadData() {
             try {
-                console.log('🎯 Initializing widget...');
-                updateStatus('Initializing Supabase client...', 'loading');
-                
-                // Check if Supabase is available
                 if (typeof window.supabase === 'undefined') {
-                    throw new Error('Supabase not available on window object');
+                    throw new Error('Supabase not available');
                 }
                 
-                showDebug('Creating Supabase client');
-                
-                // Initialize Supabase client
                 const supabase = window.supabase.createClient(
                     'https://amhznlnhrrugxatbeayo.supabase.co',
                     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
                 );
                 
-                console.log('✅ Supabase client created:', supabase);
-                showDebug('Supabase client created successfully');
-                updateStatus('Fetching listings...', 'loading');
-                
-                // Test simple query first
-                testConnection(supabase);
-                
-            } catch (error) {
-                console.error('💥 Widget initialization error:', error);
-                showDebug(`Initialization error: ${error.message}`);
-                updateStatus(`Initialization error: ${error.message}`, 'error');
-            }
-        }
-        
-        async function testConnection(supabase) {
-            try {
-                console.log('🔗 Testing Supabase connection...');
-                showDebug('Testing database connection');
-                
-                // Simple test query
-                const { data, error } = await supabase
-                    .from('sbir_listings')
-                    .select('id, title')
-                    .limit(1);
-                
-                if (error) {
-                    console.error('❌ Connection test failed:', error);
-                    showDebug(`Connection test failed: ${error.message}`);
-                    updateStatus(`Database error: ${error.message}`, 'error');
-                    return;
-                }
-                
-                console.log('✅ Connection test successful, sample data:', data);
-                showDebug(`Connection successful. Found ${data ? data.length : 0} test records`);
-                
-                // Now fetch real data
-                fetchListings(supabase);
-                
-            } catch (error) {
-                console.error('💥 Connection test error:', error);
-                showDebug(`Connection test error: ${error.message}`);
-                updateStatus(`Connection error: ${error.message}`, 'error');
-            }
-        }
-        
-        async function fetchListings(supabase) {
-            try {
-                console.log('📡 Fetching listings...');
-                updateStatus('Loading opportunities...', 'loading');
+                updateStatus('Fetching data...', 'loading');
                 
                 const { data, error } = await supabase
                     .from('sbir_listings')
-                    .select('*')
+                    .select('id, title, agency, value, deadline, status')
                     .eq('status', 'Active')
                     .order('created_at', { ascending: false })
                     .limit(3);
                 
                 if (error) {
-                    console.error('❌ Fetch error:', error);
-                    showDebug(`Fetch error: ${error.message}`);
-                    updateStatus(`Failed to load data: ${error.message}`, 'error');
-                    return;
-                }
-                
-                console.log('✅ Data fetched successfully:', data);
-                showDebug(`Successfully loaded ${data ? data.length : 0} listings`);
-                
-                if (!data || data.length === 0) {
-                    updateStatus('No active opportunities found', 'error');
-                    return;
+                    throw error;
                 }
                 
                 renderListings(data);
-                updateStatus(`Loaded ${data.length} opportunities`, 'success');
-                
-                // Hide debug after success
-                setTimeout(() => {
-                    const debugContainer = document.getElementById('debug-container');
-                    if (debugContainer) {
-                        debugContainer.innerHTML = '';
-                    }
-                }, 3000);
                 
             } catch (error) {
-                console.error('💥 Fetch error:', error);
-                showDebug(`Fetch error: ${error.message}`);
-                updateStatus(`Network error: ${error.message}`, 'error');
+                console.error('Load error:', error);
+                updateStatus('Unable to load data', 'error');
             }
         }
         
-        function renderListings(listings) {
-            try {
-                console.log('🎨 Rendering listings...');
-                const container = document.getElementById('listings-container');
-                
-                if (!container) {
-                    throw new Error('Listings container not found');
-                }
-                
-                const listingsHTML = listings.map(listing => `
-                    <div class="listing">
-                        <h3 class="listing-title">${listing.title || 'Untitled'}</h3>
-                        <div class="listing-meta">
-                            🏢 ${listing.agency || 'Unknown Agency'} | 
-                            💰 $${listing.value ? Number(listing.value).toLocaleString() : '0'} | 
-                            📅 ${listing.deadline || 'No deadline'}
-                        </div>
-                        <div class="listing-meta">
-                            Phase: ${listing.phase || 'N/A'} | 
-                            Category: ${listing.category || 'General'}
-                        </div>
-                    </div>
-                `).join('');
-                
-                container.innerHTML = listingsHTML;
-                console.log('✅ Listings rendered successfully');
-                
-            } catch (error) {
-                console.error('💥 Render error:', error);
-                showDebug(`Render error: ${error.message}`);
-                updateStatus(`Render error: ${error.message}`, 'error');
-            }
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadData);
+        } else {
+            loadData();
         }
-        
-        console.log('✅ Widget script fully loaded and ready');
     </script>
 </body>
 </html>
