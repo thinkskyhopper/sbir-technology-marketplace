@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,6 +45,15 @@
             width: auto;
             display: block;
             margin: 0 auto;
+        }
+        
+        .logo-link {
+            display: inline-block;
+            transition: opacity 0.2s ease;
+        }
+        
+        .logo-link:hover {
+            opacity: 0.8;
         }
         
         .buttons {
@@ -124,10 +134,13 @@
             margin-bottom: 6px;
             color: hsl(220 20% 94%);
             line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .listing-title:hover {
+            color: hsl(217 91% 65%);
+            text-decoration: underline;
         }
         
         .listing-meta {
@@ -207,12 +220,14 @@
 <body>
     <div class="widget">
         <div class="header">
-            <img src="/lovable-uploads/472a2ddc-0008-40c4-8006-3380082dafae.png" alt="SBIR Tech Marketplace" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <a href="https://thesbirtechmarketplace.com/" target="_blank" class="logo-link">
+                <img src="/lovable-uploads/472a2ddc-0008-40c4-8006-3380082dafae.png" alt="SBIR Tech Marketplace" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            </a>
             <div style="display:none; color: hsl(217 91% 65%); font-size: 18px; font-weight: 600;">SBIR Tech Marketplace</div>
         </div>
         
         <div class="buttons">
-            <a href="https://thesbirtechmarketplace.com/?view=marketplace" target="_blank" class="btn btn-primary">
+            <a href="https://thesbirtechmarketplace.com/" target="_blank" class="btn btn-primary">
                 Explore
             </a>
             <a href="https://thesbirtechmarketplace.com/expert-value" target="_blank" class="btn">
@@ -225,7 +240,7 @@
         </div>
         
         <div class="view-all">
-            <a href="https://thesbirtechmarketplace.com" target="_blank" class="view-all-link">
+            <a href="https://thesbirtechmarketplace.com/?view=marketplace" target="_blank" class="view-all-link">
                 View All Opportunities →
             </a>
         </div>
@@ -276,7 +291,9 @@
                 
                 const listingsHTML = listings.map(listing => `
                     <div class="listing">
-                        <h3 class="listing-title">${escapeHtml(listing.title || 'Untitled Opportunity')}</h3>
+                        <a href="https://thesbirtechmarketplace.com/listing/${listing.id}" target="_blank" class="listing-title">
+                            ${escapeHtml(listing.title || 'Untitled Opportunity')}
+                        </a>
                         <div class="listing-meta agency">
                             <span class="icon">🏢</span>
                             ${escapeHtml(listing.agency || 'Unknown Agency')}
