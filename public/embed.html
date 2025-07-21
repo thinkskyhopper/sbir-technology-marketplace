@@ -13,11 +13,12 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: #0f172a;
             color: #f1f5f9;
             padding: 16px;
             min-height: 100vh;
+            line-height: 1.5;
         }
         
         .widget {
@@ -53,6 +54,7 @@
             font-size: 18px;
             font-weight: 700;
             line-height: 1.4;
+            margin: 0;
         }
         
         .title-gradient {
@@ -99,11 +101,12 @@
         }
         
         .status {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 6px;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
             font-size: 14px;
             text-align: center;
+            font-weight: 500;
         }
         
         .status-loading {
@@ -134,12 +137,19 @@
             font-weight: 600;
             margin-bottom: 8px;
             color: #f1f5f9;
+            line-height: 1.3;
         }
         
         .listing-meta {
             font-size: 12px;
             color: #94a3b8;
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .listing-meta:last-child {
+            margin-bottom: 0;
         }
         
         .view-all {
@@ -157,6 +167,13 @@
         .view-all-link:hover {
             text-decoration: underline;
         }
+        
+        .icon {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
@@ -170,10 +187,10 @@
         </div>
         
         <div class="buttons">
-            <a href="https://sbir-technology-marketplace.lovable.app/" target="_blank" class="btn btn-primary">
+            <a href="https://sbir-technology-marketplace.lovable.app/" target="_parent" class="btn btn-primary">
                 Explore
             </a>
-            <a href="https://sbir-technology-marketplace.lovable.app/" target="_blank" class="btn btn-outline">
+            <a href="https://sbir-technology-marketplace.lovable.app/" target="_parent" class="btn btn-outline">
                 Learn More
             </a>
         </div>
@@ -185,102 +202,150 @@
         <div id="listings-container"></div>
         
         <div class="view-all">
-            <a href="https://sbir-technology-marketplace.lovable.app/?view=marketplace" target="_blank" class="view-all-link">
+            <a href="https://sbir-technology-marketplace.lovable.app/?view=marketplace" target="_parent" class="view-all-link">
                 View All Opportunities →
             </a>
         </div>
     </div>
     
     <script>
-        console.log('🔧 SBIR Widget initializing...');
-        
-        function updateStatus(message, type = 'loading') {
-            const statusContainer = document.getElementById('status-container');
-            if (statusContainer) {
-                statusContainer.innerHTML = `<div class="status status-${type}">${message}</div>`;
-            }
-            console.log(`📊 Status: ${message} (${type})`);
-        }
-        
-        function renderListings(listings) {
-            console.log('🎨 Rendering listings:', listings);
-            const container = document.getElementById('listings-container');
-            if (!container) {
-                console.error('❌ Listings container not found');
-                return;
+        // Prevent any interference from parent application
+        (function() {
+            'use strict';
+            
+            console.log('🔧 SBIR Widget initializing...');
+            
+            function updateStatus(message, type = 'loading') {
+                console.log(`📊 Status: ${message} (${type})`);
+                const statusContainer = document.getElementById('status-container');
+                if (statusContainer) {
+                    statusContainer.innerHTML = `<div class="status status-${type}">${message}</div>`;
+                }
             }
             
-            if (!listings || listings.length === 0) {
-                updateStatus('No opportunities available', 'error');
-                return;
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                }).format(amount);
             }
             
-            const listingsHTML = listings.map(listing => `
-                <div class="listing">
-                    <h3 class="listing-title">${listing.title || 'Untitled Opportunity'}</h3>
-                    <div class="listing-meta">
-                        🏢 ${listing.agency || 'Unknown Agency'}
-                    </div>
-                    <div class="listing-meta">
-                        💰 $${listing.value ? Number(listing.value).toLocaleString() : 'TBD'}
-                    </div>
-                    <div class="listing-meta">
-                        📅 Due: ${listing.deadline || 'Open'}
-                    </div>
-                </div>
-            `).join('');
+            function formatDate(dateString) {
+                if (!dateString) return 'Open';
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                } catch (e) {
+                    return 'Open';
+                }
+            }
             
-            container.innerHTML = listingsHTML;
-            updateStatus(`${listings.length} opportunities loaded`, 'success');
-        }
-        
-        async function loadData() {
-            try {
-                console.log('📡 Starting data fetch...');
-                updateStatus('Connecting to database...', 'loading');
-                
-                // Direct fetch to Supabase REST API
-                const response = await fetch('https://amhznlnhrrugxatbeayo.supabase.co/rest/v1/sbir_listings?select=id,title,agency,value,deadline,status&status=eq.Active&order=created_at.desc&limit=3', {
-                    headers: {
-                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk',
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                console.log('📡 Response status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            function renderListings(listings) {
+                console.log('🎨 Rendering listings:', listings);
+                const container = document.getElementById('listings-container');
+                if (!container) {
+                    console.error('❌ Listings container not found');
+                    return;
                 }
                 
-                const data = await response.json();
-                console.log('📊 Raw data received:', data);
+                if (!listings || listings.length === 0) {
+                    updateStatus('No opportunities available at this time', 'error');
+                    return;
+                }
                 
-                // Convert value from cents to dollars if needed and format data
-                const formattedData = data.map(listing => ({
-                    ...listing,
-                    value: listing.value / 100, // Convert cents to dollars
-                    deadline: listing.deadline ? new Date(listing.deadline).toLocaleDateString() : 'Open'
-                }));
+                const listingsHTML = listings.map(listing => `
+                    <div class="listing">
+                        <h3 class="listing-title">${escapeHtml(listing.title || 'Untitled Opportunity')}</h3>
+                        <div class="listing-meta">
+                            <span class="icon">🏢</span>
+                            ${escapeHtml(listing.agency || 'Unknown Agency')}
+                        </div>
+                        <div class="listing-meta">
+                            <span class="icon">💰</span>
+                            ${formatCurrency(listing.value || 0)}
+                        </div>
+                        <div class="listing-meta">
+                            <span class="icon">📅</span>
+                            Due: ${formatDate(listing.deadline)}
+                        </div>
+                    </div>
+                `).join('');
                 
-                console.log('✨ Formatted data:', formattedData);
-                renderListings(formattedData);
-                
-            } catch (error) {
-                console.error('❌ Load error:', error);
-                updateStatus(`Unable to load data: ${error.message}`, 'error');
+                container.innerHTML = listingsHTML;
+                updateStatus(`${listings.length} opportunities loaded`, 'success');
             }
-        }
-        
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadData);
-        } else {
-            loadData();
-        }
-        
-        console.log('🎯 Widget setup complete');
+            
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            async function loadData() {
+                try {
+                    console.log('📡 Starting data fetch...');
+                    updateStatus('Connecting to database...', 'loading');
+                    
+                    const apiUrl = 'https://amhznlnhrrugxatbeayo.supabase.co/rest/v1/sbir_listings';
+                    const params = new URLSearchParams({
+                        select: 'id,title,agency,value,deadline,status',
+                        status: 'eq.Active',
+                        order: 'created_at.desc',
+                        limit: '3'
+                    });
+                    
+                    const response = await fetch(`${apiUrl}?${params}`, {
+                        method: 'GET',
+                        headers: {
+                            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk',
+                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk',
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    console.log('📡 Response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('📊 Raw data received:', data);
+                    
+                    // Convert value from cents to dollars and format data
+                    const formattedData = Array.isArray(data) ? data.map(listing => ({
+                        ...listing,
+                        value: typeof listing.value === 'number' ? listing.value / 100 : 0,
+                        deadline: listing.deadline
+                    })) : [];
+                    
+                    console.log('✨ Formatted data:', formattedData);
+                    renderListings(formattedData);
+                    
+                } catch (error) {
+                    console.error('❌ Load error:', error);
+                    updateStatus(`Unable to load data: ${error.message}`, 'error');
+                }
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadData);
+            } else {
+                loadData();
+            }
+            
+            console.log('🎯 Widget setup complete');
+            
+        })();
     </script>
 </body>
 </html>
