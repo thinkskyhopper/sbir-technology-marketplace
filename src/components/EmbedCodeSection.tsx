@@ -7,7 +7,7 @@ import { Copy, Check } from 'lucide-react';
 const EmbedCodeSection = () => {
   const [copied, setCopied] = useState(false);
 
-  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="600" height="450" frameborder="0" scrolling="no" style="border: 1px solid #ddd; border-radius: 8px;" title="SBIR Tech Marketplace Widget"></iframe>`;
+  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="600" height="450" frameborder="0" scrolling="no" style="border: 1px solid #ddd; border-radius: 8px;"></iframe>`;
 
   const handleCopy = async () => {
     try {
