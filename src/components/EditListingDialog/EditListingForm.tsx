@@ -53,29 +53,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const { updateListing, fetchListings } = useListings();
   const { toast } = useToast();
 
-  // Helper function to normalize value - check if it's already in dollars or cents
-  const normalizeValueForDisplay = (value: number): number => {
-    // If the value is very large (likely in cents), convert to dollars
-    // If it's reasonable (likely already in dollars), use as-is
-    if (value > 10000) {
-      console.log('🔄 Converting value from cents to dollars:', value, '->', value / 100);
-      return value / 100;
-    }
-    console.log('💰 Using value as dollars:', value);
-    return value;
-  };
-
-  // Helper function to ensure value is stored as cents
-  const normalizeValueForStorage = (value: number): number => {
-    // If the value seems to already be in cents (very large), use as-is
-    // Otherwise, convert dollars to cents
-    if (value > 10000) {
-      console.log('💾 Using value as cents:', value);
-      return Math.round(value);
-    }
-    console.log('💾 Converting value from dollars to cents:', value, '->', Math.round(value * 100));
-    return Math.round(value * 100);
-  };
+  // Values from the listing query are already converted to dollars, so no conversion needed for display
+  // Values need to be kept in dollars for the form (they'll be converted to cents in listingOperations)
 
   const form = useForm<EditListingFormData>({
     resolver: zodResolver(editListingSchema),
@@ -84,7 +63,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       description: listing.description,
       phase: listing.phase,
       agency: listing.agency,
-      value: normalizeValueForDisplay(listing.value), // Use normalized value for display
+      value: listing.value, // Value is already in dollars from the query
       deadline: listing.deadline,
       category: listing.category,
       status: listing.status,
@@ -117,7 +96,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       // Include photo_url, date_sold, and technology_summary in the update data
       const updateData = {
         ...listingUpdateData,
-        value: normalizeValueForStorage(listingUpdateData.value), // Use normalized value for storage
+        value: listingUpdateData.value, // Keep value in dollars
         photo_url: photoUrl,
         date_sold: listing.date_sold,
         technology_summary: listingUpdateData.technology_summary || null,
