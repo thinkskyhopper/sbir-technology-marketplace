@@ -7,7 +7,7 @@ import { Copy, Check } from 'lucide-react';
 const EmbedCodeSection = () => {
   const [copied, setCopied] = useState(false);
 
-  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="600" height="550" frameborder="0" scrolling="no" style="border: 1px solid #ddd; border-radius: 8px;" title="SBIR Tech Marketplace Widget"></iframe>`;
+  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="600" height="450" frameborder="0" scrolling="no" style="border: 1px solid #ddd; border-radius: 8px;" title="SBIR Tech Marketplace Widget"></iframe>`;
 
   const handleCopy = async () => {
     try {
@@ -70,7 +70,7 @@ const EmbedCodeSection = () => {
               <li>• Mobile-responsive design</li>
               <li>• ADA compliant with proper accessibility features</li>
               <li>• Links open in the same tab for seamless integration</li>
-              <li>• Compact 600px × 550px size</li>
+              <li>• Compact 600px × 450px size</li>
             </ul>
           </div>
           
