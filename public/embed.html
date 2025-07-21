@@ -218,6 +218,16 @@
         .listings-container::-webkit-scrollbar-thumb:hover {
             background: hsl(220 20% 30%);
         }
+        
+        /* Disable all tooltips */
+        * {
+            title: none !important;
+        }
+        
+        *::before,
+        *::after {
+            title: none !important;
+        }
     </style>
 </head>
 <body>
