@@ -191,20 +191,26 @@
         </div>
     </div>
     
-    <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/main.js"></script>
     <script>
-        console.log('Widget initializing...');
+        console.log('🔧 SBIR Widget initializing...');
         
         function updateStatus(message, type = 'loading') {
             const statusContainer = document.getElementById('status-container');
             if (statusContainer) {
                 statusContainer.innerHTML = `<div class="status status-${type}">${message}</div>`;
             }
+            console.log(`📊 Status: ${message} (${type})`);
         }
         
         function renderListings(listings) {
+            console.log('🎨 Rendering listings:', listings);
             const container = document.getElementById('listings-container');
-            if (!container || !listings || listings.length === 0) {
+            if (!container) {
+                console.error('❌ Listings container not found');
+                return;
+            }
+            
+            if (!listings || listings.length === 0) {
                 updateStatus('No opportunities available', 'error');
                 return;
             }
@@ -230,33 +236,40 @@
         
         async function loadData() {
             try {
-                if (typeof window.supabase === 'undefined') {
-                    throw new Error('Supabase not available');
+                console.log('📡 Starting data fetch...');
+                updateStatus('Connecting to database...', 'loading');
+                
+                // Direct fetch to Supabase REST API
+                const response = await fetch('https://amhznlnhrrugxatbeayo.supabase.co/rest/v1/sbir_listings?select=id,title,agency,value,deadline,status&status=eq.Active&order=created_at.desc&limit=3', {
+                    headers: {
+                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('📡 Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                const supabase = window.supabase.createClient(
-                    'https://amhznlnhrrugxatbeayo.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
-                );
+                const data = await response.json();
+                console.log('📊 Raw data received:', data);
                 
-                updateStatus('Fetching data...', 'loading');
+                // Convert value from cents to dollars if needed and format data
+                const formattedData = data.map(listing => ({
+                    ...listing,
+                    value: listing.value / 100, // Convert cents to dollars
+                    deadline: listing.deadline ? new Date(listing.deadline).toLocaleDateString() : 'Open'
+                }));
                 
-                const { data, error } = await supabase
-                    .from('sbir_listings')
-                    .select('id, title, agency, value, deadline, status')
-                    .eq('status', 'Active')
-                    .order('created_at', { ascending: false })
-                    .limit(3);
-                
-                if (error) {
-                    throw error;
-                }
-                
-                renderListings(data);
+                console.log('✨ Formatted data:', formattedData);
+                renderListings(formattedData);
                 
             } catch (error) {
-                console.error('Load error:', error);
-                updateStatus('Unable to load data', 'error');
+                console.error('❌ Load error:', error);
+                updateStatus(`Unable to load data: ${error.message}`, 'error');
             }
         }
         
@@ -266,6 +279,8 @@
         } else {
             loadData();
         }
+        
+        console.log('🎯 Widget setup complete');
     </script>
 </body>
 </html>
