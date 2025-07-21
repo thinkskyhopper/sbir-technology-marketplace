@@ -100,18 +100,48 @@ export const updatePassword = async (password: string) => {
 };
 
 export const signInWithGoogle = async () => {
-  console.log('Google sign in attempt');
-  
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${getCurrentUrl()}/`
+  try {
+    console.log('🚀 [STEP 1] Starting Google OAuth flow...');
+    console.log('📍 Current URL:', window.location.href);
+    console.log('🏠 Redirect URL will be:', `${getCurrentUrl()}/`);
+    
+    // Check Supabase client configuration
+    console.log('🔧 [STEP 2] Checking Supabase client configuration...');
+    console.log('📡 Supabase project ready');
+    
+    // Test network connectivity to Supabase
+    console.log('🌐 [STEP 3] Testing Supabase connectivity...');
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${getCurrentUrl()}/`
+      }
+    });
+
+    if (error) {
+      console.error('❌ [STEP 4] Google OAuth error:', error);
+      console.error('🔍 Error details:', {
+        message: error.message,
+        status: error.status,
+        name: error.name
+      });
+      return { error };
     }
-  });
-  
-  if (error) {
-    console.error('Google sign in error:', error);
+
+    console.log('✅ [STEP 4] Google OAuth initiated successfully');
+    console.log('📊 OAuth response data:', data);
+    console.log('🔄 [STEP 5] Browser should now redirect to Google...');
+    console.log('🎯 Expected flow: Google login → consent → redirect to Supabase → redirect back to app');
+    
+    return { error: null };
+  } catch (err) {
+    console.error('💥 [STEP 4] Google OAuth exception:', err);
+    console.error('🔍 Exception details:', {
+      name: err instanceof Error ? err.name : 'Unknown',
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined
+    });
+    return { error: err };
   }
-  
-  return { error };
 };
