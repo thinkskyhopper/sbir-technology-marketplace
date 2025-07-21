@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,135 +13,117 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #0f172a;
-            color: #f1f5f9;
-            padding: 16px;
-            min-height: 100vh;
+            background-color: white;
+            color: #1f2937;
+            padding: 0;
+            margin: 0;
             line-height: 1.5;
         }
         
         .widget {
-            max-width: 368px;
-            margin: 0 auto;
-            background-color: #1e293b;
-            border: 1px solid #334155;
+            width: 600px;
+            height: 400px;
+            background-color: white;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
-            padding: 20px;
+            overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .logo {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 12px;
+            padding: 16px;
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            border-radius: 8px;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
         }
         
-        .title {
-            font-size: 18px;
-            font-weight: 700;
-            line-height: 1.4;
-            margin: 0;
-        }
-        
-        .title-gradient {
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .logo {
+            height: 40px;
+            width: auto;
         }
         
         .buttons {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
         }
         
         .btn {
-            flex: 1;
-            padding: 10px 16px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-size: 14px;
             font-weight: 500;
             text-decoration: none;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            border: none;
-            display: inline-block;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            background-color: white;
+        }
+        
+        .btn:hover {
+            background-color: #f3f4f6;
         }
         
         .btn-primary {
             background-color: #3b82f6;
             color: white;
+            border-color: #3b82f6;
         }
         
-        .btn-outline {
-            background-color: transparent;
-            color: #f1f5f9;
-            border: 1px solid #475569;
+        .btn-primary:hover {
+            background-color: #2563eb;
         }
         
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+        .content {
+            flex: 1;
+            padding: 16px;
+            overflow: hidden;
         }
         
-        .status {
-            padding: 12px;
-            margin: 12px 0;
-            border-radius: 8px;
-            font-size: 14px;
-            text-align: center;
-            font-weight: 500;
-        }
-        
-        .status-loading {
-            background-color: #1e40af;
-            color: white;
-        }
-        
-        .status-error {
-            background-color: #dc2626;
-            color: white;
-        }
-        
-        .status-success {
-            background-color: #16a34a;
-            color: white;
+        .listings-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            height: 100%;
         }
         
         .listing {
-            background-color: #0f172a;
-            border: 1px solid #475569;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 16px;
-            margin-bottom: 12px;
+            min-width: 180px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .listing:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .listing-title {
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 8px;
-            color: #f1f5f9;
+            color: #1f2937;
             line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         
         .listing-meta {
             font-size: 12px;
-            color: #94a3b8;
+            color: #6b7280;
             margin-bottom: 4px;
             display: flex;
             align-items: center;
@@ -152,9 +133,16 @@
             margin-bottom: 0;
         }
         
+        .agency {
+            color: #3b82f6;
+            font-weight: 500;
+        }
+        
         .view-all {
             text-align: center;
-            margin-top: 20px;
+            padding: 12px;
+            border-top: 1px solid #e5e7eb;
+            background-color: #f9fafb;
         }
         
         .view-all-link {
@@ -168,6 +156,17 @@
             text-decoration: underline;
         }
         
+        .status {
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .status-error {
+            color: #dc2626;
+        }
+        
         .icon {
             display: inline-block;
             width: 12px;
@@ -179,30 +178,24 @@
 <body>
     <div class="widget">
         <div class="header">
-            <div class="logo">ST</div>
-            <h2 class="title">
-                <span class="title-gradient">SBIR Tech</span>
-                <span> Marketplace</span>
-            </h2>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAABICAYAAABYgZJEAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAjNSURBVHgB7Z1LbhNJFIafjAOOISZhwSJCZGWHFcTJJoQNM2JmA0q8AJI9wgqSrACyAQkreAUST2CwAhYksjLSjBhxH8lOkqevp253PdpdVXa3+/9Jls/trk/3x9XVj6oqwxYhIgKt1vYKIHbbwW+bE0FEp6GGCCASZyAAdQIg9LFOgIjOQoMIHOoBADowFkEE9cEFJdQQIS6BFxQe/U6ttuEYAwCIIVJAXlAYXBDCVhwRglBDhDBJ6c8GAgQQQQQ/Uq+h8FPOb6xhOVbJPH6kztG7MWWI7+4xDgqPWOO4YLgM+lhMZbW7ubdkdZWOLr9tYIAY4KJxBBvGJRVdqCGC+rYx8GBE6NNq7W5CgwVJU1y2rdPBK+ZBGDBBcUGLhpP8Njdcii7IgD5OGOApNUQIZBCBp+/HdQEaRDChfvyFf7EEqBhGo3gT9Y7e9uOOKP1+c4UfKP2weFYQwU91kCgfvj9gUTL8TYq6Z5YkSrJSO4hT0CAiPOKKEJTbgxtw8FKPBhQGVyBvdKl6hQYyxEhQPH5CAyZUjXnMNAO4IEOCjnHhJH/FKWq8zIYYwRGJ0+95DUFpUMdqRJu3UNemJ3hXfwJXNHi4rwZ9/DQYH9ZJCGkBAIgtxl6p1YpwKSNZhvxw8WXeaZK+EQhCVJsB2OLsULrT4Q1H0xRQkLyGmNlHg/uIgKXF2WLs+JaXUJ/zRQh1lAZl9m5nTAUZooNk7Pe0BmUIpOGDtpMWCqLCmA7I9hGITe6qV4IAGhJHhOhJhM1cAYhK/4Qlf8Gy0rJCR1v3fM8FYatbTUJE+tgsINhCQSSIJdShQggr+OVbTnCcaVAcOtpH5VzJ2E2wJT2HDhPrczKWnlhKrWOX72fzj0N/R/6O3B8QP1j+KY3e6r5i9H9OPQGgvOCCFgcqeT8RIqD4UDxQBIzKS0JABVMWbHFFCMFJeK8EJeG8aNpKRIKhsZ3+ybFVl0GfU5KlBN4n5M5kgICCw+XutGE5bLTbW2s+H2mNBHUONmw5K3lJ6Ns/9W2Mjc8A4QS8gqhEg7jwqJNg7Pa7gpcErRbrNsQ7gH8Ru7wuZQHhKj9N+Bi8FhN7Z51eEIpWD3bB+nO8VgT3H1o6UiEsKXLJXXIZYJB4BHVNfHaWD0I4JUHy4HJOHKIlWuNlMUmwhGSNR+Sc8HePl4UO8aZdPQxUaUlLYl1zrhNOSxASTrySjPZlwGWAYvFK8mxW8xrHxCvByN7bGzw4ZcGSJU9eSvmEy0YxMCl5WSfPz+DlLCRkjGGDy4AaIs8YvJKLZ2J3GSAsnYTxetNdwWvnfhDJSyXDCaMmJJxXFqFVwLI8cP24LJWNb7y9tQEFsUJpyJCQEUjCfON1e4VLdaFCMnJhI0B6SSVhcnGzOF5vdpYPUqrJtjElJGQuBSRfSfj/H3BcaUpXTMZBOHjJhUl4xc9OsGWxkZCZFJDMJGQuIe9VoZQSL6kkTK4K8nVBiQTnPMKrSjn7vr9HvlrJfGZjAXBpU6LZhkGDMYQNmwRbvxLQrYwKiCBCUCgHo8pxtFwGqARj/LWY2yUDGyXBlhS8rFR5Oue8kpCMZKRvyPKF5+6tgfBZdQa2gSKXEZYBYpE7EpJRhOTz1jafKpaWb/EEjJG+9Oq4FZHMFLyS0VTjOBJMGMYX6xrEgtfFNLOkOTUIm0jIsrBVLfUqBVbCsvIFnivOLLAXXqOaYQeXyGTBNQnZnEJtObAGLI/KFFbSSNFa1aS1u7mXCjdL4lL+F7OUNB1iDYl3Ty8QoNq6jrZzLJ94RQl+aOx3FJBKOu6GpZzUfZNfBkYlDcLmbSGLYOugFTZzjJb1VCKcCCMFwwDfJUOqWCi4oTkSVKgqKVIqKK3PFktFJiDOvEVQoLFgwkQVRJXFtxKWvN5KUKKqPO1vOgdMNXlPwTNKGPeXbPiU8LKPIiNJoQqzFKFl7gRlQhBZlCxaObPEfVfXk3N+bBUzlKiXJGYbGPWPKHFEhqjKnCPRHpEQZaWpKaHQQsyYSxfErqglL0VJwqhNVpKyEuPLGMmIyzOjy5AJXtaz5yXfvYGNUFFJyFYY6xXXIpSSpPwq5/wU1hCcEe8E0zdPqz+8Vd7Pnx2bXvEqbPotJ7xLZrbONDFi7tLyaigozD7yXpXOFcLG8RcnqScUFi8bKhOEkCzJF9MdOqP1Q/a+9yWhVEJJgUqPMfVtFCKzWnEtlHwj++LdyNb8OhJKK6s9a/dqvxCdafwVnwRVRYrC+rz9X24HUU5kn7yK5FWnJJZKmJY1gFBEqY5hY+hSJrFz+eMD9kNzLivZr7LS5Ctb5amAFrXy9lkV2z9kFw3E0WuovGv5KDJX4Z29G/PYJGGUhZEEoQOvU8Xd9OJNL5jLJJYVx9N0JXZaQmhZe5FEQnz1LBJXEkWXW9+JRfOONBm7gN+qKbGSBBmj5y6tJFZwEsI1QZDhS+Q1LnC53XQl9ktQIuG5GwlCTZWDKbNQCPvfJKSMIKvydaeCKycdUVHxlSDfVJKILfcbhBgU4wTrqF5Lyi+pxEgQNMRVuSQ4Jtk5b8v4KM6t7aAVHwm6WjKSKqeRsMQOJKg4xq7kNZ34OBk2nQPJ35m7JCE32d27c98SrOy7dUZfxz9J5zLEOCJY9x0/yfIGR+cQfAJatQTvgP48/vHo6GVKcxK/Pt3d24YAKOEVwfWo1ykBEVQ6kqzN9Dz86H5fX+8cQe5A6E5jKiJxMQ4KNWRYcS8iaBCBa0fHEcGGKgBJPEf+X/0bDSJw5M7kAQQOBH1+VC1G4GBpSGguLqkEfayjQZzZgzMEIjgr1BAhCgH/AXJ8T4KzT9lKAAAAAElFTkSuQmCC" alt="SBIR Tech Marketplace" class="logo">
         </div>
         
         <div class="buttons">
-            <a href="https://sbir-technology-marketplace.lovable.app/" target="_parent" class="btn btn-primary">
+            <a href="https://thesbirtechmarketplace.com/?view=marketplace" target="_blank" class="btn btn-primary">
                 Explore
             </a>
-            <a href="https://sbir-technology-marketplace.lovable.app/" target="_parent" class="btn btn-outline">
+            <a href="https://thesbirtechmarketplace.com/expert-value" target="_blank" class="btn">
                 Learn More
             </a>
         </div>
         
-        <div id="status-container">
-            <div class="status status-loading">Loading opportunities...</div>
+        <div class="content">
+            <div id="listings-container"></div>
         </div>
         
-        <div id="listings-container"></div>
-        
         <div class="view-all">
-            <a href="https://sbir-technology-marketplace.lovable.app/?view=marketplace" target="_parent" class="view-all-link">
+            <a href="https://thesbirtechmarketplace.com" target="_blank" class="view-all-link">
                 View All Opportunities →
             </a>
         </div>
@@ -214,14 +207,6 @@
             'use strict';
             
             console.log('🔧 SBIR Widget initializing...');
-            
-            function updateStatus(message, type = 'loading') {
-                console.log(`📊 Status: ${message} (${type})`);
-                const statusContainer = document.getElementById('status-container');
-                if (statusContainer) {
-                    statusContainer.innerHTML = `<div class="status status-${type}">${message}</div>`;
-                }
-            }
             
             function formatCurrency(amount) {
                 return new Intl.NumberFormat('en-US', {
@@ -255,14 +240,14 @@
                 }
                 
                 if (!listings || listings.length === 0) {
-                    updateStatus('No opportunities available at this time', 'error');
+                    container.innerHTML = '<div class="status status-error">No opportunities available at this time</div>';
                     return;
                 }
                 
                 const listingsHTML = listings.map(listing => `
                     <div class="listing">
                         <h3 class="listing-title">${escapeHtml(listing.title || 'Untitled Opportunity')}</h3>
-                        <div class="listing-meta">
+                        <div class="listing-meta agency">
                             <span class="icon">🏢</span>
                             ${escapeHtml(listing.agency || 'Unknown Agency')}
                         </div>
@@ -278,7 +263,6 @@
                 `).join('');
                 
                 container.innerHTML = listingsHTML;
-                updateStatus(`${listings.length} opportunities loaded`, 'success');
             }
             
             function escapeHtml(text) {
@@ -290,14 +274,13 @@
             async function loadData() {
                 try {
                     console.log('📡 Starting data fetch...');
-                    updateStatus('Connecting to database...', 'loading');
                     
                     const apiUrl = 'https://amhznlnhrrugxatbeayo.supabase.co/rest/v1/sbir_listings';
                     const params = new URLSearchParams({
                         select: 'id,title,agency,value,deadline,status',
                         status: 'eq.Active',
                         order: 'created_at.desc',
-                        limit: '3'
+                        limit: '4'
                     });
                     
                     const response = await fetch(`${apiUrl}?${params}`, {
@@ -332,7 +315,10 @@
                     
                 } catch (error) {
                     console.error('❌ Load error:', error);
-                    updateStatus(`Unable to load data: ${error.message}`, 'error');
+                    const container = document.getElementById('listings-container');
+                    if (container) {
+                        container.innerHTML = '<div class="status status-error">Unable to load opportunities</div>';
+                    }
                 }
             }
             
