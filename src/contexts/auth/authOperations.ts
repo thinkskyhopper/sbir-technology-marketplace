@@ -98,3 +98,20 @@ export const updatePassword = async (password: string) => {
   
   return { error };
 };
+
+export const signInWithGoogle = async () => {
+  console.log('Google sign in attempt');
+  
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${getCurrentUrl()}/`
+    }
+  });
+  
+  if (error) {
+    console.error('Google sign in error:', error);
+  }
+  
+  return { error };
+};

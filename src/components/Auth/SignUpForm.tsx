@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Mail } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import SignUpFormFields from './SignUpFormFields';
 
@@ -23,7 +24,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   
-  const { signUp } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +75,23 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await signInWithGoogle();
+      
+      if (error) {
+        setError(error.message);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -111,6 +129,28 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           {loading ? 'Creating Account...' : 'Create Account'}
         </Button>
       </form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <Separator className="w-full" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
+        </div>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleGoogleSignIn}
+        disabled={loading}
+        className="w-full"
+      >
+        <Mail className="mr-2 h-4 w-4" />
+        Google
+      </Button>
 
       <div className="mt-4 text-center">
         <Button

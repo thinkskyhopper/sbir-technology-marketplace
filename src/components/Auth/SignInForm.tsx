@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Mail } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface SignInFormProps {
@@ -18,7 +19,7 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +28,23 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
 
     try {
       const { error } = await signIn(email, password);
+      
+      if (error) {
+        setError(error.message);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await signInWithGoogle();
       
       if (error) {
         setError(error.message);
@@ -85,6 +103,28 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
 
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? 'Loading...' : 'Sign In'}
+      </Button>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <Separator className="w-full" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
+        </div>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleGoogleSignIn}
+        disabled={loading}
+        className="w-full"
+      >
+        <Mail className="mr-2 h-4 w-4" />
+        Google
       </Button>
 
       <div className="mt-4 text-center">
