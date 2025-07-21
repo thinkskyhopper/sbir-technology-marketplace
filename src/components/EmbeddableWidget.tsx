@@ -44,30 +44,37 @@ const EmbeddableWidget = () => {
   };
 
   const handleExploreClick = () => {
-    window.open('https://sbirtech.lovableproject.com/', '_self');
+    window.open('https://thesbirtechmarketplace.com/', '_blank');
   };
 
   const handleLearnMoreClick = () => {
-    window.open('https://sbirtech.lovableproject.com/', '_self');
+    window.open('https://thesbirtechmarketplace.com/', '_blank');
   };
 
   const handleViewDetailsClick = (listingId: string) => {
-    window.open(`https://sbirtech.lovableproject.com/listing/${listingId}`, '_self');
+    window.open(`https://thesbirtechmarketplace.com/listing/${listingId}`, '_blank');
   };
 
   const handleViewAllClick = () => {
-    window.open('https://sbirtech.lovableproject.com/?view=marketplace', '_self');
+    window.open('https://thesbirtechmarketplace.com/?view=marketplace', '_blank');
   };
 
   return (
     <div className="max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans">
       {/* Logo and Title */}
       <div className="text-center mb-4">
-        <img 
-          src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
-          alt="SBIR Logo"
-          className="w-12 h-12 mx-auto mb-2"
-        />
+        <a 
+          href="https://thesbirtechmarketplace.com/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="hover:opacity-80 transition-opacity"
+        >
+          <img 
+            src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
+            alt="SBIR Logo"
+            className="w-12 h-12 mx-auto mb-2"
+          />
+        </a>
         <h2 className="text-lg font-bold text-foreground">
           <span className="text-gradient">The SBIR Tech </span>
           <span className="text-foreground">Marketplace</span>
@@ -118,9 +125,16 @@ const EmbeddableWidget = () => {
                     {listing.status}
                   </Badge>
                 </div>
-                <h3 className="text-sm font-semibold line-clamp-1 text-card-foreground">
-                  {listing.title}
-                </h3>
+                <a 
+                  href={`https://thesbirtechmarketplace.com/listing/${listing.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  <h3 className="text-sm font-semibold line-clamp-1 text-card-foreground">
+                    {listing.title}
+                  </h3>
+                </a>
                 <div className="flex items-center text-xs text-muted-foreground">
                   <Building className="w-3 h-3 mr-1" />
                   {listing.agency}
@@ -162,12 +176,14 @@ const EmbeddableWidget = () => {
 
       {/* View All Link */}
       <div className="text-center">
-        <button
-          onClick={handleViewAllClick}
+        <a
+          href="https://thesbirtechmarketplace.com/?view=marketplace"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-sm text-primary hover:text-primary/80 underline transition-colors"
         >
           View All Opportunities →
-        </button>
+        </a>
       </div>
     </div>
   );
