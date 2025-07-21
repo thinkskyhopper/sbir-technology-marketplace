@@ -257,28 +257,6 @@
             
             console.log('🔧 SBIR Widget initializing...');
             
-            // Remove all title attributes to prevent tooltips
-            function removeAllTitles() {
-                const elements = document.querySelectorAll('*');
-                elements.forEach(el => {
-                    if (el.hasAttribute('title')) {
-                        el.removeAttribute('title');
-                    }
-                });
-            }
-            
-            // Remove titles on load and mutations
-            removeAllTitles();
-            
-            // Watch for new elements that might have titles
-            const observer = new MutationObserver(removeAllTitles);
-            observer.observe(document.body, { 
-                childList: true, 
-                subtree: true, 
-                attributes: true, 
-                attributeFilter: ['title'] 
-            });
-            
             function formatCurrency(amount) {
                 return new Intl.NumberFormat('en-US', {
                     style: 'currency',
