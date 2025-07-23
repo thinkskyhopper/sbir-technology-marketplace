@@ -42,15 +42,30 @@ export const useBookmarks = () => {
 
   // Fetch bookmarked listings with full details
   const fetchBookmarkedListings = useCallback(async (): Promise<SBIRListing[]> => {
-    if (!user || bookmarkedListings.length === 0) {
+    if (!user) {
       return [];
     }
 
     try {
+      // First fetch the user's bookmarks to get the listing IDs
+      const { data: bookmarks, error: bookmarksError } = await supabase
+        .from('user_bookmarks')
+        .select('listing_id')
+        .eq('user_id', user.id);
+
+      if (bookmarksError) throw bookmarksError;
+
+      const listingIds = bookmarks?.map(bookmark => bookmark.listing_id) || [];
+      
+      if (listingIds.length === 0) {
+        return [];
+      }
+
+      // Then fetch the full listing details
       const { data, error } = await supabase
         .from('sbir_listings')
         .select('*')
-        .in('id', bookmarkedListings)
+        .in('id', listingIds)
         .eq('status', 'Active') // Only show active listings
         .order('created_at', { ascending: false });
 
@@ -72,7 +87,7 @@ export const useBookmarks = () => {
       });
       return [];
     }
-  }, [user, bookmarkedListings, toast]);
+  }, [user, toast]);
 
   // Add a bookmark
   const addBookmark = useCallback(async (listingId: string) => {
