@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { colorSwatches, componentColors, type ColorSwatch } from '@/utils/colorSwatches';
 import { ColorEditor } from '@/components/ColorEditor';
 import EmbedCodeSection from '@/components/EmbedCodeSection';
+import Header from '@/components/Header';
 import { toast } from 'sonner';
 
 const ColorSwatchCard = ({ swatch }: { swatch: ColorSwatch }) => {
@@ -119,7 +120,9 @@ const ColorSwatches = () => {
   }, {} as Record<string, typeof componentColors>);
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <Header />
+      <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
@@ -249,7 +252,7 @@ const ColorSwatches = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
