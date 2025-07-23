@@ -30,6 +30,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LegalDisclaimer from "./pages/LegalDisclaimer";
 import ExpertValue from "./pages/ExpertValue";
 import ColorSwatches from "./pages/ColorSwatches";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -66,7 +67,11 @@ function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/legal-disclaimer" element={<LegalDisclaimer />} />
                 <Route path="/expert-value" element={<ExpertValue />} />
-                <Route path="/color-swatches" element={<ColorSwatches />} />
+                <Route path="/color-swatches" element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <ColorSwatches />
+                  </ProtectedRoute>
+                } />
               </Routes>
             </BrowserRouter>
           </TooltipProvider>

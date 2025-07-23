@@ -94,6 +94,14 @@ export const AdminUsersTableRow = ({
             >
               {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
             </Badge>
+            {user.role === 'consultant' && (
+              <Badge 
+                variant="outline"
+                className="bg-[#5593F7] hover:bg-[#5593F7]/80 text-white border-[#5593F7] text-xs"
+              >
+                Verified
+              </Badge>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
