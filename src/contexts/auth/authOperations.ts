@@ -107,10 +107,36 @@ export const signInWithGoogle = async () => {
     
     // Check Supabase client configuration
     console.log('🔧 [STEP 2] Checking Supabase client configuration...');
-    console.log('📡 Supabase project ready');
+    console.log('📡 Supabase project URL: https://amhznlnhrrugxatbeayo.supabase.co');
+    console.log('🔑 Auth domain should match project URL');
     
-    // Test network connectivity to Supabase
-    console.log('🌐 [STEP 3] Testing Supabase connectivity...');
+    // Test if we can reach Supabase auth endpoint
+    console.log('🌐 [STEP 3] Testing Supabase auth connectivity...');
+    try {
+      const response = await fetch('https://amhznlnhrrugxatbeayo.supabase.co/auth/v1/settings', {
+        method: 'GET',
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+        }
+      });
+      console.log('🔗 Auth settings endpoint status:', response.status);
+      if (response.status === 403) {
+        console.error('🚨 403 FORBIDDEN: The API key might be invalid or the endpoint is restricted');
+        const responseText = await response.text();
+        console.error('🔍 Response body:', responseText);
+      } else if (response.ok) {
+        const settings = await response.json();
+        console.log('✅ Auth settings retrieved successfully');
+        console.log('🔍 External providers enabled:', settings.external);
+      }
+    } catch (fetchError) {
+      console.error('🚨 Failed to reach Supabase auth endpoint:', fetchError);
+    }
+    
+    console.log('📋 [STEP 4] OAuth call parameters:');
+    console.log('   Provider: google');
+    console.log('   Redirect URL:', `${getCurrentUrl()}/`);
+    console.log('   Expected OAuth URL pattern: /auth/v1/authorize?provider=google...');
     
     // Add additional metadata for new users
     const { data, error } = await supabase.auth.signInWithOAuth({
