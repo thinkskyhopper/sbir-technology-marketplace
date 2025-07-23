@@ -105,6 +105,7 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
         {loading ? 'Loading...' : 'Sign In'}
       </Button>
 
+      {/* Temporarily disabled Google sign-in 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <Separator className="w-full" />
@@ -126,6 +127,7 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
         <Mail className="mr-2 h-4 w-4" />
         Google
       </Button>
+      */}
 
       <div className="mt-4 text-center">
         <Button

@@ -130,6 +130,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
         </Button>
       </form>
 
+      {/* Temporarily disabled Google sign-in 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <Separator className="w-full" />
@@ -151,6 +152,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
         <Mail className="mr-2 h-4 w-4" />
         Google
       </Button>
+      */}
 
       <div className="mt-4 text-center">
         <Button
