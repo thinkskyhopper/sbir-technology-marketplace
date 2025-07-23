@@ -11,6 +11,15 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
   const { user, loading, isAdmin } = useAuth();
 
+  // Debug logging
+  console.log('ProtectedRoute render:', { 
+    user: user?.email, 
+    loading, 
+    isAdmin, 
+    requireAdmin,
+    userExists: !!user 
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
