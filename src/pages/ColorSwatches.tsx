@@ -252,6 +252,7 @@ const ColorSwatches = () => {
           </div>
         </div>
       </div>
+      </div>
     </>
   );
 };
