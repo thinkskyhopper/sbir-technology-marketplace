@@ -112,10 +112,15 @@ export const signInWithGoogle = async () => {
     // Test network connectivity to Supabase
     console.log('🌐 [STEP 3] Testing Supabase connectivity...');
     
+    // Add additional metadata for new users
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${getCurrentUrl()}/`
+        redirectTo: `${getCurrentUrl()}/`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
       }
     });
 
@@ -126,6 +131,16 @@ export const signInWithGoogle = async () => {
         status: error.status,
         name: error.name
       });
+      
+      // Provide more helpful error messages for common issues
+      if (error.message?.includes('403')) {
+        console.error('🚨 403 Error detected - this could be due to:');
+        console.error('   1. Missing RLS policies for profile creation');
+        console.error('   2. Google OAuth app not properly configured');
+        console.error('   3. Redirect URL mismatch');
+        console.error('   4. Profile creation trigger failure');
+      }
+      
       return { error };
     }
 
@@ -133,6 +148,7 @@ export const signInWithGoogle = async () => {
     console.log('📊 OAuth response data:', data);
     console.log('🔄 [STEP 5] Browser should now redirect to Google...');
     console.log('🎯 Expected flow: Google login → consent → redirect to Supabase → redirect back to app');
+    console.log('🔍 Note: After successful auth, check for profile creation in database');
     
     return { error: null };
   } catch (err) {
@@ -142,6 +158,14 @@ export const signInWithGoogle = async () => {
       message: err instanceof Error ? err.message : String(err),
       stack: err instanceof Error ? err.stack : undefined
     });
+    
+    // Enhanced error handling for specific cases
+    if (err instanceof Error && err.message?.includes('403')) {
+      console.error('🚨 Specific 403 error handling:');
+      console.error('   This usually means the user was created in auth.users but profile creation failed');
+      console.error('   Check if the handle_new_user trigger is working and RLS policies allow INSERT');
+    }
+    
     return { error: err };
   }
 };
