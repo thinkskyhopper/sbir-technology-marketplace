@@ -9,23 +9,38 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, profileLoading, isAdmin } = useAuth();
 
-  // Debug logging
+  // Enhanced debug logging
   console.log('ProtectedRoute render:', { 
     user: user?.email, 
     loading, 
+    profileLoading,
     isAdmin, 
     requireAdmin,
-    userExists: !!user 
+    userExists: !!user,
+    shouldWaitForProfile: requireAdmin && user && profileLoading
   });
 
+  // Show loading while auth is initializing
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while profile is being fetched for admin routes
+  if (requireAdmin && user && profileLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Checking permissions...</p>
         </div>
       </div>
     );

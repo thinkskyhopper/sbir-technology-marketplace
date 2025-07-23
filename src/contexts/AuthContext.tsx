@@ -21,6 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -49,14 +50,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (session?.user) {
           console.log('👤 User authenticated, fetching profile...');
+          setProfileLoading(true);
           // Use setTimeout to avoid blocking the auth state change
-          setTimeout(() => {
-            fetchProfile(session.user.id, setProfile, setIsAdmin);
+          setTimeout(async () => {
+            try {
+              await fetchProfile(session.user.id, setProfile, setIsAdmin);
+            } finally {
+              setProfileLoading(false);
+            }
           }, 0);
         } else {
           console.log('🚪 No user session, clearing profile...');
           setProfile(null);
           setIsAdmin(false);
+          setProfileLoading(false);
         }
         
         // Always set loading to false after processing auth change
@@ -78,14 +85,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (session?.user) {
         console.log('👤 Initial user found, fetching profile...');
+        setProfileLoading(true);
         // Use setTimeout to avoid blocking
-        setTimeout(() => {
-          fetchProfile(session.user.id, setProfile, setIsAdmin);
+        setTimeout(async () => {
+          try {
+            await fetchProfile(session.user.id, setProfile, setIsAdmin);
+          } finally {
+            setProfileLoading(false);
+          }
         }, 0);
       } else {
         console.log('🚪 No initial session found');
         setProfile(null);
         setIsAdmin(false);
+        setProfileLoading(false);
       }
       
       setLoading(false);
@@ -102,6 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     profile,
     loading,
+    profileLoading,
     signUp: authOps.signUp,
     signIn: authOps.signIn,
     signOut: authOps.signOut,
