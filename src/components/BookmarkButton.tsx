@@ -2,6 +2,7 @@
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBookmarks } from "@/hooks/useBookmarks";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 interface BookmarkButtonProps {
@@ -19,8 +20,14 @@ const BookmarkButton = ({
   className,
   showText = true
 }: BookmarkButtonProps) => {
+  const { user } = useAuth();
   const { isBookmarked, toggleBookmark } = useBookmarks();
   const bookmarked = isBookmarked(listingId);
+
+  // Don't render if user is not logged in
+  if (!user) {
+    return null;
+  }
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

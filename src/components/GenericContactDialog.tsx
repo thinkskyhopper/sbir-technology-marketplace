@@ -20,22 +20,12 @@ const GenericContactDialog = ({ open, onOpenChange, title = "Contact Us" }: Gene
     navigate('/auth');
   };
 
-  if (!user) {
-    return (
-      <SignInPrompt 
-        open={open} 
-        onOpenChange={onOpenChange} 
-        onSignIn={handleSignIn}
-      />
-    );
-  }
-
   return (
     <ContactForm 
       open={open} 
       onOpenChange={onOpenChange} 
       title={title}
-      userEmail={user.email}
+      userEmail={user?.email || ""}
     />
   );
 };
