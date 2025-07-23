@@ -9,7 +9,7 @@ import { UserWithStats } from "./types";
 import { useState } from "react";
 import { NotificationCategoriesDialog } from "./NotificationCategoriesDialog";
 
-type UserRole = "admin" | "user" | "consultant";
+type UserRole = "admin" | "user" | "consultant" | "verified";
 
 interface AdminUsersTableRowProps {
   user: UserWithStats;
@@ -83,7 +83,15 @@ export const AdminUsersTableRow = ({
         <TableCell className="min-w-[150px]">
           <div className="flex items-center space-x-2">
             <Badge 
-              variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
+              variant={
+                user.role === 'admin' 
+                  ? 'default' 
+                  : user.role === 'consultant' 
+                  ? 'secondary' 
+                  : user.role === 'verified'
+                  ? 'outline'
+                  : 'outline'
+              }
               className={
                 user.role === 'admin' 
                   ? 'bg-amber-500 hover:bg-amber-600 text-xs' 
@@ -92,9 +100,15 @@ export const AdminUsersTableRow = ({
                   : 'text-xs'
               }
             >
-              {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
+              {user.role === 'admin' 
+                ? 'Administrator' 
+                : user.role === 'consultant' 
+                ? 'Consultant' 
+                : user.role === 'verified'
+                ? 'User'
+                : 'User'}
             </Badge>
-            {user.role === 'consultant' && (
+            {user.role === 'verified' && (
               <Badge 
                 variant="outline"
                 className="bg-[#5593F7] hover:bg-[#5593F7]/80 text-white border-[#5593F7] text-xs"
@@ -125,6 +139,12 @@ export const AdminUsersTableRow = ({
                   disabled={user.role === 'consultant'}
                 >
                   Consultant
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('verified')}
+                  disabled={user.role === 'verified'}
+                >
+                  Verified User
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleRoleChange('admin')}
