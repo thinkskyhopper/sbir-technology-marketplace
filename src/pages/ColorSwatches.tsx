@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { colorSwatches, componentColors, type ColorSwatch } from '@/utils/colorSwatches';
 import { ColorEditor } from '@/components/ColorEditor';
 import EmbedCodeSection from '@/components/EmbedCodeSection';
@@ -142,9 +153,27 @@ const ColorSwatches = () => {
                 >
                   {isEditMode ? "Exit Edit Mode" : "Edit Colors"}
                 </Button>
-                <Button variant="outline" onClick={handleResetAll}>
-                  Reset All
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline">
+                      Reset All
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Reset All Colors</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will reset all color customizations back to their default values. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleResetAll}>
+                        Reset All Colors
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           </div>
