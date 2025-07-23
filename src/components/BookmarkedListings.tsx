@@ -9,7 +9,7 @@ import { useBookmarks } from "@/hooks/useBookmarks";
 import type { SBIRListing } from "@/types/listings";
 
 const BookmarkedListings = () => {
-  const { fetchBookmarkedListings, loading } = useBookmarks();
+  const { fetchBookmarkedListings } = useBookmarks();
   const [bookmarkedListings, setBookmarkedListings] = useState<SBIRListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -17,9 +17,14 @@ const BookmarkedListings = () => {
   useEffect(() => {
     const loadBookmarkedListings = async () => {
       setIsLoading(true);
-      const listings = await fetchBookmarkedListings();
-      setBookmarkedListings(listings);
-      setIsLoading(false);
+      try {
+        const listings = await fetchBookmarkedListings();
+        setBookmarkedListings(listings);
+      } catch (error) {
+        console.error('Error loading bookmarked listings:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadBookmarkedListings();
