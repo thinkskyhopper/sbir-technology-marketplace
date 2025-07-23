@@ -29,7 +29,7 @@ const BookmarkedListings = () => {
   // Load bookmarked listings on mount and when bookmark IDs change
   useEffect(() => {
     loadBookmarkedListings();
-  }, [bookmarkIds]);
+  }, [loadBookmarkedListings, bookmarkIds]);
 
   const handleBackToMarketplace = () => {
     navigate("/?view=marketplace");

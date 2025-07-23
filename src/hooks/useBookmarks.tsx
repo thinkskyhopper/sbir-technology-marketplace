@@ -114,6 +114,7 @@ export const useBookmarks = () => {
       toast({
         title: "Bookmarked",
         description: "Listing added to your bookmarks",
+        duration: 5000,
       });
       return true;
     } catch (error) {
@@ -144,6 +145,7 @@ export const useBookmarks = () => {
       toast({
         title: "Bookmark removed",
         description: "Listing removed from your bookmarks",
+        duration: 5000,
       });
       return true;
     } catch (error) {
