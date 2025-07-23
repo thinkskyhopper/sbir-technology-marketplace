@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bookmark, ArrowLeft } from "lucide-react";
@@ -9,26 +9,34 @@ import { useBookmarks } from "@/hooks/useBookmarks";
 import type { SBIRListing } from "@/types/listings";
 
 const BookmarkedListings = () => {
-  const { fetchBookmarkedListings } = useBookmarks();
+  const { fetchBookmarkedListings, bookmarkedListings: bookmarkIds } = useBookmarks();
   const [bookmarkedListings, setBookmarkedListings] = useState<SBIRListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadBookmarkedListings = async () => {
-      setIsLoading(true);
-      try {
-        const listings = await fetchBookmarkedListings();
-        setBookmarkedListings(listings);
-      } catch (error) {
-        console.error('Error loading bookmarked listings:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadBookmarkedListings();
+  const loadBookmarkedListings = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const listings = await fetchBookmarkedListings();
+      setBookmarkedListings(listings);
+    } catch (error) {
+      console.error('Error loading bookmarked listings:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [fetchBookmarkedListings]);
+
+  // Load bookmarked listings on mount
+  useEffect(() => {
+    loadBookmarkedListings();
+  }, [loadBookmarkedListings]);
+
+  // Reload when bookmark IDs change (when user adds/removes bookmarks)
+  useEffect(() => {
+    if (!isLoading) {
+      loadBookmarkedListings();
+    }
+  }, [bookmarkIds, isLoading, loadBookmarkedListings]);
 
   const handleBackToMarketplace = () => {
     navigate("/?view=marketplace");
