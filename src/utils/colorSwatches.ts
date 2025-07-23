@@ -201,6 +201,64 @@ export const colorSwatches: ColorSwatch[] = [
     usage: 'Text inside popovers and tooltips',
     category: 'Popover Colors',
     getHex: () => hslToHex(getHSLValue('--popover-foreground'))
+  },
+
+  // Sidebar Colors
+  {
+    name: "Sidebar Background",
+    cssVariable: "--sidebar-background",
+    usage: "Background color for sidebar components",
+    category: "Sidebar Colors",
+    getHex: () => hslToHex(getHSLValue("--sidebar-background"))
+  },
+  {
+    name: "Sidebar Foreground", 
+    cssVariable: "--sidebar-foreground",
+    usage: "Text color for sidebar components",
+    category: "Sidebar Colors",
+    getHex: () => hslToHex(getHSLValue("--sidebar-foreground"))
+  },
+  {
+    name: "Sidebar Primary",
+    cssVariable: "--sidebar-primary", 
+    usage: "Primary accent color for sidebar",
+    category: "Sidebar Colors",
+    getHex: () => hslToHex(getHSLValue("--sidebar-primary"))
+  },
+  {
+    name: "Sidebar Primary Foreground",
+    cssVariable: "--sidebar-primary-foreground",
+    usage: "Text color for sidebar primary elements", 
+    category: "Sidebar Colors",
+    getHex: () => hslToHex(getHSLValue("--sidebar-primary-foreground"))
+  },
+  {
+    name: "Sidebar Accent",
+    cssVariable: "--sidebar-accent",
+    usage: "Accent color for sidebar hover states",
+    category: "Sidebar Colors", 
+    getHex: () => hslToHex(getHSLValue("--sidebar-accent"))
+  },
+  {
+    name: "Sidebar Accent Foreground",
+    cssVariable: "--sidebar-accent-foreground",
+    usage: "Text color for sidebar accent elements",
+    category: "Sidebar Colors",
+    getHex: () => hslToHex(getHSLValue("--sidebar-accent-foreground"))
+  },
+  {
+    name: "Sidebar Border",
+    cssVariable: "--sidebar-border",
+    usage: "Border color for sidebar elements",
+    category: "Sidebar Colors",
+    getHex: () => hslToHex(getHSLValue("--sidebar-border"))
+  },
+  {
+    name: "Sidebar Ring",
+    cssVariable: "--sidebar-ring", 
+    usage: "Focus ring color for sidebar elements",
+    category: "Sidebar Colors",
+    getHex: () => hslToHex(getHSLValue("--sidebar-ring"))
   }
 ];
 

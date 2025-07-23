@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { colorSwatches, componentColors, type ColorSwatch } from '@/utils/colorSwatches';
+import { ColorEditor } from '@/components/ColorEditor';
 import EmbedCodeSection from '@/components/EmbedCodeSection';
+import { toast } from 'sonner';
 
 const ColorSwatchCard = ({ swatch }: { swatch: ColorSwatch }) => {
   const [hex, setHex] = useState('#000000');
@@ -80,6 +83,8 @@ const ComponentColorCard = ({ color }: { color: typeof componentColors[0] }) => 
 };
 
 const ColorSwatches = () => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  
   // Group swatches by category
   const groupedSwatches = colorSwatches.reduce((acc, swatch) => {
     if (!acc[swatch.category]) {
@@ -88,6 +93,21 @@ const ColorSwatches = () => {
     acc[swatch.category].push(swatch);
     return acc;
   }, {} as Record<string, ColorSwatch[]>);
+
+  // Handle color changes
+  const handleColorChange = (cssVariable: string, hslValue: string) => {
+    const propertyName = cssVariable.startsWith('--') ? cssVariable : `--${cssVariable}`;
+    document.documentElement.style.setProperty(propertyName, hslValue);
+  };
+
+  // Reset all colors to defaults
+  const handleResetAll = () => {
+    // Remove all custom properties to revert to CSS defaults
+    colorSwatches.forEach(swatch => {
+      document.documentElement.style.removeProperty(swatch.cssVariable);
+    });
+    toast.success('All colors reset to defaults');
+  };
 
   // Group component colors by category
   const groupedComponentColors = componentColors.reduce((acc, color) => {
@@ -103,12 +123,27 @@ const ColorSwatches = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              Color System Reference
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Complete reference of all colors used throughout the application, including CSS variables and component-specific colors.
-            </p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-4xl font-bold text-foreground mb-2">
+                  Color System Reference
+                </h1>
+                <p className="text-muted-foreground text-lg">
+                  Complete reference and live editor for all colors used throughout the application.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={isEditMode ? "default" : "outline"}
+                  onClick={() => setIsEditMode(!isEditMode)}
+                >
+                  {isEditMode ? "Exit Edit Mode" : "Edit Colors"}
+                </Button>
+                <Button variant="outline" onClick={handleResetAll}>
+                  Reset All
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* CSS Variable Colors */}
@@ -120,7 +155,18 @@ const ColorSwatches = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {swatches.map((swatch) => (
-                    <ColorSwatchCard key={swatch.cssVariable} swatch={swatch} />
+                    isEditMode ? (
+                      <ColorEditor
+                        key={swatch.cssVariable}
+                        name={swatch.name}
+                        cssVariable={swatch.cssVariable}
+                        currentHex={swatch.getHex()}
+                        usage={swatch.usage}
+                        onColorChange={handleColorChange}
+                      />
+                    ) : (
+                      <ColorSwatchCard key={swatch.cssVariable} swatch={swatch} />
+                    )
                   ))}
                 </div>
               </section>
