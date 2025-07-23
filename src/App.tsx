@@ -20,7 +20,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminChangeRequests from "./pages/AdminChangeRequests";
 import AdminLogs from "./pages/AdminLogs";
 import AdminCategoryImages from "./pages/AdminCategoryImages";
-import BookmarkedListings from "./pages/BookmarkedListings";
+import Bookmarks from "./pages/Bookmarks";
 import MyListings from "./pages/MyListings";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
@@ -51,7 +51,7 @@ function App() {
                 <Route path="/browse" element={<Browse />} />
                 <Route path="/listing/:id" element={<ListingDetail />} />
                 <Route path="/listing/:id/history" element={<ListingHistory />} />
-                <Route path="/bookmarks" element={<BookmarkedListings />} />
+                <Route path="/bookmarks" element={<Bookmarks />} />
                 <Route path="/my-listings" element={<MyListings />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/listings" element={<AdminListings />} />
