@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { SBIRListing } from "@/types/listings";
 import type { FormData } from "./FormFields";
@@ -13,11 +14,12 @@ interface UseContactFormProps {
 
 export const useContactForm = ({ user, listing, onSuccess }: UseContactFormProps) => {
   const { toast } = useToast();
+  const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
+    firstName: profile?.first_name || "",
+    lastName: profile?.last_name || "",
+    email: profile?.email || "",
     company: "",
     interestLevel: "",
     experience: "",
@@ -25,11 +27,23 @@ export const useContactForm = ({ user, listing, onSuccess }: UseContactFormProps
     message: ""
   });
 
+  // Update form when profile data is available
+  useEffect(() => {
+    if (profile) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: profile.first_name || "",
+        lastName: profile.last_name || "",
+        email: profile.email || ""
+      }));
+    }
+  }, [profile]);
+
   const resetForm = () => {
     setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
+      firstName: profile?.first_name || "",
+      lastName: profile?.last_name || "",
+      email: profile?.email || "",
       company: "",
       interestLevel: "",
       experience: "",

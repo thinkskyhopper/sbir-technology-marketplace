@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ContactFormProps {
@@ -30,17 +31,30 @@ interface FormData {
 
 const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps) => {
   const { toast } = useToast();
+  const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
+    firstName: profile?.first_name || "",
+    lastName: profile?.last_name || "",
+    email: profile?.email || "",
     company: "",
     howDidYouFindUs: "",
     otherSource: "",
     message: "",
     honeypot: ""
   });
+
+  // Update form when profile data is available
+  useEffect(() => {
+    if (profile) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: profile.first_name || "",
+        lastName: profile.last_name || "",
+        email: profile.email || ""
+      }));
+    }
+  }, [profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,9 +114,9 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
       });
       onOpenChange(false);
       setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
+        firstName: profile?.first_name || "",
+        lastName: profile?.last_name || "",
+        email: profile?.email || "",
         company: "",
         howDidYouFindUs: "",
         otherSource: "",
