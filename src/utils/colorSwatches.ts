@@ -335,5 +335,141 @@ export const componentColors = [
     hex: '#262e3d',
     usage: 'Hero section gradient end color (hsl(220 20% 18%))',
     category: 'Hero Gradient'
+  },
+  
+  // Admin Status Badge Colors
+  {
+    name: 'Active Status Background',
+    hex: '#059669',
+    usage: 'Active status badge background (bg-green-600)',
+    category: 'Admin Status'
+  },
+  {
+    name: 'Active Status Hover',
+    hex: '#047857',
+    usage: 'Active status badge hover background (hover:bg-green-700)',
+    category: 'Admin Status'
+  },
+  {
+    name: 'Pending Status Background',
+    hex: '#f59e0b',
+    usage: 'Pending status badge background (bg-amber-500)',
+    category: 'Admin Status'
+  },
+  {
+    name: 'Pending Status Hover',
+    hex: '#d97706',
+    usage: 'Pending status badge hover background (hover:bg-amber-600)',
+    category: 'Admin Status'
+  },
+  {
+    name: 'Warning Status Background',
+    hex: '#eab308',
+    usage: 'Warning status badge background (bg-yellow-500)',
+    category: 'Admin Status'
+  },
+  {
+    name: 'Warning Status Hover',
+    hex: '#ca8a04',
+    usage: 'Warning status badge hover background (hover:bg-yellow-600)',
+    category: 'Admin Status'
+  },
+  
+  // Admin Table & Interactive States
+  {
+    name: 'Error Background Light',
+    hex: '#fef2f2',
+    usage: 'Light error background for notifications (bg-red-50)',
+    category: 'Admin Feedback'
+  },
+  {
+    name: 'Error Text',
+    hex: '#dc2626',
+    usage: 'Error text color (text-red-600)',
+    category: 'Admin Feedback'
+  },
+  {
+    name: 'Info Background Light',
+    hex: '#eff6ff',
+    usage: 'Light info background for notifications (bg-blue-50)',
+    category: 'Admin Feedback'
+  },
+  {
+    name: 'Info Border',
+    hex: '#bfdbfe',
+    usage: 'Info border color (border-blue-200)',
+    category: 'Admin Feedback'
+  },
+  {
+    name: 'Table Row Background',
+    hex: '#f9fafb',
+    usage: 'Table row background (bg-gray-50)',
+    category: 'Admin Tables'
+  },
+  {
+    name: 'Table Row Hover',
+    hex: '#f3f4f6',
+    usage: 'Table row hover background (hover:bg-gray-50)',
+    category: 'Admin Tables'
+  },
+  
+  // Button Hover States
+  {
+    name: 'Red Hover Background',
+    hex: '#fef2f2',
+    usage: 'Red button hover background (hover:bg-red-50)',
+    category: 'Button States'
+  },
+  
+  // User Role Colors
+  {
+    name: 'Admin Role',
+    hex: '#7c3aed',
+    usage: 'Admin user role indicator',
+    category: 'User Roles'
+  },
+  {
+    name: 'Moderator Role',
+    hex: '#2563eb',
+    usage: 'Moderator user role indicator',
+    category: 'User Roles'
+  },
+  {
+    name: 'User Role',
+    hex: '#16a34a',
+    usage: 'Regular user role indicator',
+    category: 'User Roles'
+  },
+  
+  // Action Button Colors
+  {
+    name: 'Edit Action',
+    hex: '#3b82f6',
+    usage: 'Edit action button color',
+    category: 'Admin Actions'
+  },
+  {
+    name: 'Delete Action',
+    hex: '#ef4444',
+    usage: 'Delete action button color',
+    category: 'Admin Actions'
+  },
+  {
+    name: 'View Action',
+    hex: '#6b7280',
+    usage: 'View action button color',
+    category: 'Admin Actions'
+  },
+  {
+    name: 'Approve Action',
+    hex: '#10b981',
+    usage: 'Approve action button color',
+    category: 'Admin Actions'
+  },
+  {
+    name: 'Reject Action',
+    hex: '#f59e0b',
+    usage: 'Reject action button color',
+    category: 'Admin Actions'
   }
 ];
