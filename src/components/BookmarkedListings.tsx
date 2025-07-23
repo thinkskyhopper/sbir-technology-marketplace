@@ -26,17 +26,10 @@ const BookmarkedListings = () => {
     }
   }, [fetchBookmarkedListings]);
 
-  // Load bookmarked listings on mount
+  // Load bookmarked listings on mount and when bookmark IDs change
   useEffect(() => {
     loadBookmarkedListings();
-  }, [loadBookmarkedListings]);
-
-  // Reload when bookmark IDs change (when user adds/removes bookmarks)
-  useEffect(() => {
-    if (!isLoading) {
-      loadBookmarkedListings();
-    }
-  }, [bookmarkIds, isLoading, loadBookmarkedListings]);
+  }, [bookmarkIds]);
 
   const handleBackToMarketplace = () => {
     navigate("/?view=marketplace");
