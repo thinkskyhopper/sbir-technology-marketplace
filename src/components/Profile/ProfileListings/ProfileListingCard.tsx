@@ -103,7 +103,7 @@ const ProfileListingCard = ({
           {listing.technology_summary && (
             <div className="text-center">
               <p className="text-sm font-medium text-blue-400 mb-1">Technology:</p>
-              <p className="text-lg font-bold text-white">{listing.technology_summary}</p>
+              <p className="text-lg font-bold text-foreground">{listing.technology_summary}</p>
             </div>
           )}
         </div>
