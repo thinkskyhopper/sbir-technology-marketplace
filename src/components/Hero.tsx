@@ -29,7 +29,7 @@ const Hero = ({ onExploreClick }: HeroProps) => {
           {/* Logo Image */}
           <div className="mb-6 flex justify-center">
             <img 
-              src="/lovable-uploads/7afd0c6e-c779-4f57-ae36-08540adc4f01.png" 
+              src="/lovable-uploads/fe6674f8-0ad3-409f-ad77-bbca62b6a379.png" 
               alt="The SBIR Tech Marketplace"
               className="h-auto w-auto max-w-xs sm:max-w-2xl"
             />
