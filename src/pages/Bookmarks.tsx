@@ -1,14 +1,17 @@
 
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookmarkedListings from "@/components/BookmarkedListings";
+import CreateListingDialog from "@/components/CreateListingDialog";
 
 const Bookmarks = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -21,7 +24,7 @@ const Bookmarks = () => {
   };
 
   const handlePostListingClick = () => {
-    navigate('/');
+    setShowCreateDialog(true);
   };
 
   if (loading) {
@@ -53,6 +56,11 @@ const Bookmarks = () => {
         <BookmarkedListings />
       </div>
       <Footer />
+      
+      <CreateListingDialog 
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+      />
     </div>
   );
 };

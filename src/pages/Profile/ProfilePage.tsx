@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import ProfileContent from "./ProfileContent";
 import ProfileLoading from "./ProfileLoading";
 import ProfileError from "./ProfileError";
+import CreateListingDialog from "@/components/CreateListingDialog";
 
 interface Profile {
   id: string;
@@ -28,6 +29,7 @@ const ProfilePage = () => {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [displayProfile, setDisplayProfile] = useState<Profile | null>(null);
   const [isOtherUserProfile, setIsOtherUserProfile] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -98,7 +100,7 @@ const ProfilePage = () => {
   };
 
   const handlePostListingClick = () => {
-    // Navigate to home - this will be handled by the header
+    setShowCreateDialog(true);
   };
 
   if (authLoading || loading) {
@@ -131,6 +133,11 @@ const ProfilePage = () => {
         />
       </div>
       <Footer />
+      
+      <CreateListingDialog 
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+      />
     </div>
   );
 };
