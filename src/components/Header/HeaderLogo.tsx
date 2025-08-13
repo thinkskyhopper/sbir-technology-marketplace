@@ -38,13 +38,13 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
       type="button"
     >
       <img 
-        src="/lovable-uploads/8f82ed4a-36a0-46a2-a97b-78231a3a786e.png" 
+        src="/lovable-uploads/ca0d11df-91c3-48f4-8ef8-34b8eaf8bbbf.png" 
         alt="SBIR Logo"
         className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
       />
       <span className="text-sm sm:text-xl font-bold hidden xs:block sm:block">
         <span className="text-gradient">The SBIR Tech </span>
-        <span className="text-white">Marketplace</span>
+        <span className="text-foreground">Marketplace</span>
       </span>
     </button>
   );
