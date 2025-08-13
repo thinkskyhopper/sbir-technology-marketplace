@@ -28,7 +28,7 @@ const Team = () => {
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
                 Meet Our <span className="text-gradient">Expert Team</span>
               </h1>
-              <p className="text-xl max-w-3xl mx-auto leading-relaxed text-slate-50">
+              <p className="text-xl max-w-3xl mx-auto leading-relaxed text-muted-foreground">
                 Our team brings decades of experience in SBIR technology transfers, 
                 defense contracting, and entrepreneurship to help you navigate complex transactions.
               </p>

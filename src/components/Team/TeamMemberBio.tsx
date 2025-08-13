@@ -20,7 +20,7 @@ const TeamMemberBio = ({ member, isReversed }: TeamMemberBioProps) => {
       <CardContent className="p-8">
         <h3 className="text-2xl font-bold mb-4 text-gradient">{member.name}</h3>
         <div className="prose prose-lg max-w-none">
-          <p className="text-slate-50 leading-relaxed whitespace-pre-wrap">
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
             {member.bio}
           </p>
         </div>

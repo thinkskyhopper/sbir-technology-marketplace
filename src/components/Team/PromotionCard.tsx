@@ -28,7 +28,7 @@ const PromotionCard = ({ promotion, isSingleCard = false }: PromotionCardProps) 
       <h4 className={`text-lg font-semibold mb-4 text-center transition-all duration-200 ${
         hasLink 
           ? 'text-gradient underline hover:no-underline group-hover:scale-105' 
-          : 'text-slate-50'
+          : 'text-foreground'
       }`}>
         {promotion.title}
       </h4>
@@ -96,7 +96,7 @@ const PromotionCard = ({ promotion, isSingleCard = false }: PromotionCardProps) 
         
         {/* Promotion Description at bottom */}
         {promotion.description && (
-          <p className="text-sm text-slate-50 leading-relaxed text-center whitespace-pre-wrap">
+          <p className="text-sm text-muted-foreground leading-relaxed text-center whitespace-pre-wrap">
             {promotion.description}
           </p>
         )}
