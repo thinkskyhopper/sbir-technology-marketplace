@@ -16,7 +16,7 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
         phase: "border-transparent bg-accent text-accent-foreground hover:bg-accent/80",
-        sold: "border-transparent bg-muted text-muted-foreground hover:bg-muted/80",
+        sold: "border-transparent bg-gold text-gold-foreground hover:bg-gold/90",
       },
     },
     defaultVariants: {

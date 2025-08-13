@@ -29,6 +29,9 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
+    --gold: 45 100% 50%;
+    --gold-foreground: 0 0% 0%;
+
     --border: 220 20% 85%;
     --input: 220 20% 85%;
     --ring: 217 91% 50%;
