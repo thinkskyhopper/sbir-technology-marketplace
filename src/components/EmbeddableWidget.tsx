@@ -70,7 +70,7 @@ const EmbeddableWidget = () => {
           className="hover:opacity-80 transition-opacity"
         >
           <img 
-            src="/lovable-uploads/fe6674f8-0ad3-409f-ad77-bbca62b6a379.png" 
+            src="/lovable-uploads/cebf46c4-c666-4c2c-801f-a50e7ae44369.png" 
             alt="SBIR Logo"
             className="w-12 h-12 mx-auto mb-2"
           />
