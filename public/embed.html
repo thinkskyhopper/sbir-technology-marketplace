@@ -546,8 +546,27 @@
             // Dynamic height detection and communication
             function sendHeightToParent() {
                 if (window.parent && window.parent !== window) {
-                    const height = document.documentElement.scrollHeight;
-                    console.log('📏 Sending height to parent:', height);
+                    // Get the widget container for more accurate measurement
+                    const widget = document.querySelector('.widget');
+                    let height;
+                    
+                    if (widget) {
+                        // Use widget container's actual height
+                        height = widget.offsetHeight;
+                        console.log('📏 Using widget container height:', height);
+                    } else {
+                        // Fallback to body height (more accurate than documentElement)
+                        height = Math.max(
+                            document.body.scrollHeight,
+                            document.body.offsetHeight
+                        );
+                        console.log('📏 Using body height fallback:', height);
+                    }
+                    
+                    // Add small buffer for border/padding differences
+                    height += 2;
+                    
+                    console.log('📏 Final height sent to parent:', height);
                     try {
                         window.parent.postMessage({
                             type: 'SBIR_WIDGET_HEIGHT',
