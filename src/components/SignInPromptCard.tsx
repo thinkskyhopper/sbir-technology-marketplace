@@ -17,8 +17,8 @@ const SignInPromptCard = ({ onSignIn }: SignInPromptCardProps) => {
               <Plus className="w-5 h-5 text-primary" />
             </div>
           </div>
-          <div className="flex-1 min-w-0 flex items-center justify-between gap-4">
-            <div className="flex-1">
+          <div className="flex-1 min-w-0 flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="flex-1 mb-3 sm:mb-0">
               <h3 className="font-medium text-foreground text-sm mb-1">
                 Have SBIR technology to share?
               </h3>
@@ -29,7 +29,7 @@ const SignInPromptCard = ({ onSignIn }: SignInPromptCardProps) => {
             <Button 
               onClick={onSignIn}
               size="sm"
-              className="flex-shrink-0"
+              className="flex-shrink-0 w-full sm:w-auto"
             >
               <LogIn className="w-4 h-4 mr-2" />
               Sign In to Submit Listing
