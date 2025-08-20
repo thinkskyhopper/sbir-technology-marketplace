@@ -72,7 +72,7 @@ const EmbeddableWidget = () => {
           <img 
             src="/lovable-uploads/fe6674f8-0ad3-409f-ad77-bbca62b6a379.png" 
             alt="SBIR Logo"
-            className="w-16 h-16 mx-auto mb-2 sm:w-20 sm:h-20 md:w-16 md:h-16"
+            className="h-15 w-auto max-w-[90%] mx-auto mb-2 sm:h-20 lg:h-30"
           />
         </a>
         <h2 className="text-lg font-bold text-foreground sm:text-xl md:text-lg">
