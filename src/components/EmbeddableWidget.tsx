@@ -60,7 +60,7 @@ const EmbeddableWidget = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md min-h-[400px] sm:min-h-[400px]">
+    <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md">
       {/* Logo and Title */}
       <div className="text-center mb-4">
         <a 
