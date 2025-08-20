@@ -82,7 +82,7 @@ const EmbeddableWidget = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-2 mb-4 sm:flex-row">
+      <div className="flex gap-2 mb-4">
         <Button 
           onClick={handleExploreClick}
           className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
