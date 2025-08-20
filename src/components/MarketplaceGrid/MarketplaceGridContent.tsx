@@ -2,9 +2,7 @@
 import MarketplaceFilters from "../MarketplaceFilters";
 import MarketplaceResultsGrid from "../MarketplaceResultsGrid";
 import MarketplaceNoResults from "../MarketplaceNoResults";
-import SignInPromptCard from "../SignInPromptCard";
 import type { SBIRListing } from "@/types/listings";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface MarketplaceGridContentProps {
   showFilters: boolean;
@@ -23,7 +21,6 @@ interface MarketplaceGridContentProps {
   onClearFilters: () => void;
   onEditListing: (listing: SBIRListing) => void;
   onContactAdmin?: (listing: SBIRListing) => void;
-  onSignIn?: () => void;
   currentPage: number;
   totalPages: number;
   paginatedData: SBIRListing[];
@@ -50,7 +47,6 @@ const MarketplaceGridContent = ({
   onClearFilters,
   onEditListing,
   onContactAdmin,
-  onSignIn,
   currentPage,
   totalPages,
   paginatedData,
@@ -59,23 +55,11 @@ const MarketplaceGridContent = ({
   hasPreviousPage,
   totalItems
 }: MarketplaceGridContentProps) => {
-  const { user } = useAuth();
-
   return (
     <div className="space-y-6">
       {/* Search and Filters - Only show if showFilters is true */}
       {showFilters && (
-        <div className="space-y-4">
-          {/* Sign-in prompt for unauthenticated users */}
-          {!user && onSignIn && (
-            <div className="flex justify-end">
-              <div className="w-full sm:w-80">
-                <SignInPromptCard onSignIn={onSignIn} />
-              </div>
-            </div>
-          )}
-          
-          <MarketplaceFilters
+        <MarketplaceFilters
           localSearchQuery={localSearchQuery}
           phaseFilter={phaseFilter}
           categoryFilter={categoryFilter}
@@ -88,7 +72,6 @@ const MarketplaceGridContent = ({
           onStatusFilterChange={onStatusFilterChange}
           onSortFilterChange={onSortFilterChange}
         />
-        </div>
       )}
 
       {/* Results */}
