@@ -40,8 +40,9 @@
         }
         
         .widget {
-            width: 600px;
-            height: 450px;
+            width: 100%;
+            max-width: 600px;
+            min-height: 450px;
             background-color: hsl(var(--card));
             border: 1px solid hsl(var(--border));
             border-radius: 12px;
@@ -49,6 +50,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            margin: 0 auto;
         }
         
         .header {
@@ -63,6 +65,7 @@
             width: auto;
             display: block;
             margin: 0 auto;
+            max-width: 90%;
         }
         
         .logo-link {
@@ -237,6 +240,143 @@
 
         .listings-container::-webkit-scrollbar-thumb:hover {
             background: hsl(var(--accent));
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .widget {
+                max-width: 100%;
+                min-height: 400px;
+                border-radius: 8px;
+            }
+
+            .header {
+                padding: 12px;
+            }
+
+            .logo {
+                height: 80px;
+            }
+
+            .buttons {
+                padding: 10px 12px;
+                gap: 6px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .listing {
+                min-width: 140px;
+                max-width: 160px;
+                padding: 10px;
+            }
+
+            .listing-title {
+                font-size: 12px;
+            }
+
+            .listing-meta {
+                font-size: 10px;
+            }
+
+            .view-all {
+                padding: 10px;
+            }
+
+            .view-all-link {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .widget {
+                min-height: 350px;
+                border-radius: 6px;
+            }
+
+            .header {
+                padding: 10px;
+            }
+
+            .logo {
+                height: 60px;
+            }
+
+            .buttons {
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 8px 12px;
+            }
+
+            .content {
+                padding: 10px;
+            }
+
+            .listings-container {
+                gap: 8px;
+            }
+
+            .listing {
+                min-width: 120px;
+                max-width: 140px;
+                padding: 8px;
+            }
+
+            .listing-title {
+                font-size: 11px;
+                -webkit-line-clamp: 3;
+            }
+
+            .listing-meta {
+                font-size: 9px;
+                margin-bottom: 3px;
+            }
+
+            .icon {
+                width: 10px;
+                height: 10px;
+                margin-right: 3px;
+            }
+
+            .view-all {
+                padding: 8px;
+            }
+
+            .view-all-link {
+                font-size: 12px;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .listing:hover {
+                transform: none;
+            }
+
+            .listing:active {
+                background-color: hsl(var(--accent));
+                transform: scale(0.98);
+            }
+
+            .btn:hover {
+                background-color: initial;
+            }
+
+            .btn:active {
+                transform: scale(0.95);
+            }
         }
         
     </style>

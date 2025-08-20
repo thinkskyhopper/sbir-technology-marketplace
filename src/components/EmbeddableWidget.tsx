@@ -60,7 +60,7 @@ const EmbeddableWidget = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans">
+    <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md">
       {/* Logo and Title */}
       <div className="text-center mb-4">
         <a 
@@ -72,17 +72,17 @@ const EmbeddableWidget = () => {
           <img 
             src="/lovable-uploads/fe6674f8-0ad3-409f-ad77-bbca62b6a379.png" 
             alt="SBIR Logo"
-            className="w-12 h-12 mx-auto mb-2"
+            className="w-16 h-16 mx-auto mb-2 sm:w-20 sm:h-20 md:w-16 md:h-16"
           />
         </a>
-        <h2 className="text-lg font-bold text-foreground">
+        <h2 className="text-lg font-bold text-foreground sm:text-xl md:text-lg">
           <span className="text-gradient">The SBIR Tech </span>
           <span className="text-foreground">Marketplace</span>
         </h2>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-col gap-2 mb-4 sm:flex-row">
         <Button 
           onClick={handleExploreClick}
           className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
@@ -131,13 +131,13 @@ const EmbeddableWidget = () => {
                   rel="noopener noreferrer"
                   className="hover:underline"
                 >
-                  <h3 className="text-sm font-semibold line-clamp-1 text-card-foreground">
+                  <h3 className="text-sm font-semibold line-clamp-2 text-card-foreground sm:line-clamp-1">
                     {listing.title}
                   </h3>
                 </a>
                 <div className="flex items-center text-xs text-muted-foreground">
                   <Building className="w-3 h-3 mr-1" />
-                  {listing.agency}
+                  <span className="truncate">{listing.agency}</span>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
@@ -149,23 +149,24 @@ const EmbeddableWidget = () => {
                     <DollarSign className="w-3 h-3 mr-1 text-green-500" />
                     <span className="font-semibold text-card-foreground">{formatCurrency(listing.value)}</span>
                   </div>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs max-w-20 truncate" title={listing.category}>
                     {listing.category}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-xs text-muted-foreground">
                     <Calendar className="w-3 h-3 mr-1" />
-                    {formatDate(listing.deadline)}
+                    <span className="text-xs">{formatDate(listing.deadline)}</span>
                   </div>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="h-6 text-xs px-2"
+                    className="h-6 text-xs px-2 flex-shrink-0"
                     onClick={() => handleViewDetailsClick(listing.id)}
                   >
                     <FileText className="w-3 h-3 mr-1" />
-                    View Details
+                    <span className="hidden xs:inline">View Details</span>
+                    <span className="xs:hidden">View</span>
                   </Button>
                 </div>
               </CardContent>
