@@ -60,7 +60,7 @@ const EmbeddableWidget = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md">
+    <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md min-h-[400px] sm:min-h-[400px]">
       {/* Logo and Title */}
       <div className="text-center mb-4">
         <a 
@@ -101,7 +101,7 @@ const EmbeddableWidget = () => {
       </div>
 
       {/* Listings */}
-      <div className="space-y-3 mb-4">
+      <div className="space-y-3 mb-4 max-h-[300px] overflow-y-auto sm:max-h-none sm:overflow-y-visible">
         {loading ? (
           <div className="text-center py-4">
             <p className="text-sm text-muted-foreground">Loading opportunities...</p>
