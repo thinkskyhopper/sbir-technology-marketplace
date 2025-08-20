@@ -44,7 +44,7 @@ const MarketplacePage = ({
               <p className="text-muted-foreground">Browse and discover Phase I & II SBIR technology from verified sellers</p>
             </div>
             {!user && (
-              <div className="flex-shrink-0 w-full sm:w-96">
+              <div className="flex-shrink-0 w-full sm:w-[500px]">
                 <SignInPromptCard onSignIn={() => navigate('/auth')} />
               </div>
             )}
