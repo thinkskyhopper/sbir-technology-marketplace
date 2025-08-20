@@ -543,6 +543,43 @@
             
             console.log('🎯 Widget setup complete');
             
+            // Dynamic height detection and communication
+            function sendHeightToParent() {
+                if (window.parent && window.parent !== window) {
+                    const height = document.documentElement.scrollHeight;
+                    console.log('📏 Sending height to parent:', height);
+                    try {
+                        window.parent.postMessage({
+                            type: 'SBIR_WIDGET_HEIGHT',
+                            height: height
+                        }, '*');
+                    } catch (error) {
+                        console.warn('Could not send height to parent:', error);
+                    }
+                }
+            }
+            
+            // Send initial height after content loads
+            setTimeout(sendHeightToParent, 100);
+            
+            // Monitor for height changes using ResizeObserver
+            if (window.ResizeObserver) {
+                const resizeObserver = new ResizeObserver(() => {
+                    sendHeightToParent();
+                });
+                resizeObserver.observe(document.documentElement);
+            } else {
+                // Fallback for older browsers - check periodically
+                let lastHeight = 0;
+                setInterval(() => {
+                    const currentHeight = document.documentElement.scrollHeight;
+                    if (currentHeight !== lastHeight) {
+                        lastHeight = currentHeight;
+                        sendHeightToParent();
+                    }
+                }, 500);
+            }
+            
         })();
     </script>
 </body>

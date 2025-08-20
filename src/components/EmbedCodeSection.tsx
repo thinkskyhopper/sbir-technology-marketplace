@@ -7,7 +7,23 @@ import { Copy, Check } from 'lucide-react';
 const EmbedCodeSection = () => {
   const [copied, setCopied] = useState(false);
 
-  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="100%" frameborder="0" scrolling="auto" style="border: 1px solid #ddd; border-radius: 8px; max-width: 600px;"></iframe>`;
+  const embedCode = `<iframe id="sbir-widget" src="https://sbir-technology-marketplace.lovable.app/embed.html" width="100%" height="400" frameborder="0" scrolling="no" style="border: 1px solid #ddd; border-radius: 8px; max-width: 600px; transition: height 0.3s ease;"></iframe>
+
+<script>
+(function() {
+  // Listen for height messages from the SBIR widget
+  function handleWidgetMessage(event) {
+    if (event.data && event.data.type === 'SBIR_WIDGET_HEIGHT') {
+      const iframe = document.getElementById('sbir-widget');
+      if (iframe && event.data.height) {
+        iframe.style.height = event.data.height + 'px';
+      }
+    }
+  }
+  
+  window.addEventListener('message', handleWidgetMessage);
+})();
+</script>`;
 
   const handleCopy = async () => {
     try {
