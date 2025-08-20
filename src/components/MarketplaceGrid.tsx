@@ -5,6 +5,7 @@ import type { SBIRListing } from "@/types/listings";
 interface MarketplaceGridProps {
   searchQuery?: string;
   onContactAdmin?: (listing: SBIRListing) => void;
+  onSignIn?: () => void;
   preservedFilters?: {
     localSearchQuery: string;
     phaseFilter: string;

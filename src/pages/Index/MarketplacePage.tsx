@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import MarketplaceGrid from "@/components/MarketplaceGrid";
 import type { SBIRListing } from "@/types/listings";
 import { useMetaTags } from "@/hooks/useMetaTags";
@@ -23,6 +24,8 @@ const MarketplacePage = ({
   marketplaceFilters, 
   onFiltersChange 
 }: MarketplacePageProps) => {
+  const navigate = useNavigate();
+  
   useMetaTags({
     title: 'SBIR Technology Marketplace - Browse Available Technologies',
     description: 'Browse and discover Phase I & II SBIR technology from verified sellers in our comprehensive marketplace.',
@@ -38,8 +41,9 @@ const MarketplacePage = ({
         
         <MarketplaceGrid 
           searchQuery={searchQuery} 
-          onContactAdmin={onContactAdmin} 
-          preservedFilters={marketplaceFilters} 
+          onContactAdmin={onContactAdmin}
+          onSignIn={() => navigate('/auth')} 
+          preservedFilters={marketplaceFilters}
           onFiltersChange={onFiltersChange}
           showFilters={true}
         />

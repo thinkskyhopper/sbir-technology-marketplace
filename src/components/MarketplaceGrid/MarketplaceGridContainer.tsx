@@ -14,6 +14,7 @@ import type { SBIRListing } from "@/types/listings";
 interface MarketplaceGridContainerProps {
   searchQuery?: string;
   onContactAdmin?: (listing: SBIRListing) => void;
+  onSignIn?: () => void;
   preservedFilters?: {
     localSearchQuery: string;
     phaseFilter: string;
@@ -34,7 +35,8 @@ interface MarketplaceGridContainerProps {
 
 const MarketplaceGridContainer = ({ 
   searchQuery, 
-  onContactAdmin, 
+  onContactAdmin,
+  onSignIn, 
   preservedFilters,
   onFiltersChange,
   showFilters = true,
@@ -134,6 +136,7 @@ const MarketplaceGridContainer = ({
         onClearFilters={handleClearFilters}
         onEditListing={handleEditListing}
         onContactAdmin={onContactAdmin}
+        onSignIn={onSignIn}
         currentPage={currentPage}
         totalPages={totalPages}
         paginatedData={paginatedData}
