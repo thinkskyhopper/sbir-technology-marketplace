@@ -7,7 +7,7 @@ const AuthHeader = () => {
     <div className="text-center mb-8">
       <Link to="/" className="block hover:opacity-80 transition-opacity">
         <img 
-          src="/lovable-uploads/7afd0c6e-c779-4f57-ae36-08540adc4f01.png" 
+          src="/lovable-uploads/a0bc0247-5d41-40e0-b2ca-3c6aae467056.png" 
           alt="The SBIR Tech Marketplace"
           className="w-full max-w-sm mx-auto h-auto object-contain"
         />
