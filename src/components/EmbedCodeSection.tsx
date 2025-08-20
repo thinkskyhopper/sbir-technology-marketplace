@@ -7,7 +7,7 @@ import { Copy, Check } from 'lucide-react';
 const EmbedCodeSection = () => {
   const [copied, setCopied] = useState(false);
 
-  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="100%" height="400" frameborder="0" scrolling="auto" style="border: 1px solid #ddd; border-radius: 8px; max-width: 600px;"></iframe>`;
+  const embedCode = `<iframe src="https://sbir-technology-marketplace.lovable.app/embed.html" width="100%" frameborder="0" scrolling="auto" style="border: 1px solid #ddd; border-radius: 8px; max-width: 600px;"></iframe>`;
 
   const handleCopy = async () => {
     try {
@@ -70,7 +70,7 @@ const EmbedCodeSection = () => {
               <li>• Mobile-responsive design</li>
               <li>• ADA compliant with proper accessibility features</li>
               <li>• Links open in the same tab for seamless integration</li>
-              <li>• Compact 600px × 450px size</li>
+              <li>• Dynamic height based on content (600px max width)</li>
             </ul>
           </div>
           
@@ -78,7 +78,7 @@ const EmbedCodeSection = () => {
             <h4 className="font-medium text-sm mb-2 text-blue-800">Integration Notes:</h4>
             <p className="text-sm text-blue-700">
               The widget is self-contained and will automatically fetch the latest opportunities. 
-              You can adjust the width and height attributes as needed for your layout.
+              You can adjust the width attribute as needed for your layout. Height will automatically adjust based on content.
               The widget should now load correctly from the updated URL.
             </p>
           </div>
