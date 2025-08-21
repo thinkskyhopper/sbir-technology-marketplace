@@ -5,6 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PolicyDialog from './PolicyDialog';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import { sanitizeName } from '@/utils/validation';
 
 interface SignUpFormFieldsProps {
   firstName: string;
@@ -15,6 +17,8 @@ interface SignUpFormFieldsProps {
   setEmail: (value: string) => void;
   password: string;
   setPassword: (value: string) => void;
+  confirmPassword: string;
+  setConfirmPassword: (value: string) => void;
   howDidYouHear: string;
   setHowDidYouHear: (value: string) => void;
   howDidYouHearOther: string;
@@ -36,6 +40,8 @@ const SignUpFormFields = ({
   setEmail,
   password,
   setPassword,
+  confirmPassword,
+  setConfirmPassword,
   howDidYouHear,
   setHowDidYouHear,
   howDidYouHearOther,
@@ -59,9 +65,10 @@ const SignUpFormFields = ({
             id="firstName"
             type="text"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => setFirstName(sanitizeName(e.target.value))}
             required
             placeholder="John"
+            maxLength={50}
           />
         </div>
         
@@ -71,9 +78,10 @@ const SignUpFormFields = ({
             id="lastName"
             type="text"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => setLastName(sanitizeName(e.target.value))}
             required
             placeholder="Doe"
+            maxLength={50}
           />
         </div>
       </div>
@@ -99,7 +107,21 @@ const SignUpFormFields = ({
           onChange={(e) => setPassword(e.target.value)}
           required
           placeholder="••••••••"
-          minLength={6}
+          minLength={8}
+        />
+        <PasswordStrengthIndicator password={password} />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">Confirm Password *</Label>
+        <Input
+          id="confirmPassword"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          placeholder="••••••••"
+          minLength={8}
         />
       </div>
 

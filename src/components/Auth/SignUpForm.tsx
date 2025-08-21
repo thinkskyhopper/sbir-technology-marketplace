@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import SignUpFormFields from './SignUpFormFields';
+import { validateName, validatePassword, validatePasswordConfirmation, validateEmail, sanitizeName } from '@/utils/validation';
 
 interface SignUpFormProps {
   onSwitchToSignIn: () => void;
@@ -16,6 +17,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [howDidYouHear, setHowDidYouHear] = useState('');
   const [howDidYouHearOther, setHowDidYouHearOther] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
@@ -34,15 +36,42 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
     setSuccess(null);
 
     try {
-      // Validate required fields
-      if (!firstName.trim()) {
-        setError('First name is required');
+      // Validate first name
+      const firstNameValidation = validateName(firstName, 'First name');
+      if (!firstNameValidation.isValid) {
+        setError(firstNameValidation.error!);
         setLoading(false);
         return;
       }
 
-      if (!lastName.trim()) {
-        setError('Last name is required');
+      // Validate last name
+      const lastNameValidation = validateName(lastName, 'Last name');
+      if (!lastNameValidation.isValid) {
+        setError(lastNameValidation.error!);
+        setLoading(false);
+        return;
+      }
+
+      // Validate email
+      const emailValidation = validateEmail(email);
+      if (!emailValidation.isValid) {
+        setError(emailValidation.error!);
+        setLoading(false);
+        return;
+      }
+
+      // Validate password
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.isValid) {
+        setError(passwordValidation.error!);
+        setLoading(false);
+        return;
+      }
+
+      // Validate password confirmation
+      const passwordConfirmationValidation = validatePasswordConfirmation(password, confirmPassword);
+      if (!passwordConfirmationValidation.isValid) {
+        setError(passwordConfirmationValidation.error!);
         setLoading(false);
         return;
       }
@@ -71,8 +100,10 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
         return;
       }
       
-      // Create full name from first and last name
-      const fullName = `${firstName.trim()} ${lastName.trim()}`;
+      // Create full name from sanitized first and last name
+      const sanitizedFirstName = sanitizeName(firstName);
+      const sanitizedLastName = sanitizeName(lastName);
+      const fullName = `${sanitizedFirstName} ${sanitizedLastName}`;
       
       const { error } = await signUp(email, password, fullName, marketingOptIn);
       
@@ -117,6 +148,8 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           setEmail={setEmail}
           password={password}
           setPassword={setPassword}
+          confirmPassword={confirmPassword}
+          setConfirmPassword={setConfirmPassword}
           howDidYouHear={howDidYouHear}
           setHowDidYouHear={setHowDidYouHear}
           howDidYouHearOther={howDidYouHearOther}
