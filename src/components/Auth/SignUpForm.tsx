@@ -16,6 +16,8 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [howDidYouHear, setHowDidYouHear] = useState('');
+  const [howDidYouHearOther, setHowDidYouHearOther] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [marketingOptIn, setMarketingOptIn] = useState(false);
@@ -53,6 +55,18 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
 
       if (!legalAccepted) {
         setError('You must agree to the Legal Disclaimer');
+        setLoading(false);
+        return;
+      }
+
+      if (!howDidYouHear) {
+        setError('Please tell us how you heard about us');
+        setLoading(false);
+        return;
+      }
+
+      if (howDidYouHear === 'Other (Please specify)' && !howDidYouHearOther.trim()) {
+        setError('Please specify how you heard about us');
         setLoading(false);
         return;
       }
@@ -103,6 +117,10 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           setEmail={setEmail}
           password={password}
           setPassword={setPassword}
+          howDidYouHear={howDidYouHear}
+          setHowDidYouHear={setHowDidYouHear}
+          howDidYouHearOther={howDidYouHearOther}
+          setHowDidYouHearOther={setHowDidYouHearOther}
           privacyAccepted={privacyAccepted}
           setPrivacyAccepted={setPrivacyAccepted}
           legalAccepted={legalAccepted}

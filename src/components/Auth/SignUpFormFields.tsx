@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PolicyDialog from './PolicyDialog';
 
 interface SignUpFormFieldsProps {
@@ -14,6 +15,10 @@ interface SignUpFormFieldsProps {
   setEmail: (value: string) => void;
   password: string;
   setPassword: (value: string) => void;
+  howDidYouHear: string;
+  setHowDidYouHear: (value: string) => void;
+  howDidYouHearOther: string;
+  setHowDidYouHearOther: (value: string) => void;
   privacyAccepted: boolean;
   setPrivacyAccepted: (value: boolean) => void;
   legalAccepted: boolean;
@@ -31,6 +36,10 @@ const SignUpFormFields = ({
   setEmail,
   password,
   setPassword,
+  howDidYouHear,
+  setHowDidYouHear,
+  howDidYouHearOther,
+  setHowDidYouHearOther,
   privacyAccepted,
   setPrivacyAccepted,
   legalAccepted,
@@ -92,6 +101,35 @@ const SignUpFormFields = ({
           placeholder="••••••••"
           minLength={6}
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="howDidYouHear">How did you hear about us? *</Label>
+        <Select value={howDidYouHear} onValueChange={setHowDidYouHear}>
+          <SelectTrigger>
+            <SelectValue placeholder="Please select how you heard about us" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Google">Google</SelectItem>
+            <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+            <SelectItem value="Podcast">Podcast</SelectItem>
+            <SelectItem value="Word of mouth">Word of mouth</SelectItem>
+            <SelectItem value="Other (Please specify)">Other (Please specify)</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        {howDidYouHear === 'Other (Please specify)' && (
+          <div className="mt-2">
+            <Input
+              id="howDidYouHearOther"
+              type="text"
+              value={howDidYouHearOther}
+              onChange={(e) => setHowDidYouHearOther(e.target.value)}
+              placeholder="Please tell us how you heard about us"
+              required
+            />
+          </div>
+        )}
       </div>
 
       <div className="space-y-4 pt-4">
