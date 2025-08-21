@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PolicyDialog from './PolicyDialog';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import PasswordMatchIndicator from './PasswordMatchIndicator';
 import { sanitizeName } from '@/utils/validation';
 
 interface SignUpFormFieldsProps {
@@ -123,6 +124,7 @@ const SignUpFormFields = ({
           placeholder="••••••••"
           minLength={8}
         />
+        <PasswordMatchIndicator password={password} confirmPassword={confirmPassword} />
       </div>
 
       <div className="space-y-2">
