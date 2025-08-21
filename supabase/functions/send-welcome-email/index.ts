@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
     const emailHtml = createWelcomeEmailHtml(firstName, email)
     
     const { error: emailError } = await resend.emails.send({
-      from: 'SBIR Listings <notifications@yourdomain.com>',
+      from: 'The SBIR Tech Marketplace <noreply@updates.thesbirtechmarketplace.com>',
       to: [email],
       subject: 'Welcome to The SBIR Tech Marketplace!',
       html: emailHtml,
@@ -114,14 +114,14 @@ function createWelcomeEmailHtml(firstName: string, email: string): string {
         </div>
         
         <div style="margin: 30px 0;">
-          <a href="https://yourdomain.com" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600;">
+          <a href="https://thesbirtechmarketplace.com" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600;">
             Start Exploring
           </a>
         </div>
         
         <div style="border-top: 1px solid #e5e7eb; padding-top: 30px; margin-top: 40px; font-size: 14px; color: #6b7280;">
           <p style="margin-bottom: 20px;">
-            You can update your email preferences anytime in your <a href="https://yourdomain.com/settings" style="color: #3b82f6;">account settings</a>.
+            You can update your email preferences anytime in your <a href="https://thesbirtechmarketplace.com/settings" style="color: #3b82f6;">account settings</a>.
           </p>
           
           <p style="margin-top: 30px;">
