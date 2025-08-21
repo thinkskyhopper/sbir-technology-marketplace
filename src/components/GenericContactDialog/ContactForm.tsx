@@ -202,10 +202,10 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
           </div>
 
           <div>
-            <Label htmlFor="howDidYouFindUs">How did you find us? *</Label>
+            <Label htmlFor="howDidYouFindUs">How did you hear about us? *</Label>
             <Select value={formData.howDidYouFindUs} onValueChange={(value) => setFormData({ ...formData, howDidYouFindUs: value })}>
               <SelectTrigger>
-                <SelectValue placeholder="Please select how you found us" />
+                <SelectValue placeholder="Please select how you heard about us" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Google">Google</SelectItem>
@@ -224,7 +224,7 @@ const ContactForm = ({ open, onOpenChange, title, userEmail }: ContactFormProps)
                 id="otherSource"
                 value={formData.otherSource}
                 onChange={(e) => setFormData({ ...formData, otherSource: e.target.value })}
-                placeholder="Please tell us how you found us"
+                placeholder="Please tell us how you heard about us"
                 required
               />
             </div>
