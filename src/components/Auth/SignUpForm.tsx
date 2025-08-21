@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import SignUpFormFields from './SignUpFormFields';
 import { validateName, validatePassword, validatePasswordConfirmation, validateEmail, sanitizeName } from '@/utils/validation';
 
@@ -25,15 +26,14 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   
   const { signUp, signInWithGoogle } = useAuth();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccess(null);
 
     try {
       // Validate first name
@@ -110,7 +110,10 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
       if (error) {
         setError(error.message);
       } else {
-        setSuccess('Please check your email to confirm your account');
+        toast({
+          title: "Account Created Successfully!",
+          description: "Please check your email to confirm your account before signing in.",
+        });
       }
     } catch (err) {
       setError('An unexpected error occurred');
@@ -166,12 +169,6 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {success && (
-          <Alert>
-            <AlertDescription>{success}</AlertDescription>
           </Alert>
         )}
 
