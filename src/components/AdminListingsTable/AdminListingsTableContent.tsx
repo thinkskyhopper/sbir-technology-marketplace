@@ -72,15 +72,6 @@ const AdminListingsTableContent = ({
                 Value
               </SortableTableHead>
               <SortableTableHead
-                sortKey="deadline"
-                currentSortColumn={sortState.column}
-                currentSortDirection={sortState.direction}
-                onSort={onSort}
-                className="min-w-[100px]"
-              >
-                Deadline
-              </SortableTableHead>
-              <SortableTableHead
                 sortKey="status"
                 currentSortColumn={sortState.column}
                 currentSortDirection={sortState.direction}
