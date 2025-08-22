@@ -49,7 +49,6 @@ export const listingQueries = {
         return {
           ...listing,
           value: listing.value / 100, // Convert cents to dollars
-          deadline: new Date(listing.deadline).toISOString().split('T')[0],
           // Ensure profiles is properly typed
           profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
             ? listing.profiles 
@@ -93,7 +92,6 @@ export const listingQueries = {
       const formattedListings = fallbackData?.map(listing => ({
         ...listing,
         value: listing.value / 100,
-        deadline: new Date(listing.deadline).toISOString().split('T')[0],
         profiles: null // Explicitly set to null since no profile data is available
       })) || [];
 

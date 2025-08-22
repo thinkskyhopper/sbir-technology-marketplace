@@ -39,7 +39,6 @@ export const featuredListingsService = {
     const featuredListings = featuredData?.map(item => ({
       ...item.sbir_listings,
       value: item.sbir_listings.value / 100, // Convert cents to dollars
-      deadline: new Date(item.sbir_listings.deadline).toISOString().split('T')[0],
     })) || [];
 
     console.log('✅ Featured listings fetched:', featuredListings.length);
@@ -81,7 +80,6 @@ export const featuredListingsService = {
       const newestListings = newestData?.map(listing => ({
         ...listing,
         value: listing.value / 100, // Convert cents to dollars
-        deadline: new Date(listing.deadline).toISOString().split('T')[0],
       })) || [];
 
       const combinedListings = [...featuredListings, ...newestListings];
