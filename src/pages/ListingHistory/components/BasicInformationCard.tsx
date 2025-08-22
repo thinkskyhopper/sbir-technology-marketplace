@@ -81,10 +81,10 @@ export const BasicInformationCard = ({ listing }: BasicInformationCardProps) => 
           </div>
           
           <div className="flex items-center space-x-2">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
+            <DollarSign className="w-4 h-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Deadline</p>
-              <p className="font-medium">{formatDate(listing.deadline)}</p>
+              <p className="text-sm text-muted-foreground">Sale Price</p>
+              <p className="font-medium">{formatCurrency(listing.value)}</p>
             </div>
           </div>
           

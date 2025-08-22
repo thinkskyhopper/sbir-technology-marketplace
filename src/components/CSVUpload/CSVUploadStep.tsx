@@ -44,7 +44,7 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
       console.log('📊 Number of data rows:', rows.length);
 
       // Validate required headers
-      const requiredHeaders = ['title', 'description', 'agency', 'phase', 'value', 'deadline', 'category'];
+      const requiredHeaders = ['title', 'description', 'agency', 'phase', 'value', 'category'];
       const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
 
       if (missingHeaders.length > 0) {
@@ -107,9 +107,6 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
         if (isNaN(listing.value) || listing.value <= 0) {
           validationErrors.push(`Row ${rowNumber}: Value must be a positive number, got "${row[headerIndexMap['value']]}"`);
         }
-        if (!listing.deadline.trim()) {
-          validationErrors.push(`Row ${rowNumber}: Deadline is required`);
-        }
         if (!listing.category.trim()) {
           validationErrors.push(`Row ${rowNumber}: Category is required`);
         }
@@ -142,7 +139,7 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
           className="cursor-pointer"
         />
         <p className="text-sm text-muted-foreground">
-          CSV must include columns: title, description, agency, phase, value, deadline, category
+          CSV must include columns: title, description, agency, phase, value, category
         </p>
         <p className="text-xs text-muted-foreground">
           Note: Fields containing commas should be enclosed in double quotes (e.g., "Agency Name, LLC")

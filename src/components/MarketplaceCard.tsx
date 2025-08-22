@@ -148,11 +148,6 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
                 {listing.category}
               </Badge>
             </div>
-            
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Calendar className="w-4 h-4 mr-1" />
-              Deadline: {formatDate(listing.deadline)}
-            </div>
           </div>
         </CardContent>
 

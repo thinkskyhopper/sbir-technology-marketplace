@@ -155,10 +155,10 @@ const EmbeddableWidget = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    <span className="text-xs">{formatDate(listing.deadline)}</span>
+                    <DollarSign className="w-3 h-3 mr-1" />
+                    <span className="text-xs">{formatCurrency(listing.value)}</span>
                   </div>
-                  <Button 
+                  <Button
                     variant="outline" 
                     size="sm" 
                     className="h-6 text-xs px-2 flex-shrink-0"

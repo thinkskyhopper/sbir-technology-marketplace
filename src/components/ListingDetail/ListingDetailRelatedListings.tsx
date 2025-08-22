@@ -90,10 +90,6 @@ const ListingDetailRelatedListings = ({
                   <DollarSign className="w-3 h-3 mr-1" />
                   <span className="font-medium">{formatCurrency(listing.value)}</span>
                 </div>
-                <div className="flex items-center">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  <span>{formatDate(listing.deadline)}</span>
-                </div>
               </div>
               
               <div className="flex items-center justify-between">

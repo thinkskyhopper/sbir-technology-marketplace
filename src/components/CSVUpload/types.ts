@@ -7,7 +7,7 @@ export interface ParsedListing {
   agency: string;
   phase: SBIRPhase;
   value: number;
-  deadline: string;
+  deadline?: string;
   category: string;
   photo_url?: string;
   status: ListingStatus;

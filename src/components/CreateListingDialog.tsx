@@ -34,7 +34,6 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
       phase: "Phase I",
       agency: "",
       value: 0,
-      deadline: "",
       category: "",
     },
   });

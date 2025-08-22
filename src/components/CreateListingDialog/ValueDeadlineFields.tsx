@@ -47,53 +47,37 @@ const parseUSDValue = (formattedValue: string): number => {
 
 const ValueDeadlineFields = ({ form }: ValueDeadlineFieldsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <FormField
-        control={form.control}
-        name="value"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Sale Price (USD)</FormLabel>
-            <FormControl>
-              <Input
-                type="text"
-                placeholder="0"
-                value={field.value ? formatUSDValue(field.value.toString()) : ''}
-                onChange={(e) => {
-                  // Allow any input during typing
-                  const rawValue = e.target.value;
-                  const numericValue = parseUSDValue(rawValue);
-                  field.onChange(numericValue);
-                }}
-                onBlur={(e) => {
-                  // Format the value when user clicks out of the field
-                  const rawValue = e.target.value;
-                  const numericValue = parseUSDValue(rawValue);
-                  field.onChange(numericValue);
-                  // Force re-render to show formatted value
-                  e.target.value = formatUSDValue(numericValue.toString());
-                }}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name="deadline"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Deadline</FormLabel>
-            <FormControl>
-              <Input type="date" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
+    <FormField
+      control={form.control}
+      name="value"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Sale Price (USD)</FormLabel>
+          <FormControl>
+            <Input
+              type="text"
+              placeholder="0"
+              value={field.value ? formatUSDValue(field.value.toString()) : ''}
+              onChange={(e) => {
+                // Allow any input during typing
+                const rawValue = e.target.value;
+                const numericValue = parseUSDValue(rawValue);
+                field.onChange(numericValue);
+              }}
+              onBlur={(e) => {
+                // Format the value when user clicks out of the field
+                const rawValue = e.target.value;
+                const numericValue = parseUSDValue(rawValue);
+                field.onChange(numericValue);
+                // Force re-render to show formatted value
+                e.target.value = formatUSDValue(numericValue.toString());
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 };
 

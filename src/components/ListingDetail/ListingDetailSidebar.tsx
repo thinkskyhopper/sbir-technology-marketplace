@@ -79,14 +79,6 @@ const ListingDetailSidebar = ({
             </div>
             
             <div className="flex items-center text-sm">
-              <Calendar className="w-4 h-4 mr-2 text-red-500" />
-              <div>
-                <p className="font-semibold">Deadline</p>
-                <p className="text-muted-foreground">{formatDate(listing.deadline)}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center text-sm">
               <DollarSign className="w-4 h-4 mr-2 text-green-500" />
               <div>
                 <p className="font-semibold">Sale Price</p>

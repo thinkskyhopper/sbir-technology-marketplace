@@ -64,7 +64,6 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       phase: listing.phase,
       agency: listing.agency,
       value: listing.value, // Value is already in dollars from the query
-      deadline: listing.deadline,
       category: listing.category,
       status: listing.status,
       technology_summary: listing.technology_summary || "",

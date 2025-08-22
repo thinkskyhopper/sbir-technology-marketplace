@@ -38,5 +38,7 @@ export interface SBIRListing {
 export type ListingStatus = 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
 export type SBIRPhase = 'Phase I' | 'Phase II' | 'Phase III';
 
-export type CreateListingData = Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id'>;
+export type CreateListingData = Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id' | 'deadline'> & {
+  deadline?: string | null;
+};
 export type UpdateListingData = Omit<SBIRListing, 'id' | 'submitted_at' | 'user_id'>;
