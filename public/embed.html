@@ -382,19 +382,6 @@
                 }).format(amount);
             }
             
-            function formatDate(dateString) {
-                if (!dateString) return 'Open';
-                try {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                    });
-                } catch (e) {
-                    return 'Open';
-                }
-            }
             
             function renderListings(listings) {
                 console.log('🎨 Rendering listings:', listings);
@@ -423,8 +410,8 @@
                             ${formatCurrency(listing.value || 0)}
                         </div>
                         <div class="listing-meta">
-                            <span class="icon">📅</span>
-                            Due: ${formatDate(listing.deadline)}
+                            <span class="icon">🏷️</span>
+                            ${escapeHtml(listing.category || 'General')}
                         </div>
                     </div>
                 `).join('');
@@ -444,7 +431,7 @@
                     
                     const apiUrl = 'https://amhznlnhrrugxatbeayo.supabase.co/rest/v1/sbir_listings';
                     const params = new URLSearchParams({
-                        select: 'id,title,agency,value,deadline,status',
+                        select: 'id,title,agency,value,category,status',
                         status: 'eq.Active',
                         order: 'created_at.desc',
                         limit: '3'
@@ -473,8 +460,7 @@
                     // Convert value from cents to dollars and format data
                     const formattedData = Array.isArray(data) ? data.map(listing => ({
                         ...listing,
-                        value: typeof listing.value === 'number' ? listing.value / 100 : 0,
-                        deadline: listing.deadline
+                        value: typeof listing.value === 'number' ? listing.value / 100 : 0
                     })) : [];
                     
                     console.log('✨ Formatted data:', formattedData);
