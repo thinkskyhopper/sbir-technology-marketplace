@@ -1,13 +1,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, DollarSign, Building, Mail, Clock, Tag, Settings } from "lucide-react";
+import { DollarSign, Building, Mail, Clock, Tag, Settings } from "lucide-react";
 import ListingDetailRelatedListings from "./ListingDetailRelatedListings";
 import type { SBIRListing } from "@/types/listings";
 
 interface ListingDetailSidebarProps {
   listing: {
-    deadline: string;
+    deadline?: string;
     value: number;
     agency: string;
     submitted_at: string;
@@ -35,16 +35,6 @@ const ListingDetailSidebar = ({
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    // Parse the date string as a local date to avoid timezone issues
-    const date = new Date(dateString + 'T00:00:00');
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
   };
 
   const formatDateTime = (dateTimeString: string) => {

@@ -6,7 +6,7 @@ export interface SBIRListing {
   phase: 'Phase I' | 'Phase II' | 'Phase III';
   agency: string;
   value: number;
-  deadline: string;
+  deadline?: string;
   category: string;
   status: 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
   submitted_at: string;

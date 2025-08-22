@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, DollarSign, Building, FileText } from 'lucide-react';
+import { DollarSign, Building, FileText } from 'lucide-react';
 import { featuredListingsService } from '@/services/featuredListings';
 import type { SBIRListing } from '@/types/listings';
 
@@ -34,14 +34,6 @@ const EmbeddableWidget = () => {
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString + 'T00:00:00');
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
 
   const handleExploreClick = () => {
     window.open('https://thesbirtechmarketplace.com/', '_blank');
@@ -153,11 +145,7 @@ const EmbeddableWidget = () => {
                     {listing.category}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <DollarSign className="w-3 h-3 mr-1" />
-                    <span className="text-xs">{formatCurrency(listing.value)}</span>
-                  </div>
+                <div className="flex justify-end">
                   <Button
                     variant="outline" 
                     size="sm" 
