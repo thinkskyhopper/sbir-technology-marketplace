@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, Calendar } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 
@@ -50,14 +50,6 @@ const ListingDetailRelatedListings = ({
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString + 'T00:00:00');
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
 
   if (relatedListings.length === 0) {
     return null;

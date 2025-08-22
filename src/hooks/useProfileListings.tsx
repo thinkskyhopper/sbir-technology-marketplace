@@ -50,11 +50,10 @@ export const useProfileListings = ({ userId, isOwnProfile }: UseProfileListingsP
           throw error;
         }
 
-        // Convert value from cents to dollars and format dates - same logic as main listings service
+        // Convert value from cents to dollars - same logic as main listings service
         const formattedListings = data?.map(listing => ({
           ...listing,
           value: listing.value / 100, // Convert cents to dollars
-          deadline: new Date(listing.deadline).toISOString().split('T')[0],
           profiles: null // Profile listings don't include profile data
         })) || [];
 

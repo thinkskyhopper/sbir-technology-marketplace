@@ -75,7 +75,6 @@ export const useBookmarks = () => {
       return data?.map(listing => ({
         ...listing,
         value: listing.value / 100,
-        deadline: new Date(listing.deadline).toISOString().split('T')[0],
         profiles: null
       })) || [];
     } catch (error) {
