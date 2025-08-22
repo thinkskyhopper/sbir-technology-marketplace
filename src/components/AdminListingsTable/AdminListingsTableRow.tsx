@@ -59,7 +59,6 @@ const AdminListingsTableRow = ({
       
       <CurrencyCell value={listing.value} />
       
-      
       <StatusBadgeCell 
         status={listing.status} 
         dateSold={listing.date_sold} 
