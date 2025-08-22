@@ -28,7 +28,6 @@ export const CSVPreviewTable = ({ listings }: CSVPreviewTableProps) => {
             <TableHead>Phase</TableHead>
             <TableHead>Value</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Deadline</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -48,7 +47,6 @@ export const CSVPreviewTable = ({ listings }: CSVPreviewTableProps) => {
               <TableCell>
                 <Badge variant="secondary">{listing.category}</Badge>
               </TableCell>
-              <TableCell>{listing.deadline}</TableCell>
               <TableCell>
                 <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
                   {listing.status}

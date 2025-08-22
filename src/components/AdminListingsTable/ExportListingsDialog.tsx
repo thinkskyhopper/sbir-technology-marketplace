@@ -37,7 +37,6 @@ interface ExportFields {
   agency: boolean;
   phase: boolean;
   value: boolean;
-  deadline: boolean;
   category: boolean;
   status: boolean;
   submittedAt: boolean;
@@ -72,7 +71,6 @@ export const ExportListingsDialog = ({
     agency: true,
     phase: true,
     value: true,
-    deadline: true,
     category: true,
     status: true,
     submittedAt: true,
@@ -125,7 +123,6 @@ export const ExportListingsDialog = ({
       if (exportFields.agency) data.agency = listing.agency;
       if (exportFields.phase) data.phase = listing.phase;
       if (exportFields.value) data.value = listing.value;
-      if (exportFields.deadline) data.deadline = listing.deadline;
       if (exportFields.category) data.category = listing.category;
       if (exportFields.status) data.status = listing.status;
       if (exportFields.submittedAt) data.submitted_at = listing.submitted_at;
@@ -420,14 +417,6 @@ export const ExportListingsDialog = ({
                   <Label htmlFor="value">Value</Label>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="deadline"
-                    checked={exportFields.deadline}
-                    onCheckedChange={(checked) => setExportFields(prev => ({ ...prev, deadline: !!checked }))}
-                  />
-                  <Label htmlFor="deadline">Deadline</Label>
-                </div>
 
                 <div className="flex items-center space-x-2">
                   <Checkbox

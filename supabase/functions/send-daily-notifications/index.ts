@@ -23,7 +23,6 @@ interface DatabaseListing {
   category: string
   phase: string
   value: number
-  deadline: string
   description: string
   created_at: string
 }
@@ -87,7 +86,7 @@ Deno.serve(async (req) => {
     // Get new listings from the past 24 hours
     const { data: newListings, error: listingsError } = await supabase
       .from('sbir_listings')
-      .select('id, title, agency, category, phase, value, deadline, description, created_at')
+      .select('id, title, agency, category, phase, value, description, created_at')
       .gte('created_at', yesterdayStart.toISOString())
       .lt('created_at', todayStart.toISOString())
       .eq('status', 'Active')
@@ -302,7 +301,6 @@ function createEmailHtml(user: DatabaseProfile, listings: DatabaseListing[]): st
         <span><strong>Phase:</strong> ${listing.phase}</span>
         <span><strong>Category:</strong> ${listing.category}</span>
         <span><strong>Value:</strong> ${formatCurrency(listing.value)}</span>
-        <span><strong>Deadline:</strong> ${formatDate(listing.deadline)}</span>
       </div>
       <p style="color: #4b5563; line-height: 1.5; margin: 10px 0;">${listing.description.substring(0, 200)}${listing.description.length > 200 ? '...' : ''}</p>
       <a href="https://yourdomain.com/listing/${listing.id}" style="display: inline-block; background-color: #3b82f6; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; font-size: 14px; margin-top: 10px;">View Details</a>

@@ -59,9 +59,6 @@ const AdminListingsTableRow = ({
       
       <CurrencyCell value={listing.value} />
       
-      <TableCell>
-        <span className="text-sm">{format(new Date(listing.deadline), 'MMM d,yyy')}</span>
-      </TableCell>
       
       <StatusBadgeCell 
         status={listing.status} 

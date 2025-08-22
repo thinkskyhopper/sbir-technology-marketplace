@@ -53,15 +53,6 @@ const AdminListingsTableHeader = ({
           Value
         </SortableTableHead>
         <SortableTableHead
-          sortKey="deadline"
-          currentSortColumn={currentSortColumn}
-          currentSortDirection={currentSortDirection}
-          onSort={onSort}
-          className="min-w-[100px]"
-        >
-          Deadline
-        </SortableTableHead>
-        <SortableTableHead
           sortKey="status"
           currentSortColumn={currentSortColumn}
           currentSortDirection={currentSortDirection}
