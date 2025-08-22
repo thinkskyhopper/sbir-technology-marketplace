@@ -10,6 +10,7 @@ interface FormData {
   lastName: string;
   email: string;
   company: string;
+  referredBy: string;
   interestLevel: string;
   experience: string;
   timeline: string;
@@ -66,6 +67,16 @@ const FormFields = ({ formData, onFormDataChange }: FormFieldsProps) => {
           id="company"
           value={formData.company}
           onChange={(e) => updateField('company', e.target.value)}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="referredBy">Who referred you? *</Label>
+        <Input
+          id="referredBy"
+          value={formData.referredBy}
+          onChange={(e) => updateField('referredBy', e.target.value)}
+          required
         />
       </div>
 

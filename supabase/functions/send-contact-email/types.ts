@@ -3,6 +3,7 @@ export interface ContactEmailRequest {
   name: string;
   email: string;
   company: string;
+  referredBy?: string;
   interestLevel?: string;
   experience?: string;
   timeline?: string;

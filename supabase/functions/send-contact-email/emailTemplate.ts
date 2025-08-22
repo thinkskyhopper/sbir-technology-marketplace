@@ -33,6 +33,7 @@ export const generateEmailTemplate = (data: ContactEmailRequest): string => {
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>User Account:</strong> ${data.userEmail}</p>
           ${data.company ? `<p><strong>Company:</strong> ${data.company}</p>` : ''}
+          ${data.referredBy ? `<p><strong>Referred by:</strong> ${data.referredBy}</p>` : ''}
           ${data.howDidYouFindUs ? `<p><strong>How did you find us:</strong> ${data.howDidYouFindUs}</p>` : ''}
         </div>
   `;
