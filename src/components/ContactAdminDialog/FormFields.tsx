@@ -71,12 +71,11 @@ const FormFields = ({ formData, onFormDataChange }: FormFieldsProps) => {
       </div>
 
       <div>
-        <Label htmlFor="referredBy">Who referred you? *</Label>
+        <Label htmlFor="referredBy">Who referred you?</Label>
         <Input
           id="referredBy"
           value={formData.referredBy}
           onChange={(e) => updateField('referredBy', e.target.value)}
-          required
         />
       </div>
 
