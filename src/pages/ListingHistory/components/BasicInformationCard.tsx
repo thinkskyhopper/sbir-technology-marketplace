@@ -16,14 +16,13 @@ export const BasicInformationCard = ({ listing }: BasicInformationCardProps) => 
   };
 
   const formatCurrency = (amount: number): string => {
-    // Convert from cents to dollars by dividing by 100
-    const dollarAmount = amount / 100;
+    // Values are already in dollars from the query services
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(dollarAmount);
+    }).format(amount);
   };
 
   const getStatusBadgeVariant = (status: string) => {

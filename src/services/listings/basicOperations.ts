@@ -45,6 +45,7 @@ export const basicOperations = {
       .from('sbir_listings')
       .insert({
         ...listingData,
+        value: Math.round(listingData.value * 100), // Convert dollars to cents
         user_id: userId,
         submitted_at: new Date().toISOString()
       })
@@ -67,6 +68,7 @@ export const basicOperations = {
       .from('sbir_listings')
       .update({
         ...listingData,
+        value: Math.round(listingData.value * 100), // Convert dollars to cents
         updated_at: new Date().toISOString()
       })
       .eq('id', listingId);

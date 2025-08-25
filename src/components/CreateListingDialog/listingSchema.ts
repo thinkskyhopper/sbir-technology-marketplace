@@ -8,7 +8,7 @@ export const listingSchema = z.object({
     required_error: "Please select a phase",
   }),
   agency: z.string().min(1, "Agency is required").max(100, "Agency name too long"),
-  value: z.number().min(1, "Value must be greater than 0"),
+  value: z.number().min(1, "Value must be greater than 0").max(100000000, "Value cannot exceed $100 million"),
   category: z.string().min(1, "Category is required").max(50, "Category too long"),
   technology_summary: z.string().max(50, "Technology summary too long").optional(),
 });
