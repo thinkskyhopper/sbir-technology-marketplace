@@ -4,7 +4,12 @@ import type { CreateListingData, UpdateListingData } from '@/types/listings';
 
 export const listingOperations = {
   async createListing(listingData: CreateListingData, userId: string): Promise<any> {
-    console.log('📝 Creating listing...', { title: listingData.title, userId });
+    console.log('📝 Creating listing...', { 
+      title: listingData.title, 
+      userId,
+      inputValue: listingData.value,
+      valueInCents: Math.round(listingData.value * 100)
+    });
     
     const { data, error } = await supabase
       .from('sbir_listings')

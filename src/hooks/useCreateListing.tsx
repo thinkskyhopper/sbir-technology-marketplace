@@ -105,7 +105,13 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
         status: 'Pending' as const
       };
       
-      console.log('🔄 Starting listing creation process...', { user: user.id, title: data.title, isAdmin });
+      console.log('🔄 Starting listing creation process...', { 
+        user: user.id, 
+        title: data.title, 
+        isAdmin,
+        inputValue: data.value,
+        valueType: typeof data.value
+      });
       
       await createListing(listingData);
 

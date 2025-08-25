@@ -42,6 +42,8 @@ export const listingQueries = {
         console.log('📊 Processing listing:', {
           id: listing.id,
           status: listing.status,
+          rawValueFromDB: listing.value,
+          convertedValue: listing.value / 100,
           date_sold: listing.date_sold,
           date_sold_raw: listing.date_sold
         });
@@ -91,11 +93,18 @@ export const listingQueries = {
       // Return listings without profile data
       const formattedListings = fallbackData?.map(listing => ({
         ...listing,
-        value: listing.value / 100,
+        value: listing.value / 100, // Convert cents to dollars
         profiles: null // Explicitly set to null since no profile data is available
       })) || [];
 
-      console.log('✅ Listings fetched (fallback mode):', formattedListings.length);
+      console.log('✅ Listings fetched (fallback mode):', {
+        count: formattedListings.length,
+        sampleValues: formattedListings.slice(0, 3).map(l => ({
+          id: l.id,
+          title: l.title,
+          valueInDollars: l.value
+        }))
+      });
       return formattedListings as SBIRListing[];
     } catch (error) {
       console.error('💥 Fallback query failed:', error);

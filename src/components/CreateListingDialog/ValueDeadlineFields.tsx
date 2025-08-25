@@ -42,6 +42,14 @@ const parseUSDValue = (formattedValue: string): number => {
   // Remove all non-numeric characters except decimal point
   const numericValue = formattedValue.replace(/[^0-9.]/g, '');
   const number = parseFloat(numericValue);
+  
+  console.log('💰 Value parsing:', {
+    input: formattedValue,
+    numericValue,
+    parsedNumber: number,
+    isValid: !isNaN(number)
+  });
+  
   return isNaN(number) ? 0 : number;
 };
 
@@ -62,12 +70,27 @@ const ValueDeadlineFields = ({ form }: ValueDeadlineFieldsProps) => {
                 // Allow any input during typing
                 const rawValue = e.target.value;
                 const numericValue = parseUSDValue(rawValue);
+                
+                console.log('🔄 Input onChange:', {
+                  rawInput: rawValue,
+                  parsedValue: numericValue,
+                  formFieldValue: field.value
+                });
+                
                 field.onChange(numericValue);
               }}
               onBlur={(e) => {
                 // Format the value when user clicks out of the field
                 const rawValue = e.target.value;
                 const numericValue = parseUSDValue(rawValue);
+                
+                console.log('🎯 Input onBlur:', {
+                  rawInput: rawValue,
+                  parsedValue: numericValue,
+                  currentFieldValue: field.value,
+                  willUpdateField: numericValue !== field.value
+                });
+                
                 field.onChange(numericValue);
                 // Force re-render to show formatted value
                 e.target.value = formatUSDValue(numericValue.toString());
