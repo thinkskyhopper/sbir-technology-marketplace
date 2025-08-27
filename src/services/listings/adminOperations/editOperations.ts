@@ -22,10 +22,20 @@ export const editOperations = {
       throw fetchError;
     }
 
+    // Convert value to cents if present (consistent with other operations)
+    const processedUpdateData = { ...updateData };
+    if (processedUpdateData.value && typeof processedUpdateData.value === 'number') {
+      processedUpdateData.value = Math.round(processedUpdateData.value * 100);
+      console.log('💰 Converting value to cents:', {
+        inputValue: updateData.value,
+        convertedValue: processedUpdateData.value
+      });
+    }
+
     // Update the listing
     const { error: updateError } = await supabase
       .from('sbir_listings')
-      .update(updateData)
+      .update(processedUpdateData)
       .eq('id', listingId);
 
     if (updateError) {
