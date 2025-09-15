@@ -38,13 +38,13 @@ export const listingQueries = {
         return this.handlePublicFallbackQuery();
       }
 
-      const formattedListings = data?.map(listing => ({
+      const formattedListings = (data || []).map((listing: any) => ({
         ...listing,
-        value: listing.value / 100, // Convert cents to dollars
+        value: (listing.value || 0) / 100, // Convert cents to dollars
         profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
           ? listing.profiles 
           : null
-      })) || [];
+      }));
 
       console.log('✅ Public listings formatted:', formattedListings.length);
       return formattedListings;
@@ -119,11 +119,11 @@ export const listingQueries = {
         throw fallbackError;
       }
 
-      const formattedListings = fallbackData?.map(listing => ({
+      const formattedListings = (fallbackData || []).map((listing: any) => ({
         ...listing,
-        value: listing.value / 100, // Convert cents to dollars
+        value: (listing.value || 0) / 100, // Convert cents to dollars
         profiles: null // Explicitly set to null since no profile data is available
-      })) || [];
+      }));
 
       console.log('✅ Public listings fetched (fallback mode):', formattedListings.length);
       return formattedListings;
