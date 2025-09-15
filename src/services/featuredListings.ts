@@ -15,31 +15,61 @@ export const featuredListingsService = {
   async getFeaturedListings(): Promise<SBIRListing[]> {
     console.log('🔄 Fetching featured listings...');
     
+    // Use secure RPC function to get featured listings without exposing admin user IDs
     const { data: featuredData, error: featuredError } = await supabase
-      .from('featured_listings')
-      .select(`
-        *,
-        sbir_listings!inner(
-          *,
-          profiles!fk_sbir_listings_user_id(
-            full_name,
-            email
-          )
-        )
-      `)
-      .eq('sbir_listings.status', 'Active')
-      .order('display_order', { ascending: true });
+      .rpc('get_public_featured_listings');
 
     if (featuredError) {
       console.error('❌ Error fetching featured listings:', featuredError);
       throw featuredError;
     }
 
-    // Extract the listing data and format it
-    const featuredListings = featuredData?.map(item => ({
-      ...item.sbir_listings,
-      value: item.sbir_listings.value / 100, // Convert cents to dollars
-    })) || [];
+    if (!featuredData || featuredData.length === 0) {
+      console.log('✅ No featured listings found');
+      return [];
+    }
+
+    // Get unique user IDs to fetch profile data
+    const userIds = [...new Set(featuredData.map(item => item.user_id))];
+    
+    // Fetch profile data for the listing owners
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, full_name, email')
+      .in('id', userIds);
+
+    if (profilesError) {
+      console.error('❌ Error fetching profiles:', profilesError);
+      // Continue without profile data rather than failing completely
+    }
+
+    // Create a map of user_id to profile for easy lookup
+    const profileMap = (profilesData || []).reduce((acc, profile) => {
+      acc[profile.id] = profile;
+      return acc;
+    }, {} as Record<string, any>);
+
+    // Format the listings with profile data
+    const featuredListings = featuredData.map(item => ({
+      id: item.listing_id,
+      title: item.title,
+      description: item.description,
+      phase: item.phase,
+      agency: item.agency,
+      value: item.value / 100, // Convert cents to dollars
+      deadline: item.deadline,
+      category: item.category,
+      status: item.status,
+      submitted_at: item.submitted_at,
+      approved_at: item.approved_at,
+      user_id: item.user_id,
+      photo_url: item.photo_url,
+      date_sold: item.date_sold,
+      technology_summary: item.technology_summary,
+      created_at: item.listing_created_at,
+      updated_at: item.listing_updated_at,
+      profiles: profileMap[item.user_id] || null
+    }));
 
     console.log('✅ Featured listings fetched:', featuredListings.length);
     return featuredListings;

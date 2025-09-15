@@ -602,6 +602,30 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      get_public_featured_listings: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          agency: string
+          approved_at: string
+          category: string
+          date_sold: string
+          deadline: string
+          description: string
+          display_order: number
+          id: string
+          listing_created_at: string
+          listing_id: string
+          listing_updated_at: string
+          phase: Database["public"]["Enums"]["sbir_phase"]
+          photo_url: string
+          status: Database["public"]["Enums"]["listing_status"]
+          submitted_at: string
+          technology_summary: string
+          title: string
+          user_id: string
+          value: number
+        }[]
+      }
       get_public_listing_data: {
         Args: {
           listing_row: Database["public"]["Tables"]["sbir_listings"]["Row"]
