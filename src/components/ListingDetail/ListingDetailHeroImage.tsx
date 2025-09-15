@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAdminSettings } from "@/hooks/useAdminSettings";
+import { usePublicSettings } from "@/hooks/usePublicSettings";
 
 interface ListingDetailHeroImageProps {
   listing: {
@@ -16,7 +16,7 @@ interface ListingDetailHeroImageProps {
 
 const ListingDetailHeroImage = ({ listing }: ListingDetailHeroImageProps) => {
   const { isAdmin } = useAuth();
-  const { settings } = useAdminSettings();
+  const { settings } = usePublicSettings();
   const hasCustomImage = listing.photo_url && listing.photo_url.trim() !== '';
   const imageUrl = hasCustomImage ? listing.photo_url : getDefaultCategoryImage(listing.category);
   
