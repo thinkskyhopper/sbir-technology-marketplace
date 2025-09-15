@@ -672,6 +672,19 @@ export type Database = {
           value: number
         }[]
       }
+      get_public_profile: {
+        Args: { profile_user_id: string }
+        Returns: {
+          bio: string
+          company_name: string
+          created_at: string
+          first_name: string
+          full_name: string
+          id: string
+          last_name: string
+          role: Database["public"]["Enums"]["user_role"]
+        }[]
+      }
       get_user_role: {
         Args: Record<PropertyKey, never> | { user_id: string }
         Returns: string

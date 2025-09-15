@@ -63,33 +63,43 @@ const ProfilePage = () => {
   const fetchOtherUserProfile = async (targetUserId: string) => {
     setLoading(true);
     try {
-      console.log('🔍 Fetching profile for user:', targetUserId);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', targetUserId)
-        .single();
+      console.log('🔍 Fetching public profile for user:', targetUserId);
+      const { data, error } = await supabase.rpc('get_public_profile', {
+        profile_user_id: targetUserId
+      });
 
       if (error) {
-        console.error('❌ Error fetching user profile:', error);
+        console.error('❌ Error fetching public profile:', error);
         throw error;
       }
 
+      if (!data || data.length === 0) {
+        console.log('❌ No public profile found for user:', targetUserId);
+        throw new Error('Profile not found or not accessible');
+      }
+
+      const publicProfile = data[0];
       const transformedProfile: Profile = {
-        ...data,
-        notification_categories: Array.isArray(data.notification_categories) 
-          ? data.notification_categories as string[]
-          : []
+        id: publicProfile.id,
+        email: '', // Email is not included in public profile for privacy
+        full_name: publicProfile.full_name,
+        display_email: null, // Display email is not included in public profile
+        company_name: publicProfile.company_name,
+        bio: publicProfile.bio,
+        role: publicProfile.role,
+        notification_categories: [], // Not included in public profile
+        created_at: publicProfile.created_at,
+        updated_at: publicProfile.created_at // Use created_at as fallback since updated_at not in public function
       };
 
-      console.log('✅ Other user profile fetched:', transformedProfile.email);
+      console.log('✅ Public profile fetched for:', publicProfile.full_name || 'Unknown user');
       setDisplayProfile(transformedProfile);
       setIsOtherUserProfile(true);
     } catch (error) {
-      console.error('💥 Error fetching user profile:', error);
+      console.error('💥 Error fetching public profile:', error);
       toast({
         title: "Error",
-        description: "Failed to load user profile",
+        description: "Failed to load user profile. This profile may be private or not exist.",
         variant: "destructive",
       });
       setDisplayProfile(null);

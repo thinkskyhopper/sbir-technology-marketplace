@@ -41,18 +41,29 @@ export const listingQueries = {
         return this.handlePublicFallbackQuery();
       }
 
-      // Now fetch profile data separately for the listings we got
+      // Now fetch public profile data separately for the listings we got (secure access only)
       const listingIds = (data || []).map(listing => listing.user_id).filter(Boolean);
       
       let profilesData: any[] = [];
       if (listingIds.length > 0) {
-        const { data: profiles, error: profileError } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
-          .in('id', listingIds);
-          
-        if (!profileError && profiles) {
-          profilesData = profiles;
+        // Use public profile function to get only safe profile data for public listings
+        for (const userId of listingIds) {
+          try {
+            const { data: publicProfile, error: profileError } = await supabase.rpc('get_public_profile', {
+              profile_user_id: userId
+            });
+            
+            if (!profileError && publicProfile && publicProfile.length > 0) {
+              const profile = publicProfile[0];
+              profilesData.push({
+                id: profile.id,
+                full_name: profile.full_name,
+                email: null // Don't expose email in public listings for privacy
+              });
+            }
+          } catch (error) {
+            console.warn('⚠️ Could not fetch public profile for user:', userId);
+          }
         }
       }
 
