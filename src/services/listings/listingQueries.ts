@@ -77,39 +77,55 @@ export const listingQueries = {
     console.log('🔄 Fetching admin listings (full access)...', { userId });
     
     try {
-      let query = supabase
+      // Fetch listings with separate profile query to avoid FK embedding issues
+      const { data: listingsData, error: listingsError } = await supabase
         .from('sbir_listings')
-        .select(`
-          *,
-          profiles!fk_sbir_listings_user_id(
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('❌ Admin query error:', error);
+      if (listingsError) {
+        console.error('❌ Admin query error:', listingsError);
+        
+        // If it's a permission error, fall back to public listings
+        if (listingsError.code === '42501') {
+          console.log('🔄 Permission denied for admin query, falling back to public listings...');
+          return this.fetchPublicListings(userId);
+        }
+        
         return this.handleAdminFallbackQuery();
       }
 
-      const formattedListings = data?.map(listing => {
+      // Fetch profiles separately if we have listings
+      let profilesData: any[] = [];
+      if (listingsData && listingsData.length > 0) {
+        const userIds = [...new Set(listingsData.map(listing => listing.user_id))];
+        
+        const { data: profiles, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', userIds);
+          
+        if (!profileError && profiles) {
+          profilesData = profiles;
+        }
+      }
+
+      const formattedListings = listingsData?.map(listing => {
+        const profile = profilesData.find(p => p.id === listing.user_id);
+        
         console.log('📊 Processing admin listing:', {
           id: listing.id,
           status: listing.status,
           rawValueFromDB: listing.value,
           convertedValue: listing.value / 100,
-          hasAdminData: !!(listing.agency_tracking_number || listing.contract)
+          hasAdminData: !!(listing.agency_tracking_number || listing.contract),
+          hasProfile: !!profile
         });
 
         return {
           ...listing,
           value: listing.value / 100, // Convert cents to dollars
-          profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
-            ? listing.profiles 
-            : null
+          profiles: profile ? { full_name: profile.full_name, email: profile.email } : null
         };
       }) || [];
 
@@ -130,33 +146,11 @@ export const listingQueries = {
   },
 
   async handleAdminFallbackQuery(): Promise<SBIRListing[]> {
-    console.log('🔄 Falling back to basic admin listing fetch...');
+    console.log('🔄 Admin fallback - using public listings to avoid permission errors...');
     
-    try {
-      const fallbackQuery = supabase
-        .from('sbir_listings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      const { data: fallbackData, error: fallbackError } = await fallbackQuery;
-      
-      if (fallbackError) {
-        console.error('❌ Admin fallback query error:', fallbackError);
-        throw fallbackError;
-      }
-
-      const formattedListings = fallbackData?.map(listing => ({
-        ...listing,
-        value: listing.value / 100, // Convert cents to dollars
-        profiles: null // Explicitly set to null since no profile data is available
-      })) || [];
-
-      console.log('✅ Admin listings fetched (fallback mode):', formattedListings.length);
-      return formattedListings as SBIRListing[];
-    } catch (error) {
-      console.error('💥 Admin fallback query failed:', error);
-      return [];
-    }
+    // Instead of retrying the same failing query, fall back to public listings
+    // This ensures admins can still see listings even if there are RLS issues
+    return this.fetchPublicListings() as Promise<SBIRListing[]>;
   },
 
   // Legacy method for backward compatibility
