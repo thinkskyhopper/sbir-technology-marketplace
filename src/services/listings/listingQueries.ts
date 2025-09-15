@@ -1,18 +1,67 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { SBIRListing } from '@/types/listings';
+import type { PublicSBIRListing } from '@/types/publicListing';
+import { PUBLIC_LISTING_COLUMNS } from '@/types/publicListing';
 
 export const listingQueries = {
   async fetchListings(isAdmin: boolean, userId?: string): Promise<SBIRListing[]> {
     console.log('🔄 Fetching listings from Supabase...', { isAdmin, userId });
+    
+    if (isAdmin) {
+      return this.fetchAdminListings(userId);
+    } else {
+      return this.fetchPublicListings(userId);
+    }
+  },
+
+  async fetchPublicListings(userId?: string): Promise<PublicSBIRListing[]> {
+    console.log('🔄 Fetching public listings (secure mode)...', { userId });
+    
+    try {
+      let query = supabase
+        .from('sbir_listings')
+        .select(`
+          ${PUBLIC_LISTING_COLUMNS},
+          profiles!fk_sbir_listings_user_id(
+            full_name,
+            email
+          )
+        `)
+        .in('status', ['Active', 'Sold'])
+        .order('created_at', { ascending: false });
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('❌ Public query error:', error);
+        return this.handlePublicFallbackQuery();
+      }
+
+      const formattedListings = data?.map(listing => ({
+        ...listing,
+        value: listing.value / 100, // Convert cents to dollars
+        profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
+          ? listing.profiles 
+          : null
+      })) || [];
+
+      console.log('✅ Public listings formatted:', formattedListings.length);
+      return formattedListings;
+    } catch (error) {
+      console.error('💥 Fatal error in fetchPublicListings:', error);
+      return this.handlePublicFallbackQuery();
+    }
+  },
+
+  async fetchAdminListings(userId?: string): Promise<SBIRListing[]> {
+    console.log('🔄 Fetching admin listings (full access)...', { userId });
     
     try {
       let query = supabase
         .from('sbir_listings')
         .select(`
           *,
-          date_sold,
-          technology_summary,
           profiles!fk_sbir_listings_user_id(
             full_name,
             email
@@ -20,95 +69,106 @@ export const listingQueries = {
         `)
         .order('created_at', { ascending: false });
 
-      // If admin, show all listings
-      if (isAdmin) {
-        // Admin sees everything - no additional filtering needed
-      } else {
-        // For non-admin users (including non-authenticated), show only Active and Sold listings
-        // This applies to both their own listings and others' listings
-        query = query.in('status', ['Active', 'Sold']);
-      }
-
       const { data, error } = await query;
 
       if (error) {
-        console.error('❌ Supabase query error:', error);
-        // Try fallback query without profiles
-        return this.handleFallbackQuery(isAdmin, userId);
+        console.error('❌ Admin query error:', error);
+        return this.handleAdminFallbackQuery();
       }
 
-      // Convert value from cents to dollars and format dates
       const formattedListings = data?.map(listing => {
-        console.log('📊 Processing listing:', {
+        console.log('📊 Processing admin listing:', {
           id: listing.id,
           status: listing.status,
           rawValueFromDB: listing.value,
           convertedValue: listing.value / 100,
-          date_sold: listing.date_sold,
-          date_sold_raw: listing.date_sold
+          hasAdminData: !!(listing.agency_tracking_number || listing.contract)
         });
 
         return {
           ...listing,
           value: listing.value / 100, // Convert cents to dollars
-          // Ensure profiles is properly typed
           profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
             ? listing.profiles 
             : null
         };
       }) || [];
 
-      console.log('✅ Listings formatted:', formattedListings.length);
+      console.log('✅ Admin listings formatted:', formattedListings.length);
       return formattedListings;
     } catch (error) {
-      console.error('💥 Fatal error in fetchListings:', error);
-      return this.handleFallbackQuery(isAdmin, userId);
+      console.error('💥 Fatal error in fetchAdminListings:', error);
+      return this.handleAdminFallbackQuery();
     }
   },
 
-  async handleFallbackQuery(isAdmin: boolean, userId?: string): Promise<SBIRListing[]> {
-    console.log('🔄 Falling back to basic listing fetch...');
+  async handlePublicFallbackQuery(): Promise<PublicSBIRListing[]> {
+    console.log('🔄 Falling back to basic public listing fetch...');
     
     try {
       const fallbackQuery = supabase
         .from('sbir_listings')
-        .select('*, date_sold, technology_summary')
+        .select(PUBLIC_LISTING_COLUMNS)
+        .in('status', ['Active', 'Sold'])
         .order('created_at', { ascending: false });
-
-      // Apply the same filtering logic as the main query
-      if (isAdmin) {
-        // Admin sees everything - no additional filtering needed
-      } else {
-        // For non-admin users, show only Active and Sold listings
-        fallbackQuery.in('status', ['Active', 'Sold']);
-      }
 
       const { data: fallbackData, error: fallbackError } = await fallbackQuery;
       
       if (fallbackError) {
-        console.error('❌ Fallback query error:', fallbackError);
+        console.error('❌ Public fallback query error:', fallbackError);
         throw fallbackError;
       }
 
-      // Return listings without profile data
       const formattedListings = fallbackData?.map(listing => ({
         ...listing,
         value: listing.value / 100, // Convert cents to dollars
         profiles: null // Explicitly set to null since no profile data is available
       })) || [];
 
-      console.log('✅ Listings fetched (fallback mode):', {
-        count: formattedListings.length,
-        sampleValues: formattedListings.slice(0, 3).map(l => ({
-          id: l.id,
-          title: l.title,
-          valueInDollars: l.value
-        }))
-      });
+      console.log('✅ Public listings fetched (fallback mode):', formattedListings.length);
+      return formattedListings;
+    } catch (error) {
+      console.error('💥 Public fallback query failed:', error);
+      return [];
+    }
+  },
+
+  async handleAdminFallbackQuery(): Promise<SBIRListing[]> {
+    console.log('🔄 Falling back to basic admin listing fetch...');
+    
+    try {
+      const fallbackQuery = supabase
+        .from('sbir_listings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+      
+      if (fallbackError) {
+        console.error('❌ Admin fallback query error:', fallbackError);
+        throw fallbackError;
+      }
+
+      const formattedListings = fallbackData?.map(listing => ({
+        ...listing,
+        value: listing.value / 100, // Convert cents to dollars
+        profiles: null // Explicitly set to null since no profile data is available
+      })) || [];
+
+      console.log('✅ Admin listings fetched (fallback mode):', formattedListings.length);
       return formattedListings as SBIRListing[];
     } catch (error) {
-      console.error('💥 Fallback query failed:', error);
+      console.error('💥 Admin fallback query failed:', error);
       return [];
+    }
+  },
+
+  // Legacy method for backward compatibility
+  async handleFallbackQuery(isAdmin: boolean, userId?: string): Promise<SBIRListing[]> {
+    if (isAdmin) {
+      return this.handleAdminFallbackQuery();
+    } else {
+      return this.handlePublicFallbackQuery() as Promise<SBIRListing[]>;
     }
   }
 };
