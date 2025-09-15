@@ -27,6 +27,13 @@ export const useMarketplaceData = ({
   const [shouldResetPagination, setShouldResetPagination] = useState(false);
 
   const applyFilters = () => {
+    // Don't filter if listings are empty (might be loading)
+    if (!listings || listings.length === 0) {
+      setFilteredListings([]);
+      setShouldResetPagination(true);
+      return;
+    }
+    
     let filtered = listings;
 
     // Apply search query (from prop or local)

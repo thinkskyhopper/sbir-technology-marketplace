@@ -30,6 +30,7 @@ export const useMarketplaceFilters = ({
   const isInitialMount = useRef(true);
   const lastNotifiedFilters = useRef<string>("");
   const hasUserInteracted = useRef(false);
+  const [isFiltersReady, setIsFiltersReady] = useState(false);
 
   // Only sync from URL on initial mount or when user hasn't interacted yet
   useEffect(() => {
@@ -45,6 +46,13 @@ export const useMarketplaceFilters = ({
         isInitialMount.current = false;
       }
     }
+    
+    // Mark filters as ready after initial sync
+    const timer = setTimeout(() => {
+      setIsFiltersReady(true);
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, [preservedFilters]);
 
   // Notify parent component when filters change, but avoid duplicate notifications
@@ -128,6 +136,7 @@ export const useMarketplaceFilters = ({
     setStatusFilter: handleSetStatusFilter,
     sortFilter,
     setSortFilter: handleSetSortFilter,
-    handleClearFilters
+    handleClearFilters,
+    isFiltersReady
   };
 };

@@ -23,6 +23,7 @@ export const useListings = () => {
         currentUserIdRef.current === user?.id && 
         currentIsAdminRef.current === isAdmin) {
       console.log('📊 Skipping listings fetch - data already loaded and auth unchanged');
+      setLoading(false); // Ensure loading is false
       return;
     }
 

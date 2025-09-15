@@ -55,7 +55,8 @@ const MarketplaceGridContainer = ({
     setStatusFilter,
     sortFilter,
     setSortFilter,
-    handleClearFilters
+    handleClearFilters,
+    isFiltersReady
   } = useMarketplaceFilters({
     preservedFilters,
     onFiltersChange
@@ -71,6 +72,9 @@ const MarketplaceGridContainer = ({
     sortFilter,
     maxListings
   });
+
+  // Determine if we're truly ready to show content
+  const isReady = !loading && isFiltersReady;
 
   // Pagination with the filtered data
   const {
@@ -100,7 +104,7 @@ const MarketplaceGridContainer = ({
     setShowEditDialog(true);
   };
 
-  if (loading) {
+  if (!isReady) {
     return <MarketplaceLoading />;
   }
 
