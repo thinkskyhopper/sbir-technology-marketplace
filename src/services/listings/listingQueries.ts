@@ -16,37 +16,42 @@ export const listingQueries = {
   },
 
   async fetchPublicListings(userId?: string): Promise<PublicSBIRListing[]> {
-    console.log('🔄 Fetching public listings (secure mode)...', { userId });
+    console.log('🔄 Fetching public listings (secure RPC mode)...', { userId });
     
     try {
-      let query = supabase
-        .from('sbir_listings')
-        .select(`
-          ${PUBLIC_LISTING_COLUMNS},
-          profiles!fk_sbir_listings_user_id(
-            full_name,
-            email
-          )
-        `)
-        .in('status', ['Active', 'Sold'])
-        .order('created_at', { ascending: false });
-
-      const { data, error } = await query;
+      // Use the secure RPC function that only returns safe columns
+      const { data, error } = await supabase.rpc('get_public_listings');
 
       if (error) {
-        console.error('❌ Public query error:', error);
+        console.error('❌ Public RPC query error:', error);
         return this.handlePublicFallbackQuery();
       }
 
-      const formattedListings = (data || []).map((listing: any) => ({
-        ...listing,
-        value: (listing.value || 0) / 100, // Convert cents to dollars
-        profiles: listing.profiles && typeof listing.profiles === 'object' && 'full_name' in listing.profiles 
-          ? listing.profiles 
-          : null
-      }));
+      // Now fetch profile data separately for the listings we got
+      const listingIds = (data || []).map(listing => listing.user_id).filter(Boolean);
+      
+      let profilesData: any[] = [];
+      if (listingIds.length > 0) {
+        const { data: profiles, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', listingIds);
+          
+        if (!profileError && profiles) {
+          profilesData = profiles;
+        }
+      }
 
-      console.log('✅ Public listings formatted:', formattedListings.length);
+      const formattedListings = (data || []).map((listing: any) => {
+        const profile = profilesData.find(p => p.id === listing.user_id);
+        return {
+          ...listing,
+          value: (listing.value || 0) / 100, // Convert cents to dollars
+          profiles: profile ? { full_name: profile.full_name, email: profile.email } : null
+        };
+      });
+
+      console.log('✅ Public listings formatted (RPC mode):', formattedListings.length);
       return formattedListings;
     } catch (error) {
       console.error('💥 Fatal error in fetchPublicListings:', error);
@@ -103,34 +108,11 @@ export const listingQueries = {
   },
 
   async handlePublicFallbackQuery(): Promise<PublicSBIRListing[]> {
-    console.log('🔄 Falling back to basic public listing fetch...');
+    console.log('🔄 Public fallback - returning empty array since table access is restricted...');
     
-    try {
-      const fallbackQuery = supabase
-        .from('sbir_listings')
-        .select(PUBLIC_LISTING_COLUMNS)
-        .in('status', ['Active', 'Sold'])
-        .order('created_at', { ascending: false });
-
-      const { data: fallbackData, error: fallbackError } = await fallbackQuery;
-      
-      if (fallbackError) {
-        console.error('❌ Public fallback query error:', fallbackError);
-        throw fallbackError;
-      }
-
-      const formattedListings = (fallbackData || []).map((listing: any) => ({
-        ...listing,
-        value: (listing.value || 0) / 100, // Convert cents to dollars
-        profiles: null // Explicitly set to null since no profile data is available
-      }));
-
-      console.log('✅ Public listings fetched (fallback mode):', formattedListings.length);
-      return formattedListings;
-    } catch (error) {
-      console.error('💥 Public fallback query failed:', error);
-      return [];
-    }
+    // Since public access to sbir_listings table is now revoked for security,
+    // and the RPC failed, we return empty array rather than risk exposing sensitive data
+    return [];
   },
 
   async handleAdminFallbackQuery(): Promise<SBIRListing[]> {

@@ -626,6 +626,28 @@ export type Database = {
           value: number
         }[]
       }
+      get_public_listings: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          agency: string
+          approved_at: string
+          category: string
+          created_at: string
+          date_sold: string
+          deadline: string
+          description: string
+          id: string
+          phase: Database["public"]["Enums"]["sbir_phase"]
+          photo_url: string
+          status: Database["public"]["Enums"]["listing_status"]
+          submitted_at: string
+          technology_summary: string
+          title: string
+          updated_at: string
+          user_id: string
+          value: number
+        }[]
+      }
       get_user_role: {
         Args: Record<PropertyKey, never> | { user_id: string }
         Returns: string
