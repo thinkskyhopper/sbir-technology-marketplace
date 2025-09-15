@@ -8,11 +8,25 @@ export const listingQueries = {
   async fetchListings(isAdmin: boolean, userId?: string): Promise<SBIRListing[]> {
     console.log('🔄 Fetching listings from Supabase...', { isAdmin, userId });
     
-    if (isAdmin) {
-      return this.fetchAdminListings(userId);
-    } else {
-      return this.fetchPublicListings(userId);
+    // Double-check admin status on the server to avoid RLS permission errors
+    let confirmedAdmin = false;
+    try {
+      const { data: isAdminServer, error: adminCheckError } = await supabase.rpc('current_user_is_admin');
+      if (!adminCheckError && isAdminServer === true) {
+        confirmedAdmin = true;
+      } else if (adminCheckError) {
+        console.warn('⚠️ Admin RPC check failed, falling back to public listings:', adminCheckError);
+      }
+    } catch (e) {
+      console.warn('⚠️ Admin RPC check threw, falling back to public listings:', e);
     }
+
+    if (isAdmin && confirmedAdmin) {
+      return this.fetchAdminListings(userId);
+    }
+
+    // Default to public listings for non-admins or if admin cannot be confirmed
+    return this.fetchPublicListings(userId);
   },
 
   async fetchPublicListings(userId?: string): Promise<PublicSBIRListing[]> {

@@ -34,7 +34,7 @@ export const useMarketplaceData = ({
       return;
     }
     
-    let filtered = listings;
+    let filtered = listings.slice();
 
     // Apply search query (from prop or local)
     const query = searchQuery || localSearchQuery;
@@ -69,11 +69,11 @@ export const useMarketplaceData = ({
       );
     }
 
-    // Apply sorting
+    // Apply sorting (avoid mutating original array)
     if (sortFilter === "newest") {
-      filtered = filtered.sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
+      filtered = [...filtered].sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
     } else if (sortFilter === "oldest") {
-      filtered = filtered.sort((a, b) => new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime());
+      filtered = [...filtered].sort((a, b) => new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime());
     }
 
     // Apply maxListings limit if specified
