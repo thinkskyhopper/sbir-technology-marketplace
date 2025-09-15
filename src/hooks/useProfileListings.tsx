@@ -36,14 +36,10 @@ export const useProfileListings = ({ userId, isOwnProfile }: UseProfileListingsP
       });
       
       try {
-        let query = supabase
-          .from('sbir_listings')
-          .select('*')
-          .eq('user_id', targetUserId)
-          .in('status', ['Active', 'Sold'])
-          .order('submitted_at', { ascending: false }); // Sort by date listed (newest first)
-
-        const { data, error } = await query;
+        // Use the secure database function to get profile listings
+        const { data, error } = await supabase.rpc('get_profile_listings', {
+          target_user_id: targetUserId
+        });
 
         if (error) {
           console.error('❌ Error fetching profile listings:', error);
