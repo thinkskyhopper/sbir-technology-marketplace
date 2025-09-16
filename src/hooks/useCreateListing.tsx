@@ -132,12 +132,42 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
     } catch (error) {
       console.error('❌ Error in listing creation process:', error);
       
-      // More specific error handling
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      // Handle specific Supabase errors
+      let errorMessage = 'Unknown error occurred';
+      let errorTitle = 'Error';
+      
+      if (error && typeof error === 'object' && 'code' in error) {
+        const supabaseError = error as any;
+        
+        switch (supabaseError.code) {
+          case '42501': // Permission denied
+            errorTitle = 'Permission Error';
+            errorMessage = 'You do not have permission to create listings. Please make sure you are signed in and have the necessary permissions.';
+            break;
+          case '23505': // Unique constraint violation
+            errorTitle = 'Duplicate Entry';
+            errorMessage = 'A listing with similar details already exists.';
+            break;
+          case '23503': // Foreign key violation
+            errorTitle = 'Invalid Data';
+            errorMessage = 'Some of the listing data is invalid. Please check your entries and try again.';
+            break;
+          case '23514': // Check constraint violation
+            errorTitle = 'Invalid Values';
+            errorMessage = 'Please check that all values are valid and within acceptable ranges.';
+            break;
+          default:
+            if (supabaseError.message) {
+              errorMessage = supabaseError.message;
+            }
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       
       toast({
-        title: "Error",
-        description: `Failed to create listing: ${errorMessage}. Please try again.`,
+        title: errorTitle,
+        description: `Failed to create listing: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
