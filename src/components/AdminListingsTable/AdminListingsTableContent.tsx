@@ -36,7 +36,7 @@ const AdminListingsTableContent = ({
         {/* Mobile: Use native scrolling */}
         <div className="block sm:hidden">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto touch-pan-x touch-pan-y">
-            <Table className="min-w-[1300px] table-fixed">
+            <Table className="min-w-[900px]">
               <TableHeader>
                 <TableRow>
                   <SortableTableHead
@@ -44,7 +44,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[350px]"
+                    className="min-w-[200px] sm:min-w-[350px]"
                   >
                     Title
                   </SortableTableHead>
@@ -53,7 +53,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[120px]"
+                    className="min-w-[100px] sm:min-w-[120px]"
                   >
                     Agency
                   </SortableTableHead>
@@ -84,13 +84,13 @@ const AdminListingsTableContent = ({
                   >
                     Status
                   </SortableTableHead>
-                  <TableHead className="min-w-[180px]">Submitter</TableHead>
+                  <TableHead className="min-w-[120px] sm:min-w-[180px]">Submitter</TableHead>
                   <SortableTableHead
                     sortKey="submitted_at"
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[120px]"
+                    className="min-w-[100px] sm:min-w-[120px]"
                   >
                     Submitted
                   </SortableTableHead>
@@ -118,7 +118,7 @@ const AdminListingsTableContent = ({
         {/* Desktop: Use ScrollArea */}
         <div className="hidden sm:block overflow-x-auto">
           <ScrollArea className="h-[400px] w-full">
-            <Table className="min-w-[1300px] table-fixed">
+            <Table className="min-w-[1100px]">
               <TableHeader>
                 <TableRow>
                   <SortableTableHead
@@ -126,7 +126,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[350px]"
+                    className="min-w-[200px] sm:min-w-[350px]"
                   >
                     Title
                   </SortableTableHead>
@@ -135,7 +135,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[120px]"
+                    className="min-w-[100px] sm:min-w-[120px]"
                   >
                     Agency
                   </SortableTableHead>
@@ -166,13 +166,13 @@ const AdminListingsTableContent = ({
                   >
                     Status
                   </SortableTableHead>
-                  <TableHead className="min-w-[180px]">Submitter</TableHead>
+                  <TableHead className="min-w-[120px] sm:min-w-[180px]">Submitter</TableHead>
                   <SortableTableHead
                     sortKey="submitted_at"
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[120px]"
+                    className="min-w-[100px] sm:min-w-[120px]"
                   >
                     Submitted
                   </SortableTableHead>

@@ -49,7 +49,7 @@ const AdminListingsTableRow = ({
         requestSummary={requestSummary} 
       />
       
-      <TableCell className="max-w-[120px]">
+      <TableCell>
         <p className="text-sm break-words">{listing.agency}</p>
       </TableCell>
       
@@ -73,7 +73,7 @@ const AdminListingsTableRow = ({
         <span className="text-sm">{format(new Date(listing.submitted_at), 'MMM d, yyyy')}</span>
       </TableCell>
       
-      <TableCell className="w-20 sm:w-24 relative">
+      <TableCell className="relative">
         <AdminListingsTableActions
           listing={listing}
           isProcessing={isProcessing}
