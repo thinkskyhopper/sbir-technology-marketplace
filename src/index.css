@@ -58,6 +58,19 @@
     @apply bg-background text-foreground font-sans;
   }
 
+  /* Enhanced touch scrolling for mobile */
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+  
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+  
+  .touch-pan-x.touch-pan-y {
+    touch-action: pan-x pan-y;
+  }
+
   /* Screen reader only content */
   .sr-only {
     position: absolute;
