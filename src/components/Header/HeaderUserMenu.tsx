@@ -5,10 +5,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeaderUserMenu = () => {
   const { user, signOut, isAdmin, profile } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleSignOut = async () => {
     await signOut();
@@ -60,8 +62,12 @@ const HeaderUserMenu = () => {
         align="end" 
         side="bottom"
         sideOffset={8}
+        alignOffset={isMobile ? -16 : 0}
         avoidCollisions={false}
-        className="w-56 z-[999] max-w-[90vw] sm:max-w-56"
+        collisionPadding={16}
+        sticky="partial"
+        hideWhenDetached={true}
+        className={`w-56 z-[999] max-w-[90vw] sm:max-w-56 ${isMobile ? 'data-[state=open]:animate-none' : ''}`}
       >
         <div className="px-2 py-1.5 text-sm">
           <div className="font-medium truncate">{user.email}</div>

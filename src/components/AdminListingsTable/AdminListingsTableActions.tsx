@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
 import BasicActions from "./AdminListingsTableActions/BasicActions";
 import ApprovalActions from "./AdminListingsTableActions/ApprovalActions";
 import HideAction from "./AdminListingsTableActions/HideAction";
@@ -21,6 +22,8 @@ const AdminListingsTableActions = ({
   onHide,
   onDelete,
 }: AdminListingsTableActionsProps) => {
+  const isMobile = useIsMobile();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -38,8 +41,12 @@ const AdminListingsTableActions = ({
         align="end" 
         side="bottom"
         sideOffset={8}
+        alignOffset={isMobile ? -16 : 0}
         avoidCollisions={false}
-        className="w-48 z-[999] max-w-[90vw] sm:max-w-48"
+        collisionPadding={16}
+        sticky="partial"
+        hideWhenDetached={true}
+        className={`w-48 z-[999] max-w-[90vw] sm:max-w-48 ${isMobile ? 'data-[state=open]:animate-none' : ''}`}
       >
         <BasicActions 
           listing={listing} 

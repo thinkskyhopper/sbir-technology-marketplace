@@ -73,7 +73,7 @@ const AdminListingsTableRow = ({
         <span className="text-sm">{format(new Date(listing.submitted_at), 'MMM d, yyyy')}</span>
       </TableCell>
       
-      <TableCell className="w-10">
+      <TableCell className="w-20 sm:w-24 relative">
         <AdminListingsTableActions
           listing={listing}
           isProcessing={isProcessing}

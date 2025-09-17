@@ -31,8 +31,8 @@ const AdminListingsTableContent = ({
 }: AdminListingsTableContentProps) => {
   return (
     <TooltipProvider>
-      <div className="rounded-md border overflow-x-auto">
-        <Table className="min-w-[1200px]">
+      <div className="rounded-md border overflow-x-auto overflow-y-clip">
+        <Table className="min-w-[1200px] table-fixed">
           <TableHeader>
             <TableRow>
               <SortableTableHead
@@ -90,7 +90,7 @@ const AdminListingsTableContent = ({
               >
                 Submitted
               </SortableTableHead>
-              <TableHead className="min-w-[80px]">Actions</TableHead>
+              <TableHead className="min-w-[80px] sm:min-w-[100px] w-20 sm:w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
