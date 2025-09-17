@@ -44,7 +44,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[250px]"
+                    className="min-w-[350px]"
                   >
                     Title
                   </SortableTableHead>
@@ -126,7 +126,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[250px]"
+                    className="min-w-[350px]"
                   >
                     Title
                   </SortableTableHead>

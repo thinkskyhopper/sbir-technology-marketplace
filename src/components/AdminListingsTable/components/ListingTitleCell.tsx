@@ -16,14 +16,14 @@ interface ListingTitleCellProps {
 
 const ListingTitleCell = ({ listing, requestSummary }: ListingTitleCellProps) => {
   return (
-    <TableCell className="max-w-[250px]">
+    <TableCell>
       <div className="flex items-start space-x-2">
         <div className="flex-1 min-w-0">
           <Tooltip>
             <TooltipTrigger asChild>
               <Link 
                 to={`/listing/${listing.id}`}
-                className="font-medium line-clamp-2 text-sm cursor-pointer hover:text-primary transition-colors"
+                className="font-medium text-sm cursor-pointer hover:text-primary transition-colors"
               >
                 {listing.title}
               </Link>
@@ -32,7 +32,7 @@ const ListingTitleCell = ({ listing, requestSummary }: ListingTitleCellProps) =>
               <p className="text-sm">{listing.title}</p>
             </TooltipContent>
           </Tooltip>
-          <p className="text-xs text-muted-foreground truncate">{listing.category}</p>
+          <p className="text-xs text-muted-foreground">{listing.category}</p>
         </div>
         {requestSummary && requestSummary.total_pending > 0 && (
           <Tooltip>
