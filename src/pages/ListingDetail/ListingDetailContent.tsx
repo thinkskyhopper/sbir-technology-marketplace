@@ -16,6 +16,7 @@ interface ListingDetailContentProps {
   onDeleteListing: (listingId: string) => void;
   onRequestChange: () => void;
   onRequestDeletion: () => void;
+  onViewHistory?: () => void;
   allListings?: SBIRListing[];
 }
 
@@ -28,6 +29,7 @@ const ListingDetailContent = ({
   onDeleteListing,
   onRequestChange,
   onRequestDeletion,
+  onViewHistory,
   allListings = []
 }: ListingDetailContentProps) => {
   const formatCurrency = (amount: number) => {
@@ -69,6 +71,7 @@ const ListingDetailContent = ({
         onDeleteListing={onDeleteListing}
         onRequestChange={onRequestChange}
         onRequestDeletion={onRequestDeletion}
+        onViewHistory={onViewHistory}
       />
 
       <div className="container mx-auto px-6 py-8 flex-1">

@@ -55,6 +55,10 @@ const ListingDetailPage = () => {
     setShowRequestDeletionDialog
   });
 
+  const handleViewHistory = () => {
+    navigate(`/listing/${id}/history`);
+  };
+
   useListingDetailMetaTags(listing);
 
   if (loading) {
@@ -78,6 +82,7 @@ const ListingDetailPage = () => {
         onDeleteListing={handleDeleteListing}
         onRequestChange={handleRequestChange}
         onRequestDeletion={handleRequestDeletion}
+        onViewHistory={handleViewHistory}
         allListings={listings}
       />
 

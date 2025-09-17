@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building, DollarSign, ArrowLeft, Mail, Edit, Trash2, FileEdit, UserX } from "lucide-react";
+import { Building, DollarSign, ArrowLeft, Mail, Edit, Trash2, FileEdit, UserX, History } from "lucide-react";
 import ShareButton from "@/components/ShareButton";
 import BookmarkButton from "@/components/BookmarkButton";
 import ConfirmActionDialog from "@/components/ConfirmActionDialog";
@@ -25,6 +25,7 @@ interface ListingDetailHeaderProps {
   onDeleteListing?: (listingId: string) => void;
   onRequestChange?: () => void;
   onRequestDeletion?: () => void;
+  onViewHistory?: () => void;
 }
 
 const ListingDetailHeader = ({
@@ -35,7 +36,8 @@ const ListingDetailHeader = ({
   onEditListing,
   onDeleteListing,
   onRequestChange,
-  onRequestDeletion
+  onRequestDeletion,
+  onViewHistory
 }: ListingDetailHeaderProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { user } = useAuth();
@@ -140,6 +142,15 @@ const ListingDetailHeader = ({
                   >
                     <Edit className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
                     <span className="truncate">Edit</span>
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={onViewHistory}
+                    className="flex-1 min-w-0 text-sm px-2 sm:px-3"
+                    size="sm"
+                  >
+                    <History className="w-4 h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">History</span>
                   </Button>
                   <Button 
                     variant="outline"
