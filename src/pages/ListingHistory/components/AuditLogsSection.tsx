@@ -89,25 +89,40 @@ export const AuditLogsSection = ({ auditLogs }: AuditLogsSectionProps) => {
                   </div>
                   
                   {log.user_notes && (
-                    <div className="mb-2">
-                      <p className="text-sm font-medium text-muted-foreground">User Notes:</p>
-                      <p className="text-sm">{log.user_notes}</p>
+                    <div className="mb-3">
+                      <p className="text-sm font-medium text-muted-foreground mb-1">User Notes:</p>
+                      <div className="bg-blue-50 border border-blue-200 rounded-md p-2">
+                        <p className="text-sm whitespace-pre-wrap">{log.user_notes}</p>
+                      </div>
                     </div>
                   )}
                   
                   {log.internal_notes && (
-                    <div className="mb-2">
-                      <p className="text-sm font-medium text-muted-foreground">Internal Notes:</p>
-                      <p className="text-sm">{log.internal_notes}</p>
+                    <div className="mb-3">
+                      <p className="text-sm font-medium text-muted-foreground mb-1">Internal Notes:</p>
+                      <div className="bg-muted rounded-md p-2 border">
+                        <p className="text-sm whitespace-pre-wrap">{log.internal_notes}</p>
+                      </div>
                     </div>
                   )}
                   
-                  {log.changes_made && (
+                  {log.changes_made && Object.keys(log.changes_made).length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">Changes Made:</p>
-                      <pre className="text-xs bg-muted p-2 rounded mt-1 overflow-x-auto">
-                        {JSON.stringify(log.changes_made, null, 2)}
-                      </pre>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Changes Made:</p>
+                      <div className="bg-muted rounded-md p-3 border">
+                        <div className="space-y-2">
+                          {Object.entries(log.changes_made).map(([key, value]) => (
+                            <div key={key} className="flex justify-between items-start gap-4">
+                              <span className="text-sm font-medium capitalize min-w-0 flex-shrink-0">
+                                {key.replace(/_/g, ' ')}:
+                              </span>
+                              <span className="text-sm text-muted-foreground text-right break-words">
+                                {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
