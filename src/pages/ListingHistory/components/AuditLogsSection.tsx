@@ -67,7 +67,7 @@ export const AuditLogsSection = ({ auditLogs }: AuditLogsSectionProps) => {
           {auditLogs && auditLogs.length > 0 ? (
             <div className="space-y-4">
               {auditLogs.map((log) => (
-                <div key={log.id} className="border-l-2 border-muted pl-4 pb-4">
+                <div key={log.id} className="border-l-2 border-primary pl-4 pb-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <Badge 
