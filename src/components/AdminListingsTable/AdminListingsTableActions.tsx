@@ -25,7 +25,7 @@ const AdminListingsTableActions = ({
   const isMobile = useIsMobile();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"

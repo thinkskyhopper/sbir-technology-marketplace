@@ -42,7 +42,7 @@ const HeaderUserMenu = () => {
   console.log('HeaderUserMenu render:', { user: user.email, isAdmin });
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="outline" 
