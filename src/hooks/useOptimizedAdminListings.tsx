@@ -21,6 +21,7 @@ export const useOptimizedAdminListings = () => {
     gcTime: 30 * 60 * 1000, // 30 minutes
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    refetchOnReconnect: false,
     refetchInterval: isTabVisible ? 5 * 60 * 1000 : false, // Refetch every 5 minutes if tab is visible
     retry: (failureCount, error: any) => {
       // Don't retry on auth errors

@@ -96,7 +96,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const { loadFormData, clearFormData } = useFormPersistence({
     storageKey,
     form,
-    enabled: true
+    enabled: true,
+    toastOnRestore: false
   });
 
   // Track form changes for unsaved changes warning
@@ -111,12 +112,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
     const hasLoadedData = loadFormData();
     if (hasLoadedData) {
       setHasUnsavedChanges(true);
-      toast({
-        title: "Draft Restored",
-        description: "Your previous edits have been restored from a saved draft.",
-      });
     }
-  }, [loadFormData, toast]);
+  }, [loadFormData]);
 
   // Track form changes
   useEffect(() => {

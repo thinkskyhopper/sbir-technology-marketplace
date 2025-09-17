@@ -5,12 +5,14 @@ interface UseFormPersistenceOptions {
   storageKey: string;
   form: UseFormReturn<any>;
   enabled?: boolean;
+  toastOnRestore?: boolean;
 }
 
 export const useFormPersistence = ({ 
   storageKey, 
   form, 
-  enabled = true 
+  enabled = true,
+  toastOnRestore = true
 }: UseFormPersistenceOptions) => {
   
   // Save form data to localStorage
@@ -65,6 +67,7 @@ export const useFormPersistence = ({
   return {
     saveFormData,
     loadFormData,
-    clearFormData
+    clearFormData,
+    toastOnRestore
   };
 };

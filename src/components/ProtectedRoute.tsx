@@ -52,57 +52,53 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
     shouldWaitForProfile: requireAdmin && user && profileLoading
   });
 
-  // Show loading while auth is initializing
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show non-blocking overlay while profile is being fetched for admin routes
-  if (requireAdmin && user && profileLoading) {
-    return (
-      <div className="relative">
-        {children}
-        <div className="fixed inset-0 z-50 bg-background/60 backdrop-blur-sm flex items-center justify-center">
+  // Use stable wrapper to prevent render tree changes
+  return (
+    <div className="relative">
+      {loading && (
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Checking permissions...</p>
+            <p className="text-muted-foreground">Loading...</p>
           </div>
         </div>
-      </div>
-    );
-  }
+      )}
 
-  // During grace period, show loading to prevent UI flicker
-  if (!user && wasAuthenticatedRef.current) {
-    return (
-      <div className="relative">
-        {children}
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-            <p className="text-sm text-muted-foreground">Reconnecting...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+      {!loading && !user && !wasAuthenticatedRef.current && (
+        <Navigate to="/auth" replace />
+      )}
 
-  if (!user && !wasAuthenticatedRef.current) {
-    return <Navigate to="/auth" replace />;
-  }
+      {!loading && user && requireAdmin && !isAdmin && (
+        <Navigate to="/" replace />
+      )}
 
-  if (requireAdmin && !isAdmin) {
-    return <Navigate to="/" replace />;
-  }
+      {!loading && (user || wasAuthenticatedRef.current) && (
+        <>
+          {children}
+          
+          {/* Admin permission check overlay */}
+          {requireAdmin && user && profileLoading && (
+            <div className="fixed inset-0 z-50 bg-background/60 backdrop-blur-sm flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Checking permissions...</p>
+              </div>
+            </div>
+          )}
 
-  return <>{children}</>;
+          {/* Grace period overlay */}
+          {!user && wasAuthenticatedRef.current && (
+            <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+                <p className="text-sm text-muted-foreground">Reconnecting...</p>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
 };
 
 export default ProtectedRoute;
