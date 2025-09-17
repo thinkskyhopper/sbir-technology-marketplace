@@ -36,10 +36,11 @@ const AdminListingsTablePagination = ({
   startItem,
   endItem,
 }: AdminListingsTablePaginationProps) => {
-  // Generate page numbers to show
+  // Generate page numbers to show with responsive awareness
   const getPageNumbers = () => {
     const pages = [];
-    const maxPages = 5; // Show maximum 5 page numbers
+    // Show fewer pages on mobile (3) vs desktop (5)
+    const maxPages = window.innerWidth < 640 ? 3 : 5;
     
     if (totalPages <= maxPages) {
       // Show all pages if total is small
@@ -48,8 +49,9 @@ const AdminListingsTablePagination = ({
       }
     } else {
       // Show pages around current page
-      const start = Math.max(1, currentPage - 2);
-      const end = Math.min(totalPages, currentPage + 2);
+      const delta = window.innerWidth < 640 ? 1 : 2;
+      const start = Math.max(1, currentPage - delta);
+      const end = Math.min(totalPages, currentPage + delta);
       
       if (start > 1) {
         pages.push(1);
@@ -72,12 +74,12 @@ const AdminListingsTablePagination = ({
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between px-2 py-4">
-      <div className="text-sm text-muted-foreground">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-2 py-4">
+      <div className="text-sm text-muted-foreground text-center sm:text-left">
         Showing {startItem} to {endItem} of {totalItems} results
       </div>
       
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-center sm:justify-start space-x-2">
         <Pagination>
           <PaginationContent>
             <PaginationItem>
@@ -112,7 +114,7 @@ const AdminListingsTablePagination = ({
           </PaginationContent>
         </Pagination>
         
-        <div className="flex items-center space-x-2">
+        <div className="hidden sm:flex items-center space-x-2">
           <span className="text-sm text-muted-foreground">Go to:</span>
           <Select value={currentPage.toString()} onValueChange={(value) => onPageChange(parseInt(value))}>
             <SelectTrigger className="w-20">
