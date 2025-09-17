@@ -87,6 +87,10 @@ const ListingHistory = () => {
     refetchListing();
   };
 
+  const handleViewListing = () => {
+    navigate(`/listing/${id}`);
+  };
+
   return (
     <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen bg-background flex flex-col">
@@ -96,6 +100,7 @@ const ListingHistory = () => {
           <ListingHistoryHeader 
             onBack={() => navigate('/admin/listings')}
             onEdit={() => setShowEditDialog(true)}
+            onViewListing={handleViewListing}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
