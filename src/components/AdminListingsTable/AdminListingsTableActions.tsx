@@ -40,13 +40,8 @@ const AdminListingsTableActions = ({
       <DropdownMenuContent 
         align="end" 
         side="bottom"
-        sideOffset={8}
-        alignOffset={isMobile ? -16 : 0}
-        avoidCollisions={false}
-        collisionPadding={16}
-        sticky="partial"
-        hideWhenDetached={true}
-        className={`w-48 z-[999] max-w-[90vw] sm:max-w-48 ${isMobile ? 'data-[state=open]:animate-none' : ''}`}
+        sideOffset={6}
+        className={`w-48 z-[999] max-w-[90vw] sm:max-w-48`}
       >
         <BasicActions 
           listing={listing} 

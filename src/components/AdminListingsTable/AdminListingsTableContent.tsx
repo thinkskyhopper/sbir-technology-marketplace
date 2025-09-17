@@ -31,7 +31,7 @@ const AdminListingsTableContent = ({
 }: AdminListingsTableContentProps) => {
   return (
     <TooltipProvider>
-      <div className="rounded-md border overflow-x-auto overflow-y-clip">
+      <div className="rounded-md border overflow-x-auto">
         <Table className="min-w-[1200px] table-fixed">
           <TableHeader>
             <TableRow>
