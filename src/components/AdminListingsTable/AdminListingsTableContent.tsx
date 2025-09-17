@@ -1,6 +1,7 @@
 
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import AdminListingsTableRow from "./AdminListingsTableRow";
 import SortableTableHead from "./SortableTableHead";
 import type { SBIRListing } from "@/types/listings";
@@ -31,7 +32,9 @@ const AdminListingsTableContent = ({
 }: AdminListingsTableContentProps) => {
   return (
     <TooltipProvider>
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-md border">
+        <div className="overflow-x-auto">
+          <ScrollArea className="w-full">
         <Table className="min-w-[1200px] table-fixed">
           <TableHeader>
             <TableRow>
@@ -108,6 +111,8 @@ const AdminListingsTableContent = ({
             ))}
           </TableBody>
         </Table>
+          </ScrollArea>
+        </div>
       </div>
     </TooltipProvider>
   );
