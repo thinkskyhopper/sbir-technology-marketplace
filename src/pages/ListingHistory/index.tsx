@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import EditListingDialog from "@/components/EditListingDialog";
 import { supabase } from "@/integrations/supabase/client";
 import type { SBIRListing } from "@/types/listings";
+import { listingsService } from "@/services/listings";
 import { ListingHistoryHeader } from "./components/ListingHistoryHeader";
 import { ListingDetailsSection } from "./components/ListingDetailsSection";
 import { AuditLogsSection } from "./components/AuditLogsSection";
@@ -35,20 +36,12 @@ const ListingHistory = () => {
   const { data: listing, isLoading: listingLoading, refetch: refetchListing } = useQuery({
     queryKey: ['listing-history', id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('sbir_listings')
-        .select(`
-          *,
-          profiles!fk_sbir_listings_user_id (
-            full_name,
-            email
-          )
-        `)
-        .eq('id', id)
-        .single();
-
-      if (error) throw error;
-      return data as SBIRListing;
+      const listings = await listingsService.fetchListings(isAdmin);
+      const targetListing = listings.find(listing => listing.id === id);
+      if (!targetListing) {
+        throw new Error('Listing not found');
+      }
+      return targetListing;
     },
     enabled: !!id && isAdmin,
   });
