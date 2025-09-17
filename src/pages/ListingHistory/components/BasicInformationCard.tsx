@@ -59,7 +59,7 @@ export const BasicInformationCard = ({ listing }: BasicInformationCardProps) => 
       <CardContent className="space-y-4">
         <div>
           <h3 className="font-semibold text-lg mb-2">{listing.title}</h3>
-          <p className="text-muted-foreground">{listing.description}</p>
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{listing.description}</p>
         </div>
         
         <div className="grid grid-cols-2 gap-4">
@@ -101,7 +101,7 @@ export const BasicInformationCard = ({ listing }: BasicInformationCardProps) => 
         {listing.technology_summary && (
           <div>
             <p className="text-sm text-muted-foreground">Technology Summary</p>
-            <p className="font-medium">{listing.technology_summary}</p>
+            <p className="font-medium whitespace-pre-wrap">{listing.technology_summary}</p>
           </div>
         )}
       </CardContent>
