@@ -141,6 +141,38 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
     return () => subscription.unsubscribe();
   }, [form, listing]);
 
+  const handleCancel = () => {
+    // Clear persisted form data and reset to original values
+    clearFormData();
+    form.reset({
+      title: listing.title,
+      description: listing.description,
+      phase: listing.phase,
+      agency: listing.agency,
+      value: listing.value,
+      category: listing.category,
+      status: listing.status,
+      technology_summary: listing.technology_summary || "",
+      // Admin-only fields
+      agency_tracking_number: listing.agency_tracking_number || "",
+      contract: listing.contract || "",
+      proposal_award_date: listing.proposal_award_date || "",
+      contract_end_date: listing.contract_end_date || "",
+      topic_code: listing.topic_code || "",
+      company: listing.company || "",
+      address: listing.address || "",
+      primary_investigator_name: listing.primary_investigator_name || "",
+      pi_phone: listing.pi_phone || "",
+      pi_email: listing.pi_email || "",
+      business_contact_name: listing.business_contact_name || "",
+      bc_phone: listing.bc_phone || "",
+      bc_email: listing.bc_email || "",
+      admin_notes: "",
+    });
+    setHasUnsavedChanges(false);
+    onClose();
+  };
+
   const onSubmit = async (data: EditListingFormData) => {
     try {
       setIsSubmitting(true);
@@ -223,7 +255,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
         <AdminNotesField form={form} />
 
         <FormActions 
-          onCancel={onClose}
+          onCancel={handleCancel}
           isSubmitting={isSubmitting}
         />
       </form>
