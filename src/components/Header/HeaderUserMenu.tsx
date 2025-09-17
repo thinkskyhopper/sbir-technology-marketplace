@@ -56,7 +56,13 @@ const HeaderUserMenu = () => {
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent 
+        align="end" 
+        side="bottom"
+        sideOffset={8}
+        avoidCollisions={false}
+        className="w-56 z-[999] max-w-[90vw] sm:max-w-56"
+      >
         <div className="px-2 py-1.5 text-sm">
           <div className="font-medium truncate">{user.email}</div>
           {profile?.full_name && (

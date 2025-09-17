@@ -34,7 +34,13 @@ const AdminListingsTableActions = ({
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent 
+        align="end" 
+        side="bottom"
+        sideOffset={8}
+        avoidCollisions={false}
+        className="w-48 z-[999] max-w-[90vw] sm:max-w-48"
+      >
         <BasicActions 
           listing={listing} 
           isProcessing={isProcessing} 
