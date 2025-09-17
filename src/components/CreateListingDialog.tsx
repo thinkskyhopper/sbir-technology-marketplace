@@ -1,7 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useFormPersistence } from "@/hooks/useFormPersistence";
+import { useUnsavedChangesWarning } from "@/hooks/useUnsavedChangesWarning";
+import { useTabVisibility } from "@/hooks/useTabVisibility";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +29,8 @@ interface CreateListingDialogProps {
 
 const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) => {
   const [honeypotValue, setHoneypotValue] = useState("");
+  const { toast } = useToast();
+  const isTabVisible = useTabVisibility();
 
   const form = useForm<ListingFormData>({
     resolver: zodResolver(listingSchema),
@@ -38,6 +44,17 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
     },
   });
 
+  // Form persistence
+  const storageKey = 'create-listing-draft';
+  const { loadFormData, clearFormData } = useFormPersistence({
+    storageKey,
+    form,
+    enabled: open
+  });
+
+  // Track form changes for unsaved changes warning
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
   const {
     onSubmit,
     isSubmitting,
@@ -50,9 +67,53 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
     honeypotValue,
     onSuccess: () => {
       setHoneypotValue("");
+      clearFormData();
+      setHasUnsavedChanges(false);
       onOpenChange(false);
     }
   });
+  
+  useUnsavedChangesWarning({
+    hasUnsavedChanges: hasUnsavedChanges && open && !isSubmitting
+  });
+
+  // Load saved data when dialog opens
+  useEffect(() => {
+    if (open) {
+      const hasLoadedData = loadFormData();
+      if (hasLoadedData) {
+        setHasUnsavedChanges(true);
+        toast({
+          title: "Draft Restored",
+          description: "Your previous listing draft has been restored.",
+        });
+      }
+    }
+  }, [open, loadFormData, toast]);
+
+  // Track form changes
+  useEffect(() => {
+    if (!open) return;
+    
+    const subscription = form.watch((value, { name }) => {
+      if (name) {
+        const formData = form.getValues();
+        const hasNonEmptyFields = Object.values(formData).some(val => 
+          val !== "" && val !== 0 && val !== null && val !== undefined
+        );
+        setHasUnsavedChanges(hasNonEmptyFields);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, open]);
+
+  // Clear changes state when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setHasUnsavedChanges(false);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

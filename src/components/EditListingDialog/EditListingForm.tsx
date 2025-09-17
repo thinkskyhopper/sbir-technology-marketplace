@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { useListings } from "@/hooks/useListings";
 import { useToast } from "@/hooks/use-toast";
+import { useFormPersistence } from "@/hooks/useFormPersistence";
+import { useUnsavedChangesWarning } from "@/hooks/useUnsavedChangesWarning";
+import { useTabVisibility } from "@/hooks/useTabVisibility";
 import { listingSchema } from "../CreateListingDialog/listingSchema";
 import ListingFormFields from "../CreateListingDialog/ListingFormFields";
 import PhotoUpload from "../PhotoUpload";
@@ -52,6 +55,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const [photoUrl, setPhotoUrl] = useState<string | null>((listing as any).photo_url || null);
   const { updateListing, fetchListings } = useListings();
   const { toast } = useToast();
+  const isTabVisible = useTabVisibility();
 
   // Values from the listing query are already converted to dollars, so no conversion needed for display
   // Values need to be kept in dollars for the form (they'll be converted to cents in listingOperations)
@@ -84,6 +88,59 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       admin_notes: "",
     },
   });
+
+  // Form persistence
+  const storageKey = `edit-listing-${listing.id}`;
+  const { loadFormData, clearFormData } = useFormPersistence({
+    storageKey,
+    form,
+    enabled: true
+  });
+
+  // Track form changes for unsaved changes warning
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
+  useUnsavedChangesWarning({
+    hasUnsavedChanges: hasUnsavedChanges && !isSubmitting
+  });
+
+  // Load saved data on component mount
+  useEffect(() => {
+    const hasLoadedData = loadFormData();
+    if (hasLoadedData) {
+      setHasUnsavedChanges(true);
+      toast({
+        title: "Draft Restored",
+        description: "Your previous edits have been restored from a saved draft.",
+      });
+    }
+  }, [loadFormData, toast]);
+
+  // Track form changes
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      const currentData = form.getValues();
+      const originalData = {
+        title: listing.title,
+        description: listing.description,
+        phase: listing.phase,
+        agency: listing.agency,
+        value: listing.value,
+        category: listing.category,
+        status: listing.status,
+        technology_summary: listing.technology_summary || "",
+      };
+      
+      // Check if any field has changed from original
+      const hasChanges = Object.keys(currentData).some(key => {
+        return currentData[key as keyof typeof currentData] !== originalData[key as keyof typeof originalData];
+      });
+      
+      setHasUnsavedChanges(hasChanges);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, listing]);
 
   const onSubmit = async (data: EditListingFormData) => {
     try {
@@ -124,6 +181,10 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
 
       // Force refresh the listings data
       await fetchListings();
+
+      // Clear saved draft data after successful update
+      clearFormData();
+      setHasUnsavedChanges(false);
 
       toast({
         title: "Listing Updated",
