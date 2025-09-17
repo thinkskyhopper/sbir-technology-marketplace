@@ -56,7 +56,6 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    overflow-x: hidden; /* Prevent horizontal scrolling and layout shifts */
   }
 
   /* Screen reader only content */
