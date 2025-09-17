@@ -46,9 +46,9 @@ export const editOperations = {
     // Calculate changes made
     const changesMade: Record<string, { from: any; to: any }> = {};
     
-    Object.keys(updateData).forEach(key => {
+    Object.keys(processedUpdateData).forEach(key => {
       const oldValue = currentListing[key];
-      const newValue = updateData[key];
+      const newValue = processedUpdateData[key];
       
       // Only track actual changes
       if (oldValue !== newValue) {
