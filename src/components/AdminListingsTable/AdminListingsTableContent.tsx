@@ -36,7 +36,7 @@ const AdminListingsTableContent = ({
         {/* Mobile: Use native scrolling */}
         <div className="block sm:hidden">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto touch-pan-x touch-pan-y">
-            <Table className="min-w-[1200px] table-fixed">
+            <Table className="min-w-[1300px] table-fixed">
               <TableHeader>
                 <TableRow>
                   <SortableTableHead
@@ -94,7 +94,7 @@ const AdminListingsTableContent = ({
                   >
                     Submitted
                   </SortableTableHead>
-                  <TableHead className="min-w-[80px] sm:min-w-[100px] w-20 sm:w-24">Actions</TableHead>
+                  <TableHead className="min-w-[80px] sm:min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -118,7 +118,7 @@ const AdminListingsTableContent = ({
         {/* Desktop: Use ScrollArea */}
         <div className="hidden sm:block overflow-x-auto">
           <ScrollArea className="h-[400px] w-full">
-            <Table className="min-w-[1200px] table-fixed">
+            <Table className="min-w-[1300px] table-fixed">
               <TableHeader>
                 <TableRow>
                   <SortableTableHead
@@ -176,7 +176,7 @@ const AdminListingsTableContent = ({
                   >
                     Submitted
                   </SortableTableHead>
-                  <TableHead className="min-w-[80px] sm:min-w-[100px] w-20 sm:w-24">Actions</TableHead>
+                  <TableHead className="min-w-[80px] sm:min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
