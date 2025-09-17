@@ -1,12 +1,14 @@
 
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Edit, History, Check, X, EyeOff, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 import BasicActions from "./AdminListingsTableActions/BasicActions";
 import ApprovalActions from "./AdminListingsTableActions/ApprovalActions";
 import HideAction from "./AdminListingsTableActions/HideAction";
@@ -23,6 +25,7 @@ const AdminListingsTableActions = ({
   onDelete,
 }: AdminListingsTableActionsProps) => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   return (
     <DropdownMenu>

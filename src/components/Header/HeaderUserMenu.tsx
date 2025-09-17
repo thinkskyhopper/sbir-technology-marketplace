@@ -3,6 +3,7 @@ import { LogOut, User, Shield, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -41,7 +42,68 @@ const HeaderUserMenu = () => {
 
   console.log('HeaderUserMenu render:', { user: user.email, isAdmin });
 
-  return (
+return (
+  isMobile ? (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <Button 
+          variant="outline" 
+          className="h-8 sm:h-10 gap-2 px-2 sm:px-3 border-primary/20 hover:border-primary/40"
+        >
+          <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+            <AvatarFallback className="text-xs sm:text-sm bg-primary text-primary-foreground">
+              {initial}
+            </AvatarFallback>
+          </Avatar>
+          <span className="hidden sm:inline text-sm font-medium truncate max-w-24">
+            {firstName}
+          </span>
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent className="p-0">
+        <DrawerHeader className="text-left">
+          <DrawerTitle>User menu</DrawerTitle>
+          <DrawerDescription>Account actions</DrawerDescription>
+        </DrawerHeader>
+        <div className="px-4 pb-4 space-y-3">
+          <div className="text-sm">
+            <div className="font-medium truncate">{user.email}</div>
+            {profile?.full_name && (
+              <div className="text-xs text-muted-foreground truncate mt-0.5">
+                {profile.full_name}
+              </div>
+            )}
+            {isAdmin && (
+              <div className="flex items-center text-xs text-muted-foreground mt-1">
+                <Shield className="w-3 h-3 mr-1" />
+                Administrator
+              </div>
+            )}
+          </div>
+          <div className="grid gap-2">
+            <Button variant="ghost" className="justify-start" onClick={handleProfileClick}>
+              <User className="w-4 h-4 mr-2" />
+              View Profile
+            </Button>
+            <Button variant="ghost" className="justify-start" onClick={handleSettingsClick}>
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
+            {isAdmin && (
+              <Button variant="ghost" className="justify-start" onClick={handleAdminClick}>
+                <Settings className="w-4 h-4 mr-2" />
+                Admin Dashboard
+              </Button>
+            )}
+            <Button variant="destructive" className="justify-start" onClick={handleSignOut}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  ) : (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
@@ -104,7 +166,8 @@ const HeaderUserMenu = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
+);
 };
 
 export default HeaderUserMenu;
