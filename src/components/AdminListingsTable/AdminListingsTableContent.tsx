@@ -44,7 +44,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[200px] sm:min-w-[350px]"
+                    className="min-w-[180px] sm:min-w-[330px]"
                   >
                     Title
                   </SortableTableHead>
@@ -62,7 +62,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[80px]"
+                    className="min-w-[100px]"
                   >
                     Phase
                   </SortableTableHead>
@@ -126,7 +126,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[200px] sm:min-w-[350px]"
+                    className="min-w-[180px] sm:min-w-[330px]"
                   >
                     Title
                   </SortableTableHead>
@@ -144,7 +144,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[80px]"
+                    className="min-w-[100px]"
                   >
                     Phase
                   </SortableTableHead>
