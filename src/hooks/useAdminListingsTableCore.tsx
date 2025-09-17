@@ -9,6 +9,20 @@ import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
 import { useAdminListingsTableState, useAdminListingsTableLogic } from "@/components/AdminListingsTable/AdminListingsTableState";
 
 export const useAdminListingsTableCore = () => {
+  const persistedEditingListingId = useRef<string | null>(null);
+
+  // Load persisted edit dialog state
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('admin-edit-dialog-state');
+      if (saved) {
+        const { editingListingId, showDialog } = JSON.parse(saved);
+        persistedEditingListingId.current = editingListingId;
+      }
+    } catch (error) {
+      console.warn('Failed to load persisted edit dialog state:', error);
+    }
+  }, []);
   const { data, isLoading, error: queryError, invalidateAdminListings } = useOptimizedAdminListings();
   const listings = data || [];
 
@@ -102,6 +116,36 @@ export const useAdminListingsTableCore = () => {
   useEffect(() => {
     resetPagination();
   }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter]);
+
+  // Restore persisted edit dialog state when listings are available
+  useEffect(() => {
+    if (listings.length > 0 && persistedEditingListingId.current && !editingListing) {
+      const listingToRestore = listings.find(l => l.id === persistedEditingListingId.current);
+      if (listingToRestore) {
+        setEditingListing(listingToRestore);
+        setShowEditDialog(true);
+        console.log('🔄 Restored edit dialog for listing:', listingToRestore.title);
+      }
+      // Clear the persisted state after attempting restoration
+      persistedEditingListingId.current = null;
+    }
+  }, [listings, editingListing, setEditingListing, setShowEditDialog]);
+
+  // Persist edit dialog state to localStorage
+  useEffect(() => {
+    try {
+      if (editingListing && showEditDialog) {
+        localStorage.setItem('admin-edit-dialog-state', JSON.stringify({
+          editingListingId: editingListing.id,
+          showDialog: true
+        }));
+      } else {
+        localStorage.removeItem('admin-edit-dialog-state');
+      }
+    } catch (error) {
+      console.warn('Failed to persist edit dialog state:', error);
+    }
+  }, [editingListing, showEditDialog]);
 
   // Load change request data for indicators (optimized to avoid repeated calls)
   const { refetch: refetchChangeRequests } = useListingChangeRequests();

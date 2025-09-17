@@ -54,7 +54,8 @@ interface EditListingFormProps {
 const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>((listing as any).photo_url || null);
-  const { updateListing, fetchListings } = useListings();
+  const { updateListing } = useListingOperations();
+  const { invalidateAdminListings } = useOptimizedAdminListings();
   const { toast } = useToast();
   const isTabVisible = useTabVisibility();
 
@@ -181,7 +182,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       console.log('✅ Listing updated successfully, forcing data refresh...');
 
       // Force refresh the listings data
-      await fetchListings();
+      invalidateAdminListings();
 
       // Clear saved draft data after successful update
       clearFormData();
