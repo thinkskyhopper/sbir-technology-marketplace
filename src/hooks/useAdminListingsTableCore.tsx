@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import { useListings } from "@/hooks/useListings";
+import { useEffect, useRef } from "react";
+import { useOptimizedAdminListings } from "@/hooks/useOptimizedAdminListings";
+import { useListingOperations } from "@/hooks/useListingOperations";
 import { useSorting } from "@/hooks/useSorting";
 import { usePagination } from "@/hooks/usePagination";
 import { useAdminListingsTableState as useComponentState } from "@/hooks/useAdminListingsTableState";
@@ -8,7 +9,15 @@ import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
 import { useAdminListingsTableState, useAdminListingsTableLogic } from "@/components/AdminListingsTable/AdminListingsTableState";
 
 export const useAdminListingsTableCore = () => {
-  const { listings, loading, error, approveListing, rejectListing, hideListing, deleteListing } = useListings();
+  const { data, isLoading, error: queryError, invalidateAdminListings } = useOptimizedAdminListings();
+  const listings = data || [];
+
+  const { approveListing, rejectListing, hideListing, deleteListing } = useListingOperations(() => {
+    invalidateAdminListings();
+  });
+
+  const loading = isLoading as boolean;
+  const error = (queryError as any)?.message ?? null;
   
   // Filter and search state
   const {
