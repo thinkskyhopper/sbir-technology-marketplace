@@ -429,15 +429,9 @@
                 try {
                     console.log('📡 Starting data fetch...');
                     
-                    const apiUrl = 'https://amhznlnhrrugxatbeayo.supabase.co/rest/v1/sbir_listings';
-                    const params = new URLSearchParams({
-                        select: 'id,title,agency,value,category,status',
-                        status: 'eq.Active',
-                        order: 'created_at.desc',
-                        limit: '3'
-                    });
+                    const apiUrl = 'https://amhznlnhrrugxatbeayo.supabase.co/rest/v1/rpc/get_public_listings';
                     
-                    const response = await fetch(`${apiUrl}?${params}`, {
+                    const response = await fetch(apiUrl, {
                         method: 'GET',
                         headers: {
                             'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk',
@@ -457,8 +451,8 @@
                     const data = await response.json();
                     console.log('📊 Raw data received:', data);
                     
-                    // Convert value from cents to dollars and format data
-                    const formattedData = Array.isArray(data) ? data.map(listing => ({
+                    // Get only the first 3 listings and convert value from cents to dollars
+                    const formattedData = Array.isArray(data) ? data.slice(0, 3).map(listing => ({
                         ...listing,
                         value: typeof listing.value === 'number' ? listing.value / 100 : 0
                     })) : [];
