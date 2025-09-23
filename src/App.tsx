@@ -38,16 +38,48 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      refetchOnReconnect: false,
+      refetchOnReconnect: true, // Enable reconnect for VPN users
       staleTime: 10 * 60 * 1000, // 10 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
       retry: (failureCount, error: any) => {
-        // Don't retry on 4xx errors (client errors)
-        if (error?.status >= 400 && error?.status < 500) {
+        // Enhanced retry logic for VPN users
+        
+        // Don't retry auth errors (401, 403)
+        if (error?.status === 401 || error?.status === 403) {
           return false;
         }
+        
+        // Don't retry most 4xx client errors except rate limiting
+        if (error?.status >= 400 && error?.status < 500 && error?.status !== 429) {
+          return false;
+        }
+        
+        // Extended retries for network errors and VPN-related issues
+        const isNetworkError = error?.isNetworkError || 
+                              error?.isVpnRelated ||
+                              error?.message?.includes('fetch') ||
+                              error?.message?.includes('network') ||
+                              error?.name === 'TypeError';
+        
+        if (isNetworkError) {
+          return failureCount < 5; // More retries for network issues
+        }
+        
+        // Default retry logic
         return failureCount < 3;
       },
+      retryDelay: (attemptIndex, error: any) => {
+        // Exponential backoff with jitter for VPN users
+        const baseDelay = 1000; // 1 second base
+        const isNetworkError = error?.isNetworkError || error?.isVpnRelated;
+        
+        if (isNetworkError) {
+          // Longer delays for network issues
+          return Math.min(baseDelay * Math.pow(2, attemptIndex) + Math.random() * 1000, 30000);
+        }
+        
+        return Math.min(baseDelay * Math.pow(1.5, attemptIndex), 10000);
+      }
     },
   },
 });
