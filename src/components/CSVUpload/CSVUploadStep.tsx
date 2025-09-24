@@ -91,6 +91,8 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
           rowNumber,
           // Optional fields - only include if present in CSV
           technology_summary: row[headerIndexMap['technology_summary']] || undefined,
+          internal_title: row[headerIndexMap['internal_title']] || undefined,
+          internal_description: row[headerIndexMap['internal_description']] || undefined,
           agency_tracking_number: row[headerIndexMap['agency_tracking_number']] || undefined,
           contract: row[headerIndexMap['contract']] || undefined,
           proposal_award_date: row[headerIndexMap['proposal_award_date']] || undefined,
@@ -157,7 +159,7 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
           <strong>Required columns:</strong> title, description, agency, phase, value, category
         </p>
         <p className="text-sm text-muted-foreground">
-          <strong>Optional columns:</strong> deadline, photo_url, technology_summary, agency_tracking_number, contract, proposal_award_date, contract_end_date, topic_code, company, address, primary_investigator_name, pi_phone, pi_email, business_contact_name, bc_phone, bc_email
+          <strong>Optional columns:</strong> deadline, photo_url, technology_summary, internal_title, internal_description, agency_tracking_number, contract, proposal_award_date, contract_end_date, topic_code, company, address, primary_investigator_name, pi_phone, pi_email, business_contact_name, bc_phone, bc_email
         </p>
         <p className="text-xs text-muted-foreground">
           Note: Fields containing commas should be enclosed in double quotes. Dates should be in YYYY-MM-DD format.

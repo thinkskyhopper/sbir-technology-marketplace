@@ -427,6 +427,8 @@ export type Database = {
           deadline: string | null
           description: string
           id: string
+          internal_description: string | null
+          internal_title: string | null
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string | null
           pi_email: string | null
@@ -460,6 +462,8 @@ export type Database = {
           deadline?: string | null
           description: string
           id?: string
+          internal_description?: string | null
+          internal_title?: string | null
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url?: string | null
           pi_email?: string | null
@@ -493,6 +497,8 @@ export type Database = {
           deadline?: string | null
           description?: string
           id?: string
+          internal_description?: string | null
+          internal_title?: string | null
           phase?: Database["public"]["Enums"]["sbir_phase"]
           photo_url?: string | null
           pi_email?: string | null

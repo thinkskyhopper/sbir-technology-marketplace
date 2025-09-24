@@ -44,6 +44,8 @@ export const useCSVUpload = () => {
           user_id: user.id,
           // Optional fields - only include if present
           technology_summary: listing.technology_summary || null,
+          internal_title: listing.internal_title || null,
+          internal_description: listing.internal_description || null,
           agency_tracking_number: listing.agency_tracking_number || null,
           contract: listing.contract || null,
           proposal_award_date: listing.proposal_award_date || null,

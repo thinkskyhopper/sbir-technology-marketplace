@@ -21,6 +21,8 @@ import type { SBIRListing } from "@/types/listings";
 // Extend the form schema to include status and admin-only fields
 const editListingSchema = listingSchema.extend({
   status: z.enum(['Active', 'Pending', 'Sold', 'Rejected', 'Hidden']),
+  internal_title: z.string().optional(),
+  internal_description: z.string().optional(),
   agency_tracking_number: z.string().optional(),
   contract: z.string().optional(),
   proposal_award_date: z.string().optional(),
@@ -39,11 +41,13 @@ const editListingSchema = listingSchema.extend({
 
 type EditListingFormData = z.infer<typeof editListingSchema>;
 
-// Extend the form data to include photo_url, status, date_sold, and technology_summary
+// Extend the form data to include photo_url, status, date_sold, technology_summary, and internal fields
 interface ExtendedEditListingFormData extends EditListingFormData {
   photo_url?: string;
   date_sold?: string | null;
   technology_summary?: string | null;
+  internal_title?: string | null;
+  internal_description?: string | null;
 }
 
 interface EditListingFormProps {

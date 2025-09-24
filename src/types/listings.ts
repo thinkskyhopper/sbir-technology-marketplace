@@ -16,6 +16,8 @@ export interface SBIRListing {
   date_sold?: string | null;
   technology_summary?: string | null;
   // New admin-only fields
+  internal_title?: string | null;
+  internal_description?: string | null;
   agency_tracking_number?: string | null;
   contract?: string | null;
   proposal_award_date?: string | null;

@@ -19,6 +19,22 @@ export const AdministrativeDetailsCard = ({ listing }: AdministrativeDetailsCard
         <CardTitle>Administrative Details</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 gap-4">
+          {listing.internal_title && (
+            <div>
+              <p className="text-sm text-muted-foreground">Internal Title</p>
+              <p className="font-medium">{listing.internal_title}</p>
+            </div>
+          )}
+          
+          {listing.internal_description && (
+            <div>
+              <p className="text-sm text-muted-foreground">Internal Description</p>
+              <p className="font-medium whitespace-pre-wrap">{listing.internal_description}</p>
+            </div>
+          )}
+        </div>
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {listing.agency_tracking_number && (
             <div>
