@@ -88,7 +88,22 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
           category: row[headerIndexMap['category']] || '',
           photo_url: row[headerIndexMap['photo_url']] || '',
           status: 'Pending',
-          rowNumber
+          rowNumber,
+          // Optional fields - only include if present in CSV
+          technology_summary: row[headerIndexMap['technology_summary']] || undefined,
+          agency_tracking_number: row[headerIndexMap['agency_tracking_number']] || undefined,
+          contract: row[headerIndexMap['contract']] || undefined,
+          proposal_award_date: row[headerIndexMap['proposal_award_date']] || undefined,
+          contract_end_date: row[headerIndexMap['contract_end_date']] || undefined,
+          topic_code: row[headerIndexMap['topic_code']] || undefined,
+          company: row[headerIndexMap['company']] || undefined,
+          address: row[headerIndexMap['address']] || undefined,
+          primary_investigator_name: row[headerIndexMap['primary_investigator_name']] || undefined,
+          pi_phone: row[headerIndexMap['pi_phone']] || undefined,
+          pi_email: row[headerIndexMap['pi_email']] || undefined,
+          business_contact_name: row[headerIndexMap['business_contact_name']] || undefined,
+          bc_phone: row[headerIndexMap['bc_phone']] || undefined,
+          bc_email: row[headerIndexMap['bc_email']] || undefined,
         };
 
         // Comprehensive validation
@@ -139,10 +154,13 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
           className="cursor-pointer"
         />
         <p className="text-sm text-muted-foreground">
-          CSV must include columns: title, description, agency, phase, value, category
+          <strong>Required columns:</strong> title, description, agency, phase, value, category
+        </p>
+        <p className="text-sm text-muted-foreground">
+          <strong>Optional columns:</strong> deadline, photo_url, technology_summary, agency_tracking_number, contract, proposal_award_date, contract_end_date, topic_code, company, address, primary_investigator_name, pi_phone, pi_email, business_contact_name, bc_phone, bc_email
         </p>
         <p className="text-xs text-muted-foreground">
-          Note: Fields containing commas should be enclosed in double quotes (e.g., "Agency Name, LLC")
+          Note: Fields containing commas should be enclosed in double quotes. Dates should be in YYYY-MM-DD format.
         </p>
       </div>
 

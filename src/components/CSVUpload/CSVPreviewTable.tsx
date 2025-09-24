@@ -23,12 +23,14 @@ export const CSVPreviewTable = ({ listings }: CSVPreviewTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Title</TableHead>
-            <TableHead>Agency</TableHead>
-            <TableHead>Phase</TableHead>
-            <TableHead>Value</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Status</TableHead>
+          <TableHead>Title</TableHead>
+          <TableHead>Agency</TableHead>
+          <TableHead>Phase</TableHead>
+          <TableHead>Value</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead>Company</TableHead>
+          <TableHead>Topic Code</TableHead>
+          <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,6 +49,8 @@ export const CSVPreviewTable = ({ listings }: CSVPreviewTableProps) => {
               <TableCell>
                 <Badge variant="secondary">{listing.category}</Badge>
               </TableCell>
+              <TableCell>{listing.company || '-'}</TableCell>
+              <TableCell>{listing.topic_code || '-'}</TableCell>
               <TableCell>
                 <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
                   {listing.status}

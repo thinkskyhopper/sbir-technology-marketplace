@@ -37,11 +37,26 @@ export const useCSVUpload = () => {
           agency: listing.agency,
           phase: listing.phase,
           value: Math.round(listing.value * 100), // Convert to cents
-          deadline: listing.deadline,
+          deadline: listing.deadline || null,
           category: listing.category,
           photo_url: listing.photo_url || null,
           status: 'Pending' as ListingStatus,
-          user_id: user.id
+          user_id: user.id,
+          // Optional fields - only include if present
+          technology_summary: listing.technology_summary || null,
+          agency_tracking_number: listing.agency_tracking_number || null,
+          contract: listing.contract || null,
+          proposal_award_date: listing.proposal_award_date || null,
+          contract_end_date: listing.contract_end_date || null,
+          topic_code: listing.topic_code || null,
+          company: listing.company || null,
+          address: listing.address || null,
+          primary_investigator_name: listing.primary_investigator_name || null,
+          pi_phone: listing.pi_phone || null,
+          pi_email: listing.pi_email || null,
+          business_contact_name: listing.business_contact_name || null,
+          bc_phone: listing.bc_phone || null,
+          bc_email: listing.bc_email || null,
         }));
 
         const { data, error } = await supabase
