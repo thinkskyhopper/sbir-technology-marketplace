@@ -151,7 +151,7 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
         <Input
           id="csv-file"
           type="file"
-          accept=".csv"
+          accept=".csv,.tsv"
           onChange={handleFileChange}
           className="cursor-pointer"
         />
@@ -162,7 +162,7 @@ export const CSVUploadStep = ({ onFileParsed, onErrors }: CSVUploadStepProps) =>
           <strong>Optional columns:</strong> deadline, photo_url, technology_summary, internal_title, internal_description, agency_tracking_number, contract, proposal_award_date, contract_end_date, topic_code, company, address, primary_investigator_name, pi_phone, pi_email, business_contact_name, bc_phone, bc_email
         </p>
         <p className="text-xs text-muted-foreground">
-          Note: Fields containing commas should be enclosed in double quotes. Dates should be in YYYY-MM-DD format.
+          Supports CSV (comma-separated) and TSV (tab-separated) files. Multi-line fields are supported. Missing trailing columns will be auto-filled. Dates should be in YYYY-MM-DD format.
         </p>
       </div>
 
