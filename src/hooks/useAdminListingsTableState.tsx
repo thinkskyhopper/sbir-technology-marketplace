@@ -18,6 +18,9 @@ export const useAdminListingsTableState = () => {
     listingTitle: ''
   });
 
+  // Bulk selection state
+  const [selectedListings, setSelectedListings] = useState<Set<string>>(new Set());
+
   return {
     processingId,
     setProcessingId,
@@ -27,5 +30,7 @@ export const useAdminListingsTableState = () => {
     setShowEditDialog,
     confirmAction,
     setConfirmAction,
+    selectedListings,
+    setSelectedListings,
   };
 };

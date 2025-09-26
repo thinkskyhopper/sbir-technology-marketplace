@@ -2,6 +2,7 @@
 import AdminListingsTableContent from "./AdminListingsTableContent";
 import AdminListingsTablePagination from "./AdminListingsTablePagination";
 import type { SBIRListing } from "@/types/listings";
+import type { useBulkSelection } from "@/hooks/useBulkSelection";
 
 interface AdminListingsTableContainerContentProps {
   paginatedData: SBIRListing[];
@@ -17,6 +18,7 @@ interface AdminListingsTableContainerContentProps {
   onReject: (listing: SBIRListing) => void;
   onHide: (listing: SBIRListing) => void;
   onDelete: (listing: SBIRListing) => void;
+  bulkSelection: ReturnType<typeof useBulkSelection>;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -38,6 +40,7 @@ const AdminListingsTableContainerContent = ({
   onReject,
   onHide,
   onDelete,
+  bulkSelection,
   currentPage,
   totalPages,
   onPageChange,
@@ -59,6 +62,7 @@ const AdminListingsTableContainerContent = ({
         onReject={onReject}
         onHide={onHide}
         onDelete={onDelete}
+        bulkSelection={bulkSelection}
       />
       
       {filteredListings.length === 0 && (

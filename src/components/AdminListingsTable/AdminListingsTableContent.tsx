@@ -4,8 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AdminListingsTableRow from "./AdminListingsTableRow";
 import SortableTableHead from "./SortableTableHead";
+import BulkSelectionCheckbox from "./BulkSelectionCheckbox";
 import type { SBIRListing } from "@/types/listings";
 import type { SortState } from "@/hooks/useSorting";
+import type { useBulkSelection } from "@/hooks/useBulkSelection";
 
 interface AdminListingsTableContentProps {
   listings: SBIRListing[];
@@ -17,6 +19,7 @@ interface AdminListingsTableContentProps {
   onReject: (listing: SBIRListing) => void;
   onHide: (listing: SBIRListing) => void;
   onDelete: (listing: SBIRListing) => void;
+  bulkSelection: ReturnType<typeof useBulkSelection>;
 }
 
 const AdminListingsTableContent = ({
@@ -29,6 +32,7 @@ const AdminListingsTableContent = ({
   onReject,
   onHide,
   onDelete,
+  bulkSelection,
 }: AdminListingsTableContentProps) => {
   return (
     <TooltipProvider>
@@ -36,9 +40,17 @@ const AdminListingsTableContent = ({
         {/* Mobile: Use native scrolling */}
         <div className="block sm:hidden">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto touch-pan-x touch-pan-y">
-            <Table className="min-w-[900px]">
+            <Table className="min-w-[950px]">
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[40px]">
+                    <BulkSelectionCheckbox
+                      checked={bulkSelection.isAllSelected}
+                      onCheckedChange={bulkSelection.toggleAll}
+                      indeterminate={bulkSelection.isIndeterminate}
+                      aria-label="Select all listings"
+                    />
+                  </TableHead>
                   <SortableTableHead
                     sortKey="title"
                     currentSortColumn={sortState.column}
@@ -108,6 +120,7 @@ const AdminListingsTableContent = ({
                     onReject={onReject}
                     onHide={onHide}
                     onDelete={onDelete}
+                    bulkSelection={bulkSelection}
                   />
                 ))}
               </TableBody>
@@ -118,9 +131,17 @@ const AdminListingsTableContent = ({
         {/* Desktop: Use ScrollArea */}
         <div className="hidden sm:block overflow-x-auto">
           <ScrollArea className="h-[80vh] w-full">
-            <Table className="min-w-[1100px]">
+            <Table className="min-w-[1150px]">
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[40px]">
+                    <BulkSelectionCheckbox
+                      checked={bulkSelection.isAllSelected}
+                      onCheckedChange={bulkSelection.toggleAll}
+                      indeterminate={bulkSelection.isIndeterminate}
+                      aria-label="Select all listings"
+                    />
+                  </TableHead>
                   <SortableTableHead
                     sortKey="title"
                     currentSortColumn={sortState.column}
@@ -190,6 +211,7 @@ const AdminListingsTableContent = ({
                     onReject={onReject}
                     onHide={onHide}
                     onDelete={onDelete}
+                    bulkSelection={bulkSelection}
                   />
                 ))}
               </TableBody>

@@ -7,6 +7,8 @@ import { useAdminListingsTableState as useComponentState } from "@/hooks/useAdmi
 import { useAdminListingsTableHandlers } from "@/hooks/useAdminListingsTableHandlers";
 import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
 import { useAdminListingsTableState, useAdminListingsTableLogic } from "@/components/AdminListingsTable/AdminListingsTableState";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { useBulkOperations } from "@/hooks/useBulkOperations";
 
 export const useAdminListingsTableCore = () => {
   const persistedEditingListingId = useRef<string | null>(null);
@@ -68,7 +70,18 @@ export const useAdminListingsTableCore = () => {
     setShowEditDialog,
     confirmAction,
     setConfirmAction,
+    selectedListings,
+    setSelectedListings,
   } = useComponentState();
+
+  // Bulk selection functionality
+  const bulkSelection = useBulkSelection(filteredListings);
+  
+  // Bulk operations
+  const bulkOperations = useBulkOperations(() => {
+    invalidateAdminListings();
+    bulkSelection.clearSelection();
+  });
 
   const {
     handleEdit,
@@ -116,6 +129,11 @@ export const useAdminListingsTableCore = () => {
   useEffect(() => {
     resetPagination();
   }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter]);
+
+  // Clear bulk selection when filters change to avoid confusion
+  useEffect(() => {
+    bulkSelection.clearSelection();
+  }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter, bulkSelection.clearSelection]);
 
   // Restore persisted edit dialog state when listings are available
   useEffect(() => {
@@ -200,6 +218,10 @@ export const useAdminListingsTableCore = () => {
     handleHideClick,
     handleDeleteClick,
     handleConfirmAction,
+    
+    // Bulk selection
+    bulkSelection,
+    bulkOperations,
     
     // Other
     refetchChangeRequests

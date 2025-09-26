@@ -6,9 +6,11 @@ import ListingTitleCell from "./components/ListingTitleCell";
 import StatusBadgeCell from "./components/StatusBadgeCell";
 import UserInfoCell from "./components/UserInfoCell";
 import CurrencyCell from "./components/CurrencyCell";
+import BulkSelectionCheckbox from "./BulkSelectionCheckbox";
 import { format } from "date-fns";
 import type { SBIRListing } from "@/types/listings";
 import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
+import type { useBulkSelection } from "@/hooks/useBulkSelection";
 
 interface AdminListingsTableRowProps {
   listing: SBIRListing;
@@ -18,6 +20,7 @@ interface AdminListingsTableRowProps {
   onReject: (listing: SBIRListing) => void;
   onHide: (listing: SBIRListing) => void;
   onDelete: (listing: SBIRListing) => void;
+  bulkSelection: ReturnType<typeof useBulkSelection>;
 }
 
 const AdminListingsTableRow = ({
@@ -28,6 +31,7 @@ const AdminListingsTableRow = ({
   onReject,
   onHide,
   onDelete,
+  bulkSelection,
 }: AdminListingsTableRowProps) => {
   const { getListingRequestSummary } = useListingChangeRequests();
   const requestSummary = getListingRequestSummary(listing.id);
@@ -41,9 +45,17 @@ const AdminListingsTableRow = ({
   });
 
   const isProcessing = processingId === listing.id;
+  const isSelected = bulkSelection.isSelected(listing.id);
 
   return (
-    <TableRow className="hover:bg-muted/50">
+    <TableRow className={`hover:bg-muted/50 ${isSelected ? 'bg-muted/30' : ''}`}>
+      <TableCell className="w-[40px]">
+        <BulkSelectionCheckbox
+          checked={isSelected}
+          onCheckedChange={() => bulkSelection.toggleListing(listing.id)}
+          aria-label={`Select ${listing.title}`}
+        />
+      </TableCell>
       <ListingTitleCell 
         listing={listing} 
         requestSummary={requestSummary} 

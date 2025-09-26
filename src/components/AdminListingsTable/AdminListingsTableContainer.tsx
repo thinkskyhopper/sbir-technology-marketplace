@@ -6,7 +6,9 @@ import AdminListingsTableLoading from "./AdminListingsTableLoading";
 import AdminListingsTableDialogs from "./AdminListingsTableDialogs";
 import AdminListingsTableContainerHeader from "./AdminListingsTableContainerHeader";
 import AdminListingsTableContainerContent from "./AdminListingsTableContainerContent";
+import BulkActionsToolbar from "./BulkActionsToolbar";
 import { useAdminListingsTableCore } from "@/hooks/useAdminListingsTableCore";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 const AdminListingsTableContainer = () => {
   const {
@@ -59,7 +61,24 @@ const AdminListingsTableContainer = () => {
     handleHideClick,
     handleDeleteClick,
     handleConfirmAction,
+    
+    // Bulk functionality
+    bulkSelection,
+    bulkOperations,
   } = useAdminListingsTableCore();
+
+  // Keyboard shortcuts for bulk actions
+  useKeyboardShortcuts({
+    onSelectAll: bulkSelection.toggleAll,
+    onClearSelection: bulkSelection.clearSelection,
+    onBulkDelete: () => {
+      if (bulkSelection.selectedCount > 0) {
+        // This will be handled by the BulkActionsToolbar confirmation dialog
+        console.log('Bulk delete shortcut pressed');
+      }
+    },
+    disabled: loading || bulkOperations.loading
+  });
 
   if (loading) {
     return <AdminListingsTableLoading />;
@@ -99,6 +118,18 @@ const AdminListingsTableContainer = () => {
             listings={listings}
           />
         </CardHeader>
+        
+        <BulkActionsToolbar
+          selectedCount={bulkSelection.selectedCount}
+          selectedListings={bulkSelection.selectedListingObjects}
+          onBulkApprove={bulkOperations.bulkApprove}
+          onBulkReject={bulkOperations.bulkReject}
+          onBulkHide={bulkOperations.bulkHide}
+          onBulkDelete={bulkOperations.bulkDelete}
+          onClearSelection={bulkSelection.clearSelection}
+          loading={bulkOperations.loading}
+        />
+        
         <CardContent>
           <AdminListingsTableContainerContent
             paginatedData={paginatedData}
@@ -111,6 +142,7 @@ const AdminListingsTableContainer = () => {
             onReject={handleRejectClick}
             onHide={handleHideClick}
             onDelete={handleDeleteClick}
+            bulkSelection={bulkSelection}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={goToPage}
