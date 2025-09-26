@@ -17,7 +17,7 @@ const BulkSelectionCheckbox = ({
     <Checkbox
       checked={indeterminate ? 'indeterminate' : checked}
       onCheckedChange={onCheckedChange}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel || "Select all listings on this page"}
       className="translate-y-[2px]"
     />
   );

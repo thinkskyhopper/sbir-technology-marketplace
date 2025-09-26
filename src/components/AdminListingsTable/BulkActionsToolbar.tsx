@@ -125,7 +125,7 @@ const BulkActionsToolbar = ({
     <>
       <div className="flex items-center gap-2 p-4 bg-muted/50 border-b">
         <span className="text-sm text-muted-foreground">
-          {selectedCount} item{selectedCount !== 1 ? 's' : ''} selected
+          {selectedCount} item{selectedCount !== 1 ? 's' : ''} selected across all pages
         </span>
         
         <div className="flex items-center gap-2 ml-auto">

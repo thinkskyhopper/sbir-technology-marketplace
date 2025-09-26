@@ -75,8 +75,31 @@ export const useAdminListingsTableCore = () => {
     setSelectedListings,
   } = useComponentState();
 
-  // Bulk selection functionality
-  const bulkSelection = useBulkSelection(filteredListings);
+  // Add sorting functionality
+  const { sortedData: sortedListings, sortState, handleSort } = useSorting(filteredListings, {
+    column: 'submitted_at',
+    direction: 'desc'
+  });
+
+  // Add pagination
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+    totalItems,
+    resetPagination
+  } = usePagination({
+    data: sortedListings,
+    itemsPerPage: 10
+  });
+
+  // Bulk selection functionality (after pagination to access paginatedData)
+  const bulkSelection = useBulkSelection(paginatedData, filteredListings);
   
   // Bulk operations
   const {
@@ -102,29 +125,6 @@ export const useAdminListingsTableCore = () => {
     setShowEditDialog,
     setConfirmAction,
     confirmAction,
-  });
-
-  // Add sorting functionality
-  const { sortedData: sortedListings, sortState, handleSort } = useSorting(filteredListings, {
-    column: 'submitted_at',
-    direction: 'desc'
-  });
-
-  // Add pagination
-  const {
-    currentPage,
-    totalPages,
-    paginatedData,
-    goToPage,
-    goToNextPage,
-    goToPreviousPage,
-    hasNextPage,
-    hasPreviousPage,
-    totalItems,
-    resetPagination
-  } = usePagination({
-    data: sortedListings,
-    itemsPerPage: 10
   });
 
   // Reset pagination when filters change - use useEffect to avoid infinite loops
