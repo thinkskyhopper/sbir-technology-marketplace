@@ -63,21 +63,31 @@ const AdminListingsTableContainer = () => {
     handleConfirmAction,
     
     // Bulk functionality
-    bulkSelection,
-    bulkOperations,
+    selectedCount,
+    totalCount,
+    isAllSelected,
+    isIndeterminate,
+    toggleListing,
+    toggleAll,
+    clearSelection,
+    isSelected,
+    selectedListingObjects,
+    bulkStatusChange,
+    bulkDelete,
+    bulkOperationsLoading,
   } = useAdminListingsTableCore();
 
   // Keyboard shortcuts for bulk actions
   useKeyboardShortcuts({
-    onSelectAll: bulkSelection.toggleAll,
-    onClearSelection: bulkSelection.clearSelection,
+    onSelectAll: toggleAll,
+    onClearSelection: clearSelection,
     onBulkDelete: () => {
-      if (bulkSelection.selectedCount > 0) {
+      if (selectedCount > 0) {
         // This will be handled by the BulkActionsToolbar confirmation dialog
         console.log('Bulk delete shortcut pressed');
       }
     },
-    disabled: loading || bulkOperations.loading
+    disabled: loading || bulkOperationsLoading
   });
 
   if (loading) {
@@ -120,14 +130,11 @@ const AdminListingsTableContainer = () => {
         </CardHeader>
         
         <BulkActionsToolbar
-          selectedCount={bulkSelection.selectedCount}
-          selectedListings={bulkSelection.selectedListingObjects}
-          onBulkApprove={bulkOperations.bulkApprove}
-          onBulkReject={bulkOperations.bulkReject}
-          onBulkHide={bulkOperations.bulkHide}
-          onBulkDelete={bulkOperations.bulkDelete}
-          onClearSelection={bulkSelection.clearSelection}
-          loading={bulkOperations.loading}
+          selectedCount={selectedCount}
+          onBulkStatusChange={bulkStatusChange}
+          onBulkDelete={bulkDelete}
+          onClearSelection={clearSelection}
+          loading={bulkOperationsLoading}
         />
         
         <CardContent>
@@ -142,7 +149,18 @@ const AdminListingsTableContainer = () => {
             onReject={handleRejectClick}
             onHide={handleHideClick}
             onDelete={handleDeleteClick}
-            bulkSelection={bulkSelection}
+            bulkSelection={{ 
+              selectedListings: new Set(selectedListingObjects.map(l => l.id)),
+              selectedCount, 
+              totalCount, 
+              isAllSelected, 
+              isIndeterminate, 
+              toggleListing, 
+              toggleAll, 
+              clearSelection, 
+              isSelected, 
+              selectedListingObjects 
+            }}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={goToPage}

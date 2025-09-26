@@ -1,106 +1,89 @@
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
-  Check, 
-  X, 
-  EyeOff, 
-  Trash2, 
-  ChevronDown,
-  AlertTriangle 
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
-import type { SBIRListing } from "@/types/listings";
+import { 
+  Trash2, 
+  CheckCircle, 
+  XCircle, 
+  EyeOff, 
+  Clock,
+  DollarSign,
+  X
+} from 'lucide-react';
+import type { SBIRListing } from '@/types/listings';
 
 interface BulkActionsToolbarProps {
   selectedCount: number;
-  selectedListings: SBIRListing[];
-  onBulkApprove: (listings: SBIRListing[], userNotes?: string, internalNotes?: string) => Promise<any>;
-  onBulkReject: (listings: SBIRListing[], userNotes?: string, internalNotes?: string) => Promise<any>;
-  onBulkHide: (listings: SBIRListing[], userNotes?: string, internalNotes?: string) => Promise<any>;
-  onBulkDelete: (listings: SBIRListing[], userNotes?: string, internalNotes?: string) => Promise<any>;
+  onBulkStatusChange: (newStatus: SBIRListing['status'], userNotes?: string, internalNotes?: string) => Promise<void>;
+  onBulkDelete: (userNotes?: string, internalNotes?: string) => Promise<void>;
   onClearSelection: () => void;
   loading: boolean;
 }
 
-type BulkAction = 'approve' | 'reject' | 'hide' | 'delete' | null;
+type BulkAction = 'delete' | 'status' | null;
 
 const BulkActionsToolbar = ({
   selectedCount,
-  selectedListings,
-  onBulkApprove,
-  onBulkReject,
-  onBulkHide,
+  onBulkStatusChange,
   onBulkDelete,
   onClearSelection,
   loading
 }: BulkActionsToolbarProps) => {
   const [confirmAction, setConfirmAction] = useState<BulkAction>(null);
+  const [selectedStatus, setSelectedStatus] = useState<SBIRListing['status'] | ''>('');
 
   if (selectedCount === 0) return null;
 
   const handleConfirm = async () => {
-    if (!confirmAction) return;
-
     try {
       switch (confirmAction) {
-        case 'approve':
-          await onBulkApprove(selectedListings);
-          break;
-        case 'reject':
-          await onBulkReject(selectedListings);
-          break;
-        case 'hide':
-          await onBulkHide(selectedListings);
+        case 'status':
+          if (selectedStatus) {
+            await onBulkStatusChange(selectedStatus);
+          }
           break;
         case 'delete':
-          await onBulkDelete(selectedListings);
+          await onBulkDelete();
           break;
       }
       onClearSelection();
+    } catch (error) {
+      console.error('Bulk action failed:', error);
     } finally {
       setConfirmAction(null);
+      setSelectedStatus('');
     }
   };
 
-  const getActionConfig = (action: BulkAction) => {
-    switch (action) {
-      case 'approve':
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status as SBIRListing['status']);
+    setConfirmAction('status');
+  };
+
+  const getActionConfig = () => {
+    switch (confirmAction) {
+      case 'status':
         return {
-          title: 'Approve Selected Listings',
-          description: `Are you sure you want to approve ${selectedCount} listing${selectedCount !== 1 ? 's' : ''}?`,
-          actionText: 'Approve',
+          title: 'Change Status of Selected Listings',
+          description: `Are you sure you want to change ${selectedCount} listing${selectedCount !== 1 ? 's' : ''} to ${selectedStatus}?`,
+          actionText: 'Change Status',
           variant: 'default' as const
-        };
-      case 'reject':
-        return {
-          title: 'Reject Selected Listings',
-          description: `Are you sure you want to reject ${selectedCount} listing${selectedCount !== 1 ? 's' : ''}?`,
-          actionText: 'Reject',
-          variant: 'destructive' as const
-        };
-      case 'hide':
-        return {
-          title: 'Hide Selected Listings',
-          description: `Are you sure you want to hide ${selectedCount} listing${selectedCount !== 1 ? 's' : ''}?`,
-          actionText: 'Hide',
-          variant: 'destructive' as const
         };
       case 'delete':
         return {
@@ -110,79 +93,99 @@ const BulkActionsToolbar = ({
           variant: 'destructive' as const
         };
       default:
+        return {
+          title: '',
+          description: '',
+          actionText: '',
+          variant: 'default' as const
+        };
+    }
+  };
+
+  const actionConfig = getActionConfig();
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'Pending':
+        return <Clock className="h-4 w-4" />;
+      case 'Sold':
+        return <DollarSign className="h-4 w-4" />;
+      case 'Rejected':
+        return <XCircle className="h-4 w-4" />;
+      case 'Hidden':
+        return <EyeOff className="h-4 w-4" />;
+      default:
         return null;
     }
   };
 
-  const actionConfig = confirmAction ? getActionConfig(confirmAction) : null;
-
   return (
     <>
-      <div className="flex items-center justify-between p-4 bg-muted/50 border-b">
-        <div className="flex items-center space-x-3">
-          <Badge variant="secondary" className="px-3 py-1">
-            {selectedCount} selected
-          </Badge>
-        </div>
+      <div className="flex items-center gap-2 p-4 bg-muted/50 border-b">
+        <span className="text-sm text-muted-foreground">
+          {selectedCount} item{selectedCount !== 1 ? 's' : ''} selected
+        </span>
         
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setConfirmAction('approve')}
-            disabled={loading}
-            className="h-8"
-          >
-            <Check className="w-4 h-4" />
-            Approve
-          </Button>
+        <div className="flex items-center gap-2 ml-auto">
+          <Select onValueChange={handleStatusChange} disabled={loading}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Change Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Active">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon('Active')}
+                  Active
+                </div>
+              </SelectItem>
+              <SelectItem value="Pending">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon('Pending')}
+                  Pending
+                </div>
+              </SelectItem>
+              <SelectItem value="Sold">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon('Sold')}
+                  Sold
+                </div>
+              </SelectItem>
+              <SelectItem value="Rejected">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon('Rejected')}
+                  Rejected
+                </div>
+              </SelectItem>
+              <SelectItem value="Hidden">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon('Hidden')}
+                  Hidden
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
           
           <Button
-            variant="outline"
+            variant="destructive"
             size="sm"
-            onClick={() => setConfirmAction('reject')}
+            onClick={() => setConfirmAction('delete')}
             disabled={loading}
-            className="h-8"
+            className="gap-2"
           >
-            <X className="w-4 h-4" />
-            Reject
+            <Trash2 className="h-4 w-4" />
+            Delete Selected
           </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={loading}
-                className="h-8"
-              >
-                More Actions
-                <ChevronDown className="w-4 h-4 ml-1" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setConfirmAction('hide')}>
-                <EyeOff className="w-4 h-4 mr-2" />
-                Hide Selected
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={() => setConfirmAction('delete')}
-                className="text-destructive"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete Selected
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
+
           <Button
             variant="ghost"
             size="sm"
             onClick={onClearSelection}
             disabled={loading}
-            className="h-8"
+            className="gap-2"
           >
+            <X className="h-4 w-4" />
             Clear Selection
           </Button>
         </div>
@@ -191,12 +194,11 @@ const BulkActionsToolbar = ({
       <AlertDialog open={!!confirmAction} onOpenChange={(open) => !open && setConfirmAction(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center space-x-2">
-              <AlertTriangle className="w-5 h-5 text-destructive" />
-              <span>{actionConfig?.title}</span>
+            <AlertDialogTitle>
+              {actionConfig.title}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {actionConfig?.description}
+              {actionConfig.description}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -204,9 +206,9 @@ const BulkActionsToolbar = ({
             <AlertDialogAction
               onClick={handleConfirm}
               disabled={loading}
-              className={actionConfig?.variant === 'destructive' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}
+              className={actionConfig.variant === 'destructive' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}
             >
-              {loading ? 'Processing...' : actionConfig?.actionText}
+              {loading ? 'Processing...' : actionConfig.actionText}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

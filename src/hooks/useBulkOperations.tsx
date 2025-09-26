@@ -70,31 +70,17 @@ export const useBulkOperations = (onSuccess?: () => void) => {
     }
   };
 
-  const bulkApprove = async (listings: SBIRListing[], userNotes?: string, internalNotes?: string) => {
+  const bulkStatusChange = async (
+    listings: SBIRListing[], 
+    newStatus: SBIRListing['status'], 
+    userNotes?: string, 
+    internalNotes?: string
+  ) => {
     return processBulkOperation(
-      listings.filter(l => l.status !== 'Active'),
-      listingsService.approveListing,
-      'Approve',
-      userNotes,
-      internalNotes
-    );
-  };
-
-  const bulkReject = async (listings: SBIRListing[], userNotes?: string, internalNotes?: string) => {
-    return processBulkOperation(
-      listings.filter(l => l.status !== 'Rejected'),
-      listingsService.rejectListing,
-      'Reject',
-      userNotes,
-      internalNotes
-    );
-  };
-
-  const bulkHide = async (listings: SBIRListing[], userNotes?: string, internalNotes?: string) => {
-    return processBulkOperation(
-      listings.filter(l => l.status !== 'Hidden'),
-      listingsService.hideListing,
-      'Hide',
+      listings.filter(l => l.status !== newStatus),
+      (listingId: string, adminId: string, userNotes?: string, internalNotes?: string) => 
+        listingsService.changeListingStatus(listingId, newStatus, adminId, userNotes, internalNotes),
+      `Change status to ${newStatus}`,
       userNotes,
       internalNotes
     );
@@ -111,9 +97,7 @@ export const useBulkOperations = (onSuccess?: () => void) => {
   };
 
   return {
-    bulkApprove,
-    bulkReject,
-    bulkHide,
+    bulkStatusChange,
     bulkDelete,
     loading
   };

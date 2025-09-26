@@ -9,6 +9,7 @@ import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
 import { useAdminListingsTableState, useAdminListingsTableLogic } from "@/components/AdminListingsTable/AdminListingsTableState";
 import { useBulkSelection } from "@/hooks/useBulkSelection";
 import { useBulkOperations } from "@/hooks/useBulkOperations";
+import type { SBIRListing } from "@/types/listings";
 
 export const useAdminListingsTableCore = () => {
   const persistedEditingListingId = useRef<string | null>(null);
@@ -78,10 +79,11 @@ export const useAdminListingsTableCore = () => {
   const bulkSelection = useBulkSelection(filteredListings);
   
   // Bulk operations
-  const bulkOperations = useBulkOperations(() => {
-    invalidateAdminListings();
-    bulkSelection.clearSelection();
-  });
+  const {
+    bulkStatusChange,
+    bulkDelete,
+    loading: bulkLoading
+  } = useBulkOperations(invalidateAdminListings);
 
   const {
     handleEdit,
@@ -220,8 +222,24 @@ export const useAdminListingsTableCore = () => {
     handleConfirmAction,
     
     // Bulk selection
-    bulkSelection,
-    bulkOperations,
+    selectedCount: bulkSelection.selectedCount,
+    totalCount: bulkSelection.totalCount,
+    isAllSelected: bulkSelection.isAllSelected,
+    isIndeterminate: bulkSelection.isIndeterminate,
+    toggleListing: bulkSelection.toggleListing,
+    toggleAll: bulkSelection.toggleAll,
+    clearSelection: bulkSelection.clearSelection,
+    isSelected: bulkSelection.isSelected,
+    selectedListingObjects: bulkSelection.selectedListingObjects,
+    
+    // Bulk operations
+    bulkStatusChange: async (newStatus: SBIRListing['status'], userNotes?: string, internalNotes?: string) => {
+      await bulkStatusChange(bulkSelection.selectedListingObjects, newStatus, userNotes, internalNotes);
+    },
+    bulkDelete: async (userNotes?: string, internalNotes?: string) => {
+      await bulkDelete(bulkSelection.selectedListingObjects, userNotes, internalNotes);
+    },
+    bulkOperationsLoading: bulkLoading,
     
     // Other
     refetchChangeRequests
