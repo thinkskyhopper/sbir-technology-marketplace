@@ -38,10 +38,21 @@ export const CSVUploadDialog = ({ open, onOpenChange, onSuccess }: CSVUploadDial
     try {
       const result = await uploadListings(parsedData, file.name);
       
-      toast({
-        title: "Success!",
-        description: `Successfully imported ${result.successCount} listings. ${result.failureCount} failed.`,
-      });
+      if (result.successCount > 0) {
+        toast({
+          title: "Upload Complete!",
+          description: `Successfully imported ${result.successCount} of ${result.successCount + result.failureCount} listings.`,
+        });
+      }
+
+      if (result.failureCount > 0) {
+        console.log('❌ Failed listings:', result.failedListings);
+        toast({
+          title: "Partial Upload",
+          description: `${result.failureCount} listings failed. Check browser console for details.`,
+          variant: "destructive",
+        });
+      }
 
       onSuccess();
       handleClose();
