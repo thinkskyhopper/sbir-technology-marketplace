@@ -117,7 +117,7 @@ const AdminListingsTableContent = ({
 
         {/* Desktop: Use ScrollArea */}
         <div className="hidden sm:block overflow-x-auto">
-          <ScrollArea className="h-[400px] w-full">
+          <ScrollArea className="h-[80vh] w-full">
             <Table className="min-w-[1100px]">
               <TableHeader>
                 <TableRow>
