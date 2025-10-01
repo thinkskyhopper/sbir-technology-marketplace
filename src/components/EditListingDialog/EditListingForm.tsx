@@ -78,6 +78,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       status: listing.status,
       technology_summary: listing.technology_summary || "",
       // Admin-only fields
+      internal_title: listing.internal_title || "",
+      internal_description: listing.internal_description || "",
       agency_tracking_number: listing.agency_tracking_number || "",
       contract: listing.contract || "",
       proposal_award_date: listing.proposal_award_date || "",
@@ -132,6 +134,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
         category: listing.category,
         status: listing.status,
         technology_summary: listing.technology_summary || "",
+        internal_title: listing.internal_title || "",
+        internal_description: listing.internal_description || "",
       };
       
       // Check if any field has changed from original
@@ -158,6 +162,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       status: listing.status,
       technology_summary: listing.technology_summary || "",
       // Admin-only fields
+      internal_title: listing.internal_title || "",
+      internal_description: listing.internal_description || "",
       agency_tracking_number: listing.agency_tracking_number || "",
       contract: listing.contract || "",
       proposal_award_date: listing.proposal_award_date || "",
