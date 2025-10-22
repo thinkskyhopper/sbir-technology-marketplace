@@ -32,6 +32,7 @@ import ExpertValue from "./pages/ExpertValue";
 import ColorSwatches from "./pages/ColorSwatches";
 import UserSettings from "./pages/UserSettings";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GoogleAnalyticsTracker from "./components/GoogleAnalyticsTracker";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -93,6 +94,7 @@ function App() {
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <GoogleAnalyticsTracker />
               <SkipNavigation />
               <Routes>
                 <Route path="/" element={<Index />} />
