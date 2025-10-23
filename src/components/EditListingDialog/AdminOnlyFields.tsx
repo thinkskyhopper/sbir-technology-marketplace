@@ -28,41 +28,6 @@ const AdminOnlyFields = ({ form }: AdminOnlyFieldsProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 gap-4">
-            <FormField
-              control={form.control}
-              name="internal_title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Internal Title</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field.value || ""} placeholder="For internal tracking and reference" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="internal_description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Internal Description</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      {...field} 
-                      value={field.value || ""} 
-                      placeholder="Internal notes and descriptions"
-                      rows={4}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}

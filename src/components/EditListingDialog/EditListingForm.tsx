@@ -21,8 +21,6 @@ import type { SBIRListing } from "@/types/listings";
 // Extend the form schema to include status and admin-only fields
 const editListingSchema = listingSchema.extend({
   status: z.enum(['Active', 'Pending', 'Sold', 'Rejected', 'Hidden']),
-  internal_title: z.string().optional(),
-  internal_description: z.string().optional(),
   agency_tracking_number: z.string().optional(),
   contract: z.string().optional(),
   proposal_award_date: z.string().optional(),
@@ -41,13 +39,11 @@ const editListingSchema = listingSchema.extend({
 
 type EditListingFormData = z.infer<typeof editListingSchema>;
 
-// Extend the form data to include photo_url, status, date_sold, technology_summary, and internal fields
+// Extend the form data to include photo_url, status, date_sold, and technology_summary
 interface ExtendedEditListingFormData extends EditListingFormData {
   photo_url?: string;
   date_sold?: string | null;
   technology_summary?: string | null;
-  internal_title?: string | null;
-  internal_description?: string | null;
 }
 
 interface EditListingFormProps {
@@ -78,8 +74,6 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       status: listing.status,
       technology_summary: listing.technology_summary || "",
       // Admin-only fields
-      internal_title: listing.internal_title || "",
-      internal_description: listing.internal_description || "",
       agency_tracking_number: listing.agency_tracking_number || "",
       contract: listing.contract || "",
       proposal_award_date: listing.proposal_award_date || "",
@@ -134,8 +128,6 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
         category: listing.category,
         status: listing.status,
         technology_summary: listing.technology_summary || "",
-        internal_title: listing.internal_title || "",
-        internal_description: listing.internal_description || "",
       };
       
       // Check if any field has changed from original
@@ -162,8 +154,6 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       status: listing.status,
       technology_summary: listing.technology_summary || "",
       // Admin-only fields
-      internal_title: listing.internal_title || "",
-      internal_description: listing.internal_description || "",
       agency_tracking_number: listing.agency_tracking_number || "",
       contract: listing.contract || "",
       proposal_award_date: listing.proposal_award_date || "",

@@ -14,8 +14,6 @@ export interface ParsedListing {
   rowNumber: number;
   // Optional fields that can be included in CSV
   technology_summary?: string;
-  internal_title?: string;
-  internal_description?: string;
   agency_tracking_number?: string;
   contract?: string;
   proposal_award_date?: string;
