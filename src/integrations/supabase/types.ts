@@ -426,6 +426,7 @@ export type Database = {
           date_sold: string | null
           deadline: string | null
           description: string
+          description_backup: string | null
           id: string
           internal_description: string | null
           internal_title: string | null
@@ -439,6 +440,7 @@ export type Database = {
           submitted_at: string
           technology_summary: string | null
           title: string
+          title_backup: string | null
           topic_code: string | null
           updated_at: string
           user_id: string
@@ -461,6 +463,7 @@ export type Database = {
           date_sold?: string | null
           deadline?: string | null
           description: string
+          description_backup?: string | null
           id?: string
           internal_description?: string | null
           internal_title?: string | null
@@ -474,6 +477,7 @@ export type Database = {
           submitted_at?: string
           technology_summary?: string | null
           title: string
+          title_backup?: string | null
           topic_code?: string | null
           updated_at?: string
           user_id: string
@@ -496,6 +500,7 @@ export type Database = {
           date_sold?: string | null
           deadline?: string | null
           description?: string
+          description_backup?: string | null
           id?: string
           internal_description?: string | null
           internal_title?: string | null
@@ -509,6 +514,7 @@ export type Database = {
           submitted_at?: string
           technology_summary?: string | null
           title?: string
+          title_backup?: string | null
           topic_code?: string | null
           updated_at?: string
           user_id?: string
@@ -600,14 +606,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      current_user_is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      current_user_not_deleted: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      current_user_is_admin: { Args: never; Returns: boolean }
+      current_user_not_deleted: { Args: never; Returns: boolean }
       get_profile_listings: {
         Args: { target_user_id: string }
         Returns: {
@@ -631,7 +631,7 @@ export type Database = {
         }[]
       }
       get_public_featured_listings: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           agency: string
           approved_at: string
@@ -679,7 +679,7 @@ export type Database = {
         }[]
       }
       get_public_listings: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           agency: string
           approved_at: string
@@ -713,14 +713,15 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
         }[]
       }
-      get_user_role: {
-        Args: Record<PropertyKey, never> | { user_id: string }
-        Returns: string
-      }
-      is_admin: {
-        Args: Record<PropertyKey, never> | { user_id: string }
-        Returns: boolean
-      }
+      get_user_role:
+        | { Args: never; Returns: string }
+        | {
+            Args: { user_id: string }
+            Returns: Database["public"]["Enums"]["user_role"]
+          }
+      is_admin:
+        | { Args: { user_id: string }; Returns: boolean }
+        | { Args: never; Returns: boolean }
       restore_user_account: {
         Args: { user_id_param: string }
         Returns: boolean
