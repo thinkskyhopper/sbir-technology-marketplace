@@ -32,16 +32,15 @@ export const featuredListingsService = {
     // Get unique user IDs to fetch profile data
     const userIds = [...new Set(featuredData.map(item => item.user_id))];
     
-    // Fetch profile data for the listing owners
-    const { data: profilesData, error: profilesError } = await supabase
-      .from('profiles')
-      .select('id, full_name, email')
-      .in('id', userIds);
+    // Fetch profile data using public RPC function (works for unauthenticated users)
+    const profilePromises = userIds.map(userId => 
+      supabase.rpc('get_public_profile', { profile_user_id: userId })
+    );
 
-    if (profilesError) {
-      console.error('❌ Error fetching profiles:', profilesError);
-      // Continue without profile data rather than failing completely
-    }
+    const profileResults = await Promise.all(profilePromises);
+    const profilesData = profileResults
+      .filter(result => result.data && result.data.length > 0)
+      .map(result => result.data![0]);
 
     // Create a map of user_id to profile for easy lookup
     const profileMap = (profilesData || []).reduce((acc, profile) => {
@@ -88,29 +87,23 @@ export const featuredListingsService = {
       // Get featured listing IDs to exclude them from newest query
       const featuredIds = featuredListings.map(listing => listing.id);
       
-      const { data: newestData, error: newestError } = await supabase
-        .from('sbir_listings')
-        .select(`
-          *,
-          profiles!fk_sbir_listings_user_id(
-            full_name,
-            email
-          )
-        `)
-        .eq('status', 'Active')
-        .not('id', 'in', `(${featuredIds.join(',')})`)
-        .order('submitted_at', { ascending: false })
-        .limit(neededCount);
+      const { data: publicListings, error: newestError } = await supabase
+        .rpc('get_public_listings');
 
       if (newestError) {
         console.error('❌ Error fetching newest listings:', newestError);
         throw newestError;
       }
 
-      const newestListings = newestData?.map(listing => ({
-        ...listing,
-        value: listing.value / 100, // Convert cents to dollars
-      })) || [];
+      // Filter out featured listings and get newest
+      const newestListings = (publicListings || [])
+        .filter(listing => !featuredIds.includes(listing.id))
+        .sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime())
+        .slice(0, neededCount)
+        .map(listing => ({
+          ...listing,
+          value: listing.value / 100, // Convert cents to dollars
+        }));
 
       const combinedListings = [...featuredListings, ...newestListings];
       console.log('✅ Homepage listings combined:', combinedListings.length);
