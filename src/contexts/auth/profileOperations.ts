@@ -21,9 +21,37 @@ export const fetchProfile = async (
     if (error) {
       console.error('❌ Error fetching profile:', error);
       
-      // If profile doesn't exist, create one
+      // If profile doesn't exist, check if account is deleted before creating
       if (error.code === 'PGRST116') {
-        console.log('📝 Profile not found, creating new profile...');
+        console.log('📝 Profile not found, checking if account is deleted...');
+        
+        // Check if the account is deleted using RPC (bypasses RLS)
+        const { data: notDeleted, error: rpcError } = await supabase.rpc('current_user_not_deleted');
+        
+        if (rpcError) {
+          console.error('❌ Error checking account status:', rpcError);
+          setProfile(null);
+          setIsAdmin(false);
+          return;
+        }
+        
+        if (notDeleted === false) {
+          console.log('❌ Account is soft-deleted, forcing sign out');
+          setProfile(null);
+          setIsAdmin(false);
+          
+          // Force sign out to invalidate the session
+          try {
+            await supabase.auth.signOut();
+          } catch (signOutError) {
+            console.error('Error during forced sign out:', signOutError);
+          }
+          
+          // Return a special flag to indicate forced logout
+          throw new Error('ACCOUNT_DELETED');
+        }
+        
+        console.log('✅ Account is active, creating new profile...');
         const { data: userData } = await supabase.auth.getUser();
         console.log('👤 Current user data:', userData);
         

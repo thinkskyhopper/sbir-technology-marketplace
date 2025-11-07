@@ -57,7 +57,7 @@ export const signUp = async (email: string, password: string, fullName: string, 
 };
 
 export const signIn = async (email: string, password: string) => {
-  console.log('Sign in attempt for:', email);
+  console.log('🔐 Sign in attempt for:', email);
   
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -65,29 +65,30 @@ export const signIn = async (email: string, password: string) => {
   });
   
   if (error) {
-    console.error('Sign in error:', error);
+    console.error('❌ Sign in error:', error);
     return { error, accountDeleted: false };
   }
   
-  // Check if account is deleted after successful authentication
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('account_deleted')
-      .eq('id', user.id)
-      .single();
-    
-    if (profile?.account_deleted) {
-      console.log('Account is deleted, forcing sign out');
-      await supabase.auth.signOut();
-      return { 
-        error: { message: 'This account has been deleted. If you believe this is an error, please contact support.' },
-        accountDeleted: true 
-      };
-    }
+  console.log('✅ Sign in successful, checking account status...');
+  
+  // Check if account is deleted using RPC (bypasses RLS)
+  const { data: notDeleted, error: rpcError } = await supabase.rpc('current_user_not_deleted');
+  
+  if (rpcError) {
+    console.error('❌ Error checking account status:', rpcError);
+    return { error: rpcError, accountDeleted: false };
   }
   
+  if (notDeleted === false) {
+    console.log('❌ Account is soft-deleted, forcing sign out');
+    await supabase.auth.signOut();
+    return { 
+      error: { message: 'This account has been deleted. If you believe this is an error, please contact support.' },
+      accountDeleted: true 
+    };
+  }
+  
+  console.log('✅ Account is active');
   return { error: null, accountDeleted: false };
 };
 
