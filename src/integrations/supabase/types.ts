@@ -601,11 +601,42 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      change_user_role: {
+        Args: {
+          new_role: Database["public"]["Enums"]["app_role"]
+          target_user_id: string
+        }
+        Returns: boolean
+      }
       current_user_is_admin: { Args: never; Returns: boolean }
       current_user_not_deleted: { Args: never; Returns: boolean }
       get_profile_listings: {
@@ -715,10 +746,14 @@ export type Database = {
       }
       get_user_role:
         | { Args: never; Returns: string }
-        | {
-            Args: { user_id: string }
-            Returns: Database["public"]["Enums"]["user_role"]
-          }
+        | { Args: { user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_admin:
         | { Args: { user_id: string }; Returns: boolean }
         | { Args: never; Returns: boolean }
@@ -733,6 +768,7 @@ export type Database = {
     }
     Enums: {
       admin_action_type: "approval" | "denial" | "edit" | "deletion"
+      app_role: "admin" | "user" | "consultant" | "verified"
       change_request_status: "pending" | "approved" | "rejected"
       change_request_type: "change" | "deletion"
       listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
@@ -866,6 +902,7 @@ export const Constants = {
   public: {
     Enums: {
       admin_action_type: ["approval", "denial", "edit", "deletion"],
+      app_role: ["admin", "user", "consultant", "verified"],
       change_request_status: ["pending", "approved", "rejected"],
       change_request_type: ["change", "deletion"],
       listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
