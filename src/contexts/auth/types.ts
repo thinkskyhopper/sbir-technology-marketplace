@@ -31,7 +31,7 @@ export interface AuthContextType {
   profileLoading: boolean;
   signUp: (email: string, password: string, fullName?: string, marketingEmails?: boolean) => Promise<{ error: any; isDuplicate?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<{ error: any; wasStaleSession: boolean; }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;

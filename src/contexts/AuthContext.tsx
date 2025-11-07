@@ -74,9 +74,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         } else {
           console.log('🚪 No user session, clearing profile...');
+          // Force clear all auth state
           setProfile(null);
           setIsAdmin(false);
           setProfileLoading(false);
+          setSession(null);
+          setUser(null);
           lastUserIdRef.current = null;
         }
         

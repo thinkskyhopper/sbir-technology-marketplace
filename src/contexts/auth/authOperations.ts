@@ -73,7 +73,32 @@ export const signIn = async (email: string, password: string) => {
 
 export const signOut = async () => {
   console.log('Sign out initiated');
-  await supabase.auth.signOut();
+  
+  try {
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      console.error('Sign out error:', error);
+      
+      // Check if this is a stale session error (session already expired/doesn't exist)
+      const isStaleSession = error.message?.includes('session_not_found') || 
+                            error.message?.includes('Session not found') ||
+                            error.status === 403;
+      
+      if (isStaleSession) {
+        console.log('Stale session detected - treating as successful sign out');
+        return { error: null, wasStaleSession: true };
+      }
+      
+      return { error, wasStaleSession: false };
+    }
+    
+    console.log('Sign out successful');
+    return { error: null, wasStaleSession: false };
+  } catch (err) {
+    console.error('Sign out exception:', err);
+    return { error: err, wasStaleSession: false };
+  }
 };
 
 export const resetPassword = async (email: string) => {
