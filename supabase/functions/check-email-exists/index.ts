@@ -89,7 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
 
-    // Check if email exists in auth.users AND has an active profile
+    // Check if email exists in auth.users
     const { data: users, error } = await supabaseAdmin.auth.admin.listUsers();
 
     if (error) {
@@ -103,28 +103,9 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Find user with matching email
-    const matchingUser = users.users.find(
+    const emailExists = users.users.some(
       (user) => user.email?.toLowerCase() === email.toLowerCase()
     );
-
-    // If user exists in auth, also check if they have an active profile
-    let emailExists = false;
-    if (matchingUser) {
-      const { data: profile, error: profileError } = await supabaseAdmin
-        .from('profiles')
-        .select('id, account_deleted')
-        .eq('id', matchingUser.id)
-        .single();
-
-      // Only consider email as existing if:
-      // 1. User exists in auth.users AND
-      // 2. Has a profile AND
-      // 3. Profile is not deleted
-      emailExists = !profileError && profile && !profile.account_deleted;
-      
-      console.log(`Email check for ${email}: auth user exists=${!!matchingUser}, has profile=${!!profile}, is deleted=${profile?.account_deleted}, final result=${emailExists}`);
-    }
 
     return new Response(
       JSON.stringify({ exists: emailExists }),
