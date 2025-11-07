@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Info } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import SignUpFormFields from './SignUpFormFields';
@@ -164,6 +164,13 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           marketingOptIn={marketingOptIn}
           setMarketingOptIn={setMarketingOptIn}
         />
+
+        <Alert className="bg-muted/50 border-muted-foreground/20">
+          <Info className="h-4 w-4 text-muted-foreground" />
+          <AlertDescription className="text-sm text-muted-foreground">
+            After signing up, you'll receive a verification email. Please check your inbox and spam/junk folder. If you don't receive it within a few minutes, please contact support.
+          </AlertDescription>
+        </Alert>
 
         {error && (
           <Alert variant="destructive">
