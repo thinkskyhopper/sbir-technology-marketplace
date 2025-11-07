@@ -7,7 +7,7 @@ export const signUp = async (email: string, password: string, fullName: string, 
   
   console.log('Sign up attempt for:', email, 'with redirect:', redirectUrl);
   
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -24,7 +24,14 @@ export const signUp = async (email: string, password: string, fullName: string, 
     return { error };
   }
 
-  // Send welcome email after successful signup
+  // Check if this is a duplicate email (user exists but no session created)
+  // Supabase returns user data but no session when email already exists
+  if (data.user && !data.session) {
+    console.log('Duplicate email detected for:', email);
+    return { error: null, isDuplicate: true };
+  }
+
+  // Send welcome email after successful signup (only for new accounts)
   try {
     console.log('Sending welcome email to:', email);
     
@@ -46,7 +53,7 @@ export const signUp = async (email: string, password: string, fullName: string, 
     // Don't fail the signup if email sending fails
   }
   
-  return { error: null };
+  return { error: null, isDuplicate: false };
 };
 
 export const signIn = async (email: string, password: string) => {

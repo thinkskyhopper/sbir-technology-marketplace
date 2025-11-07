@@ -105,10 +105,12 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
       const sanitizedLastName = sanitizeName(lastName);
       const fullName = `${sanitizedFirstName} ${sanitizedLastName}`;
       
-      const { error } = await signUp(email, password, fullName, marketingOptIn);
+      const { error, isDuplicate } = await signUp(email, password, fullName, marketingOptIn);
       
       if (error) {
         setError(error.message);
+      } else if (isDuplicate) {
+        setError('duplicate_email');
       } else {
         toast({
           title: "Account Created Successfully!",
@@ -172,12 +174,42 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           </AlertDescription>
         </Alert>
 
-        {error && (
+        {error && error === 'duplicate_email' ? (
+          <Alert className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+            <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <AlertDescription className="text-amber-800 dark:text-amber-200">
+              <p className="font-medium mb-2">An account with this email already exists.</p>
+              <div className="flex gap-2 mt-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={onSwitchToSignIn}
+                  className="border-amber-300 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900"
+                >
+                  Sign In Instead
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    onSwitchToSignIn();
+                    // Will trigger password reset flow - user can do this from sign in page
+                  }}
+                  className="border-amber-300 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900"
+                >
+                  Forgot Password?
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        ) : error ? (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
-        )}
+        ) : null}
 
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Creating Account...' : 'Create Account'}

@@ -29,7 +29,7 @@ export interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   profileLoading: boolean;
-  signUp: (email: string, password: string, fullName?: string, marketingEmails?: boolean) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName?: string, marketingEmails?: boolean) => Promise<{ error: any; isDuplicate?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
