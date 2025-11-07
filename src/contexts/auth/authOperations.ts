@@ -19,16 +19,19 @@ export const signUp = async (email: string, password: string, fullName: string, 
     }
   });
   
+  // Check if Supabase explicitly says the email is already registered
   if (error) {
     console.error('Sign up error:', error);
+    const msg = (error as any)?.message?.toLowerCase?.() ?? '';
+    const code = (error as any)?.code ?? '';
+    const isDuplicate = msg.includes('already registered') || code === 'user_already_registered';
+    
+    if (isDuplicate) {
+      console.log('Duplicate email detected for:', email);
+      return { error: null, isDuplicate: true };
+    }
+    
     return { error };
-  }
-
-  // Check if this is a duplicate email (user exists but no session created)
-  // Supabase returns user data but no session when email already exists
-  if (data.user && !data.session) {
-    console.log('Duplicate email detected for:', email);
-    return { error: null, isDuplicate: true };
   }
 
   // Send welcome email after successful signup (only for new accounts)
