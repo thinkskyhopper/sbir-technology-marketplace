@@ -33,7 +33,8 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
         if (accountDeleted) {
           toast.error('Account Deleted', {
             description: 'This account has been deleted. If you believe this is an error, please contact support.',
-            duration: 6000
+            duration: 6000,
+            className: 'bg-destructive text-destructive-foreground border-destructive'
           });
           setError('This account has been deleted. If you believe this is an error, please contact support.');
         } else {
