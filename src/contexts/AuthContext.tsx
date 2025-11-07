@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Profile, AuthContextType } from './auth/types';
 import { fetchProfile } from './auth/profileOperations';
 import * as authOps from './auth/authOperations';
+import { toast } from 'sonner';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -70,6 +71,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               } catch (error) {
                 if (error instanceof Error && error.message === 'ACCOUNT_DELETED') {
                   console.log('🚫 Forced logout due to deleted account');
+                  toast.error('Account Deleted', {
+                    description: 'This account has been deleted. If you believe this is an error, please contact support.',
+                    duration: 6000
+                  });
                   // Clear all state - the auth state change handler will pick this up
                   setProfile(null);
                   setIsAdmin(false);
@@ -120,6 +125,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           } catch (error) {
             if (error instanceof Error && error.message === 'ACCOUNT_DELETED') {
               console.log('🚫 Forced logout due to deleted account on initial load');
+              toast.error('Account Deleted', {
+                description: 'This account has been deleted. If you believe this is an error, please contact support.',
+                duration: 6000
+              });
               // Clear all state
               setProfile(null);
               setIsAdmin(false);

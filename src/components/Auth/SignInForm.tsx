@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface SignInFormProps {
   onShowPasswordReset: () => void;
@@ -30,6 +31,10 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
       
       if (error) {
         if (accountDeleted) {
+          toast.error('Account Deleted', {
+            description: 'This account has been deleted. If you believe this is an error, please contact support.',
+            duration: 6000
+          });
           setError('This account has been deleted. If you believe this is an error, please contact support.');
         } else {
           setError(error.message);
