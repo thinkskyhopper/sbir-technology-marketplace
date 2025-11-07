@@ -26,10 +26,14 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
     setError(null);
 
     try {
-      const { error } = await signIn(email, password);
+      const { error, accountDeleted } = await signIn(email, password);
       
       if (error) {
-        setError(error.message);
+        if (accountDeleted) {
+          setError('This account has been deleted. If you believe this is an error, please contact support.');
+        } else {
+          setError(error.message);
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred');

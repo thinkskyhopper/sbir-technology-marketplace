@@ -91,12 +91,21 @@ export const fetchProfile = async (
       return;
     }
     
-    // Check if account is soft-deleted
+    // Check if account is soft-deleted and force sign out
     if (data?.account_deleted) {
-      console.log('❌ Account is soft-deleted, setting profile to null');
+      console.log('❌ Account is soft-deleted, forcing sign out');
       setProfile(null);
       setIsAdmin(false);
-      return;
+      
+      // Force sign out to invalidate the session
+      try {
+        await supabase.auth.signOut();
+      } catch (signOutError) {
+        console.error('Error during forced sign out:', signOutError);
+      }
+      
+      // Return a special flag to indicate forced logout
+      throw new Error('ACCOUNT_DELETED');
     }
     
     // Transform the data to match our Profile interface

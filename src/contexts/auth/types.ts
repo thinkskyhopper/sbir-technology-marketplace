@@ -30,10 +30,10 @@ export interface AuthContextType {
   loading: boolean;
   profileLoading: boolean;
   signUp: (email: string, password: string, fullName?: string, marketingEmails?: boolean) => Promise<{ error: any; isDuplicate?: boolean }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: any; accountDeleted?: boolean }>;
   signOut: () => Promise<{ error: any; wasStaleSession: boolean; }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (password: string) => Promise<{ error: any }>;
-  signInWithGoogle: () => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any; accountDeleted?: boolean }>;
   isAdmin: boolean;
 }

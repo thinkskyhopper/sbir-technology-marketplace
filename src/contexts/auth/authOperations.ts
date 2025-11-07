@@ -66,9 +66,29 @@ export const signIn = async (email: string, password: string) => {
   
   if (error) {
     console.error('Sign in error:', error);
+    return { error, accountDeleted: false };
   }
   
-  return { error };
+  // Check if account is deleted after successful authentication
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('account_deleted')
+      .eq('id', user.id)
+      .single();
+    
+    if (profile?.account_deleted) {
+      console.log('Account is deleted, forcing sign out');
+      await supabase.auth.signOut();
+      return { 
+        error: { message: 'This account has been deleted. If you believe this is an error, please contact support.' },
+        accountDeleted: true 
+      };
+    }
+  }
+  
+  return { error: null, accountDeleted: false };
 };
 
 export const signOut = async () => {
@@ -199,7 +219,7 @@ export const signInWithGoogle = async () => {
         console.error('   4. Profile creation trigger failure');
       }
       
-      return { error };
+      return { error, accountDeleted: false };
     }
 
     console.log('✅ [STEP 4] Google OAuth initiated successfully');
@@ -208,7 +228,9 @@ export const signInWithGoogle = async () => {
     console.log('🎯 Expected flow: Google login → consent → redirect to Supabase → redirect back to app');
     console.log('🔍 Note: After successful auth, check for profile creation in database');
     
-    return { error: null };
+    // Note: Account deletion check will happen in the auth state change handler
+    // after the user is redirected back from Google
+    return { error: null, accountDeleted: false };
   } catch (err) {
     console.error('💥 [STEP 4] Google OAuth exception:', err);
     console.error('🔍 Exception details:', {
@@ -224,6 +246,6 @@ export const signInWithGoogle = async () => {
       console.error('   Check if the handle_new_user trigger is working and RLS policies allow INSERT');
     }
     
-    return { error: err };
+    return { error: err, accountDeleted: false };
   }
 };

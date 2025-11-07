@@ -67,6 +67,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setTimeout(async () => {
               try {
                 await fetchProfile(currentUserId, setProfile, setIsAdmin);
+              } catch (error) {
+                if (error instanceof Error && error.message === 'ACCOUNT_DELETED') {
+                  console.log('🚫 Forced logout due to deleted account');
+                  // Clear all state - the auth state change handler will pick this up
+                  setProfile(null);
+                  setIsAdmin(false);
+                  setSession(null);
+                  setUser(null);
+                  lastUserIdRef.current = null;
+                }
               } finally {
                 setProfileLoading(false);
               }
@@ -107,6 +117,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setTimeout(async () => {
           try {
             await fetchProfile(session.user.id, setProfile, setIsAdmin);
+          } catch (error) {
+            if (error instanceof Error && error.message === 'ACCOUNT_DELETED') {
+              console.log('🚫 Forced logout due to deleted account on initial load');
+              // Clear all state
+              setProfile(null);
+              setIsAdmin(false);
+              setSession(null);
+              setUser(null);
+              lastUserIdRef.current = null;
+            }
           } finally {
             setProfileLoading(false);
           }
