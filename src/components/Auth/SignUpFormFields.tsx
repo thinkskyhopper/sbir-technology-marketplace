@@ -7,7 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PolicyDialog from './PolicyDialog';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import PasswordMatchIndicator from './PasswordMatchIndicator';
+import EmailExistsIndicator from './EmailExistsIndicator';
 import { sanitizeName } from '@/utils/validation';
+import { useEmailCheck } from '@/hooks/useEmailCheck';
 
 interface SignUpFormFieldsProps {
   firstName: string;
@@ -30,6 +32,7 @@ interface SignUpFormFieldsProps {
   setLegalAccepted: (value: boolean) => void;
   marketingOptIn: boolean;
   setMarketingOptIn: (value: boolean) => void;
+  onSwitchToSignIn: () => void;
 }
 
 const SignUpFormFields = ({
@@ -53,9 +56,25 @@ const SignUpFormFields = ({
   setLegalAccepted,
   marketingOptIn,
   setMarketingOptIn,
+  onSwitchToSignIn,
 }: SignUpFormFieldsProps) => {
   const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
   const [legalDialogOpen, setLegalDialogOpen] = useState(false);
+  const { checkEmail, isChecking, emailExists, resetCheck } = useEmailCheck();
+
+  const handleEmailBlur = () => {
+    if (email) {
+      checkEmail(email);
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    // Reset check when user modifies email
+    if (emailExists !== null) {
+      resetCheck();
+    }
+  };
 
   return (
     <>
@@ -93,9 +112,15 @@ const SignUpFormFields = ({
           id="email"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
+          onBlur={handleEmailBlur}
           required
           placeholder="you@company.com"
+        />
+        <EmailExistsIndicator 
+          emailExists={emailExists}
+          isChecking={isChecking}
+          onSignInClick={onSwitchToSignIn}
         />
       </div>
       

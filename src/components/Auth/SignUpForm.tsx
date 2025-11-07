@@ -165,6 +165,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           setLegalAccepted={setLegalAccepted}
           marketingOptIn={marketingOptIn}
           setMarketingOptIn={setMarketingOptIn}
+          onSwitchToSignIn={onSwitchToSignIn}
         />
 
         <Alert className="bg-muted/50 border-muted-foreground/20">
