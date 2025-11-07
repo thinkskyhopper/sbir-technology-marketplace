@@ -18,13 +18,16 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isEmailNotConfirmed, setIsEmailNotConfirmed] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
   
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn, signInWithGoogle, resendVerificationEmail } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setIsEmailNotConfirmed(false);
 
     try {
       const { error, accountDeleted } = await signIn(email, password);
@@ -38,13 +41,51 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
           });
           setError('This account has been deleted. If you believe this is an error, please contact support.');
         } else {
-          setError(error.message);
+          // Check if the error is about unverified email
+          const errorMessage = error.message?.toLowerCase() || '';
+          if (errorMessage.includes('email not confirmed') || 
+              errorMessage.includes('email link is invalid') ||
+              errorMessage.includes('confirm your email')) {
+            setIsEmailNotConfirmed(true);
+            setError('Please verify your email address before signing in. Check your inbox for a confirmation email.');
+          } else {
+            setError(error.message);
+          }
         }
       }
     } catch (err) {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      toast.error('Please enter your email address');
+      return;
+    }
+    
+    setResendingEmail(true);
+    
+    try {
+      const { error } = await resendVerificationEmail(email);
+      
+      if (error) {
+        toast.error('Failed to resend verification email', {
+          description: error.message
+        });
+      } else {
+        toast.success('Verification Email Sent', {
+          description: 'Please check your inbox and click the confirmation link.'
+        });
+        setIsEmailNotConfirmed(false);
+        setError(null);
+      }
+    } catch (err) {
+      toast.error('An unexpected error occurred');
+    } finally {
+      setResendingEmail(false);
     }
   };
 
@@ -106,7 +147,23 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>
+            {error}
+            {isEmailNotConfirmed && (
+              <div className="mt-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResendVerification}
+                  disabled={resendingEmail}
+                  className="w-full"
+                >
+                  {resendingEmail ? 'Sending...' : 'Resend Verification Email'}
+                </Button>
+              </div>
+            )}
+          </AlertDescription>
         </Alert>
       )}
 

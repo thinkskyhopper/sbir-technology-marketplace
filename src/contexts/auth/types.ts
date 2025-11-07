@@ -35,5 +35,6 @@ export interface AuthContextType {
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any; accountDeleted?: boolean }>;
+  resendVerificationEmail: (email: string) => Promise<{ error: any }>;
   isAdmin: boolean;
 }

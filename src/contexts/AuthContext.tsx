@@ -170,6 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     resetPassword: authOps.resetPassword,
     updatePassword: authOps.updatePassword,
     signInWithGoogle: authOps.signInWithGoogle,
+    resendVerificationEmail: authOps.resendVerificationEmail,
     isAdmin
   };
 

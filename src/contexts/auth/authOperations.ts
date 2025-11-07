@@ -152,6 +152,26 @@ export const updatePassword = async (password: string) => {
   return { error };
 };
 
+export const resendVerificationEmail = async (email: string) => {
+  const redirectUrl = `${getCurrentUrl()}/`;
+  
+  console.log('Resending verification email for:', email, 'with redirect:', redirectUrl);
+  
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: email,
+    options: {
+      emailRedirectTo: redirectUrl
+    }
+  });
+  
+  if (error) {
+    console.error('Resend verification error:', error);
+  }
+  
+  return { error };
+};
+
 export const signInWithGoogle = async () => {
   try {
     console.log('🚀 [STEP 1] Starting Google OAuth flow...');
