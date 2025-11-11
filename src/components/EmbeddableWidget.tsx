@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { DollarSign, Building, FileText } from 'lucide-react';
 import { featuredListingsService } from '@/services/featuredListings';
 import type { SBIRListing } from '@/types/listings';
@@ -52,7 +53,8 @@ const EmbeddableWidget = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md">
+    <TooltipProvider>
+      <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md">
       {/* Logo and Title */}
       <div className="text-center mb-4">
         <a 
@@ -117,16 +119,23 @@ const EmbeddableWidget = () => {
                     {listing.status}
                   </Badge>
                 </div>
-                <a 
-                  href={`https://thesbirtechmarketplace.com/listing/${listing.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline"
-                >
-                  <h3 className="text-sm font-semibold line-clamp-2 text-card-foreground sm:line-clamp-1">
-                    {listing.title}
-                  </h3>
-                </a>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href={`https://thesbirtechmarketplace.com/listing/${listing.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline block"
+                    >
+                      <h3 className="text-sm font-semibold line-clamp-2 text-card-foreground sm:line-clamp-1">
+                        {listing.title}
+                      </h3>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs">
+                    <p className="text-sm">{listing.title}</p>
+                  </TooltipContent>
+                </Tooltip>
                 <div className="flex items-center text-xs text-muted-foreground">
                   <Building className="w-3 h-3 mr-1" />
                   <span className="truncate">{listing.agency}</span>
@@ -174,7 +183,8 @@ const EmbeddableWidget = () => {
           View All Opportunities →
         </a>
       </div>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 };
 

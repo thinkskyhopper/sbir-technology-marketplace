@@ -3,6 +3,7 @@ import { Building, Calendar, DollarSign, FileText, Edit } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
@@ -85,7 +86,8 @@ const ProfileListingCard = ({
     : "card-hover bg-card border-border";
 
   return (
-    <Card className={cardClassName}>
+    <TooltipProvider>
+      <Card className={cardClassName}>
       {/* Blur overlay for sold listings */}
       {isSold && (
         <div className="absolute inset-0 bg-white/30 backdrop-blur-md rounded-lg z-10" />
@@ -134,9 +136,16 @@ const ProfileListingCard = ({
           </div>
         </div>
         
-        <h3 className="text-lg font-semibold line-clamp-2 text-foreground">
-          {listing.title}
-        </h3>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <h3 className="text-lg font-semibold line-clamp-2 text-foreground cursor-help">
+              {listing.title}
+            </h3>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <p className="text-sm">{listing.title}</p>
+          </TooltipContent>
+        </Tooltip>
         
         <div className="flex items-center text-sm text-muted-foreground">
           <Building className="w-4 h-4 mr-1" />
@@ -214,6 +223,7 @@ const ProfileListingCard = ({
         )}
       </CardFooter>
     </Card>
+    </TooltipProvider>
   );
 };
 

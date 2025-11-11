@@ -1,7 +1,7 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Calendar, DollarSign, Building, FileText, Edit } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
@@ -10,7 +10,6 @@ import { useState } from "react";
 import ContactAdminDialog from "./ContactAdminDialog";
 import BookmarkButton from "./BookmarkButton";
 import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
-
 interface MarketplaceCardProps {
   listing: SBIRListing;
   onViewDetails?: (listing: SBIRListing) => void;
@@ -69,7 +68,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
     : "card-hover bg-card border-border";
 
   return (
-    <>
+    <TooltipProvider>
       <Card className={cardClassName}>
         {/* Blur overlay for sold listings */}
         {isSold && (
@@ -123,9 +122,16 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold line-clamp-2 text-foreground">
-            {listing.title}
-          </h3>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <h3 className="text-lg font-semibold line-clamp-2 text-foreground cursor-help">
+                {listing.title}
+              </h3>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-xs">
+              <p className="text-sm">{listing.title}</p>
+            </TooltipContent>
+          </Tooltip>
           
           <div className="flex items-center text-sm text-muted-foreground">
             <Building className="w-4 h-4 mr-1" />
@@ -193,7 +199,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
           listing={listing}
         />
       )}
-    </>
+    </TooltipProvider>
   );
 };
 
