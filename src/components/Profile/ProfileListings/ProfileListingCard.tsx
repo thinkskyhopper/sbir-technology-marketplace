@@ -138,9 +138,9 @@ const ProfileListingCard = ({
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <h3 className="text-lg font-semibold line-clamp-2 text-foreground cursor-help">
-              {listing.title}
-            </h3>
+              <h3 className="text-lg font-semibold line-clamp-2 text-foreground">
+                {listing.title}
+              </h3>
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-xs">
             <p className="text-sm">{listing.title}</p>

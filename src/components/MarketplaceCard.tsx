@@ -124,7 +124,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
           
           <Tooltip>
             <TooltipTrigger asChild>
-              <h3 className="text-lg font-semibold line-clamp-2 text-foreground cursor-help">
+              <h3 className="text-lg font-semibold line-clamp-2 text-foreground">
                 {listing.title}
               </h3>
             </TooltipTrigger>
