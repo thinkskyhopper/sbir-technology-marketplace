@@ -35,60 +35,45 @@ export const listingQueries = {
   },
 
   async fetchPublicListings(userId?: string): Promise<PublicSBIRListing[]> {
-    console.log('🔄 Fetching public listings (secure RPC mode)...', { userId });
+    console.log('🔄 Fetching public listings with profiles (optimized)...', { userId });
     
     try {
-      // Use the secure RPC function that only returns safe columns with VPN-optimized client
+      // Single RPC call that returns listings with joined profiles
       const data = await vpnOptimizedClient.supabaseQuery(
-        supabase.rpc('get_public_listings'),
+        supabase.rpc('get_public_listings_with_profiles'),
         { timeout: 30000, retries: 5 }
       );
 
-      // Now fetch public profile data separately for the listings we got (secure access only)
-      const listingIds = (data || []).map(listing => listing.user_id).filter(Boolean);
-      
-      let profilesData: any[] = [];
-      if (listingIds.length > 0) {
-        // Use public profile function to get only safe profile data for public listings
-        for (const userId of listingIds) {
-          try {
-            const publicProfile = await apiClient.supabaseQuery(
-              supabase.rpc('get_public_profile', { profile_user_id: userId }),
-              { timeout: 15000, retries: 3 }
-            );
-            
-            if (publicProfile && publicProfile.length > 0) {
-              const profile = publicProfile[0];
-              profilesData.push({
-                id: profile.id,
-                full_name: profile.full_name,
-                email: null // Don't expose email in public listings for privacy
-              });
-            }
-          } catch (error: any) {
-            console.warn('⚠️ Could not fetch public profile for user:', userId);
-            if (error.isVpnRelated) {
-              console.log('🔍 VPN-related error during profile fetch');
-            }
-          }
-        }
-      }
+      const formattedListings = (data || []).map((listing: any) => ({
+        id: listing.id,
+        title: listing.title,
+        description: listing.description,
+        phase: listing.phase,
+        agency: listing.agency,
+        value: (listing.value || 0) / 100, // Convert cents to dollars
+        deadline: listing.deadline,
+        category: listing.category,
+        status: listing.status,
+        submitted_at: listing.submitted_at,
+        approved_at: listing.approved_at,
+        user_id: listing.user_id,
+        photo_url: listing.photo_url,
+        date_sold: listing.date_sold,
+        technology_summary: listing.technology_summary,
+        created_at: listing.created_at,
+        updated_at: listing.updated_at,
+        profiles: listing.profile_full_name ? {
+          full_name: listing.profile_full_name,
+          email: null // Don't expose email for privacy
+        } : null
+      }));
 
-      const formattedListings = (data || []).map((listing: any) => {
-        const profile = profilesData.find(p => p.id === listing.user_id);
-        return {
-          ...listing,
-          value: (listing.value || 0) / 100, // Convert cents to dollars
-          profiles: profile ? { full_name: profile.full_name, email: profile.email } : null
-        };
-      });
-
-      console.log('✅ Public listings formatted (RPC mode):', formattedListings.length);
+      console.log('✅ Public listings with profiles fetched:', formattedListings.length);
       return formattedListings;
     } catch (error: any) {
-      console.error('💥 Fatal error in fetchPublicListings:', error);
+      console.error('💥 Error in fetchPublicListings:', error);
       if (error.isVpnRelated) {
-        console.log('🔍 VPN-related error detected in fetchPublicListings');
+        console.log('🔍 VPN-related error detected');
       }
       return this.handlePublicFallbackQuery();
     }
