@@ -10,7 +10,7 @@ const ExpertValueCTA = ({
   onContactUs
 }: ExpertValueCTAProps) => {
   const handleScheduleConsultation = () => {
-    window.open('https://scheduler.zoom.us/ted-dennis/ted-dennis-sbir-connect', '_blank');
+    window.open('https://meetings-na2.hubspot.com/ted-dennis', '_blank');
   };
   return <section className="text-center bg-secondary/20 rounded-lg p-8">
       <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
