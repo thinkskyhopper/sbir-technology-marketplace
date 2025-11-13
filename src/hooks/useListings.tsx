@@ -1,58 +1,38 @@
-
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { listingsService } from '@/services/listingsService';
 import { useListingOperations } from '@/hooks/useListingOperations';
 import type { SBIRListing } from '@/types/listings';
 
+const LISTINGS_QUERY_KEY = ['listings'];
+
 export const useListings = () => {
-  const [listings, setListings] = useState<SBIRListing[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { user, isAdmin } = useAuth();
-  
-  // Track if data has been loaded to prevent unnecessary refetching
-  const hasLoadedRef = useRef(false);
-  const currentUserIdRef = useRef<string | undefined>();
-  const currentIsAdminRef = useRef<boolean>(false);
+  const queryClient = useQueryClient();
 
-  const fetchListings = useCallback(async (force = false) => {
-    // Only fetch if forced or if auth state has changed
-    if (!force && 
-        hasLoadedRef.current && 
-        currentUserIdRef.current === user?.id && 
-        currentIsAdminRef.current === isAdmin) {
-      console.log('📊 Skipping listings fetch - data already loaded and auth unchanged');
-      setLoading(false); // Ensure loading is false
-      return;
-    }
+  const query = useQuery({
+    queryKey: [...LISTINGS_QUERY_KEY, isAdmin, user?.id],
+    queryFn: async () => {
+      console.log('📊 Fetching listings via React Query...', { isAdmin, userId: user?.id });
+      return await listingsService.fetchListings(isAdmin, user?.id);
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes (formerly cacheTime)
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: (failureCount, error: any) => {
+      if (error?.status === 401 || error?.status === 403) {
+        return false;
+      }
+      return failureCount < 2;
+    },
+  });
 
-    try {
-      setLoading(true);
-      setError(null);
-      console.log('📊 Fetching listings...', { isAdmin, userId: user?.id });
-
-      const data = await listingsService.fetchListings(isAdmin, user?.id);
-      setListings(data);
-      hasLoadedRef.current = true;
-      currentUserIdRef.current = user?.id;
-      currentIsAdminRef.current = isAdmin;
-      console.log('✅ Listings fetched successfully:', data.length);
-    } catch (err) {
-      console.error('❌ Error fetching listings:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch listings');
-      hasLoadedRef.current = false;
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.id, isAdmin]);
-
-  // Enhanced refresh function that forces a fetch and clears cache
   const refreshListings = useCallback(() => {
-    console.log('🔄 Forcing listings refresh and clearing cache...');
-    hasLoadedRef.current = false;
-    fetchListings(true);
-  }, [fetchListings]);
+    console.log('🔄 Invalidating listings cache...');
+    queryClient.invalidateQueries({ queryKey: LISTINGS_QUERY_KEY });
+  }, [queryClient]);
 
   const {
     createListing: createListingOperation,
@@ -63,38 +43,19 @@ export const useListings = () => {
     deleteListing
   } = useListingOperations(refreshListings);
 
-  // Use the operation that includes notification logic
   const createListing = createListingOperation;
 
-  // Wrap updateListing to support admin notes
-  const updateListing = useCallback(async (listingId: string, listingData: any, adminNotes?: string) => {
-    return updateListingOperation(listingId, listingData, adminNotes);
-  }, [updateListingOperation]);
+  const updateListing = useCallback(
+    async (listingId: string, listingData: any, adminNotes?: string) => {
+      return updateListingOperation(listingId, listingData, adminNotes);
+    },
+    [updateListingOperation]
+  );
 
-  // Initial fetch when auth state changes significantly
-  useEffect(() => {
-    // Only fetch if we haven't loaded data yet, or if the user/admin status changed
-    if (!hasLoadedRef.current || 
-        currentUserIdRef.current !== user?.id || 
-        currentIsAdminRef.current !== isAdmin) {
-      fetchListings();
-    }
-  }, [fetchListings]);
-
-  // Cleanup function to reset state on unmount
-  useEffect(() => {
-    return () => {
-      hasLoadedRef.current = false;
-      currentUserIdRef.current = undefined;
-      currentIsAdminRef.current = false;
-    };
-  }, []);
-
-  // Memoized the return object to prevent unnecessary re-renders
-  const returnValue = useMemo(() => ({
-    listings,
-    loading,
-    error,
+  return useMemo(() => ({
+    listings: query.data || [],
+    loading: query.isLoading,
+    error: query.error ? String(query.error) : null,
     fetchListings: refreshListings,
     createListing,
     updateListing,
@@ -103,9 +64,9 @@ export const useListings = () => {
     hideListing,
     deleteListing
   }), [
-    listings,
-    loading,
-    error,
+    query.data,
+    query.isLoading,
+    query.error,
     refreshListings,
     createListing,
     updateListing,
@@ -114,6 +75,4 @@ export const useListings = () => {
     hideListing,
     deleteListing
   ]);
-
-  return returnValue;
 };
