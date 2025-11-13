@@ -27,7 +27,7 @@ const ExpertValue = () => {
   };
 
   const handleScheduleConsultation = () => {
-    window.open('https://scheduler.zoom.us/ted-dennis/ted-dennis-sbir-connect', '_blank');
+    window.open('https://meetings-na2.hubspot.com/ted-dennis', '_blank');
   };
 
   const handleExploreMarketplace = () => {
