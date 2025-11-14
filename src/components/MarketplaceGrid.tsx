@@ -11,6 +11,7 @@ interface MarketplaceGridProps {
     categoryFilter: string;
     statusFilter: string;
     sortFilter: string;
+    typeFilter: string;
   };
   onFiltersChange?: (filters: {
     localSearchQuery: string;
@@ -18,6 +19,7 @@ interface MarketplaceGridProps {
     categoryFilter: string;
     statusFilter: string;
     sortFilter: string;
+    typeFilter: string;
   }) => void;
   showFilters?: boolean;
   maxListings?: number;

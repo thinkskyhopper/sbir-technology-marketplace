@@ -9,12 +9,14 @@ interface MarketplaceFiltersProps {
   categoryFilter: string;
   statusFilter: string;
   sortFilter: string;
+  typeFilter: string;
   categories: string[];
   onSearchQueryChange: (query: string) => void;
   onPhaseFilterChange: (phase: string) => void;
   onCategoryFilterChange: (category: string) => void;
   onStatusFilterChange: (status: string) => void;
   onSortFilterChange: (sort: string) => void;
+  onTypeFilterChange: (type: string) => void;
 }
 
 const MarketplaceFilters = ({
@@ -23,12 +25,14 @@ const MarketplaceFilters = ({
   categoryFilter,
   statusFilter,
   sortFilter,
+  typeFilter,
   categories,
   onSearchQueryChange,
   onPhaseFilterChange,
   onCategoryFilterChange,
   onStatusFilterChange,
-  onSortFilterChange
+  onSortFilterChange,
+  onTypeFilterChange
 }: MarketplaceFiltersProps) => {
   return (
     <div className="bg-card rounded-lg border p-6 space-y-4">
@@ -43,11 +47,13 @@ const MarketplaceFilters = ({
           categoryFilter={categoryFilter}
           statusFilter={statusFilter}
           sortFilter={sortFilter}
+          typeFilter={typeFilter}
           categories={categories}
           onPhaseFilterChange={onPhaseFilterChange}
           onCategoryFilterChange={onCategoryFilterChange}
           onStatusFilterChange={onStatusFilterChange}
           onSortFilterChange={onSortFilterChange}
+          onTypeFilterChange={onTypeFilterChange}
         />
 
         <ResetButton
@@ -56,11 +62,13 @@ const MarketplaceFilters = ({
           categoryFilter={categoryFilter}
           statusFilter={statusFilter}
           sortFilter={sortFilter}
+          typeFilter={typeFilter}
           onSearchQueryChange={onSearchQueryChange}
           onPhaseFilterChange={onPhaseFilterChange}
           onCategoryFilterChange={onCategoryFilterChange}
           onStatusFilterChange={onStatusFilterChange}
           onSortFilterChange={onSortFilterChange}
+          onTypeFilterChange={onTypeFilterChange}
         />
       </div>
     </div>

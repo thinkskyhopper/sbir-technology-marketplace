@@ -19,7 +19,8 @@ export const useIndexState = () => {
     phaseFilter: searchParams.get("phase") || "all",
     categoryFilter: searchParams.get("category") || "all",
     statusFilter: searchParams.get("status") || "all", // Changed from "active" to "all"
-    sortFilter: searchParams.get("sort") || "newest"
+    sortFilter: searchParams.get("sort") || "newest",
+    typeFilter: searchParams.get("type") || "all"
   });
   const [marketplaceFilters, setMarketplaceFilters] = useState(getFiltersFromURL());
 

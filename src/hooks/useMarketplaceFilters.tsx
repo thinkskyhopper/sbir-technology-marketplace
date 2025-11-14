@@ -8,6 +8,7 @@ interface UseMarketplaceFiltersProps {
     categoryFilter: string;
     statusFilter: string;
     sortFilter: string;
+    typeFilter: string;
   };
   onFiltersChange?: (filters: {
     localSearchQuery: string;
@@ -15,6 +16,7 @@ interface UseMarketplaceFiltersProps {
     categoryFilter: string;
     statusFilter: string;
     sortFilter: string;
+    typeFilter: string;
   }) => void;
 }
 
@@ -27,6 +29,7 @@ export const useMarketplaceFilters = ({
   const [categoryFilter, setCategoryFilter] = useState<string>(preservedFilters?.categoryFilter || "all");
   const [statusFilter, setStatusFilter] = useState<string>(preservedFilters?.statusFilter || "all"); // Changed from "active" to "all"
   const [sortFilter, setSortFilter] = useState<string>(preservedFilters?.sortFilter || "newest");
+  const [typeFilter, setTypeFilter] = useState<string>(preservedFilters?.typeFilter || "all");
   const isInitialMount = useRef(true);
   const lastNotifiedFilters = useRef<string>("");
   const hasUserInteracted = useRef(false);
@@ -41,6 +44,7 @@ export const useMarketplaceFilters = ({
       setCategoryFilter(preservedFilters.categoryFilter);
       setStatusFilter(preservedFilters.statusFilter);
       setSortFilter(preservedFilters.sortFilter || "newest");
+      setTypeFilter(preservedFilters.typeFilter || "all");
       
       if (isInitialMount.current) {
         isInitialMount.current = false;
@@ -66,7 +70,8 @@ export const useMarketplaceFilters = ({
       phaseFilter,
       categoryFilter,
       statusFilter,
-      sortFilter
+      sortFilter,
+      typeFilter
     });
 
     // Only notify if filters actually changed and we have a callback
@@ -78,7 +83,8 @@ export const useMarketplaceFilters = ({
         phaseFilter,
         categoryFilter,
         statusFilter,
-        sortFilter
+        sortFilter,
+        typeFilter
       });
       
       onFiltersChange({
@@ -86,10 +92,11 @@ export const useMarketplaceFilters = ({
         phaseFilter,
         categoryFilter,
         statusFilter,
-        sortFilter
+        sortFilter,
+        typeFilter
       });
     }
-  }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, onFiltersChange]);
+  }, [localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, typeFilter, onFiltersChange]);
 
   const handleSetLocalSearchQuery = (query: string) => {
     hasUserInteracted.current = true;
@@ -116,6 +123,11 @@ export const useMarketplaceFilters = ({
     setSortFilter(sort);
   };
 
+  const handleSetTypeFilter = (type: string) => {
+    hasUserInteracted.current = true;
+    setTypeFilter(type);
+  };
+
   const handleClearFilters = () => {
     hasUserInteracted.current = true;
     setLocalSearchQuery("");
@@ -123,6 +135,7 @@ export const useMarketplaceFilters = ({
     setCategoryFilter("all");
     setStatusFilter("all"); // Changed from "active" to "all"
     setSortFilter("newest");
+    setTypeFilter("all");
   };
 
   return {
@@ -136,6 +149,8 @@ export const useMarketplaceFilters = ({
     setStatusFilter: handleSetStatusFilter,
     sortFilter,
     setSortFilter: handleSetSortFilter,
+    typeFilter,
+    setTypeFilter: handleSetTypeFilter,
     handleClearFilters,
     isFiltersReady
   };

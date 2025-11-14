@@ -20,6 +20,7 @@ interface MarketplaceGridContainerProps {
     categoryFilter: string;
     statusFilter: string;
     sortFilter: string;
+    typeFilter: string;
   };
   onFiltersChange?: (filters: {
     localSearchQuery: string;
@@ -27,6 +28,7 @@ interface MarketplaceGridContainerProps {
     categoryFilter: string;
     statusFilter: string;
     sortFilter: string;
+    typeFilter: string;
   }) => void;
   showFilters?: boolean;
   maxListings?: number;
@@ -55,6 +57,8 @@ const MarketplaceGridContainer = ({
     setStatusFilter,
     sortFilter,
     setSortFilter,
+    typeFilter,
+    setTypeFilter,
     handleClearFilters,
     isFiltersReady
   } = useMarketplaceFilters({
@@ -70,6 +74,7 @@ const MarketplaceGridContainer = ({
     categoryFilter,
     statusFilter,
     sortFilter,
+    typeFilter,
     maxListings
   });
 
@@ -130,21 +135,23 @@ const MarketplaceGridContainer = ({
         categoryFilter={categoryFilter}
         statusFilter={statusFilter}
         sortFilter={sortFilter}
+        typeFilter={typeFilter}
         onSearchQueryChange={setLocalSearchQuery}
         onPhaseFilterChange={setPhaseFilter}
         onCategoryFilterChange={setCategoryFilter}
         onStatusFilterChange={setStatusFilter}
         onSortFilterChange={setSortFilter}
+        onTypeFilterChange={setTypeFilter}
         onClearFilters={handleClearFilters}
-        onEditListing={handleEditListing}
-        onContactAdmin={onContactAdmin}
+        paginatedData={paginatedData}
         currentPage={currentPage}
         totalPages={totalPages}
-        paginatedData={paginatedData}
         onPageChange={goToPage}
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
         totalItems={totalItems}
+        onContactAdmin={onContactAdmin}
+        onEditListing={handleEditListing}
       />
 
       {/* Edit Dialog */}

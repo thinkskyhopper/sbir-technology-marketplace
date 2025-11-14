@@ -8,11 +8,13 @@ interface ResetButtonProps {
   categoryFilter: string;
   statusFilter: string;
   sortFilter: string;
+  typeFilter: string;
   onSearchQueryChange: (query: string) => void;
   onPhaseFilterChange: (phase: string) => void;
   onCategoryFilterChange: (category: string) => void;
   onStatusFilterChange: (status: string) => void;
   onSortFilterChange: (sort: string) => void;
+  onTypeFilterChange: (type: string) => void;
 }
 
 const ResetButton = ({
@@ -21,11 +23,13 @@ const ResetButton = ({
   categoryFilter,
   statusFilter,
   sortFilter,
+  typeFilter,
   onSearchQueryChange,
   onPhaseFilterChange,
   onCategoryFilterChange,
   onStatusFilterChange,
-  onSortFilterChange
+  onSortFilterChange,
+  onTypeFilterChange
 }: ResetButtonProps) => {
   // Check if any filters are active (different from defaults)
   const hasActiveFilters = 
@@ -33,7 +37,8 @@ const ResetButton = ({
     phaseFilter !== "all" || 
     categoryFilter !== "all" || 
     statusFilter !== "all" || // Changed from "active" to "all"
-    sortFilter !== "newest";
+    sortFilter !== "newest" ||
+    typeFilter !== "all";
 
   const handleResetFilters = () => {
     onSearchQueryChange("");
@@ -41,6 +46,7 @@ const ResetButton = ({
     onCategoryFilterChange("all");
     onStatusFilterChange("all"); // Changed from "active" to "all"
     onSortFilterChange("newest");
+    onTypeFilterChange("all");
   };
 
   if (!hasActiveFilters) {
