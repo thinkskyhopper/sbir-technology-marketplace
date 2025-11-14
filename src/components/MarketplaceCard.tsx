@@ -10,6 +10,7 @@ import { useState } from "react";
 import ContactAdminDialog from "./ContactAdminDialog";
 import BookmarkButton from "./BookmarkButton";
 import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
+import { ListingTypeBadge } from "@/utils/listingTypeBadge";
 interface MarketplaceCardProps {
   listing: SBIRListing;
   onViewDetails?: (listing: SBIRListing) => void;
@@ -95,9 +96,12 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
 
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start mb-2">
-            <Badge variant="default" className="text-xs">
-              {listing.phase}
-            </Badge>
+            <div className="flex gap-2">
+              <Badge variant="default" className="text-xs">
+                {listing.phase}
+              </Badge>
+              <ListingTypeBadge type={listing.listing_type} className="text-xs" />
+            </div>
             <div className="flex gap-1">
               {isAdmin && (
                 <Button

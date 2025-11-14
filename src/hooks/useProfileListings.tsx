@@ -50,6 +50,7 @@ export const useProfileListings = ({ userId, isOwnProfile }: UseProfileListingsP
         const formattedListings = data?.map(listing => ({
           ...listing,
           value: listing.value / 100, // Convert cents to dollars
+          listing_type: listing.listing_type || 'Contract', // Fallback for existing listings
           profiles: null // Profile listings don't include profile data
         })) || [];
 

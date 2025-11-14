@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Building, Mail, Clock, Tag, Settings } from "lucide-react";
+import { DollarSign, Building, Mail, Clock, Tag, Settings, FileText } from "lucide-react";
 import ListingDetailRelatedListings from "./ListingDetailRelatedListings";
 import type { SBIRListing } from "@/types/listings";
 
@@ -14,6 +14,7 @@ interface ListingDetailSidebarProps {
     approved_at?: string | null;
     category: string;
     phase: string;
+    listing_type: string;
   };
   onContactAdmin: () => void;
   allListings?: SBIRListing[];
@@ -89,6 +90,14 @@ const ListingDetailSidebar = ({
               <div>
                 <p className="font-semibold">Phase</p>
                 <p className="text-muted-foreground">{listing.phase}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center text-sm">
+              <FileText className="w-4 h-4 mr-2 text-indigo-500" />
+              <div>
+                <p className="font-semibold">Type</p>
+                <p className="text-muted-foreground">{listing.listing_type}</p>
               </div>
             </div>
             
