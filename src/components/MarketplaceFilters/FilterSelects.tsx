@@ -5,11 +5,13 @@ interface FilterSelectsProps {
   categoryFilter: string;
   statusFilter: string;
   sortFilter: string;
+  typeFilter: string;
   categories: string[];
   onPhaseFilterChange: (phase: string) => void;
   onCategoryFilterChange: (category: string) => void;
   onStatusFilterChange: (status: string) => void;
   onSortFilterChange: (sort: string) => void;
+  onTypeFilterChange: (type: string) => void;
 }
 
 const FilterSelects = ({
@@ -17,11 +19,13 @@ const FilterSelects = ({
   categoryFilter,
   statusFilter,
   sortFilter,
+  typeFilter,
   categories,
   onPhaseFilterChange,
   onCategoryFilterChange,
   onStatusFilterChange,
-  onSortFilterChange
+  onSortFilterChange,
+  onTypeFilterChange
 }: FilterSelectsProps) => {
   // Sort categories alphabetically, but put "Other" at the end
   const sortedCategories = [...categories].sort((a, b) => {
@@ -82,6 +86,19 @@ const FilterSelects = ({
           <SelectItem value="all">All Status</SelectItem>
           <SelectItem value="active">Active</SelectItem>
           <SelectItem value="Sold">Sold</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {/* Type Filter */}
+      <Select value={typeFilter} onValueChange={onTypeFilterChange}>
+        <SelectTrigger className="w-full md:w-48">
+          <SelectValue placeholder="Type" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Types</SelectItem>
+          <SelectItem value="Contract">Contract</SelectItem>
+          <SelectItem value="IP">IP</SelectItem>
+          <SelectItem value="Contract & IP">Contract & IP</SelectItem>
         </SelectContent>
       </Select>
     </>

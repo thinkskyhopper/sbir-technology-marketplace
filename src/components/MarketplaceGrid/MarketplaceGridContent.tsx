@@ -13,11 +13,13 @@ interface MarketplaceGridContentProps {
   categoryFilter: string;
   statusFilter: string;
   sortFilter: string;
+  typeFilter: string;
   onSearchQueryChange: (query: string) => void;
   onPhaseFilterChange: (phase: string) => void;
   onCategoryFilterChange: (category: string) => void;
   onStatusFilterChange: (status: string) => void;
   onSortFilterChange: (sort: string) => void;
+  onTypeFilterChange: (type: string) => void;
   onClearFilters: () => void;
   onEditListing: (listing: SBIRListing) => void;
   onContactAdmin?: (listing: SBIRListing) => void;
@@ -39,11 +41,13 @@ const MarketplaceGridContent = ({
   categoryFilter,
   statusFilter,
   sortFilter,
+  typeFilter,
   onSearchQueryChange,
   onPhaseFilterChange,
   onCategoryFilterChange,
   onStatusFilterChange,
   onSortFilterChange,
+  onTypeFilterChange,
   onClearFilters,
   onEditListing,
   onContactAdmin,
@@ -65,12 +69,14 @@ const MarketplaceGridContent = ({
           categoryFilter={categoryFilter}
           statusFilter={statusFilter}
           sortFilter={sortFilter}
+          typeFilter={typeFilter}
           categories={categories}
           onSearchQueryChange={onSearchQueryChange}
           onPhaseFilterChange={onPhaseFilterChange}
           onCategoryFilterChange={onCategoryFilterChange}
           onStatusFilterChange={onStatusFilterChange}
           onSortFilterChange={onSortFilterChange}
+          onTypeFilterChange={onTypeFilterChange}
         />
       )}
 

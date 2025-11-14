@@ -10,6 +10,7 @@ interface UseMarketplaceDataProps {
   categoryFilter: string;
   statusFilter: string;
   sortFilter: string;
+  typeFilter: string;
   maxListings?: number;
 }
 
@@ -21,6 +22,7 @@ export const useMarketplaceData = ({
   categoryFilter,
   statusFilter,
   sortFilter,
+  typeFilter,
   maxListings
 }: UseMarketplaceDataProps) => {
   const [filteredListings, setFilteredListings] = useState<SBIRListing[]>([]);
@@ -69,6 +71,11 @@ export const useMarketplaceData = ({
       );
     }
 
+    // Apply type filter
+    if (typeFilter !== "all") {
+      filtered = filtered.filter(listing => listing.listing_type === typeFilter);
+    }
+
     // Apply sorting (avoid mutating original array)
     if (sortFilter === "newest") {
       filtered = [...filtered].sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
@@ -89,7 +96,7 @@ export const useMarketplaceData = ({
   // Apply filters whenever dependencies change
   useEffect(() => {
     applyFilters();
-  }, [listings, searchQuery, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, maxListings]);
+  }, [listings, searchQuery, localSearchQuery, phaseFilter, categoryFilter, statusFilter, sortFilter, typeFilter, maxListings]);
 
   const categories = Array.from(new Set(listings.map(listing => listing.category)));
 
