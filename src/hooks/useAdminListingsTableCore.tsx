@@ -48,6 +48,8 @@ export const useAdminListingsTableCore = () => {
     setAgencyFilter,
     categoryFilter,
     setCategoryFilter,
+    typeFilter,
+    setTypeFilter,
     handleClearFilters,
     hasActiveFilters,
   } = useAdminListingsTableState();
@@ -59,7 +61,8 @@ export const useAdminListingsTableCore = () => {
     statusFilter,
     phaseFilter,
     agencyFilter,
-    categoryFilter
+    categoryFilter,
+    typeFilter
   );
   
   const {
@@ -130,12 +133,12 @@ export const useAdminListingsTableCore = () => {
   // Reset pagination when filters change - use useEffect to avoid infinite loops
   useEffect(() => {
     resetPagination();
-  }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter]);
+  }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter, typeFilter]);
 
   // Clear bulk selection when filters change to avoid confusion
   useEffect(() => {
     bulkSelection.clearSelection();
-  }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter, bulkSelection.clearSelection]);
+  }, [searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter, typeFilter, bulkSelection.clearSelection]);
 
   // Restore persisted edit dialog state when listings are available
   useEffect(() => {
@@ -198,6 +201,8 @@ export const useAdminListingsTableCore = () => {
     setAgencyFilter,
     categoryFilter,
     setCategoryFilter,
+    typeFilter,
+    setTypeFilter,
     handleClearFilters,
     hasActiveFilters,
     

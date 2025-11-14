@@ -39,6 +39,8 @@ const AdminListingsTableContainer = () => {
     setAgencyFilter,
     categoryFilter,
     setCategoryFilter,
+    typeFilter,
+    setTypeFilter,
     handleClearFilters,
     hasActiveFilters,
     
@@ -122,6 +124,8 @@ const AdminListingsTableContainer = () => {
             setAgencyFilter={setAgencyFilter}
             categoryFilter={categoryFilter}
             setCategoryFilter={setCategoryFilter}
+            typeFilter={typeFilter}
+            setTypeFilter={setTypeFilter}
             uniqueAgencies={uniqueAgencies}
             onClearFilters={handleClearFilters}
             hasActiveFilters={hasActiveFilters}
