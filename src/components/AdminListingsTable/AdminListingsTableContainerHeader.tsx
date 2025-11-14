@@ -19,6 +19,8 @@ interface AdminListingsTableContainerHeaderProps {
   setAgencyFilter: (agency: string) => void;
   categoryFilter: string;
   setCategoryFilter: (category: string) => void;
+  typeFilter: string;
+  setTypeFilter: (type: string) => void;
   uniqueAgencies: string[];
   onClearFilters: () => void;
   hasActiveFilters: boolean;
@@ -38,6 +40,8 @@ const AdminListingsTableContainerHeader = ({
   setAgencyFilter,
   categoryFilter,
   setCategoryFilter,
+  typeFilter,
+  setTypeFilter,
   uniqueAgencies,
   onClearFilters,
   hasActiveFilters,
@@ -75,6 +79,8 @@ const AdminListingsTableContainerHeader = ({
           setAgencyFilter={setAgencyFilter}
           categoryFilter={categoryFilter}
           setCategoryFilter={setCategoryFilter}
+          typeFilter={typeFilter}
+          setTypeFilter={setTypeFilter}
           uniqueAgencies={uniqueAgencies}
           onClearFilters={onClearFilters}
           hasActiveFilters={hasActiveFilters}

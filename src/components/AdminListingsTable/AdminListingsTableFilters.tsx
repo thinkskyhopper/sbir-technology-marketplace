@@ -17,6 +17,8 @@ interface AdminListingsTableFiltersProps {
   setAgencyFilter: (agency: string) => void;
   categoryFilter: string;
   setCategoryFilter: (category: string) => void;
+  typeFilter: string;
+  setTypeFilter: (type: string) => void;
   uniqueAgencies: string[];
   onClearFilters: () => void;
   hasActiveFilters: boolean;
@@ -33,6 +35,8 @@ const AdminListingsTableFilters = ({
   setAgencyFilter,
   categoryFilter,
   setCategoryFilter,
+  typeFilter,
+  setTypeFilter,
   uniqueAgencies,
   onClearFilters,
   hasActiveFilters,
@@ -99,6 +103,17 @@ const AdminListingsTableFilters = ({
           {sortedCategories.map(category => (
             <SelectItem key={category} value={category}>{category}</SelectItem>
           ))}
+        </SelectContent>
+      </Select>
+      <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <SelectTrigger className="w-36">
+          <SelectValue placeholder="Type" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Types</SelectItem>
+          <SelectItem value="Contract">Contract</SelectItem>
+          <SelectItem value="IP">IP</SelectItem>
+          <SelectItem value="Contract & IP">Contract & IP</SelectItem>
         </SelectContent>
       </Select>
       {hasActiveFilters && (

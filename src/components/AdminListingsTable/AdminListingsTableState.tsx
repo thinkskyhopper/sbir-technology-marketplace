@@ -9,6 +9,7 @@ export const useAdminListingsTableState = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
   const [agencyFilter, setAgencyFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
 
   // Clear all filters helper
   const handleClearFilters = () => {
@@ -17,10 +18,11 @@ export const useAdminListingsTableState = () => {
     setPhaseFilter("all");
     setAgencyFilter("all");
     setCategoryFilter("all");
+    setTypeFilter("all");
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all" || categoryFilter !== "all";
+  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || phaseFilter !== "all" || agencyFilter !== "all" || categoryFilter !== "all" || typeFilter !== "all";
 
   return {
     searchTerm,
@@ -33,6 +35,8 @@ export const useAdminListingsTableState = () => {
     setAgencyFilter,
     categoryFilter,
     setCategoryFilter,
+    typeFilter,
+    setTypeFilter,
     handleClearFilters,
     hasActiveFilters,
   };
@@ -44,7 +48,8 @@ export const useAdminListingsTableLogic = (
   statusFilter: string,
   phaseFilter: string,
   agencyFilter: string,
-  categoryFilter: string
+  categoryFilter: string,
+  typeFilter: string
 ) => {
   // Filter and search listings
   const filteredListings = useMemo(() => {
@@ -58,10 +63,11 @@ export const useAdminListingsTableLogic = (
       const matchesPhase = phaseFilter === "all" || listing.phase === phaseFilter;
       const matchesAgency = agencyFilter === "all" || listing.agency === agencyFilter;
       const matchesCategory = categoryFilter === "all" || listing.category === categoryFilter;
+      const matchesType = typeFilter === "all" || listing.listing_type === typeFilter;
       
-      return matchesSearch && matchesStatus && matchesPhase && matchesAgency && matchesCategory;
+      return matchesSearch && matchesStatus && matchesPhase && matchesAgency && matchesCategory && matchesType;
     });
-  }, [listings, searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter]);
+  }, [listings, searchTerm, statusFilter, phaseFilter, agencyFilter, categoryFilter, typeFilter]);
 
   // Get unique agencies for filter dropdown
   const uniqueAgencies = useMemo(() => {
