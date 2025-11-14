@@ -41,6 +41,7 @@ const CreateListingDialog = ({ open, onOpenChange }: CreateListingDialogProps) =
       agency: "",
       value: 0,
       category: "",
+      listing_type: "Contract",
     },
   });
 

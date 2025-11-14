@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { ListingFormData } from "./listingSchema";
+import ListingTypeField from "./ListingTypeField";
 
 interface PhaseAgencyFieldsProps {
   form: UseFormReturn<ListingFormData>;
@@ -23,43 +24,47 @@ interface PhaseAgencyFieldsProps {
 
 const PhaseAgencyFields = ({ form }: PhaseAgencyFieldsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <FormField
-        control={form.control}
-        name="phase"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Phase</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select phase" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="Phase I">Phase I</SelectItem>
-                <SelectItem value="Phase II">Phase II</SelectItem>
-                <SelectItem value="Phase III">Phase III</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <FormField
+          control={form.control}
+          name="phase"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phase</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select phase" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Phase I">Phase I</SelectItem>
+                  <SelectItem value="Phase II">Phase II</SelectItem>
+                  <SelectItem value="Phase III">Phase III</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <FormField
-        control={form.control}
-        name="agency"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Agency</FormLabel>
-            <FormControl>
-              <Input placeholder="e.g., Department of Defense" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+        <ListingTypeField form={form} />
+
+        <FormField
+          control={form.control}
+          name="agency"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Agency</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., Department of Defense" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 };

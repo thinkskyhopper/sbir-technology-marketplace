@@ -58,6 +58,7 @@ export const featuredListingsService = {
       value: item.value / 100, // Convert cents to dollars
       deadline: item.deadline,
       category: item.category,
+      listing_type: item.listing_type || 'Contract',
       status: item.status,
       submitted_at: item.submitted_at,
       approved_at: item.approved_at,

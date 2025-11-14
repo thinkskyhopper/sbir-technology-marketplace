@@ -1,5 +1,5 @@
 
-import type { SBIRPhase, ListingStatus } from "@/types/listings";
+import type { SBIRPhase, ListingStatus, ListingType } from "@/types/listings";
 
 export interface ParsedListing {
   title: string;
@@ -9,6 +9,7 @@ export interface ParsedListing {
   value: number;
   deadline?: string;
   category: string;
+  listing_type?: ListingType;
   photo_url?: string;
   status: ListingStatus;
   rowNumber: number;

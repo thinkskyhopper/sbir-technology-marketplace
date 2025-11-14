@@ -102,6 +102,7 @@ export const useCreateListing = ({ form, honeypotValue, onSuccess }: UseCreateLi
         agency: data.agency,
         value: data.value,
         category: data.category,
+        listing_type: data.listing_type,
         status: 'Pending' as const
       };
       

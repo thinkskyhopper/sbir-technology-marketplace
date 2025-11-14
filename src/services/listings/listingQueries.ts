@@ -53,6 +53,7 @@ export const listingQueries = {
         value: (listing.value || 0) / 100, // Convert cents to dollars
         deadline: listing.deadline,
         category: listing.category,
+        listing_type: listing.listing_type || 'Contract',
         status: listing.status,
         submitted_at: listing.submitted_at,
         approved_at: listing.approved_at,
@@ -126,6 +127,7 @@ export const listingQueries = {
         return {
           ...listing,
           value: listing.value / 100, // Convert cents to dollars
+          listing_type: listing.listing_type || 'Contract',
           profiles: profile ? { full_name: profile.full_name, email: profile.email } : null
         };
       }) || [];

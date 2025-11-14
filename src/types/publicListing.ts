@@ -1,3 +1,5 @@
+import type { ListingType } from './listings';
+
 // Public-safe listing interface that excludes admin-only sensitive data
 export interface PublicSBIRListing {
   id: string;
@@ -8,6 +10,7 @@ export interface PublicSBIRListing {
   value: number;
   deadline?: string;
   category: string;
+  listing_type: ListingType;
   status: 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
   submitted_at: string;
   approved_at?: string | null;
@@ -31,6 +34,7 @@ export const PUBLIC_LISTING_COLUMNS = [
   'value',
   'deadline',
   'category',
+  'listing_type',
   'status',
   'submitted_at',
   'approved_at',
