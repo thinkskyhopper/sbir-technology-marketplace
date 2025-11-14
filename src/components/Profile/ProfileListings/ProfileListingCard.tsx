@@ -8,6 +8,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDefaultCategoryImage } from "@/utils/categoryDefaultImages";
+import { ListingTypeBadge } from "@/utils/listingTypeBadge";
 
 interface ProfileListingCardProps {
   listing: SBIRListing;
@@ -113,9 +114,12 @@ const ProfileListingCard = ({
 
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
-          <Badge variant="default" className="text-xs">
-            {listing.phase}
-          </Badge>
+          <div className="flex gap-2">
+            <Badge variant="default" className="text-xs">
+              {listing.phase}
+            </Badge>
+            <ListingTypeBadge type={listing.listing_type} className="text-xs" />
+          </div>
           <div className="flex gap-1">
             {isAdmin && (
               <Button

@@ -653,6 +653,7 @@ export type Database = {
           deadline: string
           description: string
           id: string
+          listing_type: Database["public"]["Enums"]["listing_type"]
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string
           status: Database["public"]["Enums"]["listing_status"]
@@ -677,6 +678,7 @@ export type Database = {
           id: string
           listing_created_at: string
           listing_id: string
+          listing_type: Database["public"]["Enums"]["listing_type"]
           listing_updated_at: string
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string
@@ -723,6 +725,7 @@ export type Database = {
           deadline: string
           description: string
           id: string
+          listing_type: Database["public"]["Enums"]["listing_type"]
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string
           status: Database["public"]["Enums"]["listing_status"]

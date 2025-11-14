@@ -7,11 +7,13 @@ import BookmarkButton from "@/components/BookmarkButton";
 import ConfirmActionDialog from "@/components/ConfirmActionDialog";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { ListingTypeBadge } from "@/utils/listingTypeBadge";
 
 interface ListingDetailHeaderProps {
   listing: {
     id: string;
     phase: string;
+    listing_type: 'Contract' | 'IP' | 'Contract & IP';
     status: string;
     title: string;
     agency: string;
@@ -86,6 +88,7 @@ const ListingDetailHeader = ({
                 >
                   {listing.phase}
                 </Badge>
+                <ListingTypeBadge type={listing.listing_type} />
                 <Badge 
                   variant={listing.status === "Active" ? "default" : listing.status === "Sold" ? "sold" : "outline"}
                   className={listing.status === "Active" ? "bg-green-600" : ""}
