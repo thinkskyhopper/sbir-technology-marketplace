@@ -1,3 +1,4 @@
+export type ListingType = 'Contract' | 'IP' | 'Contract & IP';
 
 export interface SBIRListing {
   id: string;
@@ -8,6 +9,7 @@ export interface SBIRListing {
   value: number;
   deadline?: string;
   category: string;
+  listing_type: ListingType;
   status: 'Active' | 'Pending' | 'Sold' | 'Rejected' | 'Hidden';
   submitted_at: string;
   approved_at?: string | null;

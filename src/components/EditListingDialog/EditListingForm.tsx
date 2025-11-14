@@ -71,6 +71,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       agency: listing.agency,
       value: listing.value, // Value is already in dollars from the query
       category: listing.category,
+      listing_type: listing.listing_type || "Contract",
       status: listing.status,
       technology_summary: listing.technology_summary || "",
       // Admin-only fields

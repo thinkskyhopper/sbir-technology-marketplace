@@ -430,6 +430,7 @@ export type Database = {
           id: string
           internal_description: string | null
           internal_title: string | null
+          listing_type: Database["public"]["Enums"]["listing_type"]
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string | null
           pi_email: string | null
@@ -467,6 +468,7 @@ export type Database = {
           id?: string
           internal_description?: string | null
           internal_title?: string | null
+          listing_type?: Database["public"]["Enums"]["listing_type"]
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url?: string | null
           pi_email?: string | null
@@ -504,6 +506,7 @@ export type Database = {
           id?: string
           internal_description?: string | null
           internal_title?: string | null
+          listing_type?: Database["public"]["Enums"]["listing_type"]
           phase?: Database["public"]["Enums"]["sbir_phase"]
           photo_url?: string | null
           pi_email?: string | null
@@ -742,6 +745,7 @@ export type Database = {
           deadline: string
           description: string
           id: string
+          listing_type: Database["public"]["Enums"]["listing_type"]
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string
           profile_bio: string
@@ -800,6 +804,7 @@ export type Database = {
       change_request_status: "pending" | "approved" | "rejected"
       change_request_type: "change" | "deletion"
       listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
+      listing_type: "Contract" | "IP" | "Contract & IP"
       sbir_phase: "Phase I" | "Phase II" | "Phase III"
       user_role: "admin" | "user" | "consultant" | "verified"
     }
@@ -934,6 +939,7 @@ export const Constants = {
       change_request_status: ["pending", "approved", "rejected"],
       change_request_type: ["change", "deletion"],
       listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
+      listing_type: ["Contract", "IP", "Contract & IP"],
       sbir_phase: ["Phase I", "Phase II", "Phase III"],
       user_role: ["admin", "user", "consultant", "verified"],
     },
