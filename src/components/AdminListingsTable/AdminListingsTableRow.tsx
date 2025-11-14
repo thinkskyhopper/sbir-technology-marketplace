@@ -7,6 +7,7 @@ import StatusBadgeCell from "./components/StatusBadgeCell";
 import UserInfoCell from "./components/UserInfoCell";
 import CurrencyCell from "./components/CurrencyCell";
 import BulkSelectionCheckbox from "./BulkSelectionCheckbox";
+import { ListingTypeBadge } from "@/utils/listingTypeBadge";
 import { format } from "date-fns";
 import type { SBIRListing } from "@/types/listings";
 import { useListingChangeRequests } from "@/hooks/useListingChangeRequests";
@@ -67,6 +68,10 @@ const AdminListingsTableRow = ({
       
       <TableCell>
         <Badge variant="phase" className="text-xs">{listing.phase}</Badge>
+      </TableCell>
+      
+      <TableCell>
+        <ListingTypeBadge type={listing.listing_type} className="text-xs" />
       </TableCell>
       
       <CurrencyCell value={listing.value} />

@@ -40,7 +40,7 @@ const AdminListingsTableContent = ({
         {/* Mobile: Use native scrolling */}
         <div className="block sm:hidden">
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto touch-pan-x touch-pan-y">
-            <Table className="min-w-[950px]">
+            <Table className="min-w-[1060px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[40px]">
@@ -56,7 +56,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[180px] sm:min-w-[330px]"
+                    className="min-w-[160px] sm:min-w-[280px]"
                   >
                     Title
                   </SortableTableHead>
@@ -77,6 +77,15 @@ const AdminListingsTableContent = ({
                     className="min-w-[100px]"
                   >
                     Phase
+                  </SortableTableHead>
+                  <SortableTableHead
+                    sortKey="listing_type"
+                    currentSortColumn={sortState.column}
+                    currentSortDirection={sortState.direction}
+                    onSort={onSort}
+                    className="min-w-[110px]"
+                  >
+                    Type
                   </SortableTableHead>
                   <SortableTableHead
                     sortKey="value"
@@ -131,7 +140,7 @@ const AdminListingsTableContent = ({
         {/* Desktop: Use ScrollArea */}
         <div className="hidden sm:block overflow-x-auto">
           <ScrollArea className="h-[80vh] w-full">
-            <Table className="min-w-[1150px]">
+            <Table className="min-w-[1260px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[40px]">
@@ -147,7 +156,7 @@ const AdminListingsTableContent = ({
                     currentSortColumn={sortState.column}
                     currentSortDirection={sortState.direction}
                     onSort={onSort}
-                    className="min-w-[180px] sm:min-w-[330px]"
+                    className="min-w-[160px] sm:min-w-[280px]"
                   >
                     Title
                   </SortableTableHead>
@@ -168,6 +177,15 @@ const AdminListingsTableContent = ({
                     className="min-w-[100px]"
                   >
                     Phase
+                  </SortableTableHead>
+                  <SortableTableHead
+                    sortKey="listing_type"
+                    currentSortColumn={sortState.column}
+                    currentSortDirection={sortState.direction}
+                    onSort={onSort}
+                    className="min-w-[110px]"
+                  >
+                    Type
                   </SortableTableHead>
                   <SortableTableHead
                     sortKey="value"
