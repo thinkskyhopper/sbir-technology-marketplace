@@ -15,6 +15,7 @@ import StatusField from "./StatusField";
 import FormActions from "./FormActions";
 import AdminOnlyFields from "./AdminOnlyFields";
 import AdminNotesField from "./AdminNotesField";
+import AffiliateSelectionField from "./AffiliateSelectionField";
 import { z } from "zod";
 import type { SBIRListing } from "@/types/listings";
 
@@ -34,6 +35,8 @@ const editListingSchema = listingSchema.extend({
   business_contact_name: z.string().optional(),
   bc_phone: z.string().optional(),
   bc_email: z.string().optional(),
+  recommended_affiliate_1_id: z.string().nullable().optional(),
+  recommended_affiliate_2_id: z.string().nullable().optional(),
   admin_notes: z.string().optional(),
 });
 
@@ -88,6 +91,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
       business_contact_name: listing.business_contact_name || "",
       bc_phone: listing.bc_phone || "",
       bc_email: listing.bc_email || "",
+      recommended_affiliate_1_id: listing.recommended_affiliate_1_id || null,
+      recommended_affiliate_2_id: listing.recommended_affiliate_2_id || null,
       admin_notes: "",
     },
   });
@@ -202,6 +207,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
         business_contact_name: listingUpdateData.business_contact_name || null,
         bc_phone: listingUpdateData.bc_phone || null,
         bc_email: listingUpdateData.bc_email || null,
+        recommended_affiliate_1_id: listingUpdateData.recommended_affiliate_1_id || null,
+        recommended_affiliate_2_id: listingUpdateData.recommended_affiliate_2_id || null,
       } as Required<ExtendedEditListingFormData>;
 
       console.log('🔄 Updating listing with data:', { listingId: listing.id, updateData, adminNotes: admin_notes });
@@ -252,6 +259,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
         <ListingFormFields form={form} />
         
         <AdminOnlyFields form={form} />
+        
+        <AffiliateSelectionField form={form} />
         
         <AdminNotesField form={form} />
 

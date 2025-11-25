@@ -437,6 +437,8 @@ export type Database = {
           pi_phone: string | null
           primary_investigator_name: string | null
           proposal_award_date: string | null
+          recommended_affiliate_1_id: string | null
+          recommended_affiliate_2_id: string | null
           status: Database["public"]["Enums"]["listing_status"]
           submitted_at: string
           technology_summary: string | null
@@ -475,6 +477,8 @@ export type Database = {
           pi_phone?: string | null
           primary_investigator_name?: string | null
           proposal_award_date?: string | null
+          recommended_affiliate_1_id?: string | null
+          recommended_affiliate_2_id?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
           technology_summary?: string | null
@@ -513,6 +517,8 @@ export type Database = {
           pi_phone?: string | null
           primary_investigator_name?: string | null
           proposal_award_date?: string | null
+          recommended_affiliate_1_id?: string | null
+          recommended_affiliate_2_id?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           submitted_at?: string
           technology_summary?: string | null
@@ -527,6 +533,20 @@ export type Database = {
           {
             foreignKeyName: "fk_sbir_listings_user_id"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sbir_listings_recommended_affiliate_1_id_fkey"
+            columns: ["recommended_affiliate_1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sbir_listings_recommended_affiliate_2_id_fkey"
+            columns: ["recommended_affiliate_2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

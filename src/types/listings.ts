@@ -34,9 +34,21 @@ export interface SBIRListing {
   business_contact_name?: string | null;
   bc_phone?: string | null;
   bc_email?: string | null;
+  recommended_affiliate_1_id?: string | null;
+  recommended_affiliate_2_id?: string | null;
   profiles?: {
     full_name: string | null;
     email: string;
+  } | null;
+  recommended_affiliate_1?: {
+    id: string;
+    full_name: string | null;
+    photo_url?: string | null;
+  } | null;
+  recommended_affiliate_2?: {
+    id: string;
+    full_name: string | null;
+    photo_url?: string | null;
   } | null;
 }
 
