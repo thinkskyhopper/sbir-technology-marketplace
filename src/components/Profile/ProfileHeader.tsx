@@ -73,7 +73,7 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
                     displayProfile.role === 'admin' 
                       ? 'bg-amber-500 hover:bg-amber-600' 
                       : displayProfile.role === 'affiliate'
-                      ? 'bg-[#060ede] hover:bg-[#050cc9] text-white'
+                      ? 'bg-[#006ede] hover:bg-[#0060c9] text-white'
                       : ''
                   }
                 >
