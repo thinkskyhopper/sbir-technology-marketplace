@@ -73,6 +73,7 @@ const MarketplacePagination = ({
         <PaginationItem>
           <PaginationLink
             href="#"
+            size="default"
             onClick={(e) => {
               e.preventDefault();
               if (hasPreviousPage) {
@@ -116,6 +117,7 @@ const MarketplacePagination = ({
         <PaginationItem>
           <PaginationLink
             href="#"
+            size="default"
             onClick={(e) => {
               e.preventDefault();
               if (hasNextPage) {
