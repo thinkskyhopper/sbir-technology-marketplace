@@ -46,7 +46,7 @@ const RecommendedAffiliates = ({
         {affiliates.map(affiliate => {
         if (!affiliate) return null;
         const initials = affiliate.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
-        return <a key={affiliate.id} href="https://meetings-na2.hubspot.com/ted-dennis?uuid=9776be4c-750d-43bc-bd54-bd23de8a0b4e" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center space-y-2 p-4 rounded-lg border border-border hover:bg-accent transition-colors">
+        return <a key={affiliate.id} href="https://meetings-na2.hubspot.com/ted-dennis?uuid=9776be4c-750d-43bc-bd54-bd23de8a0b4e" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center space-y-2 py-4 px-2 rounded-lg border border-border hover:bg-accent transition-colors">
               <Avatar className="w-16 h-16">
                 <AvatarFallback className="bg-[#006ede] text-white">
                   {initials}
