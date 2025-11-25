@@ -4,27 +4,21 @@ import { Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
-
 interface RecommendedAffiliatesProps {
   listing: SBIRListing;
   isAuthenticated: boolean;
 }
-
-const RecommendedAffiliates = ({ listing, isAuthenticated }: RecommendedAffiliatesProps) => {
+const RecommendedAffiliates = ({
+  listing,
+  isAuthenticated
+}: RecommendedAffiliatesProps) => {
   const navigate = useNavigate();
-  
-  const affiliates = [
-    listing.recommended_affiliate_1,
-    listing.recommended_affiliate_2,
-  ].filter(Boolean);
-
+  const affiliates = [listing.recommended_affiliate_1, listing.recommended_affiliate_2].filter(Boolean);
   if (affiliates.length === 0) {
     return null;
   }
-
   if (!isAuthenticated) {
-    return (
-      <Card>
+    return <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-base">
             <Users className="w-4 h-4" />
@@ -39,36 +33,20 @@ const RecommendedAffiliates = ({ listing, isAuthenticated }: RecommendedAffiliat
             Sign In
           </Button>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2 text-base">
           <Users className="w-4 h-4" />
-          <span>Recommended Experts</span>
+          <span>Recommended Affiliates </span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {affiliates.map((affiliate) => {
-          if (!affiliate) return null;
-          
-          const initials = affiliate.full_name
-            ?.split(' ')
-            .map(n => n[0])
-            .join('')
-            .toUpperCase() || '?';
-
-          return (
-            <a
-              key={affiliate.id}
-              href="https://meetings-na2.hubspot.com/ted-dennis?uuid=9776be4c-750d-43bc-bd54-bd23de8a0b4e"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center space-y-2 p-4 rounded-lg border border-border hover:bg-accent transition-colors"
-            >
+        {affiliates.map(affiliate => {
+        if (!affiliate) return null;
+        const initials = affiliate.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
+        return <a key={affiliate.id} href="https://meetings-na2.hubspot.com/ted-dennis?uuid=9776be4c-750d-43bc-bd54-bd23de8a0b4e" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center space-y-2 p-4 rounded-lg border border-border hover:bg-accent transition-colors">
               <Avatar className="w-16 h-16">
                 <AvatarFallback className="bg-[#006ede] text-white">
                   {initials}
@@ -77,12 +55,9 @@ const RecommendedAffiliates = ({ listing, isAuthenticated }: RecommendedAffiliat
               <span className="text-sm font-medium text-center hover:text-primary">
                 {affiliate.full_name || 'Unnamed Expert'}
               </span>
-            </a>
-          );
-        })}
+            </a>;
+      })}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default RecommendedAffiliates;
