@@ -59,7 +59,7 @@ const UpdatePassword = () => {
     }
 
     try {
-      console.log('Attempting to update password for user:', user?.email);
+      console.log('Attempting to update password');
       const { error } = await updatePassword(password);
       
       if (error) {
@@ -75,7 +75,7 @@ const UpdatePassword = () => {
         }
       } else {
         setSuccess(true);
-        console.log('Password updated successfully for user:', user?.email);
+        console.log('Password updated successfully');
         
         // Auto-redirect after successful password update
         setTimeout(() => {

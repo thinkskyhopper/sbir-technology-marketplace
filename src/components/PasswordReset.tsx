@@ -37,7 +37,7 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
     }
 
     try {
-      console.log('Requesting password reset for:', email);
+      console.log('Requesting password reset');
       const { error } = await resetPassword(email);
       
       if (error) {
@@ -56,7 +56,7 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
         }
       } else {
         setSuccess(`Password reset email sent to ${email}! Please check your inbox and follow the instructions to reset your password.`);
-        console.log('Password reset email sent successfully to:', email);
+        console.log('Password reset email sent successfully');
       }
     } catch (err) {
       console.error('Unexpected error during password reset:', err);
