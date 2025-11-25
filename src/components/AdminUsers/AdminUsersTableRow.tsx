@@ -9,7 +9,7 @@ import { UserWithStats } from "./types";
 import { useState } from "react";
 import { NotificationCategoriesDialog } from "./NotificationCategoriesDialog";
 
-type UserRole = "admin" | "user" | "consultant" | "verified";
+type UserRole = "admin" | "user" | "affiliate" | "verified";
 
 interface AdminUsersTableRowProps {
   user: UserWithStats;
@@ -86,7 +86,7 @@ export const AdminUsersTableRow = ({
               variant={
                 user.role === 'admin' 
                   ? 'default' 
-                  : user.role === 'consultant' 
+                  : user.role === 'affiliate' 
                   ? 'secondary' 
                   : user.role === 'verified'
                   ? 'outline'
@@ -95,15 +95,15 @@ export const AdminUsersTableRow = ({
               className={
                 user.role === 'admin' 
                   ? 'bg-amber-500 hover:bg-amber-600 text-xs' 
-                  : user.role === 'consultant'
+                  : user.role === 'affiliate'
                   ? 'bg-white hover:bg-gray-50 text-black border-gray-300 text-xs'
                   : 'text-xs'
               }
             >
               {user.role === 'admin' 
                 ? 'Administrator' 
-                : user.role === 'consultant' 
-                ? 'Consultant' 
+                : user.role === 'affiliate' 
+                ? 'Affiliate' 
                 : user.role === 'verified'
                 ? 'User'
                 : 'User'}
@@ -135,10 +135,10 @@ export const AdminUsersTableRow = ({
                   User
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={() => handleRoleChange('consultant')}
-                  disabled={user.role === 'consultant'}
+                  onClick={() => handleRoleChange('affiliate')}
+                  disabled={user.role === 'affiliate'}
                 >
-                  Consultant
+                  Affiliate
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleRoleChange('verified')}

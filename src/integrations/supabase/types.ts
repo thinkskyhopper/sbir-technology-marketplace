@@ -803,13 +803,13 @@ export type Database = {
     }
     Enums: {
       admin_action_type: "approval" | "denial" | "edit" | "deletion"
-      app_role: "admin" | "user" | "consultant" | "verified"
+      app_role: "admin" | "user" | "affiliate" | "verified"
       change_request_status: "pending" | "approved" | "rejected"
       change_request_type: "change" | "deletion"
       listing_status: "Active" | "Pending" | "Sold" | "Rejected" | "Hidden"
       listing_type: "Contract" | "IP" | "Contract & IP"
       sbir_phase: "Phase I" | "Phase II" | "Phase III"
-      user_role: "admin" | "user" | "consultant" | "verified"
+      user_role: "admin" | "user" | "affiliate" | "verified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -938,13 +938,13 @@ export const Constants = {
   public: {
     Enums: {
       admin_action_type: ["approval", "denial", "edit", "deletion"],
-      app_role: ["admin", "user", "consultant", "verified"],
+      app_role: ["admin", "user", "affiliate", "verified"],
       change_request_status: ["pending", "approved", "rejected"],
       change_request_type: ["change", "deletion"],
       listing_status: ["Active", "Pending", "Sold", "Rejected", "Hidden"],
       listing_type: ["Contract", "IP", "Contract & IP"],
       sbir_phase: ["Phase I", "Phase II", "Phase III"],
-      user_role: ["admin", "user", "consultant", "verified"],
+      user_role: ["admin", "user", "affiliate", "verified"],
     },
   },
 } as const

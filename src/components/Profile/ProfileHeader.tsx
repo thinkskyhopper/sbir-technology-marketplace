@@ -68,16 +68,16 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
                   </div>
                 )}
                 <Badge 
-                  variant={displayProfile.role === 'admin' ? 'default' : displayProfile.role === 'consultant' ? 'secondary' : 'outline'}
+                  variant={displayProfile.role === 'admin' ? 'default' : displayProfile.role === 'affiliate' ? 'secondary' : 'outline'}
                   className={
                     displayProfile.role === 'admin' 
                       ? 'bg-amber-500 hover:bg-amber-600' 
-                      : displayProfile.role === 'consultant'
+                      : displayProfile.role === 'affiliate'
                       ? 'bg-white hover:bg-gray-50 text-black border-gray-300'
                       : ''
                   }
                 >
-                  {displayProfile.role === 'admin' ? 'Administrator' : displayProfile.role === 'consultant' ? 'Consultant' : 'User'}
+                  {displayProfile.role === 'admin' ? 'Administrator' : displayProfile.role === 'affiliate' ? 'Affiliate' : 'User'}
                 </Badge>
               </div>
             </div>

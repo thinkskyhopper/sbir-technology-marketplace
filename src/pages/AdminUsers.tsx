@@ -78,7 +78,7 @@ const AdminUsers = () => {
 
   const totalUsers = users?.length || 0;
   const adminUsers = users?.filter(user => user.role === 'admin').length || 0;
-  const consultantUsers = users?.filter(user => user.role === 'consultant').length || 0;
+  const affiliateUsers = users?.filter(user => user.role === 'affiliate').length || 0;
   const regularUsers = users?.filter(user => user.role === 'user').length || 0;
   const marketingSubscribers = users?.filter(user => user.marketing_emails_enabled).length || 0;
 
@@ -109,7 +109,7 @@ const AdminUsers = () => {
             <AdminUsersStats
               totalUsers={totalUsers}
               adminUsers={adminUsers}
-              consultantUsers={consultantUsers}
+              affiliateUsers={affiliateUsers}
               regularUsers={regularUsers}
               marketingSubscribers={marketingSubscribers}
             />
