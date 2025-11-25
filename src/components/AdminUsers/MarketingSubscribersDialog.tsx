@@ -126,7 +126,7 @@ export const MarketingSubscribersDialog = ({ users, marketingSubscribers }: Mark
                               user.role === 'admin' 
                                 ? 'bg-amber-500 hover:bg-amber-600 text-xs' 
                                 : user.role === 'affiliate'
-                                ? 'bg-white hover:bg-gray-50 text-black border-gray-300 text-xs'
+                                ? 'bg-[#060ede] hover:bg-[#050cc9] text-white text-xs'
                                 : 'text-xs'
                             }
                           >
