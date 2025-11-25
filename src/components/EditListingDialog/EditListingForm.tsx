@@ -258,9 +258,9 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
         
         <ListingFormFields form={form} />
         
-        <AdminOnlyFields form={form} />
-        
         <AffiliateSelectionField form={form} />
+        
+        <AdminOnlyFields form={form} />
         
         <AdminNotesField form={form} />
 
