@@ -19,12 +19,9 @@ const RecommendedAffiliates = ({
   }
   if (!isAuthenticated) {
     return <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-base">
-            <Users className="w-4 h-4" />
-            <span>Recommended Experts</span>
-          </CardTitle>
-        </CardHeader>
+      <CardHeader>
+        <CardTitle>Recommended Experts</CardTitle>
+      </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-4">
             Sign in to view our recommended experts for this listing.
@@ -36,12 +33,9 @@ const RecommendedAffiliates = ({
       </Card>;
   }
   return <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2 text-base">
-          <Users className="w-4 h-4" />
-          <span>Recommended Affiliates </span>
-        </CardTitle>
-      </CardHeader>
+    <CardHeader>
+      <CardTitle>Recommended Affiliates</CardTitle>
+    </CardHeader>
       <CardContent className="space-y-4">
         {affiliates.map(affiliate => {
         if (!affiliate) return null;
