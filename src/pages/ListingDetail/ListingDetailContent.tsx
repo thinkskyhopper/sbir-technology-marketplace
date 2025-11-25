@@ -86,16 +86,16 @@ const ListingDetailContent = ({
           </div>
 
           <div className="space-y-6">
+            <RecommendedAffiliates
+              listing={listing}
+              isAuthenticated={isAuthenticated}
+            />
+            
             <ListingDetailSidebar
               listing={listing}
               onContactAdmin={onContactAdmin}
               allListings={allListings}
               isCurrentUserAdmin={isAdmin}
-            />
-            
-            <RecommendedAffiliates
-              listing={listing}
-              isAuthenticated={isAuthenticated}
             />
           </div>
         </div>
@@ -156,6 +156,11 @@ const ListingDetailContent = ({
           
           <ListingDetailDescription description={listing.description} />
           
+          <RecommendedAffiliates
+            listing={listing}
+            isAuthenticated={isAuthenticated}
+          />
+          
           {/* Contact and Related Listings sections below description */}
           <ListingDetailSidebar
             listing={listing}
@@ -163,11 +168,6 @@ const ListingDetailContent = ({
             allListings={allListings}
             isCurrentUserAdmin={isAdmin}
             showOnlyContactAndRelated={true}
-          />
-          
-          <RecommendedAffiliates
-            listing={listing}
-            isAuthenticated={isAuthenticated}
           />
         </div>
       </div>
