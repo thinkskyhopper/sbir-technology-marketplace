@@ -76,6 +76,7 @@ const ListingDetailPage = () => {
       <ListingDetailContent
         listing={listing}
         isAdmin={isAdmin}
+        isAuthenticated={!!user}
         onBackToMarketplace={handleBackToMarketplace}
         onContactAdmin={handleContactAdmin}
         onEditListing={() => setShowEditDialog(true)}

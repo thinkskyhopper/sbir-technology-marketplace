@@ -86,7 +86,13 @@ export const listingQueries = {
     try {
       // Fetch listings with separate profile query to avoid FK embedding issues
       const listingsData = await vpnOptimizedClient.supabaseQuery(
-        supabase.from('sbir_listings').select('*').order('created_at', { ascending: false }),
+        supabase.from('sbir_listings')
+          .select(`
+            *,
+            recommended_affiliate_1:profiles!sbir_listings_recommended_affiliate_1_id_fkey(id, full_name, photo_url),
+            recommended_affiliate_2:profiles!sbir_listings_recommended_affiliate_2_id_fkey(id, full_name, photo_url)
+          `)
+          .order('created_at', { ascending: false }),
         { timeout: 30000, retries: 4 }
       );
 
@@ -121,7 +127,8 @@ export const listingQueries = {
           rawValueFromDB: listing.value,
           convertedValue: listing.value / 100,
           hasAdminData: !!(listing.agency_tracking_number || listing.contract),
-          hasProfile: !!profile
+          hasProfile: !!profile,
+          hasAffiliates: !!(listing.recommended_affiliate_1 || listing.recommended_affiliate_2)
         });
 
         return {

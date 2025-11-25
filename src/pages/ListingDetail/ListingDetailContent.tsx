@@ -4,12 +4,14 @@ import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader"
 import ListingDetailHeroImage from "@/components/ListingDetail/ListingDetailHeroImage";
 import ListingDetailDescription from "@/components/ListingDetail/ListingDetailDescription";
 import ListingDetailSidebar from "@/components/ListingDetail/ListingDetailSidebar";
+import RecommendedAffiliates from "@/components/ListingDetail/RecommendedAffiliates";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, Clock, Tag, Settings } from "lucide-react";
 
 interface ListingDetailContentProps {
   listing: SBIRListing;
   isAdmin: boolean;
+  isAuthenticated: boolean;
   onBackToMarketplace: () => void;
   onContactAdmin: () => void;
   onEditListing: () => void;
@@ -23,6 +25,7 @@ interface ListingDetailContentProps {
 const ListingDetailContent = ({
   listing,
   isAdmin,
+  isAuthenticated,
   onBackToMarketplace,
   onContactAdmin,
   onEditListing,
@@ -87,6 +90,11 @@ const ListingDetailContent = ({
             onContactAdmin={onContactAdmin}
             allListings={allListings}
             isCurrentUserAdmin={isAdmin}
+          />
+          
+          <RecommendedAffiliates
+            listing={listing}
+            isAuthenticated={isAuthenticated}
           />
         </div>
 
@@ -153,6 +161,11 @@ const ListingDetailContent = ({
             allListings={allListings}
             isCurrentUserAdmin={isAdmin}
             showOnlyContactAndRelated={true}
+          />
+          
+          <RecommendedAffiliates
+            listing={listing}
+            isAuthenticated={isAuthenticated}
           />
         </div>
       </div>
