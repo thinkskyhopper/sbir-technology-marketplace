@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -70,7 +70,6 @@ const RecommendedAffiliates = ({ listing, isAuthenticated }: RecommendedAffiliat
               className="flex flex-col items-center space-y-2 p-4 rounded-lg border border-border hover:bg-accent transition-colors"
             >
               <Avatar className="w-16 h-16">
-                <AvatarImage src={affiliate.photo_url || undefined} alt={affiliate.full_name || 'Affiliate'} />
                 <AvatarFallback className="bg-[#006ede] text-white">
                   {initials}
                 </AvatarFallback>

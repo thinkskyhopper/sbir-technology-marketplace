@@ -66,7 +66,17 @@ export const listingQueries = {
         profiles: listing.profile_full_name ? {
           full_name: listing.profile_full_name,
           email: null // Don't expose email for privacy
-        } : null
+        } : null,
+        recommended_affiliate_1_id: listing.recommended_affiliate_1_id,
+        recommended_affiliate_1: listing.recommended_affiliate_1_full_name ? {
+          id: listing.recommended_affiliate_1_id,
+          full_name: listing.recommended_affiliate_1_full_name,
+        } : null,
+        recommended_affiliate_2_id: listing.recommended_affiliate_2_id,
+        recommended_affiliate_2: listing.recommended_affiliate_2_full_name ? {
+          id: listing.recommended_affiliate_2_id,
+          full_name: listing.recommended_affiliate_2_full_name,
+        } : null,
       }));
 
       console.log('✅ Public listings with profiles fetched:', formattedListings.length);
