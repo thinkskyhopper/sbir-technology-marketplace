@@ -3,7 +3,9 @@ import type { SBIRListing } from "@/types/listings";
 import ListingDetailHeader from "@/components/ListingDetail/ListingDetailHeader";
 import ListingDetailHeroImage from "@/components/ListingDetail/ListingDetailHeroImage";
 import ListingDetailDescription from "@/components/ListingDetail/ListingDetailDescription";
-import ListingDetailSidebar from "@/components/ListingDetail/ListingDetailSidebar";
+import ListingDetailKeyInfo from "@/components/ListingDetail/ListingDetailKeyInfo";
+import ListingDetailContact from "@/components/ListingDetail/ListingDetailContact";
+import ListingDetailRelatedListings from "@/components/ListingDetail/ListingDetailRelatedListings";
 import RecommendedAffiliates from "@/components/ListingDetail/RecommendedAffiliates";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, DollarSign, Building, Clock, Tag, Settings } from "lucide-react";
@@ -86,17 +88,22 @@ const ListingDetailContent = ({
           </div>
 
           <div className="space-y-6">
+            <ListingDetailKeyInfo listing={listing} />
+            
             <RecommendedAffiliates
               listing={listing}
               isAuthenticated={isAuthenticated}
             />
             
-            <ListingDetailSidebar
-              listing={listing}
-              onContactAdmin={onContactAdmin}
-              allListings={allListings}
-              isCurrentUserAdmin={isAdmin}
-            />
+            <ListingDetailContact onContactAdmin={onContactAdmin} />
+            
+            {allListings.length > 0 && (
+              <ListingDetailRelatedListings
+                currentListing={listing}
+                allListings={allListings}
+                isCurrentUserAdmin={isAdmin}
+              />
+            )}
           </div>
         </div>
 
@@ -161,14 +168,15 @@ const ListingDetailContent = ({
             isAuthenticated={isAuthenticated}
           />
           
-          {/* Contact and Related Listings sections below description */}
-          <ListingDetailSidebar
-            listing={listing}
-            onContactAdmin={onContactAdmin}
-            allListings={allListings}
-            isCurrentUserAdmin={isAdmin}
-            showOnlyContactAndRelated={true}
-          />
+          <ListingDetailContact onContactAdmin={onContactAdmin} />
+          
+          {allListings.length > 0 && (
+            <ListingDetailRelatedListings
+              currentListing={listing}
+              allListings={allListings}
+              isCurrentUserAdmin={isAdmin}
+            />
+          )}
         </div>
       </div>
     </>
