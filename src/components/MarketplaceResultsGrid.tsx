@@ -1,4 +1,4 @@
-
+import { useRef } from "react";
 import MarketplaceCard from "./MarketplaceCard";
 import MarketplacePagination from "./MarketplacePagination";
 import type { SBIRListing } from "@/types/listings";
@@ -28,12 +28,22 @@ const MarketplaceResultsGrid = ({
   totalItems
 }: MarketplaceResultsGridProps) => {
   const { isAdmin } = useAuth();
+  const resultsTopRef = useRef<HTMLDivElement>(null);
 
   const startItem = (currentPage - 1) * 15 + 1;
   const endItem = Math.min(currentPage * 15, totalItems);
 
+  // Wrapper to scroll to top when page changes
+  const handlePageChange = (page: number) => {
+    onPageChange(page);
+    resultsTopRef.current?.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'start' 
+    });
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={resultsTopRef}>
       {/* Top section - responsive layout */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         {/* Listing count - full width on mobile, left on desktop */}
@@ -46,7 +56,7 @@ const MarketplaceResultsGrid = ({
           <MarketplacePagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            onPageChange={handlePageChange}
             hasNextPage={hasNextPage}
             hasPreviousPage={hasPreviousPage}
           />
@@ -74,7 +84,7 @@ const MarketplaceResultsGrid = ({
       <MarketplacePagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={onPageChange}
+        onPageChange={handlePageChange}
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
       />
