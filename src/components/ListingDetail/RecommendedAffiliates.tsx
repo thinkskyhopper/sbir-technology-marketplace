@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import type { SBIRListing } from "@/types/listings";
@@ -13,7 +13,21 @@ const RecommendedAffiliates = ({
   isAuthenticated
 }: RecommendedAffiliatesProps) => {
   const navigate = useNavigate();
-  const affiliates = [listing.recommended_affiliate_1, listing.recommended_affiliate_2].filter(Boolean);
+  const affiliates = [listing.recommended_affiliate_1, listing.recommended_affiliate_2]
+    .filter(Boolean)
+    .sort((a, b) => {
+      // Extract last name (last word in full_name)
+      const getLastName = (name: string | null) => {
+        if (!name) return '';
+        const parts = name.trim().split(' ');
+        return parts[parts.length - 1].toLowerCase();
+      };
+      
+      const lastNameA = getLastName(a?.full_name);
+      const lastNameB = getLastName(b?.full_name);
+      
+      return lastNameA.localeCompare(lastNameB);
+    });
   if (affiliates.length === 0) {
     return null;
   }
