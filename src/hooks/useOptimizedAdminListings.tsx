@@ -4,6 +4,7 @@ import { listingsService } from '@/services/listings';
 import { useAuth } from '@/contexts/AuthContext';
 
 const ADMIN_LISTINGS_QUERY_KEY = ['admin-listings'];
+const PUBLIC_LISTINGS_QUERY_KEY = ['listings'];
 
 export const useOptimizedAdminListings = () => {
   const { user, isAdmin } = useAuth();
@@ -40,6 +41,22 @@ export const useOptimizedAdminListings = () => {
     });
   };
 
+  // Invalidate BOTH admin and public listings caches
+  const invalidateAllListingsData = () => {
+    // Invalidate admin cache
+    queryClient.invalidateQueries({ 
+      queryKey: ADMIN_LISTINGS_QUERY_KEY,
+      exact: true 
+    });
+    
+    // Invalidate ALL public listing caches (matches ['listings', ...])
+    queryClient.invalidateQueries({ 
+      queryKey: PUBLIC_LISTINGS_QUERY_KEY,
+    });
+    
+    console.log('🔄 Invalidated both admin and public listings caches');
+  };
+
   // Prefetch related data
   const prefetchAdminListings = () => {
     queryClient.prefetchQuery({
@@ -52,6 +69,7 @@ export const useOptimizedAdminListings = () => {
   return {
     ...query,
     invalidateAdminListings,
+    invalidateAllListingsData,
     prefetchAdminListings,
   };
 };

@@ -55,7 +55,7 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>((listing as any).photo_url || null);
   const { updateListing } = useListingOperations();
-  const { invalidateAdminListings } = useOptimizedAdminListings();
+  const { invalidateAllListingsData } = useOptimizedAdminListings();
   const { toast } = useToast();
   const isTabVisible = useTabVisibility();
 
@@ -211,8 +211,8 @@ const EditListingForm = ({ listing, onClose }: EditListingFormProps) => {
 
       console.log('✅ Listing updated successfully, forcing data refresh...');
 
-      // Force refresh the listings data
-      invalidateAdminListings();
+      // Force refresh both admin and public listings data
+      invalidateAllListingsData();
 
       // Clear saved draft data after successful update
       clearFormData();
