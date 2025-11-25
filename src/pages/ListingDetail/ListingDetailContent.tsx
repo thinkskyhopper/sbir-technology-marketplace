@@ -85,17 +85,19 @@ const ListingDetailContent = ({
             <ListingDetailDescription description={listing.description} />
           </div>
 
-          <ListingDetailSidebar
-            listing={listing}
-            onContactAdmin={onContactAdmin}
-            allListings={allListings}
-            isCurrentUserAdmin={isAdmin}
-          />
-          
-          <RecommendedAffiliates
-            listing={listing}
-            isAuthenticated={isAuthenticated}
-          />
+          <div className="space-y-6">
+            <ListingDetailSidebar
+              listing={listing}
+              onContactAdmin={onContactAdmin}
+              allListings={allListings}
+              isCurrentUserAdmin={isAdmin}
+            />
+            
+            <RecommendedAffiliates
+              listing={listing}
+              isAuthenticated={isAuthenticated}
+            />
+          </div>
         </div>
 
         {/* Mobile layout: Key Information above description, rest below */}

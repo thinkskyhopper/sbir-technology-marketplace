@@ -43,12 +43,10 @@ export interface SBIRListing {
   recommended_affiliate_1?: {
     id: string;
     full_name: string | null;
-    photo_url?: string | null;
   } | null;
   recommended_affiliate_2?: {
     id: string;
     full_name: string | null;
-    photo_url?: string | null;
   } | null;
 }
 
