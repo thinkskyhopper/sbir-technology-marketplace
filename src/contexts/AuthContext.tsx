@@ -33,12 +33,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('🔄 [STEP 6] Auth state changed:', event);
-        console.log('👤 [STEP 6] User email:', session?.user?.email || 'No session');
+        console.log('👤 [STEP 6] Session status:', session ? 'Active' : 'No session');
         
         if (event === 'SIGNED_IN') {
           console.log('✅ [STEP 7] OAuth sign-in successful!');
-          console.log('📧 Email:', session?.user?.email);
-          console.log('🆔 User ID:', session?.user?.id);
+          console.log('🆔 User authenticated');
           console.log('🔗 Provider:', session?.user?.app_metadata?.provider);
           console.log('⏰ Session expires at:', session?.expires_at);
         } else if (event === 'SIGNED_OUT') {
@@ -112,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
-      console.log('🔍 Initial session check:', session?.user?.email || 'No session');
+      console.log('🔍 Initial session check:', session ? 'Session found' : 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       

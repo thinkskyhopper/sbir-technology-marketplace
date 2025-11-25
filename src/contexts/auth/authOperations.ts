@@ -5,7 +5,7 @@ import { getCurrentUrl, getRedirectUrl } from './urlUtils';
 export const signUp = async (email: string, password: string, fullName: string, marketingOptIn: boolean = false) => {
   const redirectUrl = `${getCurrentUrl()}/`;
   
-  console.log('Sign up attempt for:', email, 'with redirect:', redirectUrl);
+  console.log('Sign up attempt initiated with redirect:', redirectUrl);
   
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -27,7 +27,7 @@ export const signUp = async (email: string, password: string, fullName: string, 
     const isDuplicate = msg.includes('already registered') || code === 'user_already_registered';
     
     if (isDuplicate) {
-      console.log('Duplicate email detected for:', email);
+      console.log('Duplicate email detected during sign up');
       return { error: null, isDuplicate: true };
     }
     
@@ -36,7 +36,7 @@ export const signUp = async (email: string, password: string, fullName: string, 
 
   // Send welcome email after successful signup (only for new accounts)
   try {
-    console.log('Sending welcome email to:', email);
+    console.log('Sending welcome email to new user');
     
     const { error: emailError } = await supabase.functions.invoke('send-welcome-email', {
       body: {
@@ -60,7 +60,7 @@ export const signUp = async (email: string, password: string, fullName: string, 
 };
 
 export const signIn = async (email: string, password: string) => {
-  console.log('🔐 Sign in attempt for:', email);
+  console.log('🔐 Sign in attempt initiated');
   
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -128,7 +128,7 @@ export const signOut = async () => {
 export const resetPassword = async (email: string) => {
   const redirectUrl = getRedirectUrl();
   
-  console.log('Password reset request for:', email, 'with redirect:', redirectUrl);
+  console.log('Password reset request initiated with redirect:', redirectUrl);
   
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: redirectUrl
@@ -158,7 +158,7 @@ export const updatePassword = async (password: string) => {
 export const resendVerificationEmail = async (email: string) => {
   const redirectUrl = `${getCurrentUrl()}/`;
   
-  console.log('Resending verification email for:', email, 'with redirect:', redirectUrl);
+  console.log('Resending verification email with redirect:', redirectUrl);
   
   const { error } = await supabase.auth.resend({
     type: 'signup',
