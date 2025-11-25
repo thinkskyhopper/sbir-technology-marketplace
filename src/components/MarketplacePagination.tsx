@@ -1,13 +1,12 @@
-
 import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MarketplacePaginationProps {
   currentPage: number;
@@ -72,7 +71,7 @@ const MarketplacePagination = ({
     <Pagination className="mt-8">
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious 
+          <PaginationLink
             href="#"
             onClick={(e) => {
               e.preventDefault();
@@ -80,8 +79,15 @@ const MarketplacePagination = ({
                 onPageChange(currentPage - 1);
               }
             }}
-            className={!hasPreviousPage ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-          />
+            className={cn(
+              "gap-1 pl-2.5",
+              !hasPreviousPage ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            )}
+            aria-label="Go to previous page"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Previous</span>
+          </PaginationLink>
         </PaginationItem>
 
         {visiblePages.map((page, index) => (
@@ -96,7 +102,10 @@ const MarketplacePagination = ({
                   onPageChange(page);
                 }}
                 isActive={currentPage === page}
-                className="cursor-pointer"
+                className={cn(
+                  "cursor-pointer",
+                  page !== 1 && page !== totalPages && page !== currentPage && "hidden sm:flex"
+                )}
               >
                 {page}
               </PaginationLink>
@@ -105,7 +114,7 @@ const MarketplacePagination = ({
         ))}
 
         <PaginationItem>
-          <PaginationNext 
+          <PaginationLink
             href="#"
             onClick={(e) => {
               e.preventDefault();
@@ -113,8 +122,15 @@ const MarketplacePagination = ({
                 onPageChange(currentPage + 1);
               }
             }}
-            className={!hasNextPage ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-          />
+            className={cn(
+              "gap-1 pr-2.5",
+              !hasNextPage ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            )}
+            aria-label="Go to next page"
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ChevronRight className="h-4 w-4" />
+          </PaginationLink>
         </PaginationItem>
       </PaginationContent>
     </Pagination>
