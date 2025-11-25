@@ -99,8 +99,8 @@ export const listingQueries = {
         supabase.from('sbir_listings')
           .select(`
             *,
-            recommended_affiliate_1:profiles!sbir_listings_recommended_affiliate_1_id_fkey(id, full_name, photo_url),
-            recommended_affiliate_2:profiles!sbir_listings_recommended_affiliate_2_id_fkey(id, full_name, photo_url)
+      recommended_affiliate_1:profiles!sbir_listings_recommended_affiliate_1_id_fkey(id, full_name),
+      recommended_affiliate_2:profiles!sbir_listings_recommended_affiliate_2_id_fkey(id, full_name)
           `)
           .order('created_at', { ascending: false }),
         { timeout: 30000, retries: 4 }
