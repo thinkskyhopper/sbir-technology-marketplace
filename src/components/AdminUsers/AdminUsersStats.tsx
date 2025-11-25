@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface AdminUsersStatsProps {
   totalUsers: number;
   adminUsers: number;
-  consultantUsers: number;
+  affiliateUsers: number;
   regularUsers: number;
   marketingSubscribers: number;
 }
@@ -12,7 +12,7 @@ interface AdminUsersStatsProps {
 const AdminUsersStats = ({ 
   totalUsers, 
   adminUsers, 
-  consultantUsers, 
+  affiliateUsers, 
   regularUsers,
   marketingSubscribers 
 }: AdminUsersStatsProps) => {
@@ -38,10 +38,10 @@ const AdminUsersStats = ({
       
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Consultants</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Affiliates</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{consultantUsers}</div>
+          <div className="text-2xl font-bold">{affiliateUsers}</div>
         </CardContent>
       </Card>
       

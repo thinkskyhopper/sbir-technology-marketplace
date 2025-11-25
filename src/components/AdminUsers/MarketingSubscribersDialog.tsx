@@ -121,16 +121,16 @@ export const MarketingSubscribersDialog = ({ users, marketingSubscribers }: Mark
                         </TableCell>
                         <TableCell>
                           <Badge 
-                            variant={user.role === 'admin' ? 'default' : user.role === 'consultant' ? 'secondary' : 'outline'}
+                            variant={user.role === 'admin' ? 'default' : user.role === 'affiliate' ? 'secondary' : 'outline'}
                             className={
                               user.role === 'admin' 
                                 ? 'bg-amber-500 hover:bg-amber-600 text-xs' 
-                                : user.role === 'consultant'
+                                : user.role === 'affiliate'
                                 ? 'bg-white hover:bg-gray-50 text-black border-gray-300 text-xs'
                                 : 'text-xs'
                             }
                           >
-                            {user.role === 'admin' ? 'Administrator' : user.role === 'consultant' ? 'Consultant' : 'User'}
+                            {user.role === 'admin' ? 'Administrator' : user.role === 'affiliate' ? 'Affiliate' : 'User'}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">

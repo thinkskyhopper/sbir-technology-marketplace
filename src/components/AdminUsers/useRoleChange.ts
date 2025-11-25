@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserWithStats } from "./types";
 
-type UserRole = "admin" | "user" | "consultant" | "verified";
+type UserRole = "admin" | "user" | "affiliate" | "verified";
 
 export const useRoleChange = (users?: UserWithStats[]) => {
   const { toast } = useToast();
