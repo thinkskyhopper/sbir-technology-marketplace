@@ -1,9 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building, DollarSign, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import type { SBIRListing } from "@/types/listings";
+import { ListingTypeBadge } from "@/utils/listingTypeBadge";
 
 interface BasicInformationCardProps {
   listing: SBIRListing;
@@ -90,6 +90,11 @@ export const BasicInformationCard = ({ listing }: BasicInformationCardProps) => 
           <div>
             <p className="text-sm text-muted-foreground">Phase</p>
             <p className="font-medium">{listing.phase}</p>
+          </div>
+          
+          <div>
+            <p className="text-sm text-muted-foreground">Type</p>
+            <ListingTypeBadge type={listing.listing_type} className="mt-1" />
           </div>
         </div>
         
