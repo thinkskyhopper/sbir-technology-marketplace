@@ -11,7 +11,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-daily-notifications]
-verify_jwt = true
+verify_jwt = false
 
 [functions.check-email-exists]
 verify_jwt = false
