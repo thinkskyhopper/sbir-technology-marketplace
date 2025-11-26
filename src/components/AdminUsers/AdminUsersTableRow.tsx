@@ -1,5 +1,5 @@
 
-import { Mail, Calendar, FileText, ChevronDown, Bell } from "lucide-react";
+import { Mail, Calendar, FileText, ChevronDown, Bell, Lock, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { UserWithStats } from "./types";
 import { useState } from "react";
 import { NotificationCategoriesDialog } from "./NotificationCategoriesDialog";
+import { useAccountUnlock } from "./useAccountUnlock";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type UserRole = "admin" | "user" | "affiliate" | "verified";
 
@@ -29,6 +31,7 @@ export const AdminUsersTableRow = ({
   isUpdatingRole
 }: AdminUsersTableRowProps) => {
   const [showNotificationDialog, setShowNotificationDialog] = useState(false);
+  const unlockMutation = useAccountUnlock();
   
   console.log(`User ${user.email} can_submit_listings:`, user.can_submit_listings);
   
@@ -66,16 +69,50 @@ export const AdminUsersTableRow = ({
                 </span>
               </div>
               <div className="min-w-0 flex-1">
-                <button
-                  onClick={() => onUserClick(user.id)}
-                  className="font-medium text-primary hover:underline cursor-pointer text-sm block truncate"
-                >
-                  {user.full_name || 'No name provided'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onUserClick(user.id)}
+                    className="font-medium text-primary hover:underline cursor-pointer text-sm block truncate"
+                  >
+                    {user.full_name || 'No name provided'}
+                  </button>
+                  {user.account_locked && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge variant="destructive" className="text-xs">
+                            <Lock className="w-3 h-3 mr-1" />
+                            Locked
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <div className="text-xs space-y-1">
+                            <div>Reason: {user.lock_reason || 'Security'}</div>
+                            {user.account_locked_until && (
+                              <div>Until: {new Date(user.account_locked_until).toLocaleString()}</div>
+                            )}
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Mail className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span className="truncate">{user.email}</span>
                 </div>
+                {user.account_locked && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => unlockMutation.mutate(user.id)}
+                    disabled={unlockMutation.isPending}
+                    className="mt-1 h-6 text-xs"
+                  >
+                    <Unlock className="w-3 h-3 mr-1" />
+                    {unlockMutation.isPending ? 'Unlocking...' : 'Unlock Account'}
+                  </Button>
+                )}
               </div>
             </div>
           </div>

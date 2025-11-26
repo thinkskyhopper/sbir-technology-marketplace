@@ -7,6 +7,7 @@ interface AdminUsersStatsProps {
   affiliateUsers: number;
   regularUsers: number;
   marketingSubscribers: number;
+  lockedAccounts: number;
 }
 
 const AdminUsersStats = ({ 
@@ -14,10 +15,11 @@ const AdminUsersStats = ({
   adminUsers, 
   affiliateUsers, 
   regularUsers,
-  marketingSubscribers 
+  marketingSubscribers,
+  lockedAccounts
 }: AdminUsersStatsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
@@ -60,6 +62,15 @@ const AdminUsersStats = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">{marketingSubscribers}</div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">Locked Accounts</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-red-600">{lockedAccounts}</div>
         </CardContent>
       </Card>
     </div>

@@ -9,6 +9,10 @@ export interface UserWithStats {
   can_submit_listings: boolean;
   notification_categories: string[] | null;
   marketing_emails_enabled: boolean;
+  account_locked: boolean;
+  account_locked_at: string | null;
+  account_locked_until: string | null;
+  lock_reason: string | null;
 }
 
 export interface AdminUsersTableProps {
