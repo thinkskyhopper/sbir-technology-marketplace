@@ -106,6 +106,23 @@ export const signIn = async (email: string, password: string) => {
 
     console.log('✅ Sign in successful');
     
+    // Set the session in the browser's Supabase client
+    if (data?.data?.session) {
+      const { access_token, refresh_token } = data.data.session;
+      const { error: setSessionError } = await supabase.auth.setSession({
+        access_token,
+        refresh_token
+      });
+      
+      if (setSessionError) {
+        console.error('Failed to set session:', setSessionError);
+        return { 
+          error: new Error('Failed to establish session'),
+          accountDeleted: false 
+        };
+      }
+    }
+    
     // Check if account has been soft-deleted
     if (data?.data?.user?.id) {
       const { data: profile } = await supabase
