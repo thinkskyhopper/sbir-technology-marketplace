@@ -73,22 +73,29 @@ const PhotoUpload = ({ currentPhotoUrl, onPhotoChange, disabled }: PhotoUploadPr
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `listing-photos/${fileName}`;
 
-      // Upload to Supabase storage
-      const { error: uploadError } = await supabase.storage
-        .from('listing-photos')
-        .upload(filePath, file);
+      // Upload via edge function with server-side validation
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('bucket', 'listing-photos');
+      formData.append('filePath', filePath);
+
+      const { data, error: uploadError } = await supabase.functions.invoke(
+        'validate-and-upload-image',
+        {
+          body: formData,
+        }
+      );
 
       if (uploadError) {
         throw uploadError;
       }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('listing-photos')
-        .getPublicUrl(filePath);
+      if (!data?.publicUrl) {
+        throw new Error('No public URL returned from upload');
+      }
 
-      setPreviewUrl(publicUrl);
-      onPhotoChange(publicUrl);
+      setPreviewUrl(data.publicUrl);
+      onPhotoChange(data.publicUrl);
 
       toast({
         title: "Photo uploaded",
