@@ -9,6 +9,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertCircle, CheckCircle, Eye, EyeOff, Lock, Info } from 'lucide-react';
 import { sanitizeErrorMessage } from '@/utils/errorMessages';
+import { validatePassword, validatePasswordConfirmation } from '@/utils/validation';
+import PasswordStrengthIndicator from '@/components/Auth/PasswordStrengthIndicator';
 
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
@@ -22,23 +24,6 @@ const UpdatePassword = () => {
   const { updatePassword, signOut, user } = useAuth();
   const navigate = useNavigate();
 
-  const validatePassword = (pwd: string) => {
-    const errors = [];
-    if (pwd.length < 6) {
-      errors.push('At least 6 characters long');
-    }
-    if (!/[A-Z]/.test(pwd)) {
-      errors.push('One uppercase letter');
-    }
-    if (!/[a-z]/.test(pwd)) {
-      errors.push('One lowercase letter');
-    }
-    if (!/[0-9]/.test(pwd)) {
-      errors.push('One number');
-    }
-    return errors;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -46,15 +31,16 @@ const UpdatePassword = () => {
     setSuccess(false);
 
     // Validation
-    const passwordErrors = validatePassword(password);
-    if (passwordErrors.length > 0) {
-      setError(`Password must contain: ${passwordErrors.join(', ')}`);
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.error || 'Invalid password');
       setLoading(false);
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    const confirmValidation = validatePasswordConfirmation(password, confirmPassword);
+    if (!confirmValidation.isValid) {
+      setError(confirmValidation.error || 'Passwords do not match');
       setLoading(false);
       return;
     }
@@ -166,11 +152,7 @@ const UpdatePassword = () => {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
-            {password && (
-              <div className="text-xs text-muted-foreground">
-                Password requirements: 6+ characters, uppercase, lowercase, number
-              </div>
-            )}
+            {password && <PasswordStrengthIndicator password={password} />}
           </div>
           
           <div className="space-y-2">
