@@ -35,7 +35,11 @@ const AdminUsers = () => {
           created_at,
           can_submit_listings,
           notification_categories,
-          marketing_emails_enabled
+          marketing_emails_enabled,
+          account_locked,
+          account_locked_at,
+          account_locked_until,
+          lock_reason
         `)
         .order('created_at', { ascending: false });
 
@@ -81,6 +85,7 @@ const AdminUsers = () => {
   const affiliateUsers = users?.filter(user => user.role === 'affiliate').length || 0;
   const regularUsers = users?.filter(user => user.role === 'user').length || 0;
   const marketingSubscribers = users?.filter(user => user.marketing_emails_enabled).length || 0;
+  const lockedAccounts = users?.filter(user => user.account_locked).length || 0;
 
   if (isLoading) {
     return (
@@ -106,13 +111,14 @@ const AdminUsers = () => {
         <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 flex-1">
           <div className="mb-6 sm:mb-8">
             <AdminUsersHeader />
-            <AdminUsersStats
-              totalUsers={totalUsers}
-              adminUsers={adminUsers}
-              affiliateUsers={affiliateUsers}
-              regularUsers={regularUsers}
-              marketingSubscribers={marketingSubscribers}
-            />
+          <AdminUsersStats 
+            totalUsers={totalUsers}
+            adminUsers={adminUsers}
+            affiliateUsers={affiliateUsers}
+            regularUsers={regularUsers}
+            marketingSubscribers={marketingSubscribers}
+            lockedAccounts={lockedAccounts}
+          />
           </div>
 
           <AdminUsersTable users={users} />

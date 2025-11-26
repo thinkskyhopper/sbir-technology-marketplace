@@ -346,6 +346,9 @@ export type Database = {
         Row: {
           account_deleted: boolean
           account_deleted_at: string | null
+          account_locked: boolean
+          account_locked_at: string | null
+          account_locked_until: string | null
           bio: string | null
           can_submit_listings: boolean
           category_email_notifications_enabled: boolean
@@ -359,6 +362,7 @@ export type Database = {
           id: string
           last_name: string | null
           listing_email_notifications_enabled: boolean
+          lock_reason: string | null
           marketing_emails_enabled: boolean
           notification_categories: Json | null
           role: Database["public"]["Enums"]["user_role"]
@@ -367,6 +371,9 @@ export type Database = {
         Insert: {
           account_deleted?: boolean
           account_deleted_at?: string | null
+          account_locked?: boolean
+          account_locked_at?: string | null
+          account_locked_until?: string | null
           bio?: string | null
           can_submit_listings?: boolean
           category_email_notifications_enabled?: boolean
@@ -380,6 +387,7 @@ export type Database = {
           id: string
           last_name?: string | null
           listing_email_notifications_enabled?: boolean
+          lock_reason?: string | null
           marketing_emails_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
@@ -388,6 +396,9 @@ export type Database = {
         Update: {
           account_deleted?: boolean
           account_deleted_at?: string | null
+          account_locked?: boolean
+          account_locked_at?: string | null
+          account_locked_until?: string | null
           bio?: string | null
           can_submit_listings?: boolean
           category_email_notifications_enabled?: boolean
@@ -401,6 +412,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           listing_email_notifications_enabled?: boolean
+          lock_reason?: string | null
           marketing_emails_enabled?: boolean
           notification_categories?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
@@ -677,6 +689,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_unlock_user_account: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
       change_user_role: {
         Args: {
           new_role: Database["public"]["Enums"]["app_role"]
@@ -849,6 +865,7 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: boolean
       }
+      unlock_user_account: { Args: { user_id_param: string }; Returns: boolean }
     }
     Enums: {
       admin_action_type: "approval" | "denial" | "edit" | "deletion"

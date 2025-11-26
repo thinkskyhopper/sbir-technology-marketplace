@@ -20,6 +20,8 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEmailNotConfirmed, setIsEmailNotConfirmed] = useState(false);
+  const [isAccountLocked, setIsAccountLocked] = useState(false);
+  const [lockedUntil, setLockedUntil] = useState<string | null>(null);
   const [resendingEmail, setResendingEmail] = useState(false);
   
   const { signIn, signInWithGoogle, resendVerificationEmail } = useAuth();
@@ -29,9 +31,11 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
     setLoading(true);
     setError(null);
     setIsEmailNotConfirmed(false);
+    setIsAccountLocked(false);
+    setLockedUntil(null);
 
     try {
-      const { error, accountDeleted } = await signIn(email, password);
+      const { error, accountDeleted, isLocked, lockedUntil: lockExpiry } = await signIn(email, password);
       
       if (error) {
         if (accountDeleted) {
@@ -41,6 +45,10 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
             className: 'bg-destructive text-destructive-foreground border-destructive'
           });
           setError('This account has been deleted. If you believe this is an error, please contact support.');
+        } else if (isLocked) {
+          setIsAccountLocked(true);
+          setLockedUntil(lockExpiry || null);
+          setError(error.message || 'Your account is temporarily locked due to too many failed sign-in attempts.');
         } else {
           // Check if the error is about unverified email
           if (isEmailNotConfirmedError(error)) {
@@ -147,6 +155,23 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             {error}
+            {isAccountLocked && lockedUntil && (
+              <div className="mt-3 space-y-2">
+                <div className="text-sm">
+                  Your account will automatically unlock at{' '}
+                  {new Date(lockedUntil).toLocaleTimeString()} or you can unlock it immediately by resetting your password.
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={onShowPasswordReset}
+                  className="w-full"
+                >
+                  Reset Password to Unlock
+                </Button>
+              </div>
+            )}
             {isEmailNotConfirmed && (
               <div className="mt-3">
                 <Button

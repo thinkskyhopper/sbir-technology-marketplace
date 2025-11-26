@@ -64,17 +64,30 @@ export const signIn = async (email: string, password: string) => {
     console.log('🔐 Sign in attempt initiated');
     
     // Call the sign-in wrapper edge function for rate limiting
-    const { data, error } = await supabase.functions.invoke('sign-in-wrapper', {
-      body: { email, password }
+    const response = await fetch('https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/sign-in-wrapper', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+      },
+      body: JSON.stringify({ email, password })
     });
 
-    if (error) {
-      console.error('❌ Sign in error');
-      return { error, accountDeleted: false };
+    const data = await response.json();
+
+    // Check for account lockout (423 status)
+    if (response.status === 423) {
+      console.log('🔒 Account locked');
+      return { 
+        error: new Error(data.error || 'Account is locked'),
+        accountDeleted: false,
+        isLocked: true,
+        lockedUntil: data.lockedUntil
+      };
     }
 
-    // Check for rate limiting
-    if (data?.isRateLimited) {
+    // Check for rate limiting (429 status)
+    if (response.status === 429) {
       console.log('🚫 Rate limit exceeded');
       return { 
         error: new Error(data.error || 'Too many failed sign-in attempts. Please try again later.'),
@@ -83,10 +96,10 @@ export const signIn = async (email: string, password: string) => {
     }
 
     // Check for authentication error
-    if (data?.error) {
+    if (!response.ok || data?.error) {
       console.error('❌ Authentication failed');
       return { 
-        error: new Error(data.error),
+        error: new Error(data?.error || 'Sign in failed'),
         accountDeleted: false
       };
     }
@@ -199,9 +212,30 @@ export const updatePassword = async (password: string) => {
   
   if (error) {
     console.error('Password update error:', error);
+    return { error };
+  }
+
+  // Get current user and call unlock function
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      console.log('Calling password-reset-complete to unlock account');
+      await fetch('https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/password-reset-complete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+        },
+        body: JSON.stringify({ userId: user.id })
+      });
+    }
+  } catch (unlockError) {
+    console.error('Error calling unlock function:', unlockError);
+    // Don't fail password update if unlock fails
   }
   
-  return { error };
+  return { error: null };
 };
 
 export const resendVerificationEmail = async (email: string) => {
