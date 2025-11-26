@@ -61,10 +61,27 @@ const Auth = () => {
       console.log('Recovery mode detected from URL tokens');
       setIsRecoveryMode(true);
       setAuthError(null);
+      
+      // Clear the URL hash to remove sensitive tokens from the address bar
+      // This prevents token exposure in browser history and referrer headers
+      window.history.replaceState(
+        {}, 
+        document.title, 
+        window.location.pathname + window.location.search
+      );
     } else if (mode === 'reset') {
       console.log('Recovery mode detected from search params');
       setIsRecoveryMode(true);
       setAuthError(null);
+      
+      // Clear hash if present for consistency
+      if (window.location.hash) {
+        window.history.replaceState(
+          {}, 
+          document.title, 
+          window.location.pathname + window.location.search
+        );
+      }
     }
   }, [mode]);
 
