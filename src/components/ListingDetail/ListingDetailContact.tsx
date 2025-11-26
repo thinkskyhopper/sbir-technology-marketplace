@@ -18,12 +18,6 @@ const ListingDetailContact = ({
           <Mail className="w-4 h-4 mr-2" />
           Contact
         </Button>
-        
-        <div className="text-xs text-muted-foreground">
-          <p>• Verified opportunity details</p>
-          <p>• Expert guidance included</p>
-          <p>• Secure transaction process</p>
-        </div>
       </CardContent>
     </Card>;
 };
