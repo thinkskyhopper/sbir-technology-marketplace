@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/config/supabase';
 
 export interface NetworkDiagnostics {
   isVpnDetected: boolean;
@@ -11,7 +12,7 @@ export interface NetworkDiagnostics {
 }
 
 export class NetworkDiagnosticsService {
-  private supabaseUrl = 'https://amhznlnhrrugxatbeayo.supabase.co';
+  private supabaseUrl = SUPABASE_URL;
   
   async runDiagnostics(): Promise<NetworkDiagnostics> {
     console.log('🔍 Running network diagnostics...');
@@ -84,7 +85,7 @@ export class NetworkDiagnosticsService {
         await fetch(`${this.supabaseUrl}/rest/v1/`, {
           method: 'HEAD',
           headers: {
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+            'apikey': SUPABASE_ANON_KEY
           }
         });
         
@@ -216,7 +217,7 @@ export class NetworkDiagnosticsService {
         method: 'HEAD',
         signal: controller.signal,
         headers: {
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+          'apikey': SUPABASE_ANON_KEY
         }
       });
       

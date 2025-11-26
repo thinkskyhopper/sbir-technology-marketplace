@@ -861,6 +861,7 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: boolean
       }
+      send_daily_notifications_cron: { Args: never; Returns: undefined }
       soft_delete_user_account: {
         Args: { user_id_param: string }
         Returns: boolean
