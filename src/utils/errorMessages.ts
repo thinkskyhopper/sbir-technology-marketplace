@@ -128,8 +128,17 @@ export function isEmailNotConfirmedError(error: Error | string | unknown): boole
  * Checks if an error is a rate limit error
  */
 export function isRateLimitError(error: Error | string | unknown): boolean {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  const lowerMessage = errorMessage.toLowerCase();
+  if (!error) return false;
   
-  return lowerMessage.includes('rate limit') || lowerMessage.includes('too many');
+  const message = typeof error === 'string' 
+    ? error.toLowerCase()
+    : (error as any)?.message?.toLowerCase?.() ?? '';
+  
+  const status = (error as any)?.status;
+  const isRateLimited = (error as any)?.isRateLimited === true;
+  
+  return status === 429 || 
+         isRateLimited ||
+         message.includes('rate limit') || 
+         message.includes('too many');
 }

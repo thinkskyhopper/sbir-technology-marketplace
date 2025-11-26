@@ -408,6 +408,30 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_attempts: {
+        Row: {
+          action_type: string
+          attempted_at: string
+          id: string
+          identifier: string
+          ip_address: string | null
+        }
+        Insert: {
+          action_type: string
+          attempted_at?: string
+          id?: string
+          identifier: string
+          ip_address?: string | null
+        }
+        Update: {
+          action_type?: string
+          attempted_at?: string
+          id?: string
+          identifier?: string
+          ip_address?: string | null
+        }
+        Relationships: []
+      }
       sbir_listings: {
         Row: {
           address: string | null
@@ -660,6 +684,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_old_rate_limit_attempts: { Args: never; Returns: undefined }
       current_user_is_admin: { Args: never; Returns: boolean }
       current_user_not_deleted: { Args: never; Returns: boolean }
       get_profile_listings: {
