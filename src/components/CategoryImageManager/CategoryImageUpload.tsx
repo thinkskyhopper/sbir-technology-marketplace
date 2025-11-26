@@ -74,10 +74,10 @@ const CategoryImageUpload = ({
       const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
       const fileName = `category-${categorySlug}.${fileExt}`;
 
-      console.log('Uploading file:', fileName, 'to bucket: category-images');
+      console.log('Uploading file via validation function:', fileName, 'to bucket: category-images');
 
       // First, try to remove any existing file with different extensions
-      const possibleExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      const possibleExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
       for (const ext of possibleExtensions) {
         const oldFileName = `category-${categorySlug}.${ext}`;
         if (oldFileName !== fileName) {
@@ -87,20 +87,29 @@ const CategoryImageUpload = ({
         }
       }
 
-      // Upload to Supabase storage (note: no subdirectory, just the filename)
-      const { error: uploadError } = await supabase.storage
-        .from('category-images')
-        .upload(fileName, file, { 
-          upsert: true,
-          cacheControl: '0' // Disable caching for immediate updates
-        });
+      // Upload via edge function with server-side validation
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('bucket', 'category-images');
+      formData.append('filePath', fileName);
+
+      const { data, error: uploadError } = await supabase.functions.invoke(
+        'validate-and-upload-image',
+        {
+          body: formData,
+        }
+      );
 
       if (uploadError) {
         console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
-      console.log('File uploaded successfully:', fileName);
+      if (!data?.publicUrl) {
+        throw new Error('No public URL returned from upload');
+      }
+
+      console.log('File uploaded successfully via edge function:', data.publicUrl);
 
       toast({
         title: "Image uploaded",
