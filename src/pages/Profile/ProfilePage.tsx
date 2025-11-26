@@ -1,9 +1,10 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { isValidUUID } from "@/utils/uuidValidation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProfileContent from "./ProfileContent";
@@ -27,6 +28,7 @@ interface Profile {
 const ProfilePage = () => {
   const { user, profile: authProfile, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -49,6 +51,19 @@ const ProfilePage = () => {
       return;
     }
     
+    // Validate UUID format if userId is present
+    if (userId && !isValidUUID(userId)) {
+      console.error('❌ Invalid UUID format:', userId);
+      toast({
+        title: "Invalid Profile ID",
+        description: "The profile ID in the URL is not valid.",
+        variant: "destructive",
+      });
+      // Redirect to own profile
+      navigate('/profile', { replace: true });
+      return;
+    }
+    
     if (userId && userId !== user?.id) {
       console.log('👥 Fetching other user profile for:', userId);
       fetchOtherUserProfile(userId);
@@ -58,7 +73,7 @@ const ProfilePage = () => {
       setIsOtherUserProfile(false);
       setLoading(false);
     }
-  }, [userId, user?.id, authProfile, authLoading]);
+  }, [userId, user?.id, authProfile, authLoading, navigate, toast]);
 
   const fetchOtherUserProfile = async (targetUserId: string) => {
     setLoading(true);

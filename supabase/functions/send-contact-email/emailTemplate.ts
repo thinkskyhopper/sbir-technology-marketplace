@@ -1,5 +1,5 @@
-
 import type { ContactEmailRequest } from './types.ts';
+import { escapeHtml } from './htmlUtils.ts';
 
 export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('en-US', {
@@ -29,12 +29,12 @@ export const generateEmailTemplate = (data: ContactEmailRequest): string => {
       <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
         <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; margin: 20px 0;">
           <h2 style="color: #28a745; margin-top: 0;">Contact Information</h2>
-          <p><strong>Name:</strong> ${data.name}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>User Account:</strong> ${data.userEmail}</p>
-          ${data.company ? `<p><strong>Company:</strong> ${data.company}</p>` : ''}
-          ${data.referredBy ? `<p><strong>Referred by:</strong> ${data.referredBy}</p>` : ''}
-          ${data.howDidYouFindUs ? `<p><strong>How did you find us:</strong> ${data.howDidYouFindUs}</p>` : ''}
+          <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+          <p><strong>User Account:</strong> ${escapeHtml(data.userEmail)}</p>
+          ${data.company ? `<p><strong>Company:</strong> ${escapeHtml(data.company)}</p>` : ''}
+          ${data.referredBy ? `<p><strong>Referred by:</strong> ${escapeHtml(data.referredBy)}</p>` : ''}
+          ${data.howDidYouFindUs ? `<p><strong>How did you find us:</strong> ${escapeHtml(data.howDidYouFindUs)}</p>` : ''}
         </div>
   `;
 
@@ -42,18 +42,18 @@ export const generateEmailTemplate = (data: ContactEmailRequest): string => {
     emailContent += `
       <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; margin: 20px 0;">
         <h2 style="color: #007bff; margin-top: 0;">Interest Details</h2>
-        <p><strong>Interest Level:</strong> ${data.interestLevel}</p>
-        <p><strong>SBIR Experience:</strong> ${data.experience}</p>
-        <p><strong>Timeline:</strong> ${data.timeline}</p>
+        <p><strong>Interest Level:</strong> ${escapeHtml(data.interestLevel)}</p>
+        <p><strong>SBIR Experience:</strong> ${escapeHtml(data.experience)}</p>
+        <p><strong>Timeline:</strong> ${escapeHtml(data.timeline)}</p>
       </div>
       
       <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #6f42c1; margin: 20px 0;">
         <h2 style="color: #6f42c1; margin-top: 0;">Contract Details</h2>
-        <p><strong>Title:</strong> ${data.listing.title}</p>
-        <p><strong>Agency:</strong> ${data.listing.agency}</p>
-        <p><strong>Phase:</strong> ${data.listing.phase}</p>
+        <p><strong>Title:</strong> ${escapeHtml(data.listing.title)}</p>
+        <p><strong>Agency:</strong> ${escapeHtml(data.listing.agency)}</p>
+        <p><strong>Phase:</strong> ${escapeHtml(data.listing.phase)}</p>
         <p><strong>Value:</strong> ${formatCurrency(data.listing.value)}</p>
-        <p style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 4px;"><strong>Contract ID:</strong> ${data.listing.id}</p>
+        <p style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 4px;"><strong>Contract ID:</strong> ${escapeHtml(data.listing.id)}</p>
       </div>
     `;
   }
@@ -62,7 +62,7 @@ export const generateEmailTemplate = (data: ContactEmailRequest): string => {
     emailContent += `
       <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0;">
         <h2 style="color: #e68900; margin-top: 0;">Additional Message</h2>
-        <p style="white-space: pre-wrap;">${data.message}</p>
+        <p style="white-space: pre-wrap;">${escapeHtml(data.message)}</p>
       </div>
     `;
   }
@@ -84,7 +84,8 @@ export const generateEmailTemplate = (data: ContactEmailRequest): string => {
 export const generateEmailSubject = (data: ContactEmailRequest): string => {
   const isGenericContact = data.listing.id === "general-inquiry";
   
+  // Escape HTML in subject line for safety (email clients should handle this, but be safe)
   return isGenericContact 
-    ? `New General Contact Inquiry from ${data.name}`
-    : `New SBIR Contract Inquiry - ${data.listing.title}`;
+    ? `New General Contact Inquiry from ${escapeHtml(data.name)}`
+    : `New SBIR Contract Inquiry - ${escapeHtml(data.listing.title)}`;
 };

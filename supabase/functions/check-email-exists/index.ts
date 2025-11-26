@@ -49,24 +49,12 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { email }: CheckEmailRequest = await req.json();
 
-    if (!email || typeof email !== "string") {
-      // Ensure consistent timing even for errors
+    // Validate email using shared utility
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
       await ensureMinimumDelay(startTime);
       return new Response(
-        JSON.stringify({ error: "Invalid email provided" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
-      );
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      await ensureMinimumDelay(startTime);
-      return new Response(
-        JSON.stringify({ error: "Invalid email format" }),
+        JSON.stringify({ error: emailValidation.error || "Invalid email provided" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders },
