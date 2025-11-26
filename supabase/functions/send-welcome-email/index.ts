@@ -73,7 +73,21 @@ Deno.serve(async (req) => {
   }
 })
 
+function escapeHtml(text: string): string {
+  if (!text) return '';
+  
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/\//g, '&#x2F;');
+}
+
 function createWelcomeEmailHtml(firstName: string, email: string): string {
+  const safeFirstName = escapeHtml(firstName);
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -88,7 +102,7 @@ function createWelcomeEmailHtml(firstName: string, email: string): string {
         
         <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; margin: 30px 0; border: 1px solid #e5e7eb; text-align: left;">
           <p style="font-size: 16px; margin-bottom: 20px; color: #4b5563; line-height: 1.7;">
-            Hello ${firstName},
+            Hello ${safeFirstName},
           </p>
           
           <p style="font-size: 16px; margin-bottom: 20px; color: #4b5563; line-height: 1.7;">

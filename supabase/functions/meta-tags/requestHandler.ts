@@ -5,6 +5,7 @@ import { getListingImage } from './imageUtils.ts';
 import { escapeHtml } from './textUtils.ts';
 import { createDescription } from './descriptionUtils.ts';
 import { generateMetaTagsResponse } from './metaTagGenerator.ts';
+import { validateDomain } from './domainUtils.ts';
 import type { MetaData, Listing } from './types.ts';
 
 export const handleRequest = async (req: Request, corsHeaders: Record<string, string>) => {
@@ -31,18 +32,9 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
   console.log('Request URL:', req.url);
   console.log('Request Headers:', Object.fromEntries(req.headers.entries()));
 
-  // Determine the correct app domain
-  let appDomain = 'https://82c5feb4-6704-4122-bfd9-18a4a7de2d6b.lovableproject.com'; // Default fallback
-  
-  if (domainParam) {
-    try {
-      const parsedDomain = new URL(domainParam);
-      appDomain = `${parsedDomain.protocol}//${parsedDomain.host}`;
-      console.log('Using domain from parameter:', appDomain);
-    } catch (e) {
-      console.log('Could not parse domain parameter:', domainParam, 'Error:', e);
-    }
-  }
+  // Determine the correct app domain with allowlist validation
+  const defaultDomain = 'https://82c5feb4-6704-4122-bfd9-18a4a7de2d6b.lovableproject.com';
+  const appDomain = validateDomain(domainParam, defaultDomain);
 
   const listingUrl = `${appDomain}/listing/${listingId}`;
   console.log('Target listing URL:', listingUrl);
