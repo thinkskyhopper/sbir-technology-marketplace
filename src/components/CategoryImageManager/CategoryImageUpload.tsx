@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { isAllowedImageExtension, validateImageMagicBytes } from "@/utils/imageValidation";
 
 interface CategoryImageUploadProps {
   category: string;
@@ -25,7 +26,17 @@ const CategoryImageUpload = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
+    // 1. Check extension allowlist
+    if (!isAllowedImageExtension(file.name)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select a JPG, PNG, WebP, or GIF image.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 2. Check MIME type (basic check)
     if (!file.type.startsWith('image/')) {
       toast({
         title: "Invalid file type",
@@ -35,7 +46,17 @@ const CategoryImageUpload = ({
       return;
     }
 
-    // Validate file size (max 5MB)
+    // 3. Validate magic bytes
+    if (!await validateImageMagicBytes(file)) {
+      toast({
+        title: "Invalid image",
+        description: "The file does not appear to be a valid image.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 4. Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         title: "File too large",
