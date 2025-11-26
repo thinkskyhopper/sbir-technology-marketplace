@@ -34,34 +34,30 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify JWT token - this function should only be called by authenticated cron jobs or admins
+    // Verify cron secret for security - only cron jobs with correct secret can trigger this
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      console.error('Missing authorization header');
+    const expectedSecret = Deno.env.get('CRON_SECRET');
+    
+    if (!expectedSecret) {
+      console.error('CRON_SECRET not configured');
       return new Response(
-        JSON.stringify({ error: 'Unauthorized: Missing authorization' }),
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (!authHeader || authHeader !== `Bearer ${expectedSecret}`) {
+      console.error('Unauthorized: Invalid or missing cron secret');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    console.log('Starting daily notifications job...');
     
-    // Verify the token
-    const supabaseAuth = createClient(supabaseUrl, supabaseServiceKey);
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
-    
-    if (authError || !user) {
-      console.error('Invalid token or user:', authError);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized: Invalid token' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    console.log(`Starting daily notifications job (triggered by: ${user.email})...`);
-    
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const resendApiKey = Deno.env.get('RESEND_API_KEY')!
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
