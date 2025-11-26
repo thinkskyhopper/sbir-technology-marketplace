@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -34,12 +34,12 @@ const RecommendedAffiliates = ({
   if (!isAuthenticated) {
     return <Card>
       <CardHeader>
-        <CardTitle>Recommended Experts</CardTitle>
+        <CardTitle>Recommended Affiliate{affiliates.length === 1 ? '' : 's'}</CardTitle>
+        <CardDescription>
+          Sign in to view our recommended {affiliates.length === 1 ? 'affiliate' : 'affiliates'} for this listing.
+        </CardDescription>
       </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Sign in to view our recommended experts for this listing.
-          </p>
           <Button onClick={() => navigate('/auth')} className="w-full">
             Sign In
           </Button>
@@ -48,7 +48,12 @@ const RecommendedAffiliates = ({
   }
   return <Card>
     <CardHeader>
-      <CardTitle>Recommended Affiliates</CardTitle>
+      <CardTitle>
+        {affiliates.length === 1 ? 'Recommended Affiliate' : 'Recommended Affiliates'}
+      </CardTitle>
+      <CardDescription>
+        Among our team of experts, {affiliates.length === 1 ? 'this member has' : 'these members have'} the most experience with contracts and acquisition in this field. Interested in this opportunity? Book a conversation by selecting their portrait or by reaching out through the contact form below.
+      </CardDescription>
     </CardHeader>
       <CardContent className="space-y-4">
         {affiliates.map(affiliate => {
