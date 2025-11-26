@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserWithStats } from "./types";
+import { sanitizeErrorMessage } from "@/utils/errorMessages";
 
 export const usePermissionChange = (users?: UserWithStats[]) => {
   const { toast } = useToast();
@@ -91,21 +92,9 @@ export const usePermissionChange = (users?: UserWithStats[]) => {
     } catch (error) {
       console.error('Error updating submission permissions:', error);
       
-      let errorMessage = "Failed to update user permissions";
-      
-      if (error instanceof Error) {
-        if (error.message.includes('Insufficient permissions')) {
-          errorMessage = "You don't have permission to update user settings";
-        } else if (error.message.includes('RLS policy')) {
-          errorMessage = "Database security policy prevented the update";
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
       toast({
         title: "Error",
-        description: errorMessage,
+        description: sanitizeErrorMessage(error, 'Permission Update'),
         variant: "destructive",
       });
     } finally {

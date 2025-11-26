@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertCircle, ArrowLeft, Mail, CheckCircle, Clock } from 'lucide-react';
+import { sanitizeErrorMessage, isRateLimitError } from '@/utils/errorMessages';
 
 interface PasswordResetProps {
   onBackToSignIn: () => void;
@@ -43,17 +44,12 @@ const PasswordReset = ({ onBackToSignIn }: PasswordResetProps) => {
       if (error) {
         console.error('Password reset error:', error);
         
-        // Handle specific error cases
-        if (error.message.includes('User not found')) {
-          setError('No account found with this email address');
-        } else if (error.message.includes('rate limit') || error.message.includes('too many')) {
-          setError('Too many requests. Please wait a few minutes before trying again');
+        // Handle rate limiting specifically
+        if (isRateLimitError(error)) {
           setRateLimited(true);
-        } else if (error.message.includes('invalid_request')) {
-          setError('Invalid request. Please check your email and try again');
-        } else {
-          setError(error.message || 'An error occurred while sending the reset email');
         }
+        
+        setError(sanitizeErrorMessage(error, 'Password Reset'));
       } else {
         setSuccess(`Password reset email sent to ${email}! Please check your inbox and follow the instructions to reset your password.`);
         console.log('Password reset email sent successfully');

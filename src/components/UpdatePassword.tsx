@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertCircle, CheckCircle, Eye, EyeOff, Lock, Info } from 'lucide-react';
+import { sanitizeErrorMessage } from '@/utils/errorMessages';
 
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
@@ -64,15 +65,7 @@ const UpdatePassword = () => {
       
       if (error) {
         console.error('Password update error:', error);
-        
-        // Handle specific error cases
-        if (error.message.includes('session_not_found') || error.message.includes('invalid_session')) {
-          setError('Your session has expired. Please request a new password reset link.');
-        } else if (error.message.includes('same_password')) {
-          setError('New password must be different from your current password');
-        } else {
-          setError(error.message || 'Failed to update password');
-        }
+        setError(sanitizeErrorMessage(error, 'Update Password'));
       } else {
         setSuccess(true);
         console.log('Password updated successfully');

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserWithStats } from "./types";
+import { sanitizeErrorMessage } from "@/utils/errorMessages";
 
 type UserRole = "admin" | "user" | "affiliate" | "verified";
 
@@ -52,20 +53,10 @@ export const useRoleChange = (users?: UserWithStats[]) => {
     } catch (error) {
       console.error('Error updating user role:', error);
       
-      let errorMessage = "Failed to update user role";
-      
-      if (error instanceof Error) {
-        if (error.message.includes('Only administrators')) {
-          errorMessage = "You don't have permission to update user roles";
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
       // Show error toast with 5 second auto-dismiss
       toast({
         title: "Error",
-        description: errorMessage,
+        description: sanitizeErrorMessage(error, 'Role Update'),
         variant: "destructive",
         duration: 5000,
       });
