@@ -128,17 +128,42 @@ export const signOut = async () => {
 export const resetPassword = async (email: string) => {
   const redirectUrl = getRedirectUrl();
   
-  console.log('Password reset request initiated with redirect:', redirectUrl);
+  console.log('Password reset request initiated');
   
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: redirectUrl
-  });
-  
-  if (error) {
-    console.error('Password reset error:', error);
+  try {
+    const response = await fetch(
+      'https://amhznlnhrrugxatbeayo.supabase.co/functions/v1/password-reset-request',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtaHpubG5ocnJ1Z3hhdGJlYXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDA2NDUsImV4cCI6MjA2NTY3NjY0NX0.36_2NRiObrLxWx_ngeNzMvOSzxcFpeGXh-xKoW4irkk'
+        },
+        body: JSON.stringify({ email, redirectUrl })
+      }
+    );
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      // Handle rate limiting specifically
+      if (response.status === 429) {
+        return { 
+          error: { 
+            message: data.error || 'Too many attempts. Please try again later.',
+            status: 429,
+            isRateLimited: true
+          } 
+        };
+      }
+      return { error: { message: data.error || 'Failed to send reset email' } };
+    }
+    
+    return { error: null };
+  } catch (err) {
+    console.error('Password reset request failed:', err);
+    return { error: { message: 'Network error. Please try again.' } };
   }
-  
-  return { error };
 };
 
 export const updatePassword = async (password: string) => {
