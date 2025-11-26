@@ -1,5 +1,5 @@
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0';
 import { isCrawler, getPlatformType } from './crawlerUtils.ts';
 import { getListingImage } from './imageUtils.ts';
 import { escapeHtml } from './textUtils.ts';

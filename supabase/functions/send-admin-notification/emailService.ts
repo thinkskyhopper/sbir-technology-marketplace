@@ -1,5 +1,5 @@
 
-import { Resend } from "npm:resend@2.0.0";
+import { Resend } from "npm:resend@4.0.0";
 import type { AdminNotificationRequest, EmailResult } from './types.ts';
 import { generateEmailTemplate, generateEmailSubject } from './emailTemplate.ts';
 
