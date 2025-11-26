@@ -12,6 +12,9 @@ const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT = 5; // 5 requests
 const RATE_LIMIT_WINDOW = 60000; // per minute
 
+// Security: Constant delay prevents timing attacks that could be used to enumerate registered emails
+// All responses take at least this long, regardless of whether email exists or not
+
 function checkRateLimit(identifier: string): boolean {
   const now = Date.now();
   const record = rateLimitMap.get(identifier);
@@ -33,7 +36,12 @@ interface CheckEmailRequest {
   email: string;
 }
 
+// Constant delay to prevent timing attacks
+const RESPONSE_DELAY_MS = 200;
+
 const handler = async (req: Request): Promise<Response> => {
+  const startTime = Date.now();
+  
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -42,6 +50,8 @@ const handler = async (req: Request): Promise<Response> => {
     const { email }: CheckEmailRequest = await req.json();
 
     if (!email || typeof email !== "string") {
+      // Ensure consistent timing even for errors
+      await ensureMinimumDelay(startTime);
       return new Response(
         JSON.stringify({ error: "Invalid email provided" }),
         {
@@ -54,6 +64,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      await ensureMinimumDelay(startTime);
       return new Response(
         JSON.stringify({ error: "Invalid email format" }),
         {
@@ -68,6 +79,7 @@ const handler = async (req: Request): Promise<Response> => {
     const rateLimitKey = `${clientIp}:${email}`;
 
     if (!checkRateLimit(rateLimitKey)) {
+      await ensureMinimumDelay(startTime);
       return new Response(
         JSON.stringify({ error: "Too many requests. Please try again later." }),
         {
@@ -94,6 +106,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (error) {
       console.error("Error checking email:", error);
+      await ensureMinimumDelay(startTime);
       return new Response(
         JSON.stringify({ error: "Failed to check email" }),
         {
@@ -126,6 +139,9 @@ const handler = async (req: Request): Promise<Response> => {
       console.log(`Email check for ${email}: auth user exists=${!!matchingUser}, has profile=${!!profile}, is deleted=${profile?.account_deleted}, final result=${emailExists}`);
     }
 
+    // Ensure constant time response to prevent timing attacks
+    await ensureMinimumDelay(startTime);
+    
     return new Response(
       JSON.stringify({ exists: emailExists }),
       {
@@ -135,6 +151,7 @@ const handler = async (req: Request): Promise<Response> => {
     );
   } catch (error: any) {
     console.error("Error in check-email-exists function:", error);
+    await ensureMinimumDelay(startTime);
     return new Response(
       JSON.stringify({ error: "Unable to check email availability. Please try again." }),
       {
@@ -144,5 +161,14 @@ const handler = async (req: Request): Promise<Response> => {
     );
   }
 };
+
+// Helper function to ensure consistent response timing
+async function ensureMinimumDelay(startTime: number): Promise<void> {
+  const elapsed = Date.now() - startTime;
+  const remaining = RESPONSE_DELAY_MS - elapsed;
+  if (remaining > 0) {
+    await new Promise(resolve => setTimeout(resolve, remaining));
+  }
+}
 
 serve(handler);
