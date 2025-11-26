@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import SignUpFormFields from './SignUpFormFields';
 import { validateName, validatePassword, validatePasswordConfirmation, validateEmail, sanitizeName } from '@/utils/validation';
+import { sanitizeErrorMessage } from '@/utils/errorMessages';
 
 interface SignUpFormProps {
   onSwitchToSignIn: () => void;
@@ -108,7 +109,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
       const { error, isDuplicate } = await signUp(email, password, fullName, marketingOptIn);
       
       if (error) {
-        setError(error.message);
+        setError(sanitizeErrorMessage(error, 'Sign Up'));
       } else if (isDuplicate) {
         setError('duplicate_email');
       } else {
@@ -132,7 +133,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
       const { error } = await signInWithGoogle();
       
       if (error) {
-        setError(error.message);
+        setError(sanitizeErrorMessage(error, 'Google Sign Up'));
       }
     } catch (err) {
       setError('An unexpected error occurred');

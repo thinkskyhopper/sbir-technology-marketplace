@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { sanitizeErrorMessage, isEmailNotConfirmedError } from '@/utils/errorMessages';
 
 interface SignInFormProps {
   onShowPasswordReset: () => void;
@@ -42,14 +43,11 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
           setError('This account has been deleted. If you believe this is an error, please contact support.');
         } else {
           // Check if the error is about unverified email
-          const errorMessage = error.message?.toLowerCase() || '';
-          if (errorMessage.includes('email not confirmed') || 
-              errorMessage.includes('email link is invalid') ||
-              errorMessage.includes('confirm your email')) {
+          if (isEmailNotConfirmedError(error)) {
             setIsEmailNotConfirmed(true);
             setError('Please verify your email address before signing in. Check your inbox for a confirmation email.');
           } else {
-            setError(error.message);
+            setError(sanitizeErrorMessage(error, 'Sign In'));
           }
         }
       }
@@ -73,7 +71,7 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
       
       if (error) {
         toast.error('Failed to resend verification email', {
-          description: error.message
+          description: sanitizeErrorMessage(error, 'Resend Verification')
         });
       } else {
         toast.success('Verification Email Sent', {
@@ -97,7 +95,7 @@ const SignInForm = ({ onShowPasswordReset, onSwitchToSignUp }: SignInFormProps) 
       const { error } = await signInWithGoogle();
       
       if (error) {
-        setError(error.message);
+        setError(sanitizeErrorMessage(error, 'Google Sign In'));
       }
     } catch (err) {
       setError('An unexpected error occurred');
