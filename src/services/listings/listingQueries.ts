@@ -71,11 +71,13 @@ export const listingQueries = {
         recommended_affiliate_1: listing.recommended_affiliate_1_full_name ? {
           id: listing.recommended_affiliate_1_id,
           full_name: listing.recommended_affiliate_1_full_name,
+          photo_url: listing.recommended_affiliate_1_photo_url || null,
         } : null,
         recommended_affiliate_2_id: listing.recommended_affiliate_2_id,
         recommended_affiliate_2: listing.recommended_affiliate_2_full_name ? {
           id: listing.recommended_affiliate_2_id,
           full_name: listing.recommended_affiliate_2_full_name,
+          photo_url: listing.recommended_affiliate_2_photo_url || null,
         } : null,
       }));
 
@@ -99,8 +101,8 @@ export const listingQueries = {
         supabase.from('sbir_listings')
           .select(`
             *,
-      recommended_affiliate_1:profiles!sbir_listings_recommended_affiliate_1_id_fkey(id, full_name),
-      recommended_affiliate_2:profiles!sbir_listings_recommended_affiliate_2_id_fkey(id, full_name)
+      recommended_affiliate_1:profiles!sbir_listings_recommended_affiliate_1_id_fkey(id, full_name, photo_url),
+      recommended_affiliate_2:profiles!sbir_listings_recommended_affiliate_2_id_fkey(id, full_name, photo_url)
           `)
           .order('created_at', { ascending: false }),
         { timeout: 30000, retries: 4 }

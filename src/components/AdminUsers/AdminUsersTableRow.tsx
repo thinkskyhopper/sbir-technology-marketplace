@@ -64,7 +64,7 @@ export const AdminUsersTableRow = ({
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <ProfileAvatar
-                photoUrl={(user as UserWithStats & { photo_url?: string | null }).photo_url}
+                photoUrl={user.photo_url}
                 name={user.full_name}
                 email={user.email}
                 className="w-8 h-8 flex-shrink-0"
