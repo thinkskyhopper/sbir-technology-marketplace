@@ -823,8 +823,10 @@ export type Database = {
           profile_role: Database["public"]["Enums"]["user_role"]
           recommended_affiliate_1_full_name: string
           recommended_affiliate_1_id: string
+          recommended_affiliate_1_photo_url: string
           recommended_affiliate_2_full_name: string
           recommended_affiliate_2_id: string
+          recommended_affiliate_2_photo_url: string
           status: Database["public"]["Enums"]["listing_status"]
           submitted_at: string
           technology_summary: string

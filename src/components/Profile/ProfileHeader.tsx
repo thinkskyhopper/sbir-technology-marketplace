@@ -35,8 +35,10 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
   const displayProfile = propProfile || (isOwnProfile ? authProfile : null);
 
   // Determine if current user can upload photos for this profile
-  const canUploadPhoto = isAdmin && displayProfile && 
-    (displayProfile.role === 'admin' || displayProfile.role === 'affiliate');
+  // Admins can upload for any admin/affiliate, and admins/affiliates can upload their own
+  const canUploadPhoto = displayProfile && 
+    (displayProfile.role === 'admin' || displayProfile.role === 'affiliate') &&
+    (isAdmin || isOwnProfile);
 
   // Use local state for photo if changed, otherwise use profile value
   const currentPhotoUrl = photoUrl !== undefined ? photoUrl : displayProfile?.photo_url;
