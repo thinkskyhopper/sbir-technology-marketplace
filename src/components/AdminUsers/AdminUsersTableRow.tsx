@@ -1,4 +1,3 @@
-
 import { Mail, Calendar, FileText, ChevronDown, Bell, Lock, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -10,6 +9,7 @@ import { useState } from "react";
 import { NotificationCategoriesDialog } from "./NotificationCategoriesDialog";
 import { useAccountUnlock } from "./useAccountUnlock";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import ProfileAvatar from "@/components/ui/ProfileAvatar";
 
 type UserRole = "admin" | "user" | "affiliate" | "verified";
 
@@ -63,11 +63,13 @@ export const AdminUsersTableRow = ({
         <TableCell className="min-w-[200px]">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <span className="text-sm font-medium text-primary">
-                  {(user.full_name || user.email)?.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              <ProfileAvatar
+                photoUrl={(user as UserWithStats & { photo_url?: string | null }).photo_url}
+                name={user.full_name}
+                email={user.email}
+                className="w-8 h-8 flex-shrink-0"
+                fallbackClassName="text-sm bg-primary/10 text-primary"
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <button

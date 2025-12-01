@@ -1,10 +1,11 @@
-
 import { useAuth } from "@/contexts/AuthContext";
 import { Mail, Building, Calendar, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import ProfileAvatar from "@/components/ui/ProfileAvatar";
+import ProfilePhotoUpload from "./ProfilePhotoUpload";
+import { useState } from "react";
 
 interface Profile {
   id: string;
@@ -13,6 +14,7 @@ interface Profile {
   display_email: string | null;
   company_name: string | null;
   bio: string | null;
+  photo_url?: string | null;
   role: string;
   created_at?: string;
   updated_at?: string;
@@ -26,10 +28,18 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: ProfileHeaderProps) => {
-  const { profile: authProfile } = useAuth();
+  const { profile: authProfile, isAdmin } = useAuth();
+  const [photoUrl, setPhotoUrl] = useState<string | null | undefined>(undefined);
 
   // Use the passed profile or fall back to auth profile for own profile
   const displayProfile = propProfile || (isOwnProfile ? authProfile : null);
+
+  // Determine if current user can upload photos for this profile
+  const canUploadPhoto = isAdmin && displayProfile && 
+    (displayProfile.role === 'admin' || displayProfile.role === 'affiliate');
+
+  // Use local state for photo if changed, otherwise use profile value
+  const currentPhotoUrl = photoUrl !== undefined ? photoUrl : displayProfile?.photo_url;
 
   if (!displayProfile) {
     return (
@@ -43,19 +53,28 @@ const ProfileHeader = ({ profile: propProfile, isOwnProfile, onEdit, userId }: P
     );
   }
 
-  // Get the user's initial for the avatar
-  const userInitial = (displayProfile.full_name || displayProfile.email)?.charAt(0).toUpperCase() || '?';
-
   return (
     <Card className="mb-8">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
-            <Avatar className="w-16 h-16">
-              <AvatarFallback className="bg-primary/10 text-primary text-2xl font-medium">
-                {userInitial}
-              </AvatarFallback>
-            </Avatar>
+            {canUploadPhoto ? (
+              <ProfilePhotoUpload
+                currentPhotoUrl={currentPhotoUrl}
+                userId={displayProfile.id}
+                userName={displayProfile.full_name}
+                userEmail={displayProfile.email}
+                onPhotoChange={setPhotoUrl}
+              />
+            ) : (
+              <ProfileAvatar
+                photoUrl={currentPhotoUrl}
+                name={displayProfile.full_name}
+                email={displayProfile.email}
+                className="w-16 h-16"
+                fallbackClassName="text-2xl"
+              />
+            )}
             <div>
               <CardTitle className="text-2xl">
                 {displayProfile.full_name || 'No name provided'}

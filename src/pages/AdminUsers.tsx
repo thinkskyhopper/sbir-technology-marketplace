@@ -31,6 +31,7 @@ const AdminUsers = () => {
           id,
           email,
           full_name,
+          photo_url,
           role,
           created_at,
           can_submit_listings,
