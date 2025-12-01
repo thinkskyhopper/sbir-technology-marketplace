@@ -3,6 +3,7 @@ export interface UserWithStats {
   id: string;
   email: string;
   full_name: string | null;
+  photo_url: string | null;
   role: string;
   created_at: string;
   listing_count: number;

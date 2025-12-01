@@ -1,7 +1,7 @@
 
 import { LogOut, User, Shield, Settings, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -77,9 +77,6 @@ const HeaderUserMenu = () => {
   // Get the user's display name - prioritize first_name, then full_name, fallback to email
   const displayName = profile?.first_name || profile?.full_name || user.email;
   const firstName = profile?.first_name || (profile?.full_name ? profile.full_name.split(' ')[0] : user.email.split('@')[0]);
-  
-  // Get the initial for the avatar
-  const initial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
 
   console.log('HeaderUserMenu render:', { user: user.email, isAdmin });
 
@@ -90,11 +87,13 @@ const HeaderUserMenu = () => {
           variant="outline" 
           className="h-8 sm:h-10 gap-2 px-2 sm:px-3 border-primary/20 hover:border-primary/40"
         >
-          <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
-            <AvatarFallback className="text-xs sm:text-sm bg-primary text-primary-foreground">
-              {initial}
-            </AvatarFallback>
-          </Avatar>
+          <ProfileAvatar
+            photoUrl={profile?.photo_url}
+            name={profile?.full_name}
+            email={user.email}
+            className="h-6 w-6 sm:h-8 sm:w-8"
+            fallbackClassName="text-xs sm:text-sm bg-primary text-primary-foreground"
+          />
           <span className="hidden sm:inline text-sm font-medium truncate max-w-24">
             {firstName}
           </span>

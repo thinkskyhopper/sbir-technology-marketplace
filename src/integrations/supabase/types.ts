@@ -365,6 +365,7 @@ export type Database = {
           lock_reason: string | null
           marketing_emails_enabled: boolean
           notification_categories: Json | null
+          photo_url: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
         }
@@ -390,6 +391,7 @@ export type Database = {
           lock_reason?: string | null
           marketing_emails_enabled?: boolean
           notification_categories?: Json | null
+          photo_url?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
@@ -415,6 +417,7 @@ export type Database = {
           lock_reason?: string | null
           marketing_emails_enabled?: boolean
           notification_categories?: Json | null
+          photo_url?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
