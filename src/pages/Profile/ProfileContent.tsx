@@ -12,6 +12,7 @@ interface Profile {
   display_email: string | null;
   company_name: string | null;
   bio: string | null;
+  photo_url?: string | null;
   role: string;
   notification_categories: string[] | null;
   created_at: string;
