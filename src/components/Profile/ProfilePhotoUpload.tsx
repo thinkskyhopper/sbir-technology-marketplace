@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Camera, X, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { isAllowedImageExtension, validateImageMagicBytes } from "@/utils/imageValidation";
 import { readFile } from "@/utils/imageResize";
 import ProfileAvatar from "@/components/ui/ProfileAvatar";
@@ -31,6 +32,7 @@ const ProfilePhotoUpload = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -139,6 +141,11 @@ const ProfilePhotoUpload = ({
 
       onPhotoChange(data.publicUrl);
 
+      // Invalidate caches so other components show the new photo immediately
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['listings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
+
       toast({
         title: "Photo uploaded",
         description: "Profile photo has been updated successfully.",
@@ -186,6 +193,11 @@ const ProfilePhotoUpload = ({
       }
 
       onPhotoChange(null);
+
+      // Invalidate caches so other components reflect the removal immediately
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['listings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-listings'] });
 
       toast({
         title: "Photo removed",

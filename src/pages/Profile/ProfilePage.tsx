@@ -19,6 +19,7 @@ interface Profile {
   display_email: string | null;
   company_name: string | null;
   bio: string | null;
+  photo_url?: string | null;
   role: string;
   notification_categories: string[] | null;
   created_at: string;
@@ -101,6 +102,7 @@ const ProfilePage = () => {
         display_email: null, // Display email is not included in public profile
         company_name: publicProfile.company_name,
         bio: publicProfile.bio,
+        photo_url: publicProfile.photo_url,
         role: publicProfile.role,
         notification_categories: [], // Not included in public profile
         created_at: publicProfile.created_at,

@@ -846,6 +846,7 @@ export type Database = {
           full_name: string
           id: string
           last_name: string
+          photo_url: string
           role: Database["public"]["Enums"]["user_role"]
         }[]
       }
