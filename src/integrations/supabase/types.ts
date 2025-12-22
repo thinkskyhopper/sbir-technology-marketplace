@@ -861,8 +861,8 @@ export type Database = {
         Returns: boolean
       }
       is_admin:
-        | { Args: { user_id: string }; Returns: boolean }
         | { Args: never; Returns: boolean }
+        | { Args: { user_id: string }; Returns: boolean }
       restore_user_account: {
         Args: { user_id_param: string }
         Returns: boolean
