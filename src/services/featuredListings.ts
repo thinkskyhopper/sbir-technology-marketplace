@@ -51,6 +51,7 @@ export const featuredListingsService = {
     // Format the listings with profile data
     const featuredListings = featuredData.map(item => ({
       id: item.listing_id,
+      public_id: item.public_id,
       title: item.title,
       description: item.description,
       phase: item.phase,
@@ -103,6 +104,7 @@ export const featuredListingsService = {
         .slice(0, neededCount)
         .map(listing => ({
           ...listing,
+          public_id: listing.public_id,
           value: listing.value / 100, // Convert cents to dollars
         }));
 

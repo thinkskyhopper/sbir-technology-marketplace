@@ -836,6 +836,7 @@ export type Database = {
           listing_updated_at: string
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string
+          public_id: string
           status: Database["public"]["Enums"]["listing_status"]
           submitted_at: string
           technology_summary: string
@@ -882,6 +883,7 @@ export type Database = {
           listing_type: Database["public"]["Enums"]["listing_type"]
           phase: Database["public"]["Enums"]["sbir_phase"]
           photo_url: string
+          public_id: string
           status: Database["public"]["Enums"]["listing_status"]
           submitted_at: string
           technology_summary: string
