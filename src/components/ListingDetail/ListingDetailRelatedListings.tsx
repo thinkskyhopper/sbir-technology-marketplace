@@ -69,7 +69,7 @@ const ListingDetailRelatedListings = ({
         {relatedListings.map((listing) => (
           <Link 
             key={listing.id}
-            to={`/listing/${listing.id}`}
+            to={`/listing/${listing.public_id || listing.id}`}
             className="block p-3 border rounded-lg hover:bg-muted/50 transition-colors"
           >
             <div className="space-y-2">

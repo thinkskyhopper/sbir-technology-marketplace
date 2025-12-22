@@ -398,7 +398,7 @@
                 
                 const listingsHTML = listings.map(listing => `
                     <div class="listing">
-                        <a href="https://thesbirtechmarketplace.com/listing/${listing.id}" target="_blank" class="listing-title">
+                        <a href="https://thesbirtechmarketplace.com/listing/${listing.public_id || listing.id}" target="_blank" class="listing-title">
                             ${escapeHtml(listing.title || 'Untitled Opportunity')}
                         </a>
                         <div class="listing-meta agency">

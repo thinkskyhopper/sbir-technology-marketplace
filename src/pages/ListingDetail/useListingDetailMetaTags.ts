@@ -44,7 +44,7 @@ export const useListingDetailMetaTags = (listing: SBIRListing | undefined) => {
       `${listing.phase} ${listing.category} project from ${listing.agency}. Value: ${formatCurrency(listing.value)}. ${listing.description.substring(0, 150)}...` : 
       'Helping generate revenue from past SBIR/STTR awards by connecting interested buyers, teaming partners and federal customers.',
     image: getListingImage(),
-    url: listing ? `${window.location.origin}/listing/${listing.id}` : window.location.href,
+    url: listing ? `${window.location.origin}/listing/${listing.public_id || listing.id}` : window.location.href,
     type: 'article'
   });
 };

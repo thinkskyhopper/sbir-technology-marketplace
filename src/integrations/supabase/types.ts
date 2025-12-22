@@ -911,6 +911,7 @@ export type Database = {
           profile_full_name: string
           profile_last_name: string
           profile_role: Database["public"]["Enums"]["user_role"]
+          public_id: string
           recommended_affiliate_1_full_name: string
           recommended_affiliate_1_id: string
           recommended_affiliate_1_photo_url: string

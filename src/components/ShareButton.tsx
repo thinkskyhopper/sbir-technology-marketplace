@@ -8,14 +8,16 @@ import { toast } from "sonner";
 
 interface ShareButtonProps {
   listingId: string;
+  listingPublicId?: string;
   listingTitle: string;
   className?: string;
 }
 
-const ShareButton = ({ listingId, listingTitle, className }: ShareButtonProps) => {
+const ShareButton = ({ listingId, listingPublicId, listingTitle, className }: ShareButtonProps) => {
   const [copied, setCopied] = useState(false);
   
-  const shareUrl = `${window.location.origin}/listing/${listingId}`;
+  // Use public_id for URLs when available, fall back to UUID
+  const shareUrl = `${window.location.origin}/listing/${listingPublicId || listingId}`;
 
   const handleCopyLink = async () => {
     try {

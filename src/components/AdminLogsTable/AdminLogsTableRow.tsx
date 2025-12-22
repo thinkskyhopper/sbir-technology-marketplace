@@ -57,7 +57,8 @@ export const AdminLogsTableRow = ({ log, onViewDetails }: AdminLogsTableRowProps
 
   const handleListingClick = () => {
     if (log.listing_id) {
-      navigate(`/listing/${log.listing_id}`);
+      // Use public_id for URLs when available, fall back to UUID
+      navigate(`/listing/${log.listing?.public_id || log.listing_id}`);
     }
   };
 

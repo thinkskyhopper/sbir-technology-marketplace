@@ -50,7 +50,8 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
   const handleViewDetails = () => {
     // Preserve current search parameters when navigating to listing detail
     const currentParams = new URLSearchParams(searchParams);
-    const listingUrl = `/listing/${listing.id}`;
+    // Use public_id for URLs when available, fall back to UUID
+    const listingUrl = `/listing/${listing.public_id || listing.id}`;
     
     // Add current search params to the listing URL if they exist
     if (currentParams.toString()) {
