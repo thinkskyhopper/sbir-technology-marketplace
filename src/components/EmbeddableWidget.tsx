@@ -159,7 +159,7 @@ const EmbeddableWidget = () => {
                     variant="outline" 
                     size="sm" 
                     className="h-6 text-xs px-2 flex-shrink-0"
-                    onClick={() => handleViewDetailsClick(listing.id)}
+                    onClick={() => handleViewDetailsClick(listing.public_id || listing.id)}
                   >
                     <FileText className="w-3 h-3 mr-1" />
                     <span className="hidden xs:inline">View Details</span>
