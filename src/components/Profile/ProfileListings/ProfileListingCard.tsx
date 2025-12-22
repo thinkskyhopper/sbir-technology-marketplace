@@ -51,7 +51,8 @@ const ProfileListingCard = ({
 
   const handleViewDetails = () => {
     const currentParams = new URLSearchParams(searchParams);
-    const listingUrl = `/listing/${listing.id}`;
+    // Use public_id for URLs when available, fall back to UUID
+    const listingUrl = `/listing/${listing.public_id || listing.id}`;
     
     if (currentParams.toString()) {
       navigate(`${listingUrl}?${currentParams.toString()}`);

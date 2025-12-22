@@ -36,8 +36,9 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
   const defaultDomain = 'https://82c5feb4-6704-4122-bfd9-18a4a7de2d6b.lovableproject.com';
   const appDomain = validateDomain(domainParam, defaultDomain);
 
-  const listingUrl = `${appDomain}/listing/${listingId}`;
-  console.log('Target listing URL:', listingUrl);
+  // Will be updated after we fetch the listing to use public_id
+  let listingUrl = `${appDomain}/listing/${listingId}`;
+  console.log('Initial listing URL:', listingUrl);
 
   // For regular users (not crawlers), redirect immediately
   if (!isUserAgentCrawler) {
@@ -65,13 +66,33 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
 
   console.log('Fetching listing from database...');
 
-  // Fetch the listing data
-  const { data: listing, error } = await supabase
+  // Fetch the listing data - support both UUID and public_id lookup
+  // First try to find by id, then by public_id
+  let listing = null;
+  let error = null;
+
+  // Try UUID lookup first
+  const { data: uuidData, error: uuidError } = await supabase
     .from('sbir_listings')
     .select('*')
     .eq('id', listingId)
     .eq('status', 'Active')
-    .single();
+    .maybeSingle();
+
+  if (uuidData) {
+    listing = uuidData;
+  } else {
+    // Try public_id lookup
+    const { data: publicIdData, error: publicIdError } = await supabase
+      .from('sbir_listings')
+      .select('*')
+      .eq('public_id', listingId)
+      .eq('status', 'Active')
+      .maybeSingle();
+    
+    listing = publicIdData;
+    error = publicIdError;
+  }
 
   if (error || !listing) {
     console.log('=== LISTING NOT FOUND ===');
@@ -91,10 +112,15 @@ export const handleRequest = async (req: Request, corsHeaders: Record<string, st
 
   console.log('=== LISTING FOUND ===');
   console.log('Listing title:', listing.title);
+  console.log('Listing public_id:', listing.public_id);
   console.log('Listing category:', listing.category);
   console.log('Listing agency:', listing.agency);
   console.log('Listing phase:', listing.phase);
   console.log('Listing value:', listing.value);
+
+  // Update listing URL to use public_id for cleaner URLs
+  listingUrl = `${appDomain}/listing/${listing.public_id || listing.id}`;
+  console.log('Final listing URL with public_id:', listingUrl);
 
   // Get the image URL and log it for debugging
   const imageUrl = getListingImage(listing.category);

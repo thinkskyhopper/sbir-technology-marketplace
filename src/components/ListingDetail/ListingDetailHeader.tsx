@@ -12,6 +12,7 @@ import { ListingTypeBadge } from "@/utils/listingTypeBadge";
 interface ListingDetailHeaderProps {
   listing: {
     id: string;
+    public_id?: string;
     phase: string;
     listing_type: 'Contract' | 'IP' | 'Contract & IP';
     status: string;
@@ -121,6 +122,7 @@ const ListingDetailHeader = ({
                 />
                 <ShareButton 
                   listingId={listing.id}
+                  listingPublicId={listing.public_id}
                   listingTitle={listing.title}
                   className="flex-shrink-0 w-16 sm:w-auto px-2 sm:px-4"
                 />

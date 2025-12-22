@@ -122,7 +122,7 @@ const EmbeddableWidget = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a 
-                      href={`https://thesbirtechmarketplace.com/listing/${listing.id}`}
+                      href={`https://thesbirtechmarketplace.com/listing/${listing.public_id || listing.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:underline block"

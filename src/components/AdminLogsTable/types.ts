@@ -18,5 +18,6 @@ export interface AdminAuditLog {
   listing: {
     title: string;
     status: string;
+    public_id?: string;
   } | null;
 }

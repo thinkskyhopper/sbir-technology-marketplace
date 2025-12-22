@@ -13,7 +13,8 @@ const BasicActions = ({ listing, isProcessing, onEdit }: BasicActionsProps) => {
   const navigate = useNavigate();
 
   const handleViewHistory = () => {
-    navigate(`/listing/${listing.id}/history`);
+    // Use public_id for URLs when available, fall back to UUID
+    navigate(`/listing/${listing.public_id || listing.id}/history`);
   };
 
   return (

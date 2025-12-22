@@ -22,7 +22,7 @@ const ListingTitleCell = ({ listing, requestSummary }: ListingTitleCellProps) =>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link 
-                to={`/listing/${listing.id}`}
+                to={`/listing/${listing.public_id || listing.id}`}
                 className="font-medium text-sm cursor-pointer hover:text-primary transition-colors"
               >
                 {listing.title}

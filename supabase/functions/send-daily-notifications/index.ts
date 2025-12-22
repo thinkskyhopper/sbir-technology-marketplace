@@ -18,6 +18,7 @@ interface DatabaseProfile {
 
 interface DatabaseListing {
   id: string
+  public_id: string
   title: string
   agency: string
   category: string
@@ -106,7 +107,7 @@ Deno.serve(async (req) => {
     // Get new listings from the past 24 hours
     const { data: newListings, error: listingsError } = await supabase
       .from('sbir_listings')
-      .select('id, title, agency, category, phase, value, description, created_at')
+      .select('id, public_id, title, agency, category, phase, value, description, created_at')
       .gte('created_at', yesterdayStart.toISOString())
       .lt('created_at', todayStart.toISOString())
       .eq('status', 'Active')
@@ -323,7 +324,7 @@ function createEmailHtml(user: DatabaseProfile, listings: DatabaseListing[]): st
         <span><strong>Value:</strong> ${formatCurrency(listing.value)}</span>
       </div>
       <p style="color: #4b5563; line-height: 1.5; margin: 10px 0;">${listing.description.substring(0, 200)}${listing.description.length > 200 ? '...' : ''}</p>
-      <a href="https://yourdomain.com/listing/${listing.id}" style="display: inline-block; background-color: #3b82f6; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; font-size: 14px; margin-top: 10px;">View Details</a>
+      <a href="https://thesbirtechmarketplace.com/listing/${listing.public_id || listing.id}" style="display: inline-block; background-color: #3b82f6; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; font-size: 14px; margin-top: 10px;">View Details</a>
     </div>
   `).join('')
   

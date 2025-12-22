@@ -28,7 +28,8 @@ const ListingDetailPage = () => {
   const [showRequestChangeDialog, setShowRequestChangeDialog] = useState(false);
   const [showRequestDeletionDialog, setShowRequestDeletionDialog] = useState(false);
 
-  const listing = listings.find(l => l.id === id);
+  // Find listing by either UUID or public_id (for short URLs)
+  const listing = listings.find(l => l.id === id || l.public_id === id);
 
   // Scroll to top when the page loads or listing changes
   useEffect(() => {
@@ -56,7 +57,8 @@ const ListingDetailPage = () => {
   });
 
   const handleViewHistory = () => {
-    navigate(`/listing/${id}/history`);
+    // Use public_id for URLs when available
+    navigate(`/listing/${listing?.public_id || id}/history`);
   };
 
   useListingDetailMetaTags(listing);

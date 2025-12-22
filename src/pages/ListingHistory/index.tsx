@@ -37,7 +37,8 @@ const ListingHistory = () => {
     queryKey: ['listing-history', id],
     queryFn: async () => {
       const listings = await listingsService.fetchListings(isAdmin);
-      const targetListing = listings.find(listing => listing.id === id);
+      // Find listing by either UUID or public_id (for short URLs)
+      const targetListing = listings.find(listing => listing.id === id || listing.public_id === id);
       if (!targetListing) {
         throw new Error('Listing not found');
       }
@@ -47,8 +48,9 @@ const ListingHistory = () => {
   });
 
   const { data: auditLogs, isLoading: logsLoading } = useQuery({
-    queryKey: ['listing-audit-logs', id],
+    queryKey: ['listing-audit-logs', listing?.id],
     queryFn: async () => {
+      if (!listing?.id) return [];
       const { data, error } = await supabase
         .from('admin_audit_logs')
         .select(`
@@ -58,7 +60,7 @@ const ListingHistory = () => {
             email
           )
         `)
-        .eq('listing_id', id)
+        .eq('listing_id', listing.id) // Always use UUID for DB queries
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -67,7 +69,7 @@ const ListingHistory = () => {
         admin_profile: log.profiles
       })) as AuditLog[];
     },
-    enabled: !!id && isAdmin,
+    enabled: !!listing?.id && isAdmin,
   });
 
   if (!isAdmin) {
@@ -88,7 +90,8 @@ const ListingHistory = () => {
   };
 
   const handleViewListing = () => {
-    navigate(`/listing/${id}`);
+    // Use public_id for URLs when available
+    navigate(`/listing/${listing?.public_id || id}`);
   };
 
   return (
