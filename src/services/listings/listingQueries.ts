@@ -115,7 +115,7 @@ export const listingQueries = {
         
         try {
           const profiles = await apiClient.supabaseQuery(
-            supabase.from('profiles').select('id, full_name, email').in('id', userIds as string[]),
+            supabase.from('profiles').select('id, full_name, email, public_id').in('id', userIds as string[]),
             { timeout: 20000, retries: 3 }
           );
           
@@ -147,7 +147,7 @@ export const listingQueries = {
           ...listing,
           value: listing.value / 100, // Convert cents to dollars
           listing_type: listing.listing_type || 'Contract',
-          profiles: profile ? { full_name: profile.full_name, email: profile.email } : null
+          profiles: profile ? { full_name: profile.full_name, email: profile.email, public_id: profile.public_id } : null
         };
       }) || [];
 

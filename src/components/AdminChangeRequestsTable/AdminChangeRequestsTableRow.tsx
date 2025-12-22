@@ -12,6 +12,7 @@ interface AdminChangeRequestsTableRowProps {
     profiles?: {
       full_name?: string;
       email: string;
+      public_id?: string | null;
     };
   };
   processingId: string | null;
@@ -103,7 +104,7 @@ export const AdminChangeRequestsTableRow = ({
         {request.profiles ? (
           <div>
             <Link 
-              to={`/profile/${request.user_id}`}
+              to={`/profile/${request.profiles.public_id || request.user_id}`}
               className="text-sm font-medium truncate text-primary hover:underline block"
             >
               {request.profiles.full_name || 'Unknown User'}

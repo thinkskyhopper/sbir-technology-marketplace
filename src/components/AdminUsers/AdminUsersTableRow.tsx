@@ -15,7 +15,7 @@ type UserRole = "admin" | "user" | "affiliate" | "verified";
 
 interface AdminUsersTableRowProps {
   user: UserWithStats;
-  onUserClick: (userId: string) => void;
+  onUserClick: (userId: string, publicId?: string | null) => void;
   onPermissionChange: (userId: string, canSubmit: boolean) => void;
   onRoleChange: (userId: string, role: UserRole) => void;
   isUpdating: boolean;
@@ -73,7 +73,7 @@ export const AdminUsersTableRow = ({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => onUserClick(user.id)}
+                    onClick={() => onUserClick(user.id, user.public_id)}
                     className="font-medium text-primary hover:underline cursor-pointer text-sm block truncate"
                   >
                     {user.full_name || 'No name provided'}
