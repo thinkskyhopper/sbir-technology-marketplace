@@ -44,8 +44,9 @@ export const listingQueries = {
         { timeout: 30000, retries: 5 }
       );
 
-      const formattedListings = (data || []).map((listing: any) => ({
+        const formattedListings = (data || []).map((listing: any) => ({
         id: listing.id,
+        public_id: listing.public_id,
         title: listing.title,
         description: listing.description,
         phase: listing.phase,
