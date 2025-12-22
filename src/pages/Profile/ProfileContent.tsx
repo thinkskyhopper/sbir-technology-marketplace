@@ -47,7 +47,7 @@ const ProfileContent = ({
       />
       
       <ProfileListings 
-        userId={isOtherUserProfile ? userId : user?.id}
+        userId={isOtherUserProfile ? displayProfile?.id : user?.id}
         isOwnProfile={!isOtherUserProfile}
       />
 
