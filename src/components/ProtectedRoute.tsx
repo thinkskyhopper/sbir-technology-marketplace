@@ -68,7 +68,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
         <Navigate to="/auth" replace />
       )}
 
-      {!loading && user && requireAdmin && !isAdmin && (
+      {!loading && !profileLoading && user && requireAdmin && !isAdmin && (
         <Navigate to="/" replace />
       )}
 
