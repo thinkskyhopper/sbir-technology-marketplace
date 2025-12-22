@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { isValidUUID } from "@/utils/uuidValidation";
@@ -14,6 +14,7 @@ import CreateListingDialog from "@/components/CreateListingDialog";
 
 interface Profile {
   id: string;
+  public_id?: string;
   email: string;
   full_name: string | null;
   display_email: string | null;
@@ -31,17 +32,22 @@ const ProfilePage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { profileId } = useParams<{ profileId: string }>();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [displayProfile, setDisplayProfile] = useState<Profile | null>(null);
   const [isOtherUserProfile, setIsOtherUserProfile] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const userId = searchParams.get('userId');
+  // Support both /profile/:profileId and /profile?userId=... formats
+  const legacyUserId = searchParams.get('userId');
+  const identifier = profileId || legacyUserId;
 
   useEffect(() => {
     console.log('👤 Profile page useEffect:', { 
-      userId, 
+      profileId,
+      legacyUserId,
+      identifier,
       userIdFromAuth: user?.id, 
       authProfile: authProfile?.email || 'null',
       authLoading 
@@ -52,36 +58,36 @@ const ProfilePage = () => {
       return;
     }
     
-    // Validate UUID format if userId is present
-    if (userId && !isValidUUID(userId)) {
-      console.error('❌ Invalid UUID format:', userId);
-      toast({
-        title: "Invalid Profile ID",
-        description: "The profile ID in the URL is not valid.",
-        variant: "destructive",
-      });
-      // Redirect to own profile
-      navigate('/profile', { replace: true });
-      return;
+    // If using legacy UUID format, redirect to new short URL format if we can
+    if (legacyUserId && !profileId) {
+      // We'll fetch the profile first and redirect after
+      console.log('🔄 Legacy UUID URL detected, will redirect after fetching profile');
     }
     
-    if (userId && userId !== user?.id) {
-      console.log('👥 Fetching other user profile for:', userId);
-      fetchOtherUserProfile(userId);
-    } else {
+    // Check if identifier is the current user's ID or public_id
+    const isOwnProfile = !identifier || 
+      identifier === user?.id || 
+      identifier === (authProfile as any)?.public_id;
+    
+    if (!identifier || isOwnProfile) {
       console.log('👤 Setting own profile:', authProfile?.email || 'null');
       setDisplayProfile(authProfile);
       setIsOtherUserProfile(false);
       setLoading(false);
+    } else {
+      console.log('👥 Fetching other user profile for:', identifier);
+      fetchOtherUserProfile(identifier);
     }
-  }, [userId, user?.id, authProfile, authLoading, navigate, toast]);
+  }, [profileId, legacyUserId, user?.id, authProfile, authLoading, navigate, toast]);
 
-  const fetchOtherUserProfile = async (targetUserId: string) => {
+  const fetchOtherUserProfile = async (targetIdentifier: string) => {
     setLoading(true);
     try {
-      console.log('🔍 Fetching public profile for user:', targetUserId);
-      const { data, error } = await supabase.rpc('get_public_profile', {
-        profile_user_id: targetUserId
+      console.log('🔍 Fetching public profile for identifier:', targetIdentifier);
+      
+      // Use the new function that accepts either UUID or public_id
+      const { data, error } = await supabase.rpc('get_public_profile_by_identifier', {
+        identifier: targetIdentifier
       });
 
       if (error) {
@@ -90,13 +96,14 @@ const ProfilePage = () => {
       }
 
       if (!data || data.length === 0) {
-        console.log('❌ No public profile found for user:', targetUserId);
+        console.log('❌ No public profile found for identifier:', targetIdentifier);
         throw new Error('Profile not found or not accessible');
       }
 
       const publicProfile = data[0];
       const transformedProfile: Profile = {
         id: publicProfile.id,
+        public_id: publicProfile.public_id,
         email: '', // Email is not included in public profile for privacy
         full_name: publicProfile.full_name,
         display_email: null, // Display email is not included in public profile
@@ -112,6 +119,12 @@ const ProfilePage = () => {
       console.log('✅ Public profile fetched for:', publicProfile.full_name || 'Unknown user');
       setDisplayProfile(transformedProfile);
       setIsOtherUserProfile(true);
+      
+      // If we came from a legacy UUID URL, redirect to the clean short URL
+      if (legacyUserId && publicProfile.public_id) {
+        console.log('🔄 Redirecting from legacy UUID to short URL:', publicProfile.public_id);
+        navigate(`/profile/${publicProfile.public_id}`, { replace: true });
+      }
     } catch (error) {
       console.error('💥 Error fetching public profile:', error);
       toast({
@@ -153,7 +166,7 @@ const ProfilePage = () => {
         <ProfileContent
           displayProfile={displayProfile}
           isOtherUserProfile={isOtherUserProfile}
-          userId={userId}
+          userId={identifier || null}
           user={user}
           isEditDialogOpen={isEditDialogOpen}
           onEditDialogOpenChange={setIsEditDialogOpen}

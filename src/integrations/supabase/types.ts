@@ -366,6 +366,7 @@ export type Database = {
           marketing_emails_enabled: boolean
           notification_categories: Json | null
           photo_url: string | null
+          public_id: string
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
         }
@@ -392,6 +393,7 @@ export type Database = {
           marketing_emails_enabled?: boolean
           notification_categories?: Json | null
           photo_url?: string | null
+          public_id: string
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
@@ -418,6 +420,7 @@ export type Database = {
           marketing_emails_enabled?: boolean
           notification_categories?: Json | null
           photo_url?: string | null
+          public_id?: string
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
@@ -706,6 +709,7 @@ export type Database = {
       cleanup_old_rate_limit_attempts: { Args: never; Returns: undefined }
       current_user_is_admin: { Args: never; Returns: boolean }
       current_user_not_deleted: { Args: never; Returns: boolean }
+      generate_public_id: { Args: never; Returns: string }
       get_profile_listings: {
         Args: { target_user_id: string }
         Returns: {
@@ -847,6 +851,22 @@ export type Database = {
           id: string
           last_name: string
           photo_url: string
+          public_id: string
+          role: Database["public"]["Enums"]["user_role"]
+        }[]
+      }
+      get_public_profile_by_identifier: {
+        Args: { identifier: string }
+        Returns: {
+          bio: string
+          company_name: string
+          created_at: string
+          first_name: string
+          full_name: string
+          id: string
+          last_name: string
+          photo_url: string
+          public_id: string
           role: Database["public"]["Enums"]["user_role"]
         }[]
       }

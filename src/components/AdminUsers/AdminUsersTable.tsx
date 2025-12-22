@@ -23,8 +23,10 @@ const AdminUsersTable = ({ users }: AdminUsersTableProps) => {
   const { updatingUsers, handleSubmissionPermissionChange } = usePermissionChange(users);
   const { updatingRoles, handleRoleChange } = useRoleChange(users);
 
-  const handleUserClick = (userId: string) => {
-    navigate(`/profile?userId=${userId}`);
+  const handleUserClick = (userId: string, publicId?: string) => {
+    // Use public_id for cleaner URLs, fall back to userId if not available
+    const profilePath = publicId ? `/profile/${publicId}` : `/profile/${userId}`;
+    navigate(profilePath);
   };
 
   const marketingSubscribers = users?.filter(user => user.marketing_emails_enabled) || [];
