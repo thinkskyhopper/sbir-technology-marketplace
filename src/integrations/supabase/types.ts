@@ -520,7 +520,7 @@ export type Database = {
           pi_phone?: string | null
           primary_investigator_name?: string | null
           proposal_award_date?: string | null
-          public_id: string
+          public_id?: string
           recommended_affiliate_1_id?: string | null
           recommended_affiliate_2_id?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
