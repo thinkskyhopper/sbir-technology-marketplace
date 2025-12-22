@@ -393,7 +393,7 @@ export type Database = {
           marketing_emails_enabled?: boolean
           notification_categories?: Json | null
           photo_url?: string | null
-          public_id: string
+          public_id?: string
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }

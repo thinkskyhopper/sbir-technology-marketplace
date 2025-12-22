@@ -34,7 +34,8 @@ export const useAdminChangeRequestsState = () => {
           *,
           profiles!listing_change_requests_user_id_fkey (
             full_name,
-            email
+            email,
+            public_id
           ),
           sbir_listings (
             title,

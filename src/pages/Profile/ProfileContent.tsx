@@ -7,6 +7,7 @@ import EditProfileDialog from "@/components/Profile/EditProfileDialog";
 
 interface Profile {
   id: string;
+  public_id?: string;
   email: string;
   full_name: string | null;
   display_email: string | null;

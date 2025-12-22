@@ -3,6 +3,7 @@ import type { User, Session } from '@supabase/supabase-js';
 
 export interface Profile {
   id: string;
+  public_id: string | null;
   email: string;
   full_name: string | null;
   first_name: string | null;

@@ -29,6 +29,7 @@ const AdminUsers = () => {
         .from('profiles')
         .select(`
           id,
+          public_id,
           email,
           full_name,
           photo_url,
