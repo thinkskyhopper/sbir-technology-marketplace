@@ -2,6 +2,7 @@ export type ListingType = 'Contract' | 'IP' | 'Contract & IP';
 
 export interface SBIRListing {
   id: string;
+  public_id?: string;
   title: string;
   description: string;
   phase: 'Phase I' | 'Phase II' | 'Phase III';

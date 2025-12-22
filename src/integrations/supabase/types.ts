@@ -479,6 +479,7 @@ export type Database = {
           pi_phone: string | null
           primary_investigator_name: string | null
           proposal_award_date: string | null
+          public_id: string
           recommended_affiliate_1_id: string | null
           recommended_affiliate_2_id: string | null
           status: Database["public"]["Enums"]["listing_status"]
@@ -519,6 +520,7 @@ export type Database = {
           pi_phone?: string | null
           primary_investigator_name?: string | null
           proposal_award_date?: string | null
+          public_id: string
           recommended_affiliate_1_id?: string | null
           recommended_affiliate_2_id?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
@@ -559,6 +561,7 @@ export type Database = {
           pi_phone?: string | null
           primary_investigator_name?: string | null
           proposal_award_date?: string | null
+          public_id?: string
           recommended_affiliate_1_id?: string | null
           recommended_affiliate_2_id?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
@@ -710,6 +713,89 @@ export type Database = {
       current_user_is_admin: { Args: never; Returns: boolean }
       current_user_not_deleted: { Args: never; Returns: boolean }
       generate_public_id: { Args: never; Returns: string }
+      get_listing_by_identifier: {
+        Args: { identifier: string }
+        Returns: {
+          address: string
+          agency: string
+          agency_tracking_number: string
+          approved_at: string
+          bc_email: string
+          bc_phone: string
+          business_contact_name: string
+          category: string
+          company: string
+          contract: string
+          contract_end_date: string
+          created_at: string
+          date_sold: string
+          deadline: string
+          description: string
+          id: string
+          listing_type: Database["public"]["Enums"]["listing_type"]
+          phase: Database["public"]["Enums"]["sbir_phase"]
+          photo_url: string
+          pi_email: string
+          pi_phone: string
+          primary_investigator_name: string
+          proposal_award_date: string
+          public_id: string
+          recommended_affiliate_1_id: string
+          recommended_affiliate_2_id: string
+          status: Database["public"]["Enums"]["listing_status"]
+          submitted_at: string
+          technology_summary: string
+          title: string
+          topic_code: string
+          updated_at: string
+          user_id: string
+          value: number
+        }[]
+      }
+      get_listing_by_identifier_admin: {
+        Args: { identifier: string }
+        Returns: {
+          address: string
+          agency: string
+          agency_tracking_number: string
+          approved_at: string
+          approved_by: string
+          bc_email: string
+          bc_phone: string
+          business_contact_name: string
+          category: string
+          company: string
+          contract: string
+          contract_end_date: string
+          created_at: string
+          date_sold: string
+          deadline: string
+          description: string
+          description_backup: string
+          id: string
+          internal_description: string
+          internal_title: string
+          listing_type: Database["public"]["Enums"]["listing_type"]
+          phase: Database["public"]["Enums"]["sbir_phase"]
+          photo_url: string
+          pi_email: string
+          pi_phone: string
+          primary_investigator_name: string
+          proposal_award_date: string
+          public_id: string
+          recommended_affiliate_1_id: string
+          recommended_affiliate_2_id: string
+          status: Database["public"]["Enums"]["listing_status"]
+          submitted_at: string
+          technology_summary: string
+          title: string
+          title_backup: string
+          topic_code: string
+          updated_at: string
+          user_id: string
+          value: number
+        }[]
+      }
       get_profile_listings: {
         Args: { target_user_id: string }
         Returns: {
