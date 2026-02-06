@@ -1,29 +1,20 @@
 
-
-# Prevent Embed Widget Drift with Project Knowledge
+# Fix Embed Widget Button Colors
 
 ## Problem
-The SBIR widget exists in two places:
-- `src/components/EmbeddableWidget.tsx` (React component)
-- `public/embed.html` (standalone HTML for external embedding)
+The `public/embed.html` file uses outdated primary color values that don't match the main site's current design system.
 
-Changes to one are frequently forgotten in the other, causing the externally embedded widget to fall out of sync with the site's design.
+| Property | embed.html (current) | Site (index.css) |
+|---|---|---|
+| `--primary` | `217 91% 50%` | `217 92% 60%` |
+| `--primary-hover` | not defined | `217 93% 74%` |
 
-## Solution
+## Changes
 
-Add a **custom knowledge entry** to the project settings so that every future prompt is aware of this dual-file relationship.
+**File: `public/embed.html`**
 
-### Steps
-1. Open **Project Settings** (click project name in top-left corner, then Settings)
-2. Go to **Manage Knowledge**
-3. Add a new knowledge entry with content like:
+1. Update the `--primary` CSS variable from `217 91% 50%` to `217 92% 60%`
+2. Add a `--primary-hover: 217 93% 74%` CSS variable
+3. Update `.btn-primary:hover` to use the new hover color instead of just `opacity: 0.9`
 
-> **IMPORTANT: Dual Widget Files**
-> The embeddable widget exists in TWO places that must always be kept in sync:
-> 1. `src/components/EmbeddableWidget.tsx` — React component used within the app
-> 2. `public/embed.html` — Standalone HTML/CSS/JS file served to external sites via iframe
->
-> Whenever fonts, colors, buttons, layout, or any visual/functional change is made to either file, the same change MUST also be applied to the other file. The standalone HTML file does not use Tailwind or React — all styles are plain CSS and must be updated manually.
-
-This is a manual step you would take in the Lovable UI — no code changes are needed. Once added, this knowledge will be included in every future conversation, ensuring both files are always updated together.
-
+These are small CSS-only changes. After publishing, the embedded widget buttons will match the site's current blue.
