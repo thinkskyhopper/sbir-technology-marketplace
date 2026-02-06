@@ -1,30 +1,26 @@
 
 
-## Fix Hardcoded Hover Colors on Primary Buttons
+# Update the Standalone Embed Widget (`public/embed.html`)
 
-The button variant in `button.tsx` was updated correctly, but several components pass explicit `className="bg-primary hover:bg-primary/90"` which overrides the variant's hover style.
+## Problem
+The file `public/embed.html` is the actual file used when embedding the widget on external sites. It is a standalone HTML/CSS/JS file, completely separate from the React component. None of the recent changes (fonts, button colors, arrow icon) were applied to this file.
 
-### Files to Update
+## Changes
 
-Remove the hardcoded `hover:bg-primary/90` (and redundant `bg-primary`) from the `className` prop in these 6 locations across 5 files:
+### 1. Add Font Imports
+Add Google Fonts link for **Inter** (body text) and **Archivo** (headings) to the `<head>` section of `public/embed.html`.
 
-1. **`src/components/Hero.tsx`** (line 41) -- Explore Marketplace button
-2. **`src/components/Header/HeaderAuthButtons.tsx`** (line 21) -- Sign In button
-3. **`src/components/MarketplaceCard.tsx`** (line 190) -- Contact button
-4. **`src/components/Header/HeaderPostListing.tsx`** (lines 41, 51) -- Post Listing buttons (desktop + mobile)
-5. **`src/components/ExpertValue/ExpertValueCTA.tsx`** (line 19) -- Schedule Consultation button
-6. **`src/components/EmbeddableWidget.tsx`** (line 82) -- Widget explore button
+### 2. Update CSS Font Declarations
+- Set the `body` font-family to `'Inter', sans-serif`
+- Add a heading style using `'Archivo', sans-serif` with `font-weight: 700` for `.listing-title`
 
-### What Changes
+### 3. Update the Explore Button
+- Update the `.btn-primary` styles to match the current site primary color and hover state
+- Add an arrow icon (using a Unicode arrow or inline SVG) to the "Explore" button text, matching the React version
 
-In each case, remove `bg-primary hover:bg-primary/90` from the className since the default button variant already applies `bg-primary` and the correct `hover:bg-[hsl(var(--primary-hover))]`. Keep any other classes (like sizing overrides) intact.
+### 4. Update Badge Corners
+- If any badge-like elements exist in the widget, update them to use square corners (`border-radius: 0`) to match the site-wide badge change
 
-For example, in Hero.tsx:
-```
-// Before
-className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg"
+## Technical Details
 
-// After
-className="px-8 py-6 text-lg"
-```
-
+All changes are isolated to a single file: **`public/embed.html`**. The CSS variables and inline styles will be updated to reflect the current design system established in the React app.
