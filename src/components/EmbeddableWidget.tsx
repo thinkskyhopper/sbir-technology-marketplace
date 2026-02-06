@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { DollarSign, Building, FileText } from 'lucide-react';
+import { DollarSign, Building, FileText, ArrowRight } from 'lucide-react';
 import { featuredListingsService } from '@/services/featuredListings';
 import type { SBIRListing } from '@/types/listings';
 
@@ -83,6 +83,7 @@ const EmbeddableWidget = () => {
           size="sm"
         >
           Explore
+          <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
         <Button 
           onClick={handleLearnMoreClick}
