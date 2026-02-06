@@ -19,7 +19,7 @@ export default {
 		},
 		fontFamily: {
 			sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-			heading: ['"Highway Gothic Wide"', 'sans-serif'],
+			heading: ['Archivo', 'sans-serif'],
 		},
 		extend: {
 			colors: {
