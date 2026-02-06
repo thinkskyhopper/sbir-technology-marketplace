@@ -41,16 +41,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
     };
   }, [user, loading]);
 
-  // Enhanced debug logging
-  console.log('ProtectedRoute render:', { 
-    user: user?.email, 
-    loading, 
-    profileLoading,
-    isAdmin, 
-    requireAdmin,
-    userExists: !!user,
-    shouldWaitForProfile: requireAdmin && user && profileLoading
-  });
+  if (import.meta.env.DEV) {
+    console.log('ProtectedRoute render:', { 
+      user: user?.email, 
+      loading, 
+      profileLoading,
+      isAdmin, 
+      requireAdmin,
+    });
+  }
 
   // Use stable wrapper to prevent render tree changes
   return (

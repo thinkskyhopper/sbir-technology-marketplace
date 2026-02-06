@@ -1,6 +1,6 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryImageManager from "@/components/CategoryImageManager";
@@ -23,7 +23,6 @@ const AdminCategoryImages = () => {
   }, []);
 
   return (
-    <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         
@@ -52,7 +51,6 @@ const AdminCategoryImages = () => {
 
         <Footer />
       </div>
-    </ProtectedRoute>
   );
 };
 

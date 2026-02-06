@@ -1,6 +1,6 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminChangeRequestsTable from "@/components/AdminChangeRequestsTable";
@@ -12,7 +12,6 @@ const AdminChangeRequests = () => {
   const navigate = useNavigate();
 
   return (
-    <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         
@@ -41,7 +40,6 @@ const AdminChangeRequests = () => {
 
         <Footer />
       </div>
-    </ProtectedRoute>
   );
 };
 

@@ -1,6 +1,6 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminUsersHeader from "@/components/AdminUsers/AdminUsersHeader";
@@ -91,7 +91,6 @@ const AdminUsers = () => {
 
   if (isLoading) {
     return (
-      <ProtectedRoute requireAdmin={true}>
         <div className="min-h-screen bg-background flex flex-col">
           <Header />
           <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 flex-1">
@@ -101,12 +100,10 @@ const AdminUsers = () => {
           </div>
           <Footer />
         </div>
-      </ProtectedRoute>
     );
   }
 
   return (
-    <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         
@@ -128,7 +125,6 @@ const AdminUsers = () => {
 
         <Footer />
       </div>
-    </ProtectedRoute>
   );
 };
 

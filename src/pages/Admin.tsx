@@ -1,6 +1,5 @@
 
 import { useAuth } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminDashboardCard from "@/components/AdminDashboardCard";
@@ -49,7 +48,6 @@ const Admin = () => {
   ];
 
   return (
-    <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         
@@ -98,7 +96,6 @@ const Admin = () => {
 
         <Footer />
       </div>
-    </ProtectedRoute>
   );
 };
 
