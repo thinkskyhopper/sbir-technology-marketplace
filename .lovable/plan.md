@@ -1,20 +1,15 @@
 
-# Fix Embed Widget Button Colors
+
+# Update Focus Ring Color to Match Current Primary
 
 ## Problem
-The `public/embed.html` file uses outdated primary color values that don't match the main site's current design system.
-
-| Property | embed.html (current) | Site (index.css) |
-|---|---|---|
-| `--primary` | `217 91% 50%` | `217 92% 60%` |
-| `--primary-hover` | not defined | `217 93% 74%` |
+The `--ring` CSS variable in `src/index.css` is still set to the old primary blue (`217 91% 50%`), while the primary color was updated to `217 92% 60%`. This means dropdown select triggers, text inputs, and textareas show a slightly darker/different blue highlight ring when focused — inconsistent with the rest of the site.
 
 ## Changes
 
-**File: `public/embed.html`**
+**File: `src/index.css`**
 
-1. Update the `--primary` CSS variable from `217 91% 50%` to `217 92% 60%`
-2. Add a `--primary-hover: 217 93% 74%` CSS variable
-3. Update `.btn-primary:hover` to use the new hover color instead of just `opacity: 0.9`
+1. Update `--ring` from `217 91% 50%` to `217 92% 60%` (line 38)
+2. Update `--sidebar-ring` from `217 91% 50%` to `217 92% 60%` (line 47)
 
-These are small CSS-only changes. After publishing, the embedded widget buttons will match the site's current blue.
+This is a two-line CSS variable change. All components using `focus:ring-ring` (inputs, selects, textareas, etc.) will automatically pick up the corrected color.
