@@ -1,26 +1,29 @@
 
 
-# Update the Standalone Embed Widget (`public/embed.html`)
+# Prevent Embed Widget Drift with Project Knowledge
 
 ## Problem
-The file `public/embed.html` is the actual file used when embedding the widget on external sites. It is a standalone HTML/CSS/JS file, completely separate from the React component. None of the recent changes (fonts, button colors, arrow icon) were applied to this file.
+The SBIR widget exists in two places:
+- `src/components/EmbeddableWidget.tsx` (React component)
+- `public/embed.html` (standalone HTML for external embedding)
 
-## Changes
+Changes to one are frequently forgotten in the other, causing the externally embedded widget to fall out of sync with the site's design.
 
-### 1. Add Font Imports
-Add Google Fonts link for **Inter** (body text) and **Archivo** (headings) to the `<head>` section of `public/embed.html`.
+## Solution
 
-### 2. Update CSS Font Declarations
-- Set the `body` font-family to `'Inter', sans-serif`
-- Add a heading style using `'Archivo', sans-serif` with `font-weight: 700` for `.listing-title`
+Add a **custom knowledge entry** to the project settings so that every future prompt is aware of this dual-file relationship.
 
-### 3. Update the Explore Button
-- Update the `.btn-primary` styles to match the current site primary color and hover state
-- Add an arrow icon (using a Unicode arrow or inline SVG) to the "Explore" button text, matching the React version
+### Steps
+1. Open **Project Settings** (click project name in top-left corner, then Settings)
+2. Go to **Manage Knowledge**
+3. Add a new knowledge entry with content like:
 
-### 4. Update Badge Corners
-- If any badge-like elements exist in the widget, update them to use square corners (`border-radius: 0`) to match the site-wide badge change
+> **IMPORTANT: Dual Widget Files**
+> The embeddable widget exists in TWO places that must always be kept in sync:
+> 1. `src/components/EmbeddableWidget.tsx` — React component used within the app
+> 2. `public/embed.html` — Standalone HTML/CSS/JS file served to external sites via iframe
+>
+> Whenever fonts, colors, buttons, layout, or any visual/functional change is made to either file, the same change MUST also be applied to the other file. The standalone HTML file does not use Tailwind or React — all styles are plain CSS and must be updated manually.
 
-## Technical Details
+This is a manual step you would take in the Lovable UI — no code changes are needed. Once added, this knowledge will be included in every future conversation, ensuring both files are always updated together.
 
-All changes are isolated to a single file: **`public/embed.html`**. The CSS variables and inline styles will be updated to reflect the current design system established in the React app.
