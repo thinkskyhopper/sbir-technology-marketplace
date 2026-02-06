@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Shield, Target, Zap } from "lucide-react";
+import { Shield, ArrowRight, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface HeroProps {
@@ -39,8 +39,8 @@ const Hero = ({ onExploreClick }: HeroProps) => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button size="lg" onClick={onExploreClick} className="px-8 py-6 text-lg">
-              <Target className="w-5 h-5 mr-2" />
               Explore Marketplace
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             <Button size="lg" variant="outline" onClick={handleLearnMoreClick} className="border-primary/20 hover:border-primary/40 px-8 py-6 text-lg">
               Learn More
