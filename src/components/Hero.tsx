@@ -46,33 +46,6 @@ const Hero = ({ onExploreClick }: HeroProps) => {
               Learn More
             </Button>
           </div>
-
-          {/* Features */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Verified Listings</h3>
-              <p className="text-muted-foreground">All listings are reviewed by our expert team</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Target className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Precision Matching</h3>
-              <p className="text-muted-foreground">Advanced search and filtering to find exactly what you need</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Fast Execution</h3>
-              <p className="text-muted-foreground">Streamlined process from discovery to sale</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
