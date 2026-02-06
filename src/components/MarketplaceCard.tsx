@@ -187,7 +187,7 @@ const MarketplaceCard = ({ listing, onViewDetails, onContact, onEdit }: Marketpl
               </div>
               <Button 
                 size="sm" 
-                className="bg-primary hover:bg-primary/90"
+                className=""
                 onClick={handleContactAdmin}
               >
                 Contact

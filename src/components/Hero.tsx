@@ -38,7 +38,7 @@ const Hero = ({ onExploreClick }: HeroProps) => {
           <p className="text-xl mb-8 max-w-2xl mx-auto leading-relaxed text-muted-foreground">Connect innovation with opportunity. Buy and sell Phase I & II SBIR technology in a secure, professional marketplace designed for defense contractors and innovators.</p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Button size="lg" onClick={onExploreClick} className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg">
+            <Button size="lg" onClick={onExploreClick} className="px-8 py-6 text-lg">
               <Target className="w-5 h-5 mr-2" />
               Explore Marketplace
             </Button>

@@ -18,7 +18,7 @@ const HeaderAuthButtons = () => {
     <Button 
       onClick={handleAuthClick} 
       size="sm"
-      className="bg-primary hover:bg-primary/90"
+      className=""
     >
       <LogIn className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
       <span className="hidden sm:inline">Sign In</span>
