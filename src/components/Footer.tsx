@@ -50,7 +50,7 @@ const Footer = () => {
             {/* Copyright */}
             <div className="flex flex-col items-center gap-2">
               <p className="text-xs sm:text-sm text-muted-foreground text-center">
-                © 2025 The SBIR Tech Marketplace. All rights reserved.
+                © {new Date().getFullYear()} The SBIR Tech Marketplace. All rights reserved.
               </p>
               <p className="text-xs sm:text-sm text-muted-foreground text-center">
                 Powered by{" "}
