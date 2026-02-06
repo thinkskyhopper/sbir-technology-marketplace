@@ -27,24 +27,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const lastUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    console.log('🚀 Setting up auth state listener...');
+    if (import.meta.env.DEV) console.log('🚀 Setting up auth state listener...');
     
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('🔄 [STEP 6] Auth state changed:', event);
-        console.log('👤 [STEP 6] Session status:', session ? 'Active' : 'No session');
+        if (import.meta.env.DEV) {
+          console.log('🔄 Auth state changed:', event, session ? 'Active' : 'No session');
+        }
         
-        if (event === 'SIGNED_IN') {
-          console.log('✅ [STEP 7] OAuth sign-in successful!');
-          console.log('🆔 User authenticated');
-          console.log('🔗 Provider:', session?.user?.app_metadata?.provider);
-          console.log('⏰ Session expires at:', session?.expires_at);
-        } else if (event === 'SIGNED_OUT') {
-          console.log('👋 [AUTH] User signed out');
+        if (event === 'SIGNED_OUT') {
           lastUserIdRef.current = null;
-        } else if (event === 'TOKEN_REFRESHED') {
-          console.log('🔄 [AUTH] Token refreshed');
         }
         
         const prevUserId = lastUserIdRef.current;
@@ -58,10 +51,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           lastUserIdRef.current = currentUserId;
 
           if (event === 'TOKEN_REFRESHED' && prevUserId === currentUserId) {
-            console.log('🔄 [AUTH] Token refreshed; user unchanged — skipping profile fetch');
             setProfileLoading(false);
           } else {
-            console.log('👤 User authenticated, fetching profile...');
             setProfileLoading(true);
             // Use setTimeout to avoid blocking the auth state change
             setTimeout(async () => {
@@ -88,7 +79,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }, 0);
           }
         } else {
-          console.log('🚪 No user session, clearing profile...');
           // Force clear all auth state
           setProfile(null);
           setIsAdmin(false);
@@ -111,14 +101,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
-      console.log('🔍 Initial session check:', session ? 'Session found' : 'No session');
+      if (import.meta.env.DEV) console.log('🔍 Initial session check:', session ? 'Session found' : 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        console.log('👤 Initial user found, fetching profile...');
         setProfileLoading(true);
-        // Use setTimeout to avoid blocking
         setTimeout(async () => {
           try {
             await fetchProfile(session.user.id, setProfile, setIsAdmin);
@@ -142,7 +130,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }, 0);
       } else {
-        console.log('🚪 No initial session found');
         setProfile(null);
         setIsAdmin(false);
         setProfileLoading(false);
@@ -152,7 +139,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => {
-      console.log('🧹 Cleaning up auth subscription');
       subscription.unsubscribe();
     };
   }, []);

@@ -23,7 +23,6 @@ import AdminCategoryImages from "./pages/AdminCategoryImages";
 import Bookmarks from "./pages/Bookmarks";
 import MyListings from "./pages/MyListings";
 import About from "./pages/About";
-import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Team from "./pages/Team";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -107,14 +106,38 @@ function App() {
                 <Route path="/listing/:id/history" element={<ListingHistory />} />
                 <Route path="/bookmarks" element={<Bookmarks />} />
                 <Route path="/my-listings" element={<MyListings />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/admin/listings" element={<AdminListings />} />
-                <Route path="/admin/users" element={<AdminUsers />} />
-                <Route path="/admin/change-requests" element={<AdminChangeRequests />} />
-                <Route path="/admin/logs" element={<AdminLogs />} />
-                <Route path="/admin/category-images" element={<AdminCategoryImages />} />
+                <Route path="/admin" element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <Admin />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/listings" element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminListings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/users" element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminUsers />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/change-requests" element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminChangeRequests />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/logs" element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminLogs />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/category-images" element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminCategoryImages />
+                  </ProtectedRoute>
+                } />
                 <Route path="/about" element={<About />} />
-                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/team" element={<Team />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
