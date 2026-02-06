@@ -1,25 +1,30 @@
 
 
-## Update Primary Color from #0b64f4 to #3c83f6
+## Fix Hardcoded Hover Colors on Primary Buttons
 
-This is a one-line change. Both the Sign In button and Explore Marketplace button (and all other primary-colored elements) use the `--primary` CSS variable defined in `src/index.css`.
+The button variant in `button.tsx` was updated correctly, but several components pass explicit `className="bg-primary hover:bg-primary/90"` which overrides the variant's hover style.
 
-### Change
+### Files to Update
 
-**File: `src/index.css`, line 17**
+Remove the hardcoded `hover:bg-primary/90` (and redundant `bg-primary`) from the `className` prop in these 6 locations across 5 files:
 
-Replace:
-```css
---primary: 217 91% 50%;
+1. **`src/components/Hero.tsx`** (line 41) -- Explore Marketplace button
+2. **`src/components/Header/HeaderAuthButtons.tsx`** (line 21) -- Sign In button
+3. **`src/components/MarketplaceCard.tsx`** (line 190) -- Contact button
+4. **`src/components/Header/HeaderPostListing.tsx`** (lines 41, 51) -- Post Listing buttons (desktop + mobile)
+5. **`src/components/ExpertValue/ExpertValueCTA.tsx`** (line 19) -- Schedule Consultation button
+6. **`src/components/EmbeddableWidget.tsx`** (line 82) -- Widget explore button
+
+### What Changes
+
+In each case, remove `bg-primary hover:bg-primary/90` from the className since the default button variant already applies `bg-primary` and the correct `hover:bg-[hsl(var(--primary-hover))]`. Keep any other classes (like sizing overrides) intact.
+
+For example, in Hero.tsx:
 ```
-With:
-```css
---primary: 217 92% 60%;
+// Before
+className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg"
+
+// After
+className="px-8 py-6 text-lg"
 ```
-
-This converts `#0b64f4` (HSL 217, 91%, 50%) to `#3c83f6` (HSL 217, 92%, 60%) and automatically updates every element using the `primary` color token -- buttons, links, focus rings, sidebar accents, etc.
-
-### Also update the high-contrast override
-
-Line ~120 in `src/index.css` has a high-contrast media query that darkens primary to `217 91% 40%`. This should be adjusted proportionally to `217 92% 50%` to maintain the same contrast relationship.
 
