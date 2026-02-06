@@ -54,7 +54,8 @@ const EmbeddableWidget = () => {
 
   return (
     <TooltipProvider>
-      <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 font-sans sm:max-w-lg md:max-w-md">
+      <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      <div className="w-full max-w-md mx-auto bg-background border border-border rounded-lg p-4 sm:max-w-lg md:max-w-md" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Logo and Title */}
       <div className="text-center mb-4">
         <a 
@@ -69,7 +70,7 @@ const EmbeddableWidget = () => {
             className="h-15 w-auto max-w-[90%] mx-auto mb-2 sm:h-20 lg:h-30"
           />
         </a>
-        <h2 className="text-lg font-bold text-foreground sm:text-xl md:text-lg">
+        <h2 className="text-lg font-bold text-foreground font-heading sm:text-xl md:text-lg">
           <span className="text-gradient">The SBIR Tech </span>
           <span className="text-foreground">Marketplace</span>
         </h2>
@@ -128,7 +129,7 @@ const EmbeddableWidget = () => {
                       rel="noopener noreferrer"
                       className="hover:underline block"
                     >
-                      <h3 className="text-sm font-semibold line-clamp-2 text-card-foreground sm:line-clamp-1">
+                      <h3 className="text-sm font-semibold line-clamp-2 text-card-foreground font-heading sm:line-clamp-1">
                         {listing.title}
                       </h3>
                     </a>
