@@ -42,7 +42,7 @@ const HeaderLogo = ({ isMobile }: HeaderLogoProps) => {
         alt="SBIR Logo"
         className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
       />
-      <span className="text-sm sm:text-xl font-bold hidden xs:block sm:block" style={{ fontFamily: "'Highway Gothic Wide', sans-serif" }}>
+      <span className="text-base sm:text-2xl font-bold hidden xs:block sm:block uppercase tracking-wide" style={{ fontFamily: "'Highway Gothic Wide', sans-serif" }}>
         <span className="text-gradient">The SBIR Tech </span>
         <span className="text-foreground">Marketplace</span>
       </span>
