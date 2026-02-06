@@ -38,7 +38,7 @@ const HeaderPostListing = ({ onPostListingClick }: HeaderPostListingProps) => {
       <Button 
         onClick={handlePostListing}
         size="sm"
-        className="hidden sm:flex bg-primary hover:bg-primary/90"
+        className="hidden sm:flex"
       >
         <Plus className="w-4 h-4 mr-2" />
         New Listing
@@ -48,7 +48,7 @@ const HeaderPostListing = ({ onPostListingClick }: HeaderPostListingProps) => {
       <Button 
         onClick={handlePostListing}
         size="icon"
-        className="sm:hidden h-8 w-8 bg-primary hover:bg-primary/90"
+        className="sm:hidden h-8 w-8"
       >
         <Plus className="w-4 h-4" />
       </Button>
