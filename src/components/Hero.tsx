@@ -16,7 +16,7 @@ const Hero = ({ onExploreClick }: HeroProps) => {
   };
 
   return (
-    <section className="hero-gradient py-20 relative overflow-hidden">
+    <section className="hero-gradient pt-28 pb-20 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-full h-full" style={{
