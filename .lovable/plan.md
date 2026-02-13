@@ -1,15 +1,31 @@
 
 
-# Update Focus Ring Color to Match Current Primary
+# Fix: Featured Listings Permission Denied Error
 
 ## Problem
-The `--ring` CSS variable in `src/index.css` is still set to the old primary blue (`217 91% 50%`), while the primary color was updated to `217 92% 60%`. This means dropdown select triggers, text inputs, and textareas show a slightly darker/different blue highlight ring when focused — inconsistent with the rest of the site.
 
-## Changes
+The `featured_listings` table has a single RLS policy ("Admins can manage featured listings") that is set as **restrictive** instead of **permissive**. PostgreSQL requires at least one permissive policy to grant access. Restrictive policies can only further limit access granted by permissive policies. Since no permissive policy exists, all write operations (INSERT, UPDATE, DELETE) are denied -- even for admins.
 
-**File: `src/index.css`**
+## Solution
 
-1. Update `--ring` from `217 91% 50%` to `217 92% 60%` (line 38)
-2. Update `--sidebar-ring` from `217 91% 50%` to `217 92% 60%` (line 47)
+Run a database migration to drop the existing restrictive policy and recreate it as a **permissive** policy with the same conditions.
 
-This is a two-line CSS variable change. All components using `focus:ring-ring` (inputs, selects, textareas, etc.) will automatically pick up the corrected color.
+## Technical Details
+
+SQL migration:
+
+```sql
+-- Drop the existing restrictive policy
+DROP POLICY IF EXISTS "Admins can manage featured listings" ON featured_listings;
+
+-- Recreate as a permissive policy (default behavior)
+CREATE POLICY "Admins can manage featured listings"
+  ON featured_listings
+  FOR ALL
+  TO authenticated
+  USING (current_user_is_admin() AND current_user_not_deleted())
+  WITH CHECK (current_user_is_admin() AND current_user_not_deleted());
+```
+
+No code changes are needed -- the service layer and UI code are correct. This is purely a database policy configuration issue.
+
